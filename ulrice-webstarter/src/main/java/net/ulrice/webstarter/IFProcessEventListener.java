@@ -1,20 +1,17 @@
 package net.ulrice.webstarter;
 
 import java.util.EventListener;
-import java.util.List;
 
 import net.ulrice.webstarter.tasks.IFTask;
 
 public interface IFProcessEventListener extends EventListener {
 
 		
-	void taskFinished(IFTask task);
+	void taskFinished(ProcessThread thread, IFTask task);
 	
-	void taskStarted(IFTask task, String message);
-	
+	void taskStarted(ProcessThread thread, IFTask task);
 
-	void tasksLoaded();
-
-	void taskProgressed(IFTask task, String message);
+	void taskProgressed(ProcessThread thread, IFTask task, int progress, String shortMessage, String longMessage);
 	
+	void handleError(ProcessThread thread, IFTask task, String shortMessage, String longMessage);
 }

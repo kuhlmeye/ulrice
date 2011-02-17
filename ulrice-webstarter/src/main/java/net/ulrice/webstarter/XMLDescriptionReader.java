@@ -1,8 +1,13 @@
 package net.ulrice.webstarter;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Stack;
+
+import javax.swing.ImageIcon;
 
 import net.ulrice.webstarter.tasks.IFTask;
 
@@ -15,67 +20,67 @@ import org.xml.sax.helpers.XMLReaderFactory;
 
 public class XMLDescriptionReader extends DefaultHandler {
 
-	private ProcessThread process;
+	private ApplicationDescription appDescription;
 
-	private Stack<IFTask> taskStack;
+	private Stack<TaskDescription> taskStack;
 
-	private IFTask cTask;
+	private TaskDescription cTask;
 
 	private InputStream input;
 
-	public XMLDescriptionReader(InputStream input) {
+	private String imagePath;
+
+	public XMLDescriptionReader(InputStream input, String imagePath) {
 		this.cTask = null;
+		this.imagePath = imagePath;
 		this.input = input;
-		this.taskStack = new Stack<IFTask>();
+		this.taskStack = new Stack<TaskDescription>();
 
 	}
 
-	public void parseXML(ProcessThread process) throws SAXException, IOException {
-		this.process = process;
+	public void parseXML(ApplicationDescription appDescription) throws SAXException, IOException {
+		this.appDescription = appDescription;
 		XMLReader reader = XMLReaderFactory.createXMLReader();
 		reader.setContentHandler(this);
 		reader.parse(new InputSource(input));
-
-		process.fireTasksLoadedEvent();
-
 	}
 	
 	@Override
 	public void startElement(String uri, String localName, String qName, Attributes atts) throws SAXException {
 		if ("task".equalsIgnoreCase(localName)) {
 			String type = atts.getValue("type");
-			IFTask readTask = createTaskByName(type);
+			Map<String, String> parameters = new HashMap<String, String>();
 			for (int i = 0; i < atts.getLength(); i++) {
-				readTask.addParameter(atts.getLocalName(i), atts.getValue(i));
+				parameters.put(atts.getLocalName(i), atts.getValue(i));
 			}
-			if (cTask == null) {
-				process.addTask(readTask);
-				cTask = readTask;
-			} else {
-				taskStack.add(cTask);
-				cTask.addSubTask(readTask);
-				readTask = cTask;
+			
+			try {
+				Class<? extends IFTask> taskClass = (Class<? extends IFTask>) Class.forName("net.ulrice.webstarter.tasks." + type);				
+				TaskDescription readTask = new TaskDescription(taskClass, parameters);
+				
+				if (cTask == null) {
+					appDescription.addTask(readTask);
+					cTask = readTask;
+				} else {
+					taskStack.add(cTask);
+					cTask.addSubTask(readTask);
+					readTask = cTask;
+				}
+			} catch (ClassNotFoundException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
 			}
+		}
+		else if("application".equalsIgnoreCase(localName)) {
+			appDescription.setName(atts.getValue("applicationName"));
+			String iconName = atts.getValue("applicationIcon");
+			if(iconName != null) {
+			appDescription.setIcon(new ImageIcon(imagePath + File.separator + iconName));
+			}
+			appDescription.setNeedsLogin(Boolean.valueOf(atts.getValue("needsLogin")));
 		}
 	}
 
-	private IFTask createTaskByName(String type) {
-		try {
-			Class<?> taskClass = Class.forName("net.ulrice.webstarter.tasks." + type);
-			return (IFTask) taskClass.newInstance();
-		} catch (ClassNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (InstantiationException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IllegalAccessException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-
-		return null;
-	}
 
 	@Override
 	public void endElement(String uri, String localName, String qName) throws SAXException {

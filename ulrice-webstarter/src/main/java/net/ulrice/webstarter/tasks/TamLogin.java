@@ -25,14 +25,14 @@ public class TamLogin extends AbstractTask {
 	public static final String URL_ATTRIBUTE = "url";
 
 	@Override
-	public void executeTask(ProcessThread thread) {
-		String urlString = getParameter(URL_ATTRIBUTE);
+	public boolean doTask(ProcessThread thread) {
+		String urlString = getParameterAsString(URL_ATTRIBUTE);
 		String loginType = thread.getContext().getValueAsString(ProcessContext.LOGIN_TYPE, "pwd");
 		String userId = thread.getContext().getValueAsString(ProcessContext.USERID);
 		String password = thread.getContext().getValueAsString(ProcessContext.PASSWORD);
 
 		if (urlString == null || userId == null) {
-			return;
+			return false;
 		}
 
 		try {
@@ -47,10 +47,11 @@ public class TamLogin extends AbstractTask {
 		    SSLContext sc = SSLContext.getInstance("SSL");
 		    sc.init(null, new TrustManager[]{new TrustAllTrustManager()}, new java.security.SecureRandom());
 		    HttpsURLConnection.setDefaultSSLSocketFactory(sc.getSocketFactory());
-
 			
 			
 			URL url = new URL(urlString);
+
+        	thread.fireTaskProgressed(this, 50, "Connecting to TAM", "Connect to TAM at " + url);
 			HttpURLConnection con = (HttpURLConnection) url.openConnection();
 	        HttpURLConnection.setFollowRedirects(false);
 	        con.setDoInput(true);
@@ -83,34 +84,42 @@ public class TamLogin extends AbstractTask {
 			String tamResponseContent = getTamResponseValue(strRespBuff.toString());
 	        if (tamResponseContent != null) {
 	            if ("Login successful".equalsIgnoreCase(tamResponseContent)) {
-	                // Login was successful.
-	    	        
+	                // Login was successful.	    	        
+	            	thread.fireTaskProgressed(this, 100, "Login successful", "Successfully logged in.");
 	                String cookieString = con.getHeaderField("Set-Cookie");
 	                thread.getContext().setValue(ProcessContext.COOKIE, cookieString);
-	                return;
+	                return true;
 	            }
 	            else if ("".equals(tamResponseContent)) {
-	            	// TODO Unknown Error
+	            	if(password == null || "".equals(password)) {
+		            	thread.handleError(this, "No password specified.", "No password was specified. Please enter your password.");	            		
+	            	} else {
+		            	thread.handleError(this, "Unknown error", "Unknown error during TAM Login");
+	            	}
+	            	
+	            	return false;
 	            }
 	            else {
 	                // And error message occurred.
 	                String errorCode = tamResponseContent.substring(0, 10);
 	                if ("HPDIA0200W".equalsIgnoreCase(errorCode)) {
-	                    // Authentication failed. You have used an invalid user name, password or client
-	                    // certificate.
-	                	//TODO throw new ConnectorException(ConnectorException.ExceptionType.AuthenticationFailed);
+		            	thread.handleError(this, "Wrong UserId/Password", tamResponseContent);
+		            	return false;
 	                }
 	                else if ("HPDIA0205W".equalsIgnoreCase(errorCode)) {
 	                    // The user’s account has expired.
-	                	//TODO throw new ConnectorException(ConnectorException.ExceptionType.AccountExpired);
+		            	thread.handleError(this, "Your account has expired.", tamResponseContent);
+		            	return false;
 	                }
 	                else if ("HPDIA0204W".equalsIgnoreCase(errorCode)) {
 	                    // The user's password has expired.
 	                    // TODO Handle password changed exception.
-	                	//TODO throw new ConnectorException(ConnectorException.ExceptionType.PasswordExpired);
+		            	thread.handleError(this, "Your password has expired.", tamResponseContent);
+		            	return false;
 	                }
 	                else {
-	                	//TODO throw new ConnectorException(ConnectorException.ExceptionType.Other);
+		            	thread.handleError(this, "Unknown error during login", tamResponseContent);
+		            	return false;
 	                }
 	            }
 	        }
@@ -132,6 +141,7 @@ public class TamLogin extends AbstractTask {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		return true;
 	}
 
 	private String getTamResponseValue(String response) {

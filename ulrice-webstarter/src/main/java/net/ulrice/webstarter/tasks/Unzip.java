@@ -17,18 +17,22 @@ public class Unzip extends AbstractTask {
 	private static final String FILTER_NAME = "filter";
 
 	@Override
-	public void executeTask(ProcessThread thread) {
-		String filter = getParameter(FILTER_NAME);
-		String fileName = thread.getContext().getValueAsString(ProcessContext.CURRENT_FILE_NAME);
+	public boolean doTask(ProcessThread thread) {
+		String filter = getParameterAsString(FILTER_NAME);
+		String fileName = getParameterAsString(ReadDescription.CURRENT_FILE_NAME);
 
 		if (fileName.matches(filter)) {
 			try {
-				String localPath = "D:/TEMP/";
+				String localPath = getParameterAsString(ReadDescription.LOCAL_PATH);
 				ZipInputStream zis = new ZipInputStream(new FileInputStream(new File(localPath + fileName)));
 				BufferedOutputStream dest = null;
 
 				ZipEntry entry;
+				
+				
 				while ((entry = zis.getNextEntry()) != null) {
+					
+					thread.fireTaskProgressed(this, 0, entry.getName(), "Unzipping " + entry.getName() + "(" + entry.getSize() + "bytes) ...");
 					
 					if(entry.isDirectory()) {
 						File directory = new File(localPath + entry.getName());
@@ -39,9 +43,20 @@ public class Unzip extends AbstractTask {
 						// write the files to the disk
 						FileOutputStream fos = new FileOutputStream(localPath + entry.getName());
 						dest = new BufferedOutputStream(fos, 1024);
+						
+
+						Long length = Long.valueOf(entry.getSize());
+						Long downloaded = 0l;
+						
 						while ((count = zis.read(data, 0, 1024)) != -1) {
+
+							downloaded += count;
+							int progress = (int)(100.0/length * downloaded);
+							thread.fireTaskProgressed(this, progress,  entry.getName(), null);
+							
 							dest.write(data, 0, count);
 						}
+						
 						dest.flush();
 						dest.close();
 					}
@@ -58,7 +73,8 @@ public class Unzip extends AbstractTask {
 				e.printStackTrace();
 			}
 		}
-
+		return true;
 	}
+
 
 }

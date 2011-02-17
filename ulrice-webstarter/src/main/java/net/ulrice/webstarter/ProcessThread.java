@@ -1,39 +1,68 @@
 package net.ulrice.webstarter;
 
-import java.awt.Component;
 import java.util.ArrayList;
 import java.util.List;
 
 import javax.swing.event.EventListenerList;
 
-import net.ulrice.webstarter.tasks.DownloadFile;
 import net.ulrice.webstarter.tasks.IFTask;
+import net.ulrice.webstarter.tasks.TamLogin;
 
 public class ProcessThread {
 
 	private ProcessContext context;
 
-	private List<IFTask> tasks;
+	private ApplicationDescription appDescription;
 	
 	private EventListenerList eventListeners = new EventListenerList();
 
+	private List<IFTask> taskQueue;
 
-	public ProcessThread() {
+	private int numberOfCurrentTask;
+
+	private Thread taskWorker;
+
+	public ProcessThread(ApplicationDescription appDescription) {
 		this.context = new ProcessContext();
-		this.tasks = new ArrayList<IFTask>();
-	}
-
-	public void addTask(IFTask task) {
-		tasks.add(task);
+		this.appDescription = appDescription;
+		this.taskQueue = new ArrayList<IFTask>();
 	}
 
 	public void startProcess() {
-
-		if (tasks != null) {
-			for (IFTask task : tasks) {
-				task.doTask(this);
+		if(appDescription != null && appDescription.getTasks() != null) {
+			List<TaskDescription> tasks = appDescription.getTasks();
+			for(TaskDescription task : tasks) {
+				try {
+					taskQueue.add(task.instanciateTask());
+				} catch (InstantiationException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (IllegalAccessException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
 			}
 		}
+		
+		taskWorker = new Thread(new Runnable() {
+			
+			@Override
+			public void run() {
+				// TODO Auto-generated method stub
+				if(taskQueue != null) {
+					for(numberOfCurrentTask = 0; numberOfCurrentTask < taskQueue.size(); numberOfCurrentTask++) {
+						IFTask task = taskQueue.get(numberOfCurrentTask);
+						fireTaskStarted(task);
+						if(!task.doTask(ProcessThread.this)) {
+							return;
+						}
+						fireTaskFinished(task);
+					}
+				}
+			}
+		});
+		
+		taskWorker.start();
 	}
 
 
@@ -52,60 +81,75 @@ public class ProcessThread {
 		eventListeners.remove(IFProcessEventListener.class, eventListener);
 	}
 
-
-	public int getTaskCounter() {
-		int taskCounter = 0; 
-		if(tasks != null) {
-			for(IFTask task : tasks) {
-				taskCounter += task.getSubTaskCounter() + 1;
+	public void addSubTasks(IFTask task, IFTask... subtasks) {
+		int taskPos = taskQueue.indexOf(task);
+		if(taskPos == -1) {
+			taskPos = taskQueue.size() > 0 ? taskQueue.size() - 1 : 0;
+		}
+		
+		if(taskPos > 0) {
+			taskPos ++;
+		}
+		
+		if(subtasks != null) {
+			for(IFTask subtask : subtasks) { 
+				taskQueue.add(taskPos++, subtask);
 			}
-		}		
-		return taskCounter;
+		}
 	}
+	
+	public int getNumberOfCurrentTask() {
+		return numberOfCurrentTask;
+	}
+	
+	public int getTaskQueueSize() {
+		return taskQueue.size();
+	}
+	
 
-
-	public void fireTasksLoadedEvent() {
+	public void handleError(IFTask task, String shortErrorMessage, String longErrorMessage) {		
 		if (eventListeners != null) {
 			IFProcessEventListener[] listeners = eventListeners.getListeners(IFProcessEventListener.class);
 			if (listeners != null) {
 				for (IFProcessEventListener listener : listeners) {
-					listener.tasksLoaded();
+					listener.handleError(this, task, shortErrorMessage, longErrorMessage);
 				}
 			}
 		}
 	}
-
-	public void fireTaskStarted(IFTask task, String message) {
+	
+	public void fireTaskStarted(IFTask task) {
 		if (eventListeners != null) {
 			IFProcessEventListener[] listeners = eventListeners.getListeners(IFProcessEventListener.class);
 			if (listeners != null) {
 				for (IFProcessEventListener listener : listeners) {
-					listener.taskStarted(task, message);
+					listener.taskStarted(this, task);
 				}
 			}
 		}
 	}
 
 	public void fireTaskFinished(IFTask task) {
+		
+		
 		if (eventListeners != null) {
 			IFProcessEventListener[] listeners = eventListeners.getListeners(IFProcessEventListener.class);
 			if (listeners != null) {
 				for (IFProcessEventListener listener : listeners) {
-					listener.taskFinished(task);
+					listener.taskFinished(this, task);
 				}
 			}
 		}
 	}
 
-	public void fireTaskProgressed(IFTask task, String message) {
+	public void fireTaskProgressed(IFTask task, int progress, String shortMessage, String longMessage) {
 		if (eventListeners != null) {
 			IFProcessEventListener[] listeners = eventListeners.getListeners(IFProcessEventListener.class);
 			if (listeners != null) {
 				for (IFProcessEventListener listener : listeners) {
-					listener.taskProgressed(task, message);
+					listener.taskProgressed(this, task, progress, shortMessage, longMessage);
 				}
 			}
 		}
 	}
-
 }

@@ -15,11 +15,10 @@ public class ProcessContext {
 
 	public static final String LOGIN_TYPE = "LOGINTYPE";
 
-	public static final String CURRENT_FILE_URL = "CURRENT_FILE_URL";
-
-	public static final String CURRENT_FILE_NAME = "CURRENT_FILE_NAME";
 
 	public static final String EVENT_LISTENERS = "EVENT_LISTENERS";
+
+	public static final String CLASSPATH = "CLASSPATH";
 
 	public String getValueAsString(String key) {
 		return getValueAsString(key, null);
@@ -34,9 +33,10 @@ public class ProcessContext {
 		return getValue(key, null);
 	}
 	
-	public Object getValue(String key, Object defaultValue) {
+	@SuppressWarnings("unchecked")
+	public <T> T getValue(String key, T defaultValue) {
 		if (context.containsKey(key)) {
-			return context.get(key);
+			return (T) context.get(key);
 		} else {
 			return defaultValue;
 		}
