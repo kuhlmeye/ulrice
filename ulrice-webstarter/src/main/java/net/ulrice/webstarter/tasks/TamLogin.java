@@ -31,7 +31,12 @@ public class TamLogin extends AbstractTask {
 		String userId = thread.getContext().getValueAsString(ProcessContext.USERID);
 		String password = thread.getContext().getValueAsString(ProcessContext.PASSWORD);
 
-		if (urlString == null || userId == null) {
+		if (urlString == null) {
+        	thread.handleError(this, "No Url specified.", "TAM Url was not specified. Please specify a TAM url in the application description file.");	 
+			return false;
+		}
+		if (userId == null) {
+        	thread.handleError(this, "No UserId specified.", "No user id was given. Please enter a UserId in the user id field.");	 
 			return false;
 		}
 
@@ -107,7 +112,7 @@ public class TamLogin extends AbstractTask {
 		            	return false;
 	                }
 	                else if ("HPDIA0205W".equalsIgnoreCase(errorCode)) {
-	                    // The user’s account has expired.
+	                    // The userï¿½s account has expired.
 		            	thread.handleError(this, "Your account has expired.", tamResponseContent);
 		            	return false;
 	                }
