@@ -1,17 +1,19 @@
 package net.ulrice.webstarter.tasks;
 
 import net.ulrice.webstarter.ProcessThread;
+import net.ulrice.webstarter.TaskDescription;
 
-public interface IFTask {
+public interface IFTask  {
 	
 	String getName();
 	
-	void addParameter(String key, String value);
+	void addParameter(String key, Object value);
 	
-	void addSubTask(IFTask task);
+	void addSubTask(TaskDescription task);
 	
-	int getSubTaskCounter();
 	
-	void doTask(ProcessThread thread);
+	boolean doTask(ProcessThread thread);
+
+	String getParameterAsString(String currentFileName);
 	
 }

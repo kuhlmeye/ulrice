@@ -6,58 +6,45 @@ import java.util.List;
 import java.util.Map;
 
 import net.ulrice.webstarter.ProcessThread;
+import net.ulrice.webstarter.TaskDescription;
 
 public abstract class AbstractTask implements IFTask {
 
-	private Map<String, String> parameters = new HashMap<String, String>();
-	
-	private List<IFTask> subTasks = new ArrayList<IFTask>();
+	private Map<String, Object> parameters = new HashMap<String, Object>();
+
+	private List<TaskDescription> subTasks = new ArrayList<TaskDescription>();
 
 	@Override
 	public String getName() {
 		return getClass().getSimpleName();
 	}
-	
+
 	@Override
-	public void addParameter(String key, String value) {
-		parameters.put(key, value);	
-	}
-	
-	public String getParameter(String key) {
-		return parameters.get(key);
-	}
-	
-	@Override
-	public void addSubTask(IFTask task) {
-		subTasks.add(task);
-	}	
-	
-	protected List<IFTask> getSubTasks() {
-		return subTasks;
-	}
-	
-	@Override
-	public int getSubTaskCounter() {
-		
-		int result = 0;
-		if(subTasks != null) {
-			for(IFTask subTask : subTasks) {
-				result += subTask.getSubTaskCounter() + 1;
-			}
-		}
-		
-		return result;
-	}
-	
-	@Override
-	public void doTask(ProcessThread thread) {
-		thread.fireTaskStarted(this, "");
-		executeTask(thread);
-		thread.fireTaskFinished(this);
+	public void addParameter(String key, Object value) {
+		parameters.put(key, value);
 	}
 
-	public void executeTask(ProcessThread thread) {
-		
+	public Object getParameter(String key) {
+		return parameters.get(key);
 	}
-	
+
+	@Override
+	public void addSubTask(TaskDescription task) {
+		subTasks.add(task);
+	}
+
+	protected List<TaskDescription> getSubTasks() {
+		return subTasks;
+	}
+
+
+	public String getParameterAsString(String key) {
+		Object value = getParameter(key);
+		return value != null ? value.toString() : null;
+	}
+
+	@Override
+	public abstract boolean doTask(ProcessThread thread);
+
+
 }
