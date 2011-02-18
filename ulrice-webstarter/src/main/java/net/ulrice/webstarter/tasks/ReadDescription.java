@@ -27,7 +27,6 @@ public class ReadDescription extends AbstractTask {
 	@Override
 	public boolean doTask(ProcessThread thread) {
 		String baseUrl = getParameterAsString(BASE_URL);
-		String localDir = getParameterAsString(LOCAL_DIR) + File.separator;
 
 		Properties prop = loadProperties(thread);
 		if(prop != null) {
@@ -50,7 +49,7 @@ public class ReadDescription extends AbstractTask {
 						IFTask task = subTask.instanciateTask();						
 						task.addParameter(CURRENT_FILE_URL, new URL(baseUrl + file));
 						task.addParameter(CURRENT_FILE_NAME, file);
-						task.addParameter(LOCAL_PATH, localDir);
+						task.addParameter(LOCAL_PATH, thread.getAppDescription().getLocalDir());
 						subTaskList.add(task);
 					}
 					
@@ -84,7 +83,7 @@ public class ReadDescription extends AbstractTask {
 			URL url = new URL(urlStr);
 			HttpURLConnection con = (HttpURLConnection)url.openConnection();
             con.setRequestMethod("GET");
-			String cookieString = thread.getContext().getValueAsString(ProcessContext.COOKIE);
+			String cookieString = thread.getContext().getCookieAsString();
 			if (cookieString != null) {
 				con.setRequestProperty("Cookie", cookieString);
 			}

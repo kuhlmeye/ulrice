@@ -25,7 +25,7 @@ public class DownloadFile extends AbstractTask {
 		try {
 			
 			URLConnection con = fileUrl.openConnection();
-			String cookieString = thread.getContext().getValueAsString(ProcessContext.COOKIE);
+			String cookieString = thread.getContext().getCookieAsString();
 			if (cookieString != null) {
 				con.setRequestProperty("Cookie", cookieString);
 			}
@@ -54,7 +54,7 @@ public class DownloadFile extends AbstractTask {
 					downloaded += read;
 					int progress = (int)(100.0/length * downloaded);
 					thread.fireTaskProgressed(this, progress, fileName, null);
-					fos.write(responseBuffer);
+					fos.write(responseBuffer, 0, read);
 				}
 				fos.flush();
 				fos.close();
