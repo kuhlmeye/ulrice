@@ -3,13 +3,16 @@ package net.ulrice.webstarter;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Stack;
 
 import javax.swing.ImageIcon;
 
 import net.ulrice.webstarter.tasks.IFTask;
+import net.ulrice.webstarter.tasks.StartApplication;
 
 import org.xml.sax.Attributes;
 import org.xml.sax.InputSource;
@@ -44,20 +47,21 @@ public class XMLDescriptionReader extends DefaultHandler {
 		reader.setContentHandler(this);
 		reader.parse(new InputSource(input));
 	}
-	
+
 	@Override
 	public void startElement(String uri, String localName, String qName, Attributes atts) throws SAXException {
+		
 		if ("task".equalsIgnoreCase(localName)) {
 			String type = atts.getValue("type");
 			Map<String, String> parameters = new HashMap<String, String>();
 			for (int i = 0; i < atts.getLength(); i++) {
 				parameters.put(atts.getLocalName(i), atts.getValue(i));
 			}
-			
+
 			try {
-				Class<? extends IFTask> taskClass = (Class<? extends IFTask>) Class.forName("net.ulrice.webstarter.tasks." + type);				
+				Class<? extends IFTask> taskClass = (Class<? extends IFTask>) Class.forName("net.ulrice.webstarter.tasks." + type);
 				TaskDescription readTask = new TaskDescription(taskClass, parameters);
-				
+
 				if (cTask == null) {
 					appDescription.addTask(readTask);
 					cTask = readTask;
@@ -70,17 +74,26 @@ public class XMLDescriptionReader extends DefaultHandler {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-		}
-		else if("application".equalsIgnoreCase(localName)) {
+		} else if ("appparameter".equalsIgnoreCase(localName) && cTask.instanceOf(StartApplication.class)) {
+			
+			String paramValue = atts.getValue("value");
+			List<String> appParameters = appDescription.getAppParameters();
+			if(appParameters == null) {
+				appParameters = new ArrayList<String>();
+				appDescription.setAppParameters(appParameters);
+			}
+			appParameters.add(paramValue);
+			
+		} else if ("application".equalsIgnoreCase(localName)) {
 			appDescription.setName(atts.getValue("applicationName"));
+			appDescription.setLocalDir(atts.getValue("localDir") + File.separator);
 			String iconName = atts.getValue("applicationIcon");
-			if(iconName != null) {
-			appDescription.setIcon(new ImageIcon(imagePath + File.separator + iconName));
+			if (iconName != null) {
+				appDescription.setIcon(new ImageIcon(imagePath + File.separator + iconName));
 			}
 			appDescription.setNeedsLogin(Boolean.valueOf(atts.getValue("needsLogin")));
 		}
 	}
-
 
 	@Override
 	public void endElement(String uri, String localName, String qName) throws SAXException {

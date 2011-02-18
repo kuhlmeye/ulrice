@@ -11,7 +11,11 @@ public class ApplicationDescription {
 	
 	private String name;
 	
+	private String localDir;
+	
 	private ImageIcon icon;
+	
+	private List<String> appParameters = new ArrayList<String>();
 	
 	private List<TaskDescription> tasks = new ArrayList<TaskDescription>();
 	
@@ -60,5 +64,21 @@ public class ApplicationDescription {
 
 	public void setId(String id) {
 		this.id = id;
+	}
+
+	public String getLocalDir() {
+		return localDir;
+	}
+
+	public void setLocalDir(String localDir) {
+		this.localDir = localDir;
+	}
+
+	public List<String> getAppParameters() {
+		return appParameters;
+	}
+
+	public void setAppParameters(List<String> appParameters) {
+		this.appParameters = appParameters;
 	}
 }

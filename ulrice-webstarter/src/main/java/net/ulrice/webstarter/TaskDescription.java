@@ -7,6 +7,7 @@ import java.util.Set;
 import java.util.Map.Entry;
 
 import net.ulrice.webstarter.tasks.IFTask;
+import net.ulrice.webstarter.tasks.StartApplication;
 
 public class TaskDescription {
 
@@ -45,5 +46,9 @@ public class TaskDescription {
 
 	protected List<TaskDescription> getSubTasks() {
 		return subTasks;
+	}
+
+	public boolean instanceOf(Class<? extends IFTask> taskClass) {
+		return this.taskClass.isAssignableFrom(taskClass);
 	}
 }
