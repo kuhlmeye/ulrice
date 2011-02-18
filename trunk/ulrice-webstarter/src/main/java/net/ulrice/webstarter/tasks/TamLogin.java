@@ -11,6 +11,9 @@ import java.net.URL;
 import java.net.URLEncoder;
 import java.security.KeyManagementException;
 import java.security.NoSuchAlgorithmException;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.StringTokenizer;
 
 import javax.net.ssl.HttpsURLConnection;
 import javax.net.ssl.SSLContext;
@@ -92,7 +95,19 @@ public class TamLogin extends AbstractTask {
 	                // Login was successful.	    	        
 	            	thread.fireTaskProgressed(this, 100, "Login successful", "Successfully logged in.");
 	                String cookieString = con.getHeaderField("Set-Cookie");
-	                thread.getContext().setValue(ProcessContext.COOKIE, cookieString);
+	                
+	                StringTokenizer tok = new StringTokenizer(cookieString, ";");
+	                while(tok.hasMoreTokens()) {
+	                	String cookiePart = tok.nextToken();
+	                	String[] cookieParts = cookiePart.split("=");
+	                	String cookieKey = cookieParts[0];
+	                	String cookieValue = null;
+	                	if(cookieParts.length > 1) {
+	                		cookieValue = cookieParts[1];
+	                	}
+		                thread.getContext().getCookieMap().put(cookieKey, cookieValue);
+	                }
+	                
 	                return true;
 	            }
 	            else if ("".equals(tamResponseContent)) {
