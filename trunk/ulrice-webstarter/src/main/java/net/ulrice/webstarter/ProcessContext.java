@@ -2,12 +2,14 @@ package net.ulrice.webstarter;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Map.Entry;
 
 public class ProcessContext {
 
 	private Map<String, Object> context = new HashMap<String, Object>();
 
-	public static final String COOKIE = "COOKIE_CONTENT";
+	private Map<String, String> cookieMap = new HashMap<String, String>();
+	
 
 	public static final String USERID = "USERID";
 
@@ -38,11 +40,28 @@ public class ProcessContext {
 		if (context.containsKey(key)) {
 			return (T) context.get(key);
 		} else {
+			context.put(key, defaultValue);
 			return defaultValue;
 		}
 	}
 
 	public void setValue(String key, Object value) {
 		context.put(key, value);
+	}
+
+	public Map<String, String> getCookieMap() {
+		return cookieMap;
+	}
+
+	public String getCookieAsString() {
+		StringBuffer buffer = new StringBuffer();
+		for(Entry<String, String> entry : cookieMap.entrySet()) {
+			buffer.append(entry.getKey());
+			if(entry.getValue() != null) {
+				buffer.append("=").append(entry.getValue());
+			}
+			buffer.append(";");
+		}
+		return buffer.toString();
 	}
 }

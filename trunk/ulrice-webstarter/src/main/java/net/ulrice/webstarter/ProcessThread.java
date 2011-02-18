@@ -152,4 +152,8 @@ public class ProcessThread {
 			}
 		}
 	}
+
+	public ApplicationDescription getAppDescription() {
+		return appDescription;
+	}
 }
