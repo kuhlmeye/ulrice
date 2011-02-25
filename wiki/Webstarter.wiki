@@ -2,8 +2,27 @@
 
 = Introduction =
 
-The webstarter is a highly configurable toolbox to download and start java applications. The process needed to update and start an application differs from application to application. For that reason the process is defined in an xml file.
+The webstarter is a highly configurable toolbox to download and start java applications. The process needed to update and start an application differs from application to application and therefore the process is defined in an xml file. Each process consists of several tasks.
 
+= Tasks =
+
+== AddToClasspath ==
+Adds a downloaded file to the classpath.
+
+== DownloadFile ==
+Downloads a file from an url.
+
+== ReadDescription ==
+Reads a list of files from an application description file from an url and starts all subtasks contained in this task.
+
+== StartApplication ==
+Starts an application.
+
+== TamLogin ==
+Logins with username/password at a tivoli access manager.
+
+== Unzip ==
+Unzips a downloaded file.
 
 = Sample configuration =
 
