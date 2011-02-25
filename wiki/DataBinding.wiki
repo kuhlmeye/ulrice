@@ -1,0 +1,14 @@
+#summary Describes the data-binding project of ulrice.
+
+= Introduction =
+
+Databinding is used to bind the values of attributes of your business object to gui components. This means that all values are displayed automatically in the gui and user inputs are automatically synchronized with the business objects.
+
+= GUI Accessor =
+A gui accessor is a class that is able to handle a java gui component. The main task of this class is to receive values from attribtue models and display them in the gui component.
+
+== TextFieldGA ==
+The text field gui accessor is synchronizing the attribute model with a JTextField. 
+
+= Attribute Models =
+An attribute model is a class that is able to store an attribute value and detect changes on it.
