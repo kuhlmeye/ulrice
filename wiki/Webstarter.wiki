@@ -1,0 +1,20 @@
+#summary Describes the webstarter project.
+
+= Introduction =
+
+The webstarter is a highly configurable toolbox to download and start java applications. The process needed to update and start an application differs from application to application. For that reason the process is defined in an xml file.
+
+
+= Sample configuration =
+
+{{{
+<application applicationName="Sample Application (Internet)">
+	<task type="TamLogin" url="https://sample.application.com/pkmslogin.form"/>
+	<task type="ReadDescription">
+		<task type="DownloadFile"/>
+		<task type="Unzip" filter=".*\.zip"/>
+		<task type="AddToClasspath" filter=".*\.jar"/>
+	</task>
+	<task type="StartApplication".../>
+</application>
+}}}
