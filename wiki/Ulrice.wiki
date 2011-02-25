@@ -10,4 +10,4 @@ Ulrice (Universal Rich Client Environment) is a framework for building rich clie
 
 = Screenshot =
 
-[sample_application.png]
+[http://code.google.com/p/ulrice/source/browse/wiki/img/sample_application.png]
