@@ -6,21 +6,21 @@ The webstarter is a highly configurable toolbox to download and start java appli
 
 = Tasks =
 
-== Add-To-Classpath ==
+== !AddToClasspath ==
 
 Adds a downloaded file to the classpath.
 
-== Download-File ==
+== !DownloadFile ==
 
 Downloads a file from an url.
 
-== Read-Description ==
+== !ReadDescription ==
 Reads a list of files from an application description file from an url and starts all subtasks contained in this task.
 
-== Start-Application ==
+== !StartApplication ==
 Starts an application.
 
-== Tam-Login ==
+== !TamLogin ==
 Logins with username/password at a tivoli access manager.
 
 == Unzip ==
