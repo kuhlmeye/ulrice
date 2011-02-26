@@ -11,4 +11,24 @@ A gui accessor is a class that is able to handle a java gui component. The main 
 The text field gui accessor is synchronizing the attribute model with a JTextField. 
 
 = Attribute Models =
-An attribute model is a class that is able to store an attribute value and detect changes on it.
+An attribute model is a class that is able to store an attribute value and detect changes on it. One or more gui accessors could be connected to an attribute model. The value maintained by the attribute model is then displayed in the gui components of the accessors.
+
+== Data State ==
+  * NotInitialized
+  * NotChanged
+  * Changed
+  * Invalid
+
+== Data Validation ==
+Attribute models including a validation mechanism for the maintained value. 
+
+== Included Models ==
+
+=== GenericAM ===
+Attribute model that can be used with each simple java type. 
+
+=== ListAM ===
+This model is managing lists. It is used as a model for tables and list gui elements.
+
+= !DataGroup =
+A data group is a set of attribute models with connected gui accessors. 
