@@ -7,35 +7,58 @@ The webstarter is a highly configurable toolbox to download and start java appli
 = Tasks =
 
 == !AddToClasspath ==
-
 Adds a downloaded file to the classpath.
+=== Parameters ===
+  * filter 
 
 == !DownloadFile ==
-
 Downloads a file from an url.
 
 == !ReadDescription ==
 Reads a list of files from an application description file from an url and starts all subtasks contained in this task.
+== Parameters ==
+  * baseUrl
+  * descritionUrl
 
 == !StartApplication ==
 Starts an application.
+=== Parameters ===
+  * localJre
+  * mainClass
+=== Sub-Tags ===
+  * appParameter  
+
 
 == !TamLogin ==
 Logins with username/password at a tivoli access manager.
+=== Parameters ===
+  * url
 
 == Unzip ==
 Unzips a downloaded file.
 
+=== Parameters ===
+  * filter 
+
 = Sample configuration =
 
 {{{
-<application applicationName="Sample Application (Internet)">
-	<task type="TamLogin" url="https://sample.application.com/pkmslogin.form"/>
-	<task type="ReadDescription">
+<application applicationName="Application Name" applicationIcon="Application.200.png" needsLogin="true" localDir="C:/MyApplication">	
+	<task type="TamLogin" url="https://tam.login.url/pkmslogin.form" />
+	<task type="ReadDescription"
+		baseUrl="https://root.url.to.downloaded.files/"
+		descriptionUrl="https://url.of.description.file" >
 		<task type="DownloadFile"/>
-		<task type="Unzip" filter=".*\.zip"/>
-		<task type="AddToClasspath" filter=".*\.jar"/>
+		<task type="Unzip" filter=".*\.zip" />
+		<task type="AddToClasspath" filter=".*\.jar" />
 	</task>
-	<task type="StartApplication".../>
+	<task type="StartApplication" localJre="name/of/jre/directory" mainClass="my.application.Application">
+		<appParameter value="-param01=value"/>
+		<appParameter value="-param02=value"/>
+		<appParameter value="-param03=value"/>
+		<appParameter value="-userId=${USERID}"/>
+		<appParameter value="-pdCookie=${COOKIE=PD-H-SESSION-ID}"/>		
+		<appParameter value="-pdFailoverCookie=${COOKIE=PD-ID}"/>		
+	</task>
 </application>
 }}}
