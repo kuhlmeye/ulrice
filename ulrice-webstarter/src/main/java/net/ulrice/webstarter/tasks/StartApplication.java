@@ -19,7 +19,7 @@ public class StartApplication extends AbstractTask {
 	@Override
 	public boolean doTask(ProcessThread thread) {
 
-		LinkedList<String> classPath = thread.getContext().getValue(ProcessContext.CLASSPATH, new LinkedList<String>());
+		List<String> classPath = thread.getContext().getClassPath();
 
 		StringBuffer commandBuffer = new StringBuffer();
 		String localDir = thread.getAppDescription().getLocalDir();
@@ -74,7 +74,7 @@ public class StartApplication extends AbstractTask {
 	}
 
 	protected String replacePlaceholders(ProcessThread thread, String appParameter) {
-		appParameter = appParameter.replace("${USERID}", thread.getContext().getValueAsString(ProcessContext.USERID, ""));
+		appParameter = appParameter.replace("${USERID}", thread.getContext().getUserId());
 		// appParameter = appParameter.replace("${PD-H-SESSION-ID}",
 		// thread.getContext().getValueAsString(ProcessContext.COOKIE));
 		// appParameter = appParameter.replace("${PD-H-SESSION-ID}",

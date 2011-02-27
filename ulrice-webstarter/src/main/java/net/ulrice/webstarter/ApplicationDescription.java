@@ -5,20 +5,32 @@ import java.util.List;
 
 import javax.swing.ImageIcon;
 
+/**
+ * Class describing the startup process of an application.
+ * 
+ * @author christof
+ */
 public class ApplicationDescription {
 
+	/** Internal id used for identifing in the settings. */
 	private String id;
 	
+	/** Name displayed in the frontend. */
 	private String name;
 	
+	/** Directory where the application is stored. */
 	private String localDir;
 	
+	/** Icon of the application displayed in the frontend. */
 	private ImageIcon icon;
 	
+	/** List of application parameters. */
 	private List<String> appParameters = new ArrayList<String>();
 	
+	/** List of the tasks description needed to run for application startup. */
 	private List<TaskDescription> tasks = new ArrayList<TaskDescription>();
 	
+	/** Boolean, if login is needed for this application and the fields in the application must be unblocked. */
 	private boolean needsLogin;
 
 	public String getName() {
@@ -43,12 +55,7 @@ public class ApplicationDescription {
 
 	public void addTask(TaskDescription task) {
 		this.tasks.add(task);
-	}
-	
-	@Override
-	public String toString() {
-		return getName();
-	}
+	}	
 
 	public boolean isNeedsLogin() {
 		return needsLogin;
@@ -80,5 +87,10 @@ public class ApplicationDescription {
 
 	public void setAppParameters(List<String> appParameters) {
 		this.appParameters = appParameters;
+	}
+	
+	@Override
+	public String toString() {
+		return getName();
 	}
 }

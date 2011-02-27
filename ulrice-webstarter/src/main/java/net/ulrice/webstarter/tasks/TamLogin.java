@@ -29,9 +29,9 @@ public class TamLogin extends AbstractTask {
 	@Override
 	public boolean doTask(ProcessThread thread) {
 		String urlString = getParameterAsString(URL_ATTRIBUTE);
-		String loginType = thread.getContext().getValueAsString(ProcessContext.LOGIN_TYPE, "pwd");
-		String userId = thread.getContext().getValueAsString(ProcessContext.USERID);
-		String password = thread.getContext().getValueAsString(ProcessContext.PASSWORD);
+		String loginType = "pwd";
+		String userId = thread.getContext().getUserId();
+		String password = thread.getContext().getPassword();
 
 		// TODO Complete cookie handling (see rfc)
 		
