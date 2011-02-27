@@ -50,7 +50,7 @@ public class XMLDescriptionReader extends DefaultHandler {
 
 	@Override
 	public void startElement(String uri, String localName, String qName, Attributes atts) throws SAXException {
-		
+
 		if ("task".equalsIgnoreCase(localName)) {
 			String type = atts.getValue("type");
 			Map<String, String> parameters = new HashMap<String, String>();
@@ -59,34 +59,46 @@ public class XMLDescriptionReader extends DefaultHandler {
 			}
 
 			try {
-				Class<? extends IFTask> taskClass = (Class<? extends IFTask>) Class.forName("net.ulrice.webstarter.tasks." + type);
+				Class<? extends IFTask> taskClass = (Class<? extends IFTask>) Class
+						.forName("net.ulrice.webstarter.tasks." + type);
 				TaskDescription readTask = new TaskDescription(taskClass, parameters);
 
-				if (cTask == null) {
-					appDescription.addTask(readTask);
-					cTask = readTask;
-				} else {
-					taskStack.add(cTask);
-					cTask.addSubTask(readTask);
-					readTask = cTask;
+				String osAttribute = atts.getValue("os");
+				if (osAttribute == null || System.getProperty("os.name").matches(osAttribute)) {
+
+					if (cTask == null) {
+						appDescription.addTask(readTask);
+						cTask = readTask;
+					} else {
+						taskStack.add(cTask);
+						cTask.addSubTask(readTask);
+						readTask = cTask;
+					}
 				}
 			} catch (ClassNotFoundException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-		} else if ("appparameter".equalsIgnoreCase(localName) && cTask.instanceOf(StartApplication.class)) {
-			
+		} else if ("appparameter".equalsIgnoreCase(localName) && cTask != null
+				&& cTask.instanceOf(StartApplication.class)) {
+
 			String paramValue = atts.getValue("value");
 			List<String> appParameters = appDescription.getAppParameters();
-			if(appParameters == null) {
+			if (appParameters == null) {
 				appParameters = new ArrayList<String>();
 				appDescription.setAppParameters(appParameters);
 			}
 			appParameters.add(paramValue);
-			
+
 		} else if ("application".equalsIgnoreCase(localName)) {
 			appDescription.setName(atts.getValue("applicationName"));
-			appDescription.setLocalDir(atts.getValue("localDir") + File.separator);
+
+			String localDirString = atts.getValue("localDir");
+			if (localDirString != null) {
+				localDirString = localDirString.replace("${USER_DIR}", System.getProperty("user.home"));
+				appDescription.setLocalDir(localDirString + File.separator);
+			}
+
 			String iconName = atts.getValue("applicationIcon");
 			if (iconName != null) {
 				appDescription.setIcon(new ImageIcon(imagePath + File.separator + iconName));

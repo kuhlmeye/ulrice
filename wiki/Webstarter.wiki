@@ -5,47 +5,12 @@
 The webstarter is a highly configurable toolbox to download and start java applications. The process needed to update and start an application differs from application to application and therefore the process is defined in an xml file. Each process consists of several tasks.
 The webstarter could be started as a client application or an applet.
 
-== Screenshot (Client-Application) ==
-
 [https://ulrice.googlecode.com/svn/wiki/img/webstarter.png]
 
-= Tasks =
+= Webstarter-Configuration =
+The xml-files defining the download and startup-process are loaded from the applications subdirectory (all files with the suffix .ws.xml or are given directly by a command line parameter.
 
-== !AddToClasspath ==
-Adds a downloaded file to the classpath.
-=== Parameters ===
-  * filter 
-
-== !DownloadFile ==
-Downloads a file from an url.
-
-== !ReadDescription ==
-Reads a list of files from an application description file from an url and starts all subtasks contained in this task.
-== Parameters ==
-  * baseUrl
-  * descritionUrl
-
-== !StartApplication ==
-Starts an application.
-=== Parameters ===
-  * localJre
-  * mainClass
-=== Sub-Tags ===
-  * appParameter  
-
-
-== !TamLogin ==
-Logins with username/password at a tivoli access manager.
-=== Parameters ===
-  * url
-
-== Unzip ==
-Unzips a downloaded file.
-
-=== Parameters ===
-  * filter 
-
-= Sample configuration =
+== Sample configuration ==
 
 {{{
 <application applicationName="Application Name" applicationIcon="Application.200.png" needsLogin="true" localDir="C:/MyApplication">	
@@ -67,3 +32,47 @@ Unzips a downloaded file.
 	</task>
 </application>
 }}}
+
+== Application ==
+This tag defines the basic application settings like the name. The following attributes are valid
+  * applicationName The name of the application shown in the webstarter.
+  * applicationIcon An optional icon for the application.
+  * needsLogin true or false. It defines, if login-parameters are used.
+  * localDir The local directory where the downloaded files are stored. ${USER_DIR} is an allowed placeholder for the default user directory.  
+
+== Tasks ==
+This section describes the standard tasks included in the ulrice webstarter.
+
+=== !AddToClasspath ===
+Adds a downloaded file to the classpath.
+==== Parameters ====
+  * filter 
+
+=== !DownloadFile ===
+Downloads a file from an url.
+
+=== !ReadDescription ===
+Reads a list of files from an application description file from an url and starts all subtasks contained in this task.
+==== Parameters ====
+  * baseUrl
+  * descritionUrl
+
+=== !StartApplication ===
+Starts an application.
+==== Parameters ====
+  * localJre
+  * mainClass
+==== Sub-Tags ====
+  * appParameter  
+
+
+=== !TamLogin ===
+Logins with username/password at a tivoli access manager.
+==== Parameters ====
+  * url
+
+=== Unzip ===
+Unzips a downloaded file.
+
+==== Parameters ====
+  * filter 

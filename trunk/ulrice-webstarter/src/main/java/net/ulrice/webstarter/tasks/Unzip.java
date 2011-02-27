@@ -6,6 +6,8 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
@@ -14,17 +16,34 @@ import net.ulrice.webstarter.ProcessThread;
 
 public class Unzip extends AbstractTask {
 
-	private static final String FILTER_NAME = "filter";
+	public static final String FILTER_PARAM = "filter";
+	public static final String URL_PARAM = "url";
 
 	@Override
 	public boolean doTask(ProcessThread thread) {
-		String filter = getParameterAsString(FILTER_NAME);
-		String fileName = getParameterAsString(ReadDescription.CURRENT_FILE_NAME);
+		String filter = getParameterAsString(FILTER_PARAM);
+		String urlStr = getParameterAsString(URL_PARAM);
+		String localDirStr = thread.getAppDescription().getLocalDir();
+		
+		URL fileUrl = null;
+		if(urlStr != null) {
+			try {
+				fileUrl = new URL(urlStr);
+			} catch (MalformedURLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+		
+		String file = fileUrl.getFile();
+		String[] split = file.split("\\/");
+		
+		
+		String fileName = split[split.length - 1];
 
 		if (fileName.matches(filter)) {
 			try {
-				String localPath = getParameterAsString(ReadDescription.LOCAL_PATH);
-				ZipInputStream zis = new ZipInputStream(new FileInputStream(new File(localPath + fileName)));
+				ZipInputStream zis = new ZipInputStream(new FileInputStream(new File(localDirStr + fileName)));
 				BufferedOutputStream dest = null;
 
 				ZipEntry entry;
@@ -32,16 +51,29 @@ public class Unzip extends AbstractTask {
 				
 				while ((entry = zis.getNextEntry()) != null) {
 					
-					thread.fireTaskProgressed(this, 0, entry.getName(), "Unzipping " + entry.getName() + "(" + entry.getSize() + "bytes) ...");
 					
 					if(entry.isDirectory()) {
-						File directory = new File(localPath + entry.getName());
+						thread.fireTaskProgressed(this, 0, entry.getName(), "Unzipping Directory " + entry.getName() + "...");
+						File directory = new File(localDirStr + entry.getName());
 						directory.mkdirs();
 					} else {
 						int count;
 						byte data[] = new byte[1024];
 						// write the files to the disk
-						FileOutputStream fos = new FileOutputStream(localPath + entry.getName());
+						File localFile = new File(localDirStr, entry.getName());
+						if(localFile.exists()) {
+							long localLen = localFile.length();
+							long zipLen = entry.getSize();
+							
+							if(localLen == zipLen) {
+								thread.fireTaskProgressed(this, 100, entry.getName(), "Unzipping " + entry.getName() + "(" + entry.getSize() + "bytes) ... (Skipped)");
+								continue;
+							}
+							
+						}
+						thread.fireTaskProgressed(this, 0, entry.getName(), "Unzipping " + entry.getName() + "(" + entry.getSize() + "bytes) ...");
+						
+						FileOutputStream fos = new FileOutputStream(localDirStr + entry.getName());
 						dest = new BufferedOutputStream(fos, 1024);
 						
 

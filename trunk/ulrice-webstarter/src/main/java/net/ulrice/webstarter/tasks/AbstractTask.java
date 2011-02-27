@@ -28,6 +28,11 @@ public abstract class AbstractTask implements IFTask {
 		return parameters.get(key);
 	}
 
+	public Object getParameter(String key, Object defaultValue) {
+		Object object  = parameters.get(key);
+		return object == null ? defaultValue : object;
+	}
+
 	@Override
 	public void addSubTask(TaskDescription task) {
 		subTasks.add(task);
@@ -41,6 +46,11 @@ public abstract class AbstractTask implements IFTask {
 	public String getParameterAsString(String key) {
 		Object value = getParameter(key);
 		return value != null ? value.toString() : null;
+	}
+	
+	public String getParameterAsString(String key, String defaultValue) {
+		Object value = getParameter(key);
+		return value != null ? value.toString() : defaultValue;
 	}
 
 	@Override
