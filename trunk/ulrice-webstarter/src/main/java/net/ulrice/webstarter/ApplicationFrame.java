@@ -34,12 +34,17 @@ import javax.swing.KeyStroke;
 import javax.swing.SwingUtilities;
 import javax.swing.border.BevelBorder;
 
+/**
+ * Main frame of the client application displaying the webstarter process.
+ * 
+ * @author christof
+ */
 public class ApplicationFrame extends JFrame implements ActionListener, ItemListener {
+	
+	private static final long serialVersionUID = 5214287073693526828L;
 
 	public static final String START_CMD = "START";
 	public static final String CANCEL_CMD = "CANCEL";
-	
-	private static final long serialVersionUID = 5214287073693526828L;
 
 	private JProgressBar globalProgress;
 	private JProgressBar taskProgress;
@@ -216,6 +221,11 @@ public class ApplicationFrame extends JFrame implements ActionListener, ItemList
 		return taskProgress;
 	}
 
+	/**
+	 * Append the message in the log window. 
+	 * 
+	 * @param message The message that should be displayed in the text area.
+	 */
 	public void appendMessage(String message) {
 		messageArea.append(message);
 		SwingUtilities.invokeLater(new Runnable() {
@@ -223,7 +233,6 @@ public class ApplicationFrame extends JFrame implements ActionListener, ItemList
 				messageArea.setCaretPosition(messageArea.getText().length());
 			}
 		});
-
 	}
 
 	public JPasswordField getPasswordField() {
@@ -263,24 +272,6 @@ public class ApplicationFrame extends JFrame implements ActionListener, ItemList
 	public void addApplication(ApplicationDescription appDescription) {
 		applicationChooser.addItem(appDescription);
 	}
-
-	@Override
-	public void itemStateChanged(ItemEvent e) {
-		if(ItemEvent.SELECTED == e.getStateChange()) {
-			ApplicationDescription application = getSelectedApplication();
-			userIdField.setEnabled(application.isNeedsLogin());
-			passwordField.setEnabled(application.isNeedsLogin());
-			setTitle("Start: " + application.getName());
-			if(application.getIcon() != null) {
-				applicationLabel.setIcon(application.getIcon());
-			}
-			else {
-				applicationLabel.setIcon(defaultAppImage);
-			}
-			applicationLabel.invalidate();
-		}
-	}
-
 	public void setSelectedApplication(String applicationId) {
 		if(applicationId == null) {
 			return;
@@ -293,6 +284,24 @@ public class ApplicationFrame extends JFrame implements ActionListener, ItemList
 				return;
 			}
 		}
+	}
 
+
+	@Override
+	public void itemStateChanged(ItemEvent e) {		
+		if(ItemEvent.SELECTED == e.getStateChange()) {
+			// Adapt display settings to selected applications.
+			ApplicationDescription application = getSelectedApplication();
+			userIdField.setEnabled(application.isNeedsLogin());
+			passwordField.setEnabled(application.isNeedsLogin());
+			setTitle("Start: " + application.getName());
+			if(application.getIcon() != null) {
+				applicationLabel.setIcon(application.getIcon());
+			}
+			else {
+				applicationLabel.setIcon(defaultAppImage);
+			}
+			applicationLabel.invalidate();
+		}
 	}
 }

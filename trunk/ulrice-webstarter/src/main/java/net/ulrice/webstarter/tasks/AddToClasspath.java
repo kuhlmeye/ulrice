@@ -2,9 +2,8 @@ package net.ulrice.webstarter.tasks;
 
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.LinkedList;
+import java.util.List;
 
-import net.ulrice.webstarter.ProcessContext;
 import net.ulrice.webstarter.ProcessThread;
 
 public class AddToClasspath extends AbstractTask {
@@ -38,7 +37,7 @@ public class AddToClasspath extends AbstractTask {
 		
 
 		if (fileName.matches(filter)) {
-			LinkedList<String> classPath = thread.getContext().getValue(ProcessContext.CLASSPATH, new LinkedList<String>());
+			List<String> classPath = thread.getContext().getClassPath();
 			classPath.add(localDirString + fileName);
 		}
 		

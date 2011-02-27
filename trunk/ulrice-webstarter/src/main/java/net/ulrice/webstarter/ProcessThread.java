@@ -2,25 +2,37 @@ package net.ulrice.webstarter;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.swing.event.EventListenerList;
 
 import net.ulrice.webstarter.tasks.IFTask;
-import net.ulrice.webstarter.tasks.TamLogin;
 
+/**
+ * The thread downloading and starting the application.
+ * 
+ * @author christof
+ */
 public class ProcessThread {
 
-	private ProcessContext context;
-
+	private static final Logger LOG = Logger.getLogger(ProcessThread.class.getName());
+	
+	/** The description of the application stated with this thread. */
 	private ApplicationDescription appDescription;
+
+	/** The thread handling the execution of the tasks. */
+	private Thread taskWorker;
+	
+	private ProcessContext context;
 	
 	private EventListenerList eventListeners = new EventListenerList();
 
+	/** The task queue. */
 	private List<IFTask> taskQueue;
 
 	private int numberOfCurrentTask;
 
-	private Thread taskWorker;
 
 	public ProcessThread(ApplicationDescription appDescription) {
 		this.context = new ProcessContext();
@@ -28,60 +40,14 @@ public class ProcessThread {
 		this.taskQueue = new ArrayList<IFTask>();
 	}
 
+	/**
+	 * Starts the startup process of the application.
+	 */
 	public void startProcess() {
-
-		
-		taskWorker = new Thread(new Runnable() {
-			
-			@Override
-			public void run() {
-				
-
-				// TODO Auto-generated method stub
-				if(taskQueue != null) {
-
-					fillTaskQueue();
-
-					for(numberOfCurrentTask = 0; numberOfCurrentTask < taskQueue.size(); numberOfCurrentTask++) {
-
-						IFTask task = taskQueue.get(numberOfCurrentTask);
-						fireTaskStarted(task);
-						if(!task.doTask(ProcessThread.this)) {
-							return;
-						}
-						fireTaskFinished(task);						
-
-						fillTaskQueue();
-					}
-				}
-			}
-
-			private void fillTaskQueue() {
-				if(appDescription != null && appDescription.getTasks() != null) {
-					List<TaskDescription> tasks = appDescription.getTasks();
-					while(tasks.size() > 0) {
-						TaskDescription taskDescription = tasks.remove(0);
-						try {
-							taskQueue.add(taskDescription.instanciateTask());
-						} catch (InstantiationException e) {
-							// TODO Auto-generated catch block
-							e.printStackTrace();
-						} catch (IllegalAccessException e) {
-							// TODO Auto-generated catch block
-							e.printStackTrace();
-						}
-					}
-				}
-			}
-		});
-		
+		taskWorker = new Thread(new StartupProcess());		
 		taskWorker.start();
 	}
 
-
-	/**
-	 * @return the context
-	 */
 	public ProcessContext getContext() {
 		return context;
 	}
@@ -118,7 +84,6 @@ public class ProcessThread {
 	public int getTaskQueueSize() {
 		return taskQueue.size();
 	}
-	
 
 	public void handleError(IFTask task, String shortErrorMessage, String longErrorMessage) {		
 		if (eventListeners != null) {
@@ -168,5 +133,53 @@ public class ProcessThread {
 
 	public ApplicationDescription getAppDescription() {
 		return appDescription;
+	}
+	
+	
+	/**
+	 * Process handling the tasks.
+	 * 
+	 * @author christof
+	 */
+	private final class StartupProcess implements Runnable {
+		
+		@Override
+		public void run() {
+			
+			if(taskQueue != null) {
+
+				// Prefill the task-queue
+				fillTaskQueue();
+				for(numberOfCurrentTask = 0; numberOfCurrentTask < taskQueue.size(); numberOfCurrentTask++) {
+
+					// Execute next task.
+					IFTask task = taskQueue.get(numberOfCurrentTask);
+					fireTaskStarted(task);
+					if(!task.doTask(ProcessThread.this)) {
+						return;
+					}
+					fireTaskFinished(task);						
+
+					// Instanciate subtasks.
+					fillTaskQueue();
+				}
+			}
+		}
+
+		private void fillTaskQueue() {
+			if(appDescription != null && appDescription.getTasks() != null) {
+				List<TaskDescription> tasks = appDescription.getTasks();
+				while(tasks.size() > 0) {
+					TaskDescription taskDescription = tasks.remove(0);
+					try {
+						taskQueue.add(taskDescription.instanciateTask());
+					} catch (InstantiationException e) {
+						LOG.log(Level.SEVERE, "Error instanciating task.", e);
+					} catch (IllegalAccessException e) {
+						LOG.log(Level.SEVERE, "Error instanciating task.", e);
+					}
+				}
+			}
+		}
 	}
 }

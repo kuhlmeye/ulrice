@@ -1,5 +1,10 @@
 package net.ulrice.webstarter;
 
+/**
+ * Class representing a placeholder (simple key/value-class)
+ * 
+ * @author christof
+ */
 public class Placeholder {
 
 	private String key;

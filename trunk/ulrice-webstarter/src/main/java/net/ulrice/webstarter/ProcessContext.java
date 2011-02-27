@@ -1,54 +1,28 @@
 package net.ulrice.webstarter;
 
 import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
+/**
+ * Class storing the global settings. 
+ * 
+ * @author christof
+ */
 public class ProcessContext {
 
-	private Map<String, Object> context = new HashMap<String, Object>();
-
+	/** Stores the cookie-values. */
 	private Map<String, String> cookieMap = new HashMap<String, String>();
 	
-
-	public static final String USERID = "USERID";
-
-	public static final String PASSWORD = "PASSWORD";
-
-	public static final String LOGIN_TYPE = "LOGINTYPE";
-
-
-	public static final String EVENT_LISTENERS = "EVENT_LISTENERS";
-
-	public static final String CLASSPATH = "CLASSPATH";
-
-	public String getValueAsString(String key) {
-		return getValueAsString(key, null);
-	}
+	/** Stores all classpath entries. */
+	private List<String> classPath= new LinkedList<String>();
 	
-	public String getValueAsString(String key, String defaultValue) {
-		Object value = getValue(key, defaultValue);
-		return value == null ? null : value.toString();
-	}
+	private String userId;
 	
-	public Object getValue(String key) {
-		return getValue(key, null);
-	}
+	private String password;
 	
-	@SuppressWarnings("unchecked")
-	public <T> T getValue(String key, T defaultValue) {
-		if (context.containsKey(key)) {
-			return (T) context.get(key);
-		} else {
-			context.put(key, defaultValue);
-			return defaultValue;
-		}
-	}
-
-	public void setValue(String key, Object value) {
-		context.put(key, value);
-	}
-
 	public Map<String, String> getCookieMap() {
 		return cookieMap;
 	}
@@ -63,5 +37,33 @@ public class ProcessContext {
 			buffer.append(";");
 		}
 		return buffer.toString();
+	}
+
+	public String getUserId() {
+		return userId;
+	}
+
+	public void setUserId(String userId) {
+		this.userId = userId;
+	}
+
+	public String getPassword() {
+		return password;
+	}
+
+	public void setPassword(String password) {
+		this.password = password;
+	}
+
+	public List<String> getClassPath() {
+		return classPath;
+	}
+
+	public void setClassPath(List<String> classPath) {
+		this.classPath = classPath;
+	}
+
+	public void setCookieMap(Map<String, String> cookieMap) {
+		this.cookieMap = cookieMap;
 	}
 }

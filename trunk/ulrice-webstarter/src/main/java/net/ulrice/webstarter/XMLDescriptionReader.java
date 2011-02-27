@@ -12,7 +12,6 @@ import java.util.Stack;
 import javax.swing.ImageIcon;
 
 import net.ulrice.webstarter.tasks.IFTask;
-import net.ulrice.webstarter.tasks.StartApplication;
 
 import org.xml.sax.Attributes;
 import org.xml.sax.InputSource;
@@ -21,6 +20,11 @@ import org.xml.sax.XMLReader;
 import org.xml.sax.helpers.DefaultHandler;
 import org.xml.sax.helpers.XMLReaderFactory;
 
+/**
+ * Class used to parse the application description from an xml file. 
+ * 
+ * @author christof
+ */
 public class XMLDescriptionReader extends DefaultHandler {
 
 	private ApplicationDescription appDescription;
@@ -48,6 +52,7 @@ public class XMLDescriptionReader extends DefaultHandler {
 		reader.parse(new InputSource(input));
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public void startElement(String uri, String localName, String qName, Attributes atts) throws SAXException {
 
