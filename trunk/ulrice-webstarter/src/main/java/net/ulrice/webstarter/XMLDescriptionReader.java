@@ -79,8 +79,7 @@ public class XMLDescriptionReader extends DefaultHandler {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-		} else if ("appparameter".equalsIgnoreCase(localName) && cTask != null
-				&& cTask.instanceOf(StartApplication.class)) {
+		} else if ("appparameter".equalsIgnoreCase(localName)) {
 
 			String paramValue = atts.getValue("value");
 			List<String> appParameters = appDescription.getAppParameters();
