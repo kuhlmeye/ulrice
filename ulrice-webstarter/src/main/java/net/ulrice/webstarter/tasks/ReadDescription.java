@@ -1,6 +1,5 @@
 package net.ulrice.webstarter.tasks;
 
-import java.io.File;
 import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
@@ -10,7 +9,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Properties;
 
-import net.ulrice.webstarter.ProcessContext;
+import net.ulrice.webstarter.Placeholder;
 import net.ulrice.webstarter.ProcessThread;
 import net.ulrice.webstarter.TaskDescription;
 
@@ -18,11 +17,8 @@ public class ReadDescription extends AbstractTask {
 
 	private static final String URL_PARAM_NAME = "descriptionUrl";
 	private static final String BASE_URL = "baseUrl";
-	private static final String LOCAL_DIR = "localDir";
 	
 	public static final String CURRENT_FILE_URL = "CURRENT_FILE_URL";
-	public static final String CURRENT_FILE_NAME = "CURRENT_FILE_NAME";
-	public static final String LOCAL_PATH = "LOCAL_PATH";
 	
 	@Override
 	public boolean doTask(ProcessThread thread) {
@@ -39,23 +35,19 @@ public class ReadDescription extends AbstractTask {
 			
 			List<IFTask> subTaskList = new ArrayList<IFTask>();
 			for(String file : files) {
+				String fileUrlStr = baseUrl + file;
 				
 				try {
 
 					
 
 					thread.fireTaskProgressed(this, 60, "Instanciating subtasks..", null);
-					for(TaskDescription subTask : getSubTasks()) {
-						IFTask task = subTask.instanciateTask();						
-						task.addParameter(CURRENT_FILE_URL, new URL(baseUrl + file));
-						task.addParameter(CURRENT_FILE_NAME, file);
-						task.addParameter(LOCAL_PATH, thread.getAppDescription().getLocalDir());
+					for(TaskDescription subTask : getSubTasks()) {						
+						Placeholder placeholder = new Placeholder("${FILE_URL}", fileUrlStr);						
+						IFTask task = subTask.instanciateTask(placeholder);		
 						subTaskList.add(task);
 					}
 					
-				} catch (MalformedURLException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
 				} catch (InstantiationException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();

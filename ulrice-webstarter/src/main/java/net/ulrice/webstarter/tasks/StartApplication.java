@@ -19,8 +19,9 @@ public class StartApplication extends AbstractTask {
 		String localDir = thread.getAppDescription().getLocalDir();
 		String localJre = getParameterAsString("localJre");
 		if(localJre != null) {
-			commandBuffer.append(localDir).append(localJre).append(File.separator).append("bin").append(File.separator).append("java ");
+			commandBuffer.append(localDir).append(localJre).append(File.separator).append("bin").append(File.separator);
 		}
+		commandBuffer.append("java ");
 		
 		commandBuffer.append("-cp ");
 		for(String element : classPath) {

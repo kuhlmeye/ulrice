@@ -17,17 +17,21 @@ public class TaskDescription {
 	
 	private Map<String, String> parameters; 
 	
+	public Map<String, String> getParameters() {
+		return parameters;
+	}
+
 	public TaskDescription(Class<? extends IFTask> taskClass, Map<String, String> parameters) {
 		this.taskClass = taskClass;
 		this.parameters = parameters;
 	}
 	
-	public IFTask instanciateTask() throws InstantiationException, IllegalAccessException {
+	public IFTask instanciateTask(Placeholder... placeholders) throws InstantiationException, IllegalAccessException {
 		IFTask task = taskClass.newInstance();
 		if(parameters != null) {
 			Set<Entry<String,String>> entrySet = parameters.entrySet();
 			for(Entry<String, String> entry : entrySet) {
-				task.addParameter(entry.getKey(), entry.getValue());
+				task.addParameter(entry.getKey(), replacePlaceholders(entry.getValue(), placeholders));
 			}
 		}
 		if(subTasks != null) {
@@ -39,6 +43,15 @@ public class TaskDescription {
 		return task;
 	}
 
+
+	private String replacePlaceholders(String value, Placeholder[] placeholders) {
+		if(placeholders != null) {
+			for(Placeholder placeholder : placeholders) {
+				value = value.replace(placeholder.getKey(), placeholder.getValue());
+			}
+		}
+		return value;
+	}
 
 	public void addSubTask(TaskDescription task) {
 		subTasks.add(task);
