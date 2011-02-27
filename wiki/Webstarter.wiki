@@ -3,6 +3,11 @@
 = Introduction =
 
 The webstarter is a highly configurable toolbox to download and start java applications. The process needed to update and start an application differs from application to application and therefore the process is defined in an xml file. Each process consists of several tasks.
+The webstarter could be started as a client application or an applet.
+
+== Screenshot (Client-Application) ==
+
+[https://ulrice.googlecode.com/svn/wiki/img/webstarter.png]
 
 = Tasks =
 
