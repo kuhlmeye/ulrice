@@ -9,7 +9,9 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.StringTokenizer;
 
 import net.ulrice.webstarter.ProcessThread;
 import net.ulrice.webstarter.TaskDescription;
@@ -40,13 +42,15 @@ public class DownloadFile extends AbstractTask {
 		try {
 
 			URLConnection con = fileUrl.openConnection();
-			String cookieString = thread.getContext().getCookieAsString();
-			if (cookieString != null) {
-				con.setRequestProperty("Cookie", cookieString);
+			String reqCookieStr = thread.getContext().getCookieAsString();
+			if (reqCookieStr != null) {
+				con.setRequestProperty("Cookie", reqCookieStr);
 			}
 			con.connect();
 
 			String lengthStr = con.getHeaderField("Content-Length");
+			
+			
 
 			Long length = Long.valueOf(lengthStr);
 			Long downloaded = 0l;

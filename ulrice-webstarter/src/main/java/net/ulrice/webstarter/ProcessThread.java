@@ -29,34 +29,47 @@ public class ProcessThread {
 	}
 
 	public void startProcess() {
-		if(appDescription != null && appDescription.getTasks() != null) {
-			List<TaskDescription> tasks = appDescription.getTasks();
-			for(TaskDescription task : tasks) {
-				try {
-					taskQueue.add(task.instanciateTask());
-				} catch (InstantiationException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				} catch (IllegalAccessException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-			}
-		}
+
 		
 		taskWorker = new Thread(new Runnable() {
 			
 			@Override
 			public void run() {
+				
+
 				// TODO Auto-generated method stub
 				if(taskQueue != null) {
+
+					fillTaskQueue();
+
 					for(numberOfCurrentTask = 0; numberOfCurrentTask < taskQueue.size(); numberOfCurrentTask++) {
+
 						IFTask task = taskQueue.get(numberOfCurrentTask);
 						fireTaskStarted(task);
 						if(!task.doTask(ProcessThread.this)) {
 							return;
 						}
-						fireTaskFinished(task);
+						fireTaskFinished(task);						
+
+						fillTaskQueue();
+					}
+				}
+			}
+
+			private void fillTaskQueue() {
+				if(appDescription != null && appDescription.getTasks() != null) {
+					List<TaskDescription> tasks = appDescription.getTasks();
+					while(tasks.size() > 0) {
+						TaskDescription taskDescription = tasks.remove(0);
+						try {
+							taskQueue.add(taskDescription.instanciateTask());
+						} catch (InstantiationException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						} catch (IllegalAccessException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
 					}
 				}
 			}

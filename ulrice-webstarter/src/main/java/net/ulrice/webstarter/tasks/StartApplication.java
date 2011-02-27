@@ -9,6 +9,7 @@ import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 import net.ulrice.webstarter.ProcessContext;
 import net.ulrice.webstarter.ProcessThread;
@@ -30,7 +31,7 @@ public class StartApplication extends AbstractTask {
 
 		commandBuffer.append("-cp ");
 		for (String element : classPath) {
-			commandBuffer.append(element).append(";");
+			commandBuffer.append(element).append(File.pathSeparator);
 		}
 		commandBuffer.append(" ");
 
@@ -51,11 +52,16 @@ public class StartApplication extends AbstractTask {
 		}
 
 		try {			
-			Process process = Runtime.getRuntime().exec(commandBuffer.toString(), new String[0], new File(localDir));
-			StreamGobbler isGobbler = new StreamGobbler(process.getInputStream(), System.out);
-			StreamGobbler esGobbler = new StreamGobbler(process.getErrorStream(), System.err);
+			
+			
+			Process process = Runtime.getRuntime().exec(commandBuffer.toString(), null, new File(localDir));
+			
+			
+			StreamGobbler isGobbler = new StreamGobbler("OUT", process.getInputStream(), System.out);
+			StreamGobbler esGobbler = new StreamGobbler("ERR", process.getErrorStream(), System.err);
 			isGobbler.start();
 			esGobbler.start();
+			
 			
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
@@ -92,10 +98,12 @@ public class StartApplication extends AbstractTask {
 
 		InputStream is;
 		OutputStream os;
+		String name;
 
-		public StreamGobbler(InputStream is, OutputStream os) {
+		public StreamGobbler(String name, InputStream is, OutputStream os) {
 			this.is = is;
 			this.os = os;
+			this.name = name;
 		}
 
 		@Override
@@ -108,7 +116,8 @@ public class StartApplication extends AbstractTask {
 			String line = null;
 			try {
 				while ((line = br.readLine()) != null) {
-					pw.println(line);
+					pw.println(name + " > " + line);
+					System.out.println(name + " > " + line);
 				}
 			} catch (IOException e) {
 				// TODO
