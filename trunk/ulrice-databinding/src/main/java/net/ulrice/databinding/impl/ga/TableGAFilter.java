@@ -201,6 +201,8 @@ public class TableGAFilter extends RowFilter<TableGA, String> implements Documen
         if (text == null || text.isEmpty()) {
             regexExpressionMap.remove(columnId);
             numericPatternExpressionMap.remove(columnId);
+
+            rowSorter.sort();
         } else if(columnFilterModes.containsKey(columnId)){
             
             switch (columnFilterModes.get(columnId)) {
