@@ -33,6 +33,14 @@ The xml-files defining the download and startup-process are loaded from the appl
 </application>
 }}}
 
+{{{
+<application applicationName="Ulrice Sample Application (Internet)" needsLogin="false" localDir="${USER_DIR}/ulrice-webstarter/ulrice_sample">
+    <task type="ReadTasks" descriptionUrl="http://ulrice.googlecode.com/files/ulrice-sample-0.1-SNAPSHOT.ws.xml"/>	
+	<task type="StartApplication" mainClass="net.ulrice.sample.UlriceSampleApplication" />
+</application>
+}}}
+Configuration file for downloading and starting the ulrice sample application.
+
 == Application ==
 This tag defines the basic application settings like the name. The following attributes are valid
   * applicationName The name of the application shown in the webstarter.
