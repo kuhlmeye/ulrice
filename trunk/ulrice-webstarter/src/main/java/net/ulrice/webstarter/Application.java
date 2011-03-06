@@ -174,4 +174,9 @@ public class Application implements IFProcessEventListener, ActionListener {
 	public static void main(String[] args) {
 		new Application();
 	}
+
+	@Override
+	public void allTasksFinished(ProcessThread processThread) {
+		frame.dispose();
+	}
 }

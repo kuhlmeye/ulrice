@@ -131,6 +131,17 @@ public class ProcessThread {
 		}
 	}
 
+	public void fireAllTasksFinished() {
+		if (eventListeners != null) {
+			IFProcessEventListener[] listeners = eventListeners.getListeners(IFProcessEventListener.class);
+			if (listeners != null) {
+				for (IFProcessEventListener listener : listeners) {
+					listener.allTasksFinished(this);
+				}
+			}
+		}
+	}
+
 	public ApplicationDescription getAppDescription() {
 		return appDescription;
 	}
@@ -163,6 +174,9 @@ public class ProcessThread {
 					// Instanciate subtasks.
 					fillTaskQueue();
 				}
+				fireAllTasksFinished();
+				
+				
 			}
 		}
 

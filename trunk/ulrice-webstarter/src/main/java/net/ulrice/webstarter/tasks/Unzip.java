@@ -8,6 +8,8 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.jar.Pack200;
+import java.util.jar.Pack200.Packer;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
@@ -34,6 +36,7 @@ public class Unzip extends AbstractTask {
 				e.printStackTrace();
 			}
 		}
+		
 		
 		String file = fileUrl.getFile();
 		String[] split = file.split("\\/");

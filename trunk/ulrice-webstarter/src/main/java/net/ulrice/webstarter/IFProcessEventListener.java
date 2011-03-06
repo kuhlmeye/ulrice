@@ -47,4 +47,6 @@ public interface IFProcessEventListener extends EventListener {
 	 * @param longMessage The long description of the error.
 	 */
 	void handleError(ProcessThread thread, IFTask task, String shortMessage, String longMessage);
+
+	void allTasksFinished(ProcessThread processThread);
 }
