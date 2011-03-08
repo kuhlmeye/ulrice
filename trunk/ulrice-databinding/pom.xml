@@ -10,6 +10,7 @@
 		<version>0.1-SNAPSHOT</version>
 		<relativePath>..</relativePath>
 	</parent>
+	
 	<build>
 		<plugins>
 			<plugin>
@@ -38,5 +39,4 @@
 			</plugin>
 		</plugins>
 	</build>
-
 </project>
