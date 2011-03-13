@@ -165,11 +165,12 @@ public class ProcessThread {
 				fillTaskQueue();
 				for(numberOfCurrentTask = 0; numberOfCurrentTask < taskQueue.size() && !threadStopped; numberOfCurrentTask++) {
 
+					
 					// Execute next task.
 					IFTask task = taskQueue.get(numberOfCurrentTask);
 					fireTaskStarted(task);
 					if(!task.doTask(ProcessThread.this)) {
-						return;
+						return;												
 					}
 					fireTaskFinished(task);						
 
