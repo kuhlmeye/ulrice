@@ -18,7 +18,6 @@ import javax.net.ssl.HttpsURLConnection;
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.TrustManager;
 
-import net.ulrice.webstarter.ProcessContext;
 import net.ulrice.webstarter.ProcessThread;
 import net.ulrice.webstarter.net.TrustAllTrustManager;
 
