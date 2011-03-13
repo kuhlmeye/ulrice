@@ -61,6 +61,7 @@ public class ApplicationFrame extends JFrame implements ActionListener, ItemList
 	private JScrollPane messageAreaScroller;
 	private ImageIcon defaultAppImage;
 	private JToggleButton messageToggleButton;
+	private boolean showApplicationChooser = true;
 
 	public ApplicationFrame() {
 		this.globalProgress = new JProgressBar();
@@ -210,7 +211,13 @@ public class ApplicationFrame extends JFrame implements ActionListener, ItemList
 		setResizable(false);
 		setLocationRelativeTo(null);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setVisible(true);
+	}
+	
+	public void setShowApplicationDialog(boolean showApplicationChooser) {
+		this.showApplicationChooser = showApplicationChooser;
+		applicationChooser.setVisible(showApplicationChooser);
+		this.invalidate();
+		this.repaint();
 	}
 
 	public JProgressBar getGlobalProgress() {

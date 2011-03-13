@@ -41,7 +41,7 @@ public class Application implements IFProcessEventListener, ActionListener {
 	private Properties appSettings;
 
 	public Application() {
-		
+
 		frame = new ApplicationFrame();
 		frame.getStartButton().addActionListener(this);
 		frame.getCancelButton().addActionListener(this);
@@ -169,10 +169,73 @@ public class Application implements IFProcessEventListener, ActionListener {
 		frame.getTaskProgress().getModel().setValue(0);
 		frame.getTaskProgress().setString(shortMessage);
 	}
-	
 
 	public static void main(String[] args) {
-		new Application();
+		Application app = new Application();
+		app.parseArguments(args);
+		app.frame.setVisible(true);
+	}
+
+	private void parseArguments(String[] args) {
+		if (args != null) {
+			ApplicationDescription appDescription = null;
+			String userId = null;
+			String password = null;
+
+			for (String arg : args) {
+				if("-h".equalsIgnoreCase(arg) || "--help".equalsIgnoreCase(arg) || "/?".equalsIgnoreCase(arg)) {
+					StringBuffer buffer = new StringBuffer();
+					buffer.append("Ulrice-Webstarter");
+					buffer.append("Usage: net.ulrice.webstarter.Application <param>*\n");
+					buffer.append(" Param: \n");
+					buffer.append("  -h, --help, /?             Show this help.");
+					buffer.append("  -userId=<userId>           Set the username used for the login.\n");
+					buffer.append("  -password=<password>       Set the password used for the login.\n");
+					buffer.append("  -application=<application> Start application. Application is the name of the .ws.xml file without extension.\n");
+					System.out.println(buffer.toString());
+				}
+				else if (arg.indexOf('=') >= 0) {
+					String[] split = arg.split("=");
+					if (split.length > 1) {
+						String key = split[0];
+						String value = split[1];
+
+						if ("-userId".equalsIgnoreCase(key)) {
+							userId = value;
+						} else if ("-password".equalsIgnoreCase(key)) {
+							password = value;
+						} else if ("-application".equalsIgnoreCase(key)) {
+							String application = value;
+							File appDescr = new File(appDirectoryName, application + ".ws.xml");
+							if (appDescr.exists()) {
+								try {
+									XMLDescriptionReader reader = new XMLDescriptionReader(
+											new FileInputStream(appDescr), appDirectoryName);
+									appDescription = new ApplicationDescription();
+									appDescription.setId(appDescr.getName());
+									reader.parseXML(appDescription);
+								} catch (FileNotFoundException e) {
+									LOG.log(Level.WARNING, "Error loading application description.", e);
+								} catch (SAXException e) {
+									LOG.log(Level.WARNING, "Error parsing application description.", e);
+								} catch (IOException e) {
+									LOG.log(Level.WARNING, "Error parsing application description.", e);
+								}
+							}
+						}
+					}
+				}
+			}
+
+			if (appDescription != null && (!appDescription.isNeedsLogin() || userId != null)) {
+				frame.setShowApplicationDialog(false);
+				thread = new ProcessThread(appDescription);
+				thread.getContext().setUserId(userId);
+				thread.getContext().setPassword(password);
+				thread.addProcessEventListener(this);
+				thread.startProcess();
+			}
+		}
 	}
 
 	@Override
