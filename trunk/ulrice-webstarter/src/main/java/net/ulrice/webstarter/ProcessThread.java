@@ -32,6 +32,8 @@ public class ProcessThread {
 	private List<IFTask> taskQueue;
 
 	private int numberOfCurrentTask;
+	
+	private boolean threadStopped = false;
 
 
 	public ProcessThread(ApplicationDescription appDescription) {
@@ -157,11 +159,11 @@ public class ProcessThread {
 		@Override
 		public void run() {
 			
-			if(taskQueue != null) {
+			if(taskQueue != null && !threadStopped) {
 
 				// Prefill the task-queue
 				fillTaskQueue();
-				for(numberOfCurrentTask = 0; numberOfCurrentTask < taskQueue.size(); numberOfCurrentTask++) {
+				for(numberOfCurrentTask = 0; numberOfCurrentTask < taskQueue.size() && !threadStopped; numberOfCurrentTask++) {
 
 					// Execute next task.
 					IFTask task = taskQueue.get(numberOfCurrentTask);
@@ -195,5 +197,10 @@ public class ProcessThread {
 				}
 			}
 		}
+	}
+
+
+	public void cancelProcess() {
+		threadStopped = true;
 	}
 }

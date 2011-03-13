@@ -106,6 +106,7 @@ public class Application implements IFProcessEventListener, ActionListener {
 			startProcess();
 		} else if (ApplicationFrame.CANCEL_CMD.equals(e.getActionCommand())) {
 			frame.dispose();
+			thread.cancelProcess();			
 		}
 	}
 
