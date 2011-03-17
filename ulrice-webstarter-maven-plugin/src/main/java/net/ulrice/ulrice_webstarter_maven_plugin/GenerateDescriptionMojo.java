@@ -25,7 +25,7 @@ public class GenerateDescriptionMojo extends AbstractMojo {
 	/**
 	 * Location of the files.
 	 * 
-	 * @parameter expression="${project.build.directory}"
+	 * @parameter
 	 * @required
 	 */
 	private List<File> directories;
