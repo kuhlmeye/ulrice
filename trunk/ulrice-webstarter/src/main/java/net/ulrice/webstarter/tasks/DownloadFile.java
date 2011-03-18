@@ -2,12 +2,17 @@ package net.ulrice.webstarter.tasks;
 
 import java.io.BufferedInputStream;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.math.BigInteger;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -19,6 +24,7 @@ import net.ulrice.webstarter.TaskDescription;
 public class DownloadFile extends AbstractTask {
 
 	public static final String URL_PARAM = "url";
+	public static final String MD5_PARAM = "md5";
 
 	public static final String CLASSPATH_PARAM = "classpath";
 
@@ -26,6 +32,7 @@ public class DownloadFile extends AbstractTask {
 	public boolean doTask(ProcessThread thread) {
 
 		String urlStr = getParameterAsString(URL_PARAM);
+		String remoteMd5 = getParameterAsString(URL_PARAM);
 		URL fileUrl = null;
 		try {
 			fileUrl = new URL(urlStr);
@@ -59,14 +66,25 @@ public class DownloadFile extends AbstractTask {
 			localDir.mkdirs();
 
 			File localFile = new File(localDir, fileName);
+			String localMd5 = null;
+			try {
+				localMd5 = calculateMd5(localFile);
+			} catch (NoSuchAlgorithmException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 			boolean skipDownload = false;
 			if (localFile.exists()) {
-				long localFileLen = localFile.length();
-				long remoteFileLen = Long.valueOf(lengthStr);
-				if (localFileLen == remoteFileLen) {
-					// Skip file. It already exists.
-					thread.fireTaskProgressed(this, 100, fileName, "Downloading " + fileName + "...(skipped)");
-					skipDownload = true;
+				if(remoteMd5 != null && localMd5 != null) {
+					skipDownload = remoteMd5.equals(localMd5);
+				} else {
+					long localFileLen = localFile.length();
+					long remoteFileLen = Long.valueOf(lengthStr);
+					if (localFileLen == remoteFileLen) {
+						// Skip file. It already exists.
+						thread.fireTaskProgressed(this, 100, fileName, "Downloading " + fileName + "...(skipped)");
+						skipDownload = true;
+					}
 				}
 			}
 
@@ -112,5 +130,32 @@ public class DownloadFile extends AbstractTask {
 			thread.fireTaskFinished(this);
 		}
 		return true;
+	}
+	
+	private String calculateMd5(File file) throws NoSuchAlgorithmException, FileNotFoundException {
+		MessageDigest digest = MessageDigest.getInstance("MD5");
+		InputStream is = new FileInputStream(file);				
+		byte[] buffer = new byte[8192];
+		int read = 0;
+		try {
+			while( (read = is.read(buffer)) > 0) {
+				digest.update(buffer, 0, read);
+			}		
+			byte[] md5sum = digest.digest();
+			BigInteger bigInt = new BigInteger(1, md5sum);
+			return bigInt.toString(16);
+			
+		}
+		catch(IOException e) {
+			throw new RuntimeException("Unable to process file for MD5", e);
+		}
+		finally {
+			try {
+				is.close();
+			}
+			catch(IOException e) {
+				throw new RuntimeException("Unable to close input stream for MD5 calculation", e);
+			}
+		}
 	}
 }
