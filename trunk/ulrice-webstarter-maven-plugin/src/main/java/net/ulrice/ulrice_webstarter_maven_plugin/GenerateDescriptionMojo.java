@@ -153,9 +153,11 @@ public class GenerateDescriptionMojo extends AbstractMojo {
 		FileChannel inChannel = null;
 		FileChannel outChannel = null;
 		try {
+			File f = new File(targetDir.getAbsolutePath(), file.getName());
 			inChannel = new FileInputStream(file).getChannel();
-			outChannel = new FileOutputStream(new File(targetDir.getAbsolutePath(), file.getName())).getChannel();
+			outChannel = new FileOutputStream(f).getChannel();
 			inChannel.transferTo(0, inChannel.size(), outChannel);
+			getLog().info("Copy " + file.getName() + " to " + f.getAbsolutePath());
 		} catch (FileNotFoundException e) {
 			throw new MojoExecutionException(
 					"Error creating file " + targetDir, e);
