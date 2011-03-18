@@ -59,7 +59,7 @@
 			<plugin>
 				<groupId>net.ulrice</groupId>
 				<artifactId>ulrice-webstarter-maven-plugin</artifactId>
-				<version>0.0.1-SNAPSHOT</version>
+				<version>0.1-SNAPSHOT</version>
 
 				<configuration>
 					<directory>${project.build.directory}/ulrice-sample-dir/</directory>
