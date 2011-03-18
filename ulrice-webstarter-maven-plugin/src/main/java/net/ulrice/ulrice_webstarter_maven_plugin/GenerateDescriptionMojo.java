@@ -5,9 +5,13 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.PrintWriter;
+import java.math.BigInteger;
 import java.net.URL;
 import java.nio.channels.FileChannel;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.List;
 
 import org.apache.maven.plugin.AbstractMojo;
@@ -55,23 +59,22 @@ public class GenerateDescriptionMojo extends AbstractMojo {
 	private URL baseUrl;
 
 	/**
-	 * Location where the files matching the filename
-	 * pattern within the directories should be copied to
+	 * Location where the files matching the filename pattern within the
+	 * directories should be copied to
 	 * 
 	 * @parameter
 	 */
 	private File targetDirectory;
 
 	public void execute() throws MojoExecutionException {
-		
+
 		File targetDir = targetDirectory;
-		
+
 		boolean copyFiles = true;
-		
+
 		if (targetDir != null && !targetDir.exists()) {
 			targetDir.mkdirs();
-		}
-		else {
+		} else {
 			copyFiles = false;
 		}
 
@@ -117,19 +120,21 @@ public class GenerateDescriptionMojo extends AbstractMojo {
 								pw.println("<tasklist>");
 								fileFound = true;
 							}
+							String md5 = calculateMd5(file);
 							URL url = new URL(baseUrl, filename);
-							getLog().info(
-									"-Adding file '" + file + "' as '" + url
-											+ "'.");
-							pw
-									.println("<task type=\"DownloadFile\" classpath=\"true\" url=\""
-											+ url + "\"/>");
+							getLog().info("-Adding file '" + file + "' as '" + url + "'.");
+							pw.print("<task type=\"DownloadFile\" classpath=\"true\" ");
+							pw.print("url=\"" + url + "\" ");
+							if (md5 != null) {
+								pw.print("md5=\"" + md5 + "\" ");
+							}
+							pw.println("/>");
 							if (copyFiles) {
 								try {
 									copyFile(file, targetDir);
-								}
-								catch (IOException e) {
-									throw new MojoExecutionException("Error closing FileChannels copying file " + file.getAbsolutePath());
+								} catch (IOException e) {
+									throw new MojoExecutionException("Error closing FileChannels copying file "
+											+ file.getAbsolutePath());
 								}
 							}
 						}
@@ -140,11 +145,36 @@ public class GenerateDescriptionMojo extends AbstractMojo {
 				pw.println("</tasklist>");
 			}
 		} catch (IOException e) {
-			throw new MojoExecutionException(
-					"Error creating file " + descrFile, e);
+			throw new MojoExecutionException("Error creating file " + descrFile, e);
+		} catch (NoSuchAlgorithmException e) {
+			throw new MojoExecutionException("Error creating md5 for file " + descrFile, e);
 		} finally {
 			if (pw != null) {
 				pw.close();
+			}
+		}
+	}
+
+	private String calculateMd5(File file) throws NoSuchAlgorithmException, FileNotFoundException {
+		MessageDigest digest = MessageDigest.getInstance("MD5");
+		InputStream is = new FileInputStream(file);
+		byte[] buffer = new byte[8192];
+		int read = 0;
+		try {
+			while ((read = is.read(buffer)) > 0) {
+				digest.update(buffer, 0, read);
+			}
+			byte[] md5sum = digest.digest();
+			BigInteger bigInt = new BigInteger(1, md5sum);
+			return bigInt.toString(16);
+
+		} catch (IOException e) {
+			throw new RuntimeException("Unable to process file for MD5", e);
+		} finally {
+			try {
+				is.close();
+			} catch (IOException e) {
+				throw new RuntimeException("Unable to close input stream for MD5 calculation", e);
 			}
 		}
 	}
@@ -159,13 +189,10 @@ public class GenerateDescriptionMojo extends AbstractMojo {
 			inChannel.transferTo(0, inChannel.size(), outChannel);
 			getLog().info("Copy " + file.getName() + " to " + f.getAbsolutePath());
 		} catch (FileNotFoundException e) {
-			throw new MojoExecutionException(
-					"Error creating file " + targetDir, e);
+			throw new MojoExecutionException("Error creating file " + targetDir, e);
 		} catch (IOException e) {
-			throw new MojoExecutionException(
-					"Error writing to file " + targetDir, e);
-		}
-		finally {
+			throw new MojoExecutionException("Error writing to file " + targetDir, e);
+		} finally {
 			if (inChannel != null) {
 				inChannel.close();
 			}
