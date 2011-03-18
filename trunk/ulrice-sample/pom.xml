@@ -62,7 +62,9 @@
 				<version>0.1-SNAPSHOT</version>
 
 				<configuration>
-					<directory>${project.build.directory}/ulrice-sample-dir/</directory>
+					<directories>
+						<java.io.File>${project.build.directory}/ulrice-sample-dir/</java.io.File>
+					</directories>
 					<outputFilename>${project.build.directory}/${project.artifactId}-${project.version}.ws.xml</outputFilename>
 					<baseUrl>http://ulrice.googlecode.com/files/</baseUrl>
 					<filenameFilters>
