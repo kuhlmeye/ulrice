@@ -92,6 +92,10 @@ public class ReflectionModule implements IFModule, IFModuleTitleRenderer {
 	}
 
 	private ImageIcon getIcon(String iconName, ModuleIconSize size) {
+		if(iconName == null) {
+			return null;
+		}
+		
 		int extStartPosition = iconName.lastIndexOf('.');
 		String extension = iconName.substring(extStartPosition);
 		String name = iconName.substring(0, extStartPosition);
