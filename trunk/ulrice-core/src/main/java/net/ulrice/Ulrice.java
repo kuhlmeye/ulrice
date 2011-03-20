@@ -45,10 +45,9 @@ public class Ulrice {
 	 */
 	public static void initialize(IFUlriceConfiguration configuration) throws ConfigurationException {
 		UI.applyDefaultUI();
-		Ulrice.configuration = configuration.getConfigurationProperties();
-		
 		configuration.loadConfiguration();
-		
+		Ulrice.configuration = configuration.getConfigurationProperties();
+				
 		Ulrice.moduleManager = configuration.getModuleManager();
 		Ulrice.moduleStructureManager = configuration.getModuleStructureManager();
 		Ulrice.messageHandler = new MessageHandler();
@@ -116,6 +115,9 @@ public class Ulrice {
 		builder.append(requestingObject.getClass().getName());
 		builder.append('.');
 		builder.append(key);
+		if(Ulrice.configuration == null) {
+			return defaultValue;
+		}
 		return Ulrice.configuration.getProperty(builder.toString(), defaultValue);
 	}
 
