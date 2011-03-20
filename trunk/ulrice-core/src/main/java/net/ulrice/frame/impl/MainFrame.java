@@ -4,6 +4,7 @@ import java.awt.BorderLayout;
 
 import javax.swing.JFrame;
 import javax.swing.JScrollPane;
+import javax.swing.SwingConstants;
 
 import net.ulrice.Ulrice;
 import net.ulrice.frame.IFMainFrame;
@@ -30,6 +31,7 @@ public class MainFrame extends JFrame implements IFMainFrame {
 	 * Creates a new main frame.
 	 */
 	public MainFrame() {
+		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		setTitle(Ulrice.getConfiguration(this, "Title", ""));	
 		setLayout(new BorderLayout());
 	}
