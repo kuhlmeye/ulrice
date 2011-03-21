@@ -4,7 +4,7 @@
 	<groupId>net.ulrice</groupId>
 	<artifactId>ulrice</artifactId>
 	<version>0.1-SNAPSHOT</version>
-	<name>ulrice</name>
+	<name>Ulrice</name>
 	<packaging>pom</packaging>
 
 	<dependencies>
