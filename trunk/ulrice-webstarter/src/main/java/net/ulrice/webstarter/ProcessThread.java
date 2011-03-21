@@ -68,7 +68,7 @@ public class ProcessThread {
 			taskPos = taskQueue.size() > 0 ? taskQueue.size() - 1 : 0;
 		}
 		
-		if(taskPos > 0) {
+		if(taskPos >= 0) {
 			taskPos ++;
 		}
 		
