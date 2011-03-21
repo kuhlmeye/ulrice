@@ -74,7 +74,7 @@ public class GenerateDescriptionMojo extends AbstractMojo {
 
 		if (targetDir == null) {
 			copyFiles = false;
-			getLog().info("Files won´t be copied as targetDirectory is null!");
+			getLog().info("Files wont be copied as targetDirectory is null!");
 		}
 		else if (!targetDir.exists()) {
 			targetDir.mkdirs();
