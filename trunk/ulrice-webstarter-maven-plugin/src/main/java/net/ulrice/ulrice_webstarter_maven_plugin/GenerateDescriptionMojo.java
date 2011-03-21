@@ -13,6 +13,9 @@ import java.nio.channels.FileChannel;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.List;
+import java.util.jar.JarFile;
+import java.util.jar.Pack200;
+import java.util.jar.Pack200.Packer;
 
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
@@ -62,13 +65,28 @@ public class GenerateDescriptionMojo extends AbstractMojo {
 	 * Location where the files matching the filename pattern within the
 	 * directories should be copied to
 	 * 
-	 * @parameter
+	 * @parameter 
 	 */
 	private File targetDirectory;
+	
+	/**
+	 * True, if an md5 fingerprint should be generated.
+	 * 
+	 * @parameter default-value="true"
+	 */
+	private boolean useMd5;
+	
+	/**
+	 * True, if pack200 should be used to compress the jars.
+	 * 
+	 * @parameter default-value="false"
+	 */
+	private boolean usePack200;
 
 	public void execute() throws MojoExecutionException {
 
 		File targetDir = targetDirectory;
+		getLog().info("Target-Dir: " + targetDir);
 
 		boolean copyFiles = true;
 
@@ -123,13 +141,23 @@ public class GenerateDescriptionMojo extends AbstractMojo {
 								pw.println("<tasklist>");
 								fileFound = true;
 							}
+
+
+							if(usePack200) {
+								file = pack200(file.getParentFile(), file);
+							}
+							
 							String md5 = calculateMd5(file);
-							URL url = new URL(baseUrl, filename);
+							
+							URL url = new URL(baseUrl, file.getName());
 							getLog().info("-Adding file '" + file + "' as '" + url + "'.");
-							pw.print("<task type=\"DownloadFile\" classpath=\"true\" ");
+							pw.print("<task type=\"DownloadFile\" classpath=\"true\" ");							
 							pw.print("url=\"" + url + "\" ");
-							if (md5 != null) {
+							if (md5 != null && useMd5) {
 								pw.print("md5=\"" + md5 + "\" ");
+							}		
+							if(usePack200 && file.toString().endsWith(".pack200")) {
+								pw.print("pack200=\"true\"");
 							}
 							pw.println("/>");
 							if (copyFiles) {
@@ -156,6 +184,20 @@ public class GenerateDescriptionMojo extends AbstractMojo {
 				pw.close();
 			}
 		}
+	}
+
+	private File pack200(File targetDir, File file) throws IOException {
+		File packedFile = new File(targetDir, file.getName().concat(".pack200"));
+		try {
+			JarFile jarFile = new JarFile(file);
+			Packer packer = Pack200.newPacker();
+			FileOutputStream os = new FileOutputStream(packedFile);
+			packer.pack(jarFile, os);		
+			return packedFile;
+		} catch(IOException e) {
+			getLog().info("Ignore packing file: " + file.getName());
+		}
+		return file;
 	}
 
 	private String calculateMd5(File file) throws NoSuchAlgorithmException, FileNotFoundException {
