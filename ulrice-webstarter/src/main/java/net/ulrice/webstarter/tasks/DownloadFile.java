@@ -14,9 +14,11 @@ import java.net.URLConnection;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
-import java.util.StringTokenizer;
+import java.util.jar.JarFile;
+import java.util.jar.JarOutputStream;
+import java.util.jar.Pack200;
+import java.util.jar.Pack200.Unpacker;
 
 import net.ulrice.webstarter.ProcessThread;
 import net.ulrice.webstarter.TaskDescription;
@@ -25,14 +27,20 @@ public class DownloadFile extends AbstractTask {
 
 	public static final String URL_PARAM = "url";
 	public static final String MD5_PARAM = "md5";
+	public static final String PACK200_PARAM = "pack200";
 
 	public static final String CLASSPATH_PARAM = "classpath";
 
 	@Override
 	public boolean doTask(ProcessThread thread) {
 
+		
 		String urlStr = getParameterAsString(URL_PARAM);
 		String remoteMd5 = getParameterAsString(URL_PARAM);
+		boolean usePack200 = Boolean.valueOf(getParameterAsString(PACK200_PARAM));
+		
+
+		
 		URL fileUrl = null;
 		try {
 			fileUrl = new URL(urlStr);
@@ -45,6 +53,12 @@ public class DownloadFile extends AbstractTask {
 		String[] split = file.split("\\/");
 
 		String fileName = split[split.length - 1];
+		
+		String localFileName = fileName;
+		if(usePack200 && localFileName.endsWith(".pack200")) {
+			localFileName = localFileName.substring(0, localFileName.length() - ".pack200".length());
+		}
+		
 		String localDirString = thread.getAppDescription().getLocalDir();
 		try {
 
@@ -65,10 +79,12 @@ public class DownloadFile extends AbstractTask {
 			File localDir = new File(localDirString);
 			localDir.mkdirs();
 
-			File localFile = new File(localDir, fileName);
+			File localFile = new File(localDir, localFileName);
 			String localMd5 = null;
 			try {
-				localMd5 = calculateMd5(localFile);
+				if(localFile.exists()) {
+					localMd5 = calculateMd5(localFile);
+				}
 			} catch (NoSuchAlgorithmException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -92,7 +108,16 @@ public class DownloadFile extends AbstractTask {
 				thread.fireTaskProgressed(this, 0, fileName, "Downloading " + fileName + "...");
 
 				if (localDir.isDirectory() && localDir.canWrite()) {
-					FileOutputStream fos = new FileOutputStream(localFile);
+
+					FileOutputStream fos = null;
+					File tempFile = null;
+					if(usePack200 && urlStr.endsWith(".pack200")) {
+						tempFile = File.createTempFile("downloader", ".pack200");
+					} else {
+						tempFile = localFile;
+					}
+					fos = new FileOutputStream(tempFile);
+					
 					InputStream is = new BufferedInputStream(con.getInputStream(), 1024);
 					byte[] responseBuffer = new byte[1024];
 					int read = 0;
@@ -105,13 +130,17 @@ public class DownloadFile extends AbstractTask {
 					}
 					fos.flush();
 					fos.close();
+					
+					if(usePack200 && urlStr.endsWith(".pack200")) {
+						unpack200(tempFile, localFile);
+					}
 				}
 			}
 
 			if (Boolean.valueOf(getParameterAsString(CLASSPATH_PARAM, "false"))) {
 				Map<String, String> parameters = new HashMap<String, String>();
 				parameters.put(AddToClasspath.FILTER_PARAM, ".*");
-				parameters.put(AddToClasspath.URL_PARAM, urlStr);
+				parameters.put(AddToClasspath.URL_PARAM, localFile.toURI().toURL().toString());
 				TaskDescription classpathTask = new TaskDescription(AddToClasspath.class, parameters);
 				thread.addSubTasks(this, classpathTask.instanciateTask());
 			}
@@ -130,6 +159,18 @@ public class DownloadFile extends AbstractTask {
 			thread.fireTaskFinished(this);
 		}
 		return true;
+	}
+	
+
+	private void unpack200(File inFile, File unpackedFile) throws IOException {
+		System.out.println("Unpacking " + inFile.toString() + " to " + unpackedFile);
+		try {
+			Unpacker unpacker = Pack200.newUnpacker();
+			JarOutputStream os = new JarOutputStream(new FileOutputStream(unpackedFile));
+			unpacker.unpack(inFile, os);		
+		} catch(IOException e) {
+			e.printStackTrace();
+		}
 	}
 	
 	private String calculateMd5(File file) throws NoSuchAlgorithmException, FileNotFoundException {
