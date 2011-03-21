@@ -65,8 +65,10 @@
 					<directories>
 						<java.io.File>${project.build.directory}/ulrice-sample-dir/</java.io.File>
 					</directories>
+					<targetDir>${project.build.directory}</targetDir>
 					<outputFilename>${project.build.directory}/${project.artifactId}-${project.version}.ws.xml</outputFilename>
 					<baseUrl>http://ulrice.googlecode.com/files/</baseUrl>
+					<usePack200>false</usePack200>
 					<filenameFilters>
 						<param>.*\.jar</param>
 						<param>.*\.txt</param>
@@ -92,8 +94,7 @@
 					<allowSnapshots>true</allowSnapshots>
 					<uploads>
 						<upload>
-							<extensions>jar</extensions>							
-							<labels>Featured</labels>
+							<extensions>jar.pack200</extensions>			
 						</upload>
 						<upload>
 							<extensions>ws.xml</extensions>
