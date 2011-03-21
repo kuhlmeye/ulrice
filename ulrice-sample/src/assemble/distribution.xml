@@ -11,7 +11,7 @@
 	<dependencySets>
 		<dependencySet>
 			<includes>
-				<include>*</include>
+				<include>*:jar</include>
 			</includes>
 		</dependencySet>
 	</dependencySets>
