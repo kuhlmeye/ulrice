@@ -7,7 +7,8 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.StringTokenizer;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import net.ulrice.webstarter.ApplicationDescription;
 import net.ulrice.webstarter.ProcessThread;
@@ -18,6 +19,9 @@ import org.xml.sax.SAXException;
 
 public class ReadTasks extends AbstractTask {
 
+	/** The logger used by this class. */
+	private static final Logger LOG = Logger.getLogger(ReadTasks.class.getName());
+	
 	private static final String URL_PARAM_NAME = "descriptionUrl";
 
 	@Override
@@ -37,11 +41,11 @@ public class ReadTasks extends AbstractTask {
 				thread.addSubTasks(this, subTaskList.toArray(new IFTask[subTaskList.size()]));
 
 			} catch (InstantiationException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				thread.handleError(this, "Could not instanciate task.", "Could not instanciate task." + e.getMessage());
+				LOG.log(Level.SEVERE, "Could not instanciate task.", e);
 			} catch (IllegalAccessException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				thread.handleError(this, "Could not access task.", "Could not access task." + e.getMessage());
+				LOG.log(Level.SEVERE, "Could not access task.", e);
 			}
 		}
 
@@ -80,14 +84,14 @@ public class ReadTasks extends AbstractTask {
 			return descr.getTasks();
 
 		} catch (MalformedURLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			thread.handleError(this, "Malformed url.", "Malformed url:" + urlStr);
+			LOG.log(Level.SEVERE, "Malformed url.", e);
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			thread.handleError(this, "IO error loading tasks.", "IO error loading tasks.");
+			LOG.log(Level.SEVERE, "IO error loading tasks.", e);
 		} catch (SAXException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			thread.handleError(this, "Could not parse task description.", "Could not parse task description. " + e.getMessage());
+			LOG.log(Level.SEVERE, "Could not parse task description.", e);
 		}
 
 		return null;

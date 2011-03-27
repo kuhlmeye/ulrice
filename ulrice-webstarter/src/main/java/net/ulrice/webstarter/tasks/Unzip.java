@@ -8,19 +8,29 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.jar.Pack200;
-import java.util.jar.Pack200.Packer;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
-import net.ulrice.webstarter.ProcessContext;
 import net.ulrice.webstarter.ProcessThread;
 
+/**
+ * Task for unzipping downloaded files.
+ * 
+ * @author christof
+ */
 public class Unzip extends AbstractTask {
 
+	/** The logger used by this class. */
+	private static final Logger LOG = Logger.getLogger(Unzip.class.getName());
+	
+	/** The reg exp filter string used to identify files to unzip. */
 	public static final String FILTER_PARAM = "filter";
+	
+	/** The url of the cadidate file. */
 	public static final String URL_PARAM = "url";
-
+	
 	@Override
 	public boolean doTask(ProcessThread thread) {
 		String filter = getParameterAsString(FILTER_PARAM);
@@ -32,15 +42,13 @@ public class Unzip extends AbstractTask {
 			try {
 				fileUrl = new URL(urlStr);
 			} catch (MalformedURLException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				thread.handleError(this, "Malformed url.", "Malformed url: " + urlStr);
+				LOG.log(Level.SEVERE, "Malformed url: " + urlStr, e);
 			}
-		}
-		
+		}		
 		
 		String file = fileUrl.getFile();
-		String[] split = file.split("\\/");
-		
+		String[] split = file.split("\\/");		
 		
 		String fileName = split[split.length - 1];
 
@@ -101,11 +109,11 @@ public class Unzip extends AbstractTask {
 				zis.close();
 
 			} catch (FileNotFoundException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				thread.handleError(this, "File not found.", "File not found:" + fileName);
+				LOG.log(Level.SEVERE, "File not found:" + fileName, e);
 			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				thread.handleError(this, "IO exception.", "IO exception during unzipping file from url: " + urlStr);
+				LOG.log(Level.SEVERE, "IO exception during unzipping file from url: " + urlStr, e);
 			}
 		}
 		return true;

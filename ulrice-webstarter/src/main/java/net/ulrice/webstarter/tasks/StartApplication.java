@@ -7,14 +7,27 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.PrintWriter;
-import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
-import net.ulrice.webstarter.ProcessContext;
 import net.ulrice.webstarter.ProcessThread;
 
+/**
+ * Starts a java application
+ * 
+ * @author christof
+ */
 public class StartApplication extends AbstractTask {
+
+	/** The logger used by this class. */
+	private static final Logger LOG = Logger.getLogger(StartApplication.class.getName());
+	
+	/** Parameter containing the main class value. */
+	private static final String PARAM_MAIN_CLASS = "mainClass";
+	
+	/** Optional parameter containing a location jre path. */
+	private static final String PARAM_LOCAL_JRE = "localJre";
 
 	@Override
 	public boolean doTask(ProcessThread thread) {
@@ -23,7 +36,7 @@ public class StartApplication extends AbstractTask {
 
 		StringBuffer commandBuffer = new StringBuffer();
 		String localDir = thread.getAppDescription().getLocalDir();
-		String localJre = getParameterAsString("localJre");
+		String localJre = getParameterAsString(PARAM_LOCAL_JRE);
 		if (localJre != null) {
 			commandBuffer.append(localDir).append(localJre).append(File.separator).append("bin").append(File.separator);
 		}
@@ -35,7 +48,7 @@ public class StartApplication extends AbstractTask {
 		}
 		commandBuffer.append(" ");
 
-		String mainClass = getParameterAsString("mainClass");
+		String mainClass = getParameterAsString(PARAM_MAIN_CLASS);
 		if (mainClass != null) {
 			commandBuffer.append(mainClass);
 		}
@@ -52,34 +65,24 @@ public class StartApplication extends AbstractTask {
 		}
 
 		try {			
-			
-			
-			Process process = Runtime.getRuntime().exec(commandBuffer.toString(), null, new File(localDir));
-			
-			
+			// Start application			
+			Process process = Runtime.getRuntime().exec(commandBuffer.toString(), null, new File(localDir));						
 			StreamGobbler isGobbler = new StreamGobbler("OUT", process.getInputStream(), System.out);
 			StreamGobbler esGobbler = new StreamGobbler("ERR", process.getErrorStream(), System.err);
 			isGobbler.start();
-			esGobbler.start();
-			
-			
+			esGobbler.start();						
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			thread.handleError(this, "Error starting application.", "Error starting application: " + e.getMessage());
+			LOG.log(Level.SEVERE, "IOException during application startup", e);
 		}
 
-		System.out.println(commandBuffer);
 
 		return true;
 	}
 
 	protected String replacePlaceholders(ProcessThread thread, String appParameter) {
 		appParameter = appParameter.replace("${USERID}", thread.getContext().getUserId());
-		// appParameter = appParameter.replace("${PD-H-SESSION-ID}",
-		// thread.getContext().getValueAsString(ProcessContext.COOKIE));
-		// appParameter = appParameter.replace("${PD-H-SESSION-ID}",
-		// thread.getContext().getValueAsString(ProcessContext.COOKIE));
-		//		
+
 		int cookieIdxStart = appParameter.indexOf("${COOKIE=");
 		int cookieIdxEnd = appParameter.indexOf("}", cookieIdxStart);
 		if (cookieIdxStart >= 0 && cookieIdxEnd >= 0) {
@@ -117,14 +120,10 @@ public class StartApplication extends AbstractTask {
 			try {
 				while ((line = br.readLine()) != null) {
 					pw.println(name + " > " + line);
-					System.out.println(name + " > " + line);
 				}
 			} catch (IOException e) {
-				// TODO
-				e.printStackTrace();
+				e.printStackTrace(pw);
 			}
-
 		}
-
 	}
 }
