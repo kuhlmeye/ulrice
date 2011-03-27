@@ -1,12 +1,12 @@
 package net.ulrice.frame.impl.workarea;
 
 import java.awt.BorderLayout;
-import java.awt.Component;
 import java.awt.Insets;
+import java.awt.Point;
 import java.awt.event.ActionEvent;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.net.URL;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.logging.Logger;
 
 import javax.swing.AbstractAction;
@@ -16,25 +16,25 @@ import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
+import javax.swing.JPopupMenu;
 import javax.swing.JTabbedPane;
 import javax.swing.SwingConstants;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
+import javax.swing.UIManager;
 
 import net.ulrice.Ulrice;
 import net.ulrice.frame.IFWorkarea;
 import net.ulrice.module.IFController;
-import net.ulrice.module.IFModuleManager;
 import net.ulrice.module.IFModuleTitleRenderer;
-import net.ulrice.module.ModuleIconSize;
 import net.ulrice.module.IFModuleTitleRenderer.Usage;
+import net.ulrice.module.ModuleIconSize;
+import net.ulrice.ui.UIConstants;
 
 /**
  * Workspace that displays the modules in a tabbed view.
  * 
  * @author ckuhlmeyer
  */
-public class TabbedWorkarea extends JTabbedPane implements IFWorkarea, ChangeListener {
+public class TabbedWorkarea extends JTabbedPane implements IFWorkarea, MouseListener {
 
 	/** Default generated serial version uid. */
 	private static final long serialVersionUID = -4790214373827895177L;
@@ -44,17 +44,12 @@ public class TabbedWorkarea extends JTabbedPane implements IFWorkarea, ChangeLis
 
 	/** The close icon. */
 	private ImageIcon closeIcon;
-	
-	/** Mapping betweeMap<K, V>ab component and controller. */
-	private Map<Component, IFController> componentControllerMap = new HashMap<Component, IFController>();
 
 	/**
 	 * Creates a new tabbed workarea.
 	 */
 	public TabbedWorkarea() {
 		super();
-		
-		addChangeListener(this);
 
 		URL closeIconUrl = getClass().getResource("close.gif");
 		if (closeIconUrl != null) {
@@ -87,8 +82,7 @@ public class TabbedWorkarea extends JTabbedPane implements IFWorkarea, ChangeLis
 	 * @see net.ulrice.module.event.IFModuleEventListener#activateModule(net.ulrice.module.IFController)
 	 */
 	public void activateModule(IFController activeController) {
-		removeChangeListener(this);
-		
+
 		// Get the component of the controller.
 		JComponent controllerComponent = getControllerComponent(activeController);
 		int idx = indexOfComponent(controllerComponent);
@@ -104,14 +98,12 @@ public class TabbedWorkarea extends JTabbedPane implements IFWorkarea, ChangeLis
 
 			openModule(activeController);
 		}
-		addChangeListener(this);
 	}
 
 	/**
 	 * @see net.ulrice.module.event.IFModuleEventListener#closeModule(net.ulrice.module.IFController)
 	 */
 	public void closeModule(IFController activeController) {
-		removeChangeListener(this);
 		if (activeController == null) {
 			return;
 		}
@@ -131,30 +123,25 @@ public class TabbedWorkarea extends JTabbedPane implements IFWorkarea, ChangeLis
 			LOG.warning("Closed module [id:" + moduleId + "] could not be found in the tab.");
 		}
 		remove(controllerComponent);
-		addChangeListener(this);
 	}
 
 	/**
 	 * @see net.ulrice.module.event.IFModuleEventListener#deactivateModule(net.ulrice.module.IFController)
 	 */
 	public void deactivateModule(IFController activeController) {
-		removeChangeListener(this);
 		setSelectedIndex(-1);
-		addChangeListener(this);
 	}
 
 	/**
 	 * @see net.ulrice.module.event.IFModuleEventListener#openModule(net.ulrice.module.IFController)
 	 */
 	public void openModule(IFController activeController) {
-		removeChangeListener(this);
 		if (activeController == null) {
 			return;
 		}
 
 		// Get the component of the controller.
 		JComponent controllerComponent = getControllerComponent(activeController);
-		componentControllerMap.put(controllerComponent, activeController);
 
 		// Get the insert position.
 		int selectedIdx = getSelectedIndex();
@@ -174,20 +161,20 @@ public class TabbedWorkarea extends JTabbedPane implements IFWorkarea, ChangeLis
 		setSelectedComponent(controllerComponent);
 		selectedIdx = getSelectedIndex();
 		setTabComponentAt(selectedIdx, new TabControllerPanel(activeController));
-		addChangeListener(this);
 	}
 
 	/**
 	 * Returns the view component of a given controller.
 	 * 
-	 * @param controller The controller
+	 * @param controller
+	 *            The controller
 	 * @return The view component of this controller.
 	 */
 	private JComponent getControllerComponent(IFController controller) {
-		if(controller == null) {
+		if (controller == null) {
 			return null;
 		}
-		
+
 		JComponent controllerComponent = null;
 		if (controller.getView() != null) {
 			controllerComponent = controller.getView().getView();
@@ -196,7 +183,8 @@ public class TabbedWorkarea extends JTabbedPane implements IFWorkarea, ChangeLis
 	}
 
 	/**
-	 * Component displayed in the tab area displaying the information of a controller.
+	 * Component displayed in the tab area displaying the information of a
+	 * controller.
 	 * 
 	 * @author ckuhlmeyer
 	 */
@@ -204,8 +192,12 @@ public class TabbedWorkarea extends JTabbedPane implements IFWorkarea, ChangeLis
 
 		/** Default generated serial version uid. */
 		private static final long serialVersionUID = -6541174126754145798L;
+		private IFController controller;
 
 		TabControllerPanel(final IFController controller) {
+			this.controller = controller;
+
+			addMouseListener(TabbedWorkarea.this);
 			setOpaque(false);
 			setBorder(BorderFactory.createEmptyBorder());
 
@@ -249,18 +241,21 @@ public class TabbedWorkarea extends JTabbedPane implements IFWorkarea, ChangeLis
 
 			// Create the label displaying the controller title
 			JLabel label = new JLabel(controllerTitle, icon, JLabel.HORIZONTAL);
-			label.setBorder(BorderFactory.createEmptyBorder(2, 0, 0, 0));
+			label.setBorder(BorderFactory.createEmptyBorder(2, 0, 0, 20));
 			label.setHorizontalAlignment(SwingConstants.LEFT);
 
 			// Layout the tab component.
 			setLayout(new BorderLayout());
-			add(label, BorderLayout.WEST);
-			add(Box.createHorizontalStrut(20), BorderLayout.CENTER);
+			add(label, BorderLayout.CENTER);
 			add(closeButton, BorderLayout.EAST);
 		}
 
+		public IFController getController() {
+			return controller;
+		}
+
 	}
-	
+
 	/**
 	 * @see net.ulrice.frame.IFMainFrameComponent#getComponentId()
 	 */
@@ -269,18 +264,73 @@ public class TabbedWorkarea extends JTabbedPane implements IFWorkarea, ChangeLis
 		return getClass().getName();
 	}
 
-	/**
-	 * @see javax.swing.event.ChangeListener#stateChanged(javax.swing.event.ChangeEvent)
-	 */
 	@Override
-	public void stateChanged(ChangeEvent e) {
-		IFModuleManager moduleManager = Ulrice.getModuleManager();
+	public void mouseClicked(MouseEvent e) {
+	}
 
-		IFController controller = componentControllerMap.get(getSelectedComponent());
-		if(controller == null) {
-			new RuntimeException("Controller could not be found for tab component.");
+	@Override
+	public void mousePressed(MouseEvent e) {
+		if (e.getComponent() instanceof TabControllerPanel) {			
+			
+			TabControllerPanel tabCtrlPanel = (TabControllerPanel) e.getComponent();
+
+			Ulrice.getModuleManager().activateModule(tabCtrlPanel.getController());
+
+			
+			if (e.isPopupTrigger()) {
+				showPopup(tabCtrlPanel, e.getPoint());
+			}
 		}
-		
-		moduleManager.activateModule(controller);
+	}
+
+	private void showPopup(final TabControllerPanel tabCtrlPanel, Point point) {
+		JPopupMenu popup = new JPopupMenu();
+
+		popup.add(new AbstractAction(UIManager.getString(UIConstants.CLOSE_ACTION_TEXT)) {
+
+			/** Default generated serial version uid.*/
+			private static final long serialVersionUID = 4669265533306602938L;
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				Ulrice.getModuleManager().closeModule(tabCtrlPanel.getController());
+			}
+		});
+
+		popup.add(new AbstractAction(UIManager.getString(UIConstants.CLOSE_OTHER_ACTION_TEXT)) {
+
+			/** Default generated serial version uid.*/
+			private static final long serialVersionUID = 7971222651198540021L;
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				Ulrice.getModuleManager().closeOtherModules(tabCtrlPanel.getController());
+			}
+		});
+
+		popup.add(new AbstractAction(UIManager.getString(UIConstants.CLOSE_ALL_ACTION_TEXT)) {
+
+			/** Default generated serial version uid.*/
+			private static final long serialVersionUID = 8170793754336153114L;
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				Ulrice.getModuleManager().closeAllModules();
+			}
+		});
+		popup.show(tabCtrlPanel, point.x, point.y);
+	}
+
+	@Override
+	public void mouseReleased(MouseEvent e) {
+	}
+
+	@Override
+	public void mouseEntered(MouseEvent e) {
+
+	}
+
+	@Override
+	public void mouseExited(MouseEvent e) {
 	}
 }

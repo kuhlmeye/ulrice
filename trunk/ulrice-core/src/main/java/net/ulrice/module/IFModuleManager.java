@@ -81,4 +81,11 @@ public interface IFModuleManager {
 	 * Close all modules.
 	 */
 	void closeAllModules();
+
+	/**
+	 * Close all modules except the one given by the parameter
+	 * 
+	 * @param controller The module the should be left open.
+	 */
+	void closeOtherModules(IFController controller);
 }

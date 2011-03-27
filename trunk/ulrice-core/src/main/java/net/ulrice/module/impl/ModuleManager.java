@@ -134,6 +134,20 @@ public class ModuleManager implements IFModuleManager, IFModuleStructureManager 
 		}
 	}
 	
+
+	@Override
+	public void closeOtherModules(IFController controller) {
+		List<IFController> activeModules = getActiveModules();
+		
+		if(activeModules != null) {
+			for(IFController closeController : activeModules) {
+				if(!closeController.equals(controller)) {
+					closeModule(closeController);
+				}
+			}
+		}
+	}
+	
 	/**
 	 * @see net.ulrice.module.IFModuleManager#closeModule(net.ulrice.module.IFController)
 	 */
@@ -320,4 +334,5 @@ public class ModuleManager implements IFModuleManager, IFModuleStructureManager 
 	public void removeModuleStructureEventListener(IFModuleStructureEventListener listener) {
 		listenerList.remove(IFModuleStructureEventListener.class, listener);
 	}
+
 }

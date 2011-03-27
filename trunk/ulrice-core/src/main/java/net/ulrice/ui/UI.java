@@ -16,7 +16,12 @@ import javax.swing.border.BevelBorder;
  */
 public class UI implements UIConstants {
 
-    public static void applyDefaultUI() {
+	public static void applyDefaultUI() {
+    	
+    	UIManager.put(CLOSE_ACTION_TEXT, "Close");
+    	UIManager.put(CLOSE_OTHER_ACTION_TEXT, "Close Other");
+    	UIManager.put(CLOSE_ALL_ACTION_TEXT, "Close All");
+    	
         UIManager.put(CHANGEOVER_DIALOG_SIZE, new Dimension(300, 150));
         UIManager.put(CHANGEOVER_ICON_PANEL_BORDER, BorderFactory.createBevelBorder(BevelBorder.RAISED));
         UIManager.put(CHANGEOVER_MARKED_BORDER, BorderFactory.createCompoundBorder(BorderFactory
