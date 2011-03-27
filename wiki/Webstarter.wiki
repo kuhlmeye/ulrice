@@ -48,16 +48,24 @@ This tag defines the basic application settings like the name. The following att
   * needsLogin true or false. It defines, if login-parameters are used.
   * localDir The local directory where the downloaded files are stored. ${USER_DIR} is an allowed placeholder for the default user directory.  
 
+
+
 == Tasks ==
 This section describes the standard tasks included in the ulrice webstarter.
 
 === !AddToClasspath ===
 Adds a downloaded file to the classpath.
 ==== Parameters ====
-  * filter 
+  * filter Reg.-Exp filter which identifies all files that should be added to the classpath. 
+  * url Url of the file which is a candicate to be added to the classpath.
 
 === !DownloadFile ===
 Downloads a file from an url.
+==== Parameters ====
+  * url The file location.
+  * md5 The md5 sum of the file.
+  * pack200 True, if the remote file is packed with pack200
+  * classpath True, if this file should be added to the classpath.
 
 === !ReadDescription ===
 Reads a list of files from an application description file from an url and starts all subtasks contained in this task.
@@ -81,7 +89,7 @@ Starts a java application using a jre. The application is started as a seperate 
 ==== Placeholders ====
 The following placeholders are processed during the application parameter handling.
   * ${USERID} Replaced with the user id entered for the login.
-  * ${COOKIE=<name>} Replaced with the value of the cookie with name <name>  
+  * ${COOKIE=`<name>`} Replaced with the value of the cookie with name <name>  
 
 === !TamLogin ===
 Logins with username/password at a tivoli access manager. 
