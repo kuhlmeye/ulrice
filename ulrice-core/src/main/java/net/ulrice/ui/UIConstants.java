@@ -30,4 +30,10 @@ public interface UIConstants {
 	
 	/** The font used for displaying the time in the statusbar. */
 	public static final String STATUSBAR_CLOCKRENDERER_TIME_FONT = "Ulrice.StatusbarClockRenderer.Time.Font";
+	
+
+	public static final String CLOSE_ACTION_TEXT = "Ulrice.TabbedWorkarea.CloseActionText";
+	public static final String CLOSE_OTHER_ACTION_TEXT = "Ulrice.TabbedWorkarea.CloseOtherActionText";
+	public static final String CLOSE_ALL_ACTION_TEXT = "Ulrice.TabbedWorkarea.CloseAllActionText";
+
 }
