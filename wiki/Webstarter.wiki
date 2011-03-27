@@ -50,7 +50,7 @@ This tag defines the basic application settings like the name. The following att
 
 === Application Parameters ===
 Parameters that should be added as command line parameter during appliation start could be specified with the tag appParameter. The value attribute contains the commmand line parameter string.
-The placeholder that can be used within the value attribute are described in the StartApplication-Task. 
+The placeholder that can be used within the value attribute are described in the !StartApplication-Task. 
 
 == Tasks ==
 This section describes the standard tasks included in the ulrice webstarter.
