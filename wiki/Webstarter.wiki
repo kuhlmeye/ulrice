@@ -48,7 +48,9 @@ This tag defines the basic application settings like the name. The following att
   * needsLogin true or false. It defines, if login-parameters are used.
   * localDir The local directory where the downloaded files are stored. ${USER_DIR} is an allowed placeholder for the default user directory.  
 
-
+=== Application Parameters ===
+Parameters that should be added as command line parameter during appliation start could be specified with the tag appParameter. The value attribute contains the commmand line parameter string.
+The placeholder that can be used within the value attribute are described in the StartApplication-Task. 
 
 == Tasks ==
 This section describes the standard tasks included in the ulrice webstarter.
@@ -89,7 +91,7 @@ Starts a java application using a jre. The application is started as a seperate 
 ==== Placeholders ====
 The following placeholders are processed during the application parameter handling.
   * ${USERID} Replaced with the user id entered for the login.
-  * ${COOKIE=`<name>`} Replaced with the value of the cookie with name <name>  
+  * ${COOKIE=`<name>`} Replaced with the value of the cookie with name `<name>`  
 
 === !TamLogin ===
 Logins with username/password at a tivoli access manager. 
