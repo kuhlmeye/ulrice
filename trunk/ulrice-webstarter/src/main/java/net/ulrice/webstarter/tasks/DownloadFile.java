@@ -163,11 +163,12 @@ public class DownloadFile extends AbstractTask {
 	
 
 	private void unpack200(File inFile, File unpackedFile) throws IOException {
-		System.out.println("Unpacking " + inFile.toString() + " to " + unpackedFile);
 		try {
-			Unpacker unpacker = Pack200.newUnpacker();
-			JarOutputStream os = new JarOutputStream(new FileOutputStream(unpackedFile));
-			unpacker.unpack(inFile, os);		
+	        FileOutputStream fostream = new FileOutputStream(unpackedFile);
+	        JarOutputStream jostream = new JarOutputStream(fostream);
+	        Unpacker unpacker = Pack200.newUnpacker();
+	        unpacker.unpack(inFile, jostream);
+	        jostream.close();	
 		} catch(IOException e) {
 			e.printStackTrace();
 		}
