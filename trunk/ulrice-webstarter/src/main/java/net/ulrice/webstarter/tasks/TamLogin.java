@@ -21,6 +21,11 @@ import javax.net.ssl.TrustManager;
 import net.ulrice.webstarter.ProcessThread;
 import net.ulrice.webstarter.net.TrustAllTrustManager;
 
+/**
+ * Task for the authentication at a tivoli access manager
+ * 
+ * @author christof
+ */
 public class TamLogin extends AbstractTask {
 
 	public static final String URL_ATTRIBUTE = "url";

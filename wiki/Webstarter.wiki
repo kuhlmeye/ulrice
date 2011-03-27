@@ -14,6 +14,13 @@ The xml-files defining the download and startup-process are loaded from the appl
 
 {{{
 <application applicationName="Application Name" applicationIcon="Application.200.png" needsLogin="true" localDir="C:/MyApplication">	
+	<appParameter value="-param01=value"/>
+	<appParameter value="-param02=value"/>
+	<appParameter value="-param03=value"/>
+	<appParameter value="-userId=${USERID}"/>
+	<appParameter value="-pdCookie=${COOKIE=PD-H-SESSION-ID}"/>		
+	<appParameter value="-pdFailoverCookie=${COOKIE=PD-ID}"/>		
+		
 	<task type="TamLogin" url="https://tam.login.url/pkmslogin.form" />
 	<task type="ReadDescription"
 		baseUrl="https://root.url.to.downloaded.files/"
@@ -22,14 +29,7 @@ The xml-files defining the download and startup-process are loaded from the appl
 		<task type="Unzip" filter=".*\.zip" />
 		<task type="AddToClasspath" filter=".*\.jar" />
 	</task>
-	<task type="StartApplication" localJre="name/of/jre/directory" mainClass="my.application.Application">
-		<appParameter value="-param01=value"/>
-		<appParameter value="-param02=value"/>
-		<appParameter value="-param03=value"/>
-		<appParameter value="-userId=${USERID}"/>
-		<appParameter value="-pdCookie=${COOKIE=PD-H-SESSION-ID}"/>		
-		<appParameter value="-pdFailoverCookie=${COOKIE=PD-ID}"/>		
-	</task>
+	<task type="StartApplication" localJre="name/of/jre/directory" mainClass="my.application.Application"/>
 </application>
 }}}
 
@@ -63,24 +63,35 @@ Downloads a file from an url.
 Reads a list of files from an application description file from an url and starts all subtasks contained in this task.
 ==== Parameters ====
   * baseUrl
-  * descritionUrl
+  * descriptionUrl
+==== Placeholders ====
+The following placeholders could be used in the subtasks.
+  * ${FILE_URL} This placeholder will be replaced with the url of the current file that is downloaded by the webstarter.  
+  
+=== !ReadTasks ===
+Read further tasks from an url.
+==== Parameters ====
+  * url The url of the xml description file containing the additional tasks.
 
 === !StartApplication ===
-Starts an application.
+Starts a java application using a jre. The application is started as a seperate process. All appParameter-Tags are processed within this task.
 ==== Parameters ====
-  * localJre
-  * mainClass
-==== Sub-Tags ====
-  * appParameter  
-
+  * localJre Path to a local jre. This is an optional parameter. If not existing a system jre will be used.
+  * mainClass The full qualified path to the main class.
+==== Placeholders ====
+The following placeholders are processed during the application parameter handling.
+  * ${USERID} Replaced with the user id entered for the login.
+  * ${COOKIE=<name>} Replaced with the value of the cookie with name <name>  
 
 === !TamLogin ===
-Logins with username/password at a tivoli access manager.
+Logins with username/password at a tivoli access manager. 
+Sends the user/password to the tam login form and retrieves the response including the session coookie. 
+The cookie then will be used in the further communication with the server
 ==== Parameters ====
-  * url
+  * url Url to the login page of the tivoli access manager
 
 === Unzip ===
-Unzips a downloaded file.
-
+Unzips a file.
 ==== Parameters ====
-  * filter 
+  * filter Reg.-Exp filter which identifies all files that should be unzipped. 
+  * url Url of the file which is a candicate to be unzipped.

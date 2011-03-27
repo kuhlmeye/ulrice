@@ -15,6 +15,7 @@ import net.ulrice.webstarter.TaskDescription;
 
 public class ReadDescription extends AbstractTask {
 
+	private static final String FILE_URL_PLACEHOLDER = "${FILE_URL}";
 	private static final String URL_PARAM_NAME = "descriptionUrl";
 	private static final String BASE_URL = "baseUrl";
 	
@@ -43,7 +44,7 @@ public class ReadDescription extends AbstractTask {
 
 					thread.fireTaskProgressed(this, 60, "Instanciating subtasks..", null);
 					for(TaskDescription subTask : getSubTasks()) {						
-						Placeholder placeholder = new Placeholder("${FILE_URL}", fileUrlStr);						
+						Placeholder placeholder = new Placeholder(FILE_URL_PLACEHOLDER, fileUrlStr);						
 						IFTask task = subTask.instanciateTask(placeholder);		
 						subTaskList.add(task);
 					}
