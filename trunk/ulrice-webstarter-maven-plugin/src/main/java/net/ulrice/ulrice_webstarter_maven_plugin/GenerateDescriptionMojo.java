@@ -57,7 +57,6 @@ public class GenerateDescriptionMojo extends AbstractMojo {
 	 * Base url
 	 * 
 	 * @parameter
-	 * @required
 	 */
 	private URL baseUrl;
 
@@ -77,11 +76,11 @@ public class GenerateDescriptionMojo extends AbstractMojo {
 	private boolean useMd5;
 	
 	/**
-	 * True, if pack200 should be used to compress the jars.
+	 * RegExp for files that should be compressed by pack200
 	 * 
-	 * @parameter default-value="false"
+	 * @parameter default-value=""
 	 */
-	private boolean usePack200;
+	private String usePack200;
 
 	public void execute() throws MojoExecutionException {
 
@@ -137,28 +136,38 @@ public class GenerateDescriptionMojo extends AbstractMojo {
 						}
 
 						if (matches) {
+							getLog().info("Processing: " + filename);
 							if (!fileFound) {
 								pw.println("<tasklist>");
 								fileFound = true;
 							}
 
+							boolean pack200Used = false;
 
-							if(usePack200) {
+							if(usePack200 != null && !"".equals(usePack200.trim()) && filename.matches(usePack200)) {
+								getLog().debug("-Using pack200");
 								file = pack200(file.getParentFile(), file);
+								pack200Used = true;
 							}
 							
 							String md5 = calculateMd5(file);
+
+							String urlStr = null;
+							if(baseUrl != null) {								
+								URL url = new URL(baseUrl, file.getName());
+								urlStr = url.toString();
+							} else {
+								urlStr = file.getName();
+							}
+							getLog().debug("-Adding file '" + file + "' as '" + urlStr + "'.");
 							
-							URL url = new URL(baseUrl, file.getName());
-							getLog().info("-Adding file '" + file + "' as '" + url + "'.");
 							pw.print("<task type=\"DownloadFile\" classpath=\"true\" ");							
-							pw.print("url=\"" + url + "\" ");
+							pw.print("url=\"" + urlStr + "\" ");
 							if (md5 != null && useMd5) {
+								getLog().debug("-MD5 is " + md5);
 								pw.print("md5=\"" + md5 + "\" ");
 							}		
-							if(usePack200 && file.toString().endsWith(".pack200")) {
-								pw.print("pack200=\"true\"");
-							}
+							pw.print("pack200=\"" + pack200Used + "\"");
 							pw.println("/>");
 							if (copyFiles) {
 								try {
@@ -232,7 +241,7 @@ public class GenerateDescriptionMojo extends AbstractMojo {
 			inChannel = new FileInputStream(file).getChannel();
 			outChannel = new FileOutputStream(f).getChannel();
 			inChannel.transferTo(0, inChannel.size(), outChannel);
-			getLog().info("Copy " + file.getName() + " to " + f.getAbsolutePath());
+			getLog().debug("-Copy " + file.getName() + " to " + f.getAbsolutePath());
 		} catch (FileNotFoundException e) {
 			throw new MojoExecutionException("Error creating file " + targetDir, e);
 		} catch (IOException e) {
