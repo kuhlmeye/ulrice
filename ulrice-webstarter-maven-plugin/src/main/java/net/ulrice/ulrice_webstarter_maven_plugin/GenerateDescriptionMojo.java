@@ -151,6 +151,7 @@ public class GenerateDescriptionMojo extends AbstractMojo {
 
 							boolean pack200Used = false;
 
+							String md5 = calculateMd5(file);
 							if(usePack200 != null && !"".equals(usePack200.trim()) && filename.matches(usePack200)) {
 								getLog().debug("-Using pack200");
 								file = pack200(file.getParentFile(), file);
@@ -158,7 +159,6 @@ public class GenerateDescriptionMojo extends AbstractMojo {
 							}
 
 							
-							String md5 = calculateMd5(file);
 
 							String urlStr = null;
 							if(baseUrl != null) {								
