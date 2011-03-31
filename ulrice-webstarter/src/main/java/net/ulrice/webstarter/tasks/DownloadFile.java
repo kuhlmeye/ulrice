@@ -37,7 +37,7 @@ public class DownloadFile extends AbstractTask {
 
 		String baseUrlString = getParameterAsString(BASE_URL_PARAM_NAME);
 		String urlStr = getParameterAsString(URL_PARAM);
-		String remoteMd5 = getParameterAsString(URL_PARAM);
+		String remoteMd5 = getParameterAsString(MD5_PARAM);
 		boolean usePack200 = Boolean.valueOf(getParameterAsString(PACK200_PARAM));
 		
 
@@ -187,6 +187,7 @@ public class DownloadFile extends AbstractTask {
 			while( (read = is.read(buffer)) > 0) {
 				digest.update(buffer, 0, read);
 			}		
+			is.close();
 			byte[] md5sum = digest.digest();
 			BigInteger bigInt = new BigInteger(1, md5sum);
 			return bigInt.toString(16);
@@ -204,4 +205,5 @@ public class DownloadFile extends AbstractTask {
 			}
 		}
 	}
+
 }
