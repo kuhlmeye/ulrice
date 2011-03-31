@@ -81,6 +81,13 @@ public class GenerateDescriptionMojo extends AbstractMojo {
 	 * @parameter default-value=""
 	 */
 	private String usePack200;
+	
+	/**
+	 * Regexp for the files that should be uncompressed by zip after downloading.
+	 * 
+	 * @parameter default-value=""
+	 */
+	private String unzipFiles;
 
 	public void execute() throws MojoExecutionException {
 
@@ -149,6 +156,7 @@ public class GenerateDescriptionMojo extends AbstractMojo {
 								file = pack200(file.getParentFile(), file);
 								pack200Used = true;
 							}
+
 							
 							String md5 = calculateMd5(file);
 
@@ -169,6 +177,13 @@ public class GenerateDescriptionMojo extends AbstractMojo {
 							}		
 							pw.print("pack200=\"" + pack200Used + "\"");
 							pw.println("/>");
+							
+							
+							if(unzipFiles != null && !"".equals(unzipFiles.trim()) && filename.matches(unzipFiles)) {
+								getLog().debug("-Using unzip files");							
+								pw.print("<task type=\"Unzip\" filter=\".*\" url=\"" + urlStr + "\"/>");
+							}
+							
 							if (copyFiles) {
 								try {
 									copyFile(file, targetDir);

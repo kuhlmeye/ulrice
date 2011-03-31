@@ -31,11 +31,20 @@ public class Unzip extends AbstractTask {
 	/** The url of the cadidate file. */
 	public static final String URL_PARAM = "url";
 	
+	private static final String BASE_URL_PARAM_NAME = "baseUrl";
+	
 	@Override
 	public boolean doTask(ProcessThread thread) {
 		String filter = getParameterAsString(FILTER_PARAM);
 		String urlStr = getParameterAsString(URL_PARAM);
 		String localDirStr = thread.getAppDescription().getLocalDir();
+		
+		
+
+		String baseUrlString = getParameterAsString(BASE_URL_PARAM_NAME);		
+		if(baseUrlString != null) {
+			urlStr = baseUrlString + urlStr;
+		}
 		
 		URL fileUrl = null;
 		if(urlStr != null) {
