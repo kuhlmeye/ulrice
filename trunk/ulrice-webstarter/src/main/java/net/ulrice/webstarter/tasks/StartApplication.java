@@ -68,7 +68,7 @@ public class StartApplication extends AbstractTask {
 			// Start application			
 			Process process = Runtime.getRuntime().exec(commandBuffer.toString(), null, new File(localDir));						
 			StreamGobbler isGobbler = new StreamGobbler("OUT", process.getInputStream(), System.out);
-			StreamGobbler esGobbler = new StreamGobbler("ERR", process.getErrorStream(), System.err);
+			StreamGobbler esGobbler = new StreamGobbler("ERR", process.getErrorStream(), System.out);
 			isGobbler.start();
 			esGobbler.start();						
 		} catch (IOException e) {

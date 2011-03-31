@@ -233,8 +233,10 @@ public class GenerateDescriptionMojo extends AbstractMojo {
 			while ((read = is.read(buffer)) > 0) {
 				digest.update(buffer, 0, read);
 			}
+			is.close();
 			byte[] md5sum = digest.digest();
 			BigInteger bigInt = new BigInteger(1, md5sum);
+
 			return bigInt.toString(16);
 
 		} catch (IOException e) {
