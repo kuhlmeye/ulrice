@@ -28,18 +28,22 @@ public class DownloadFile extends AbstractTask {
 	public static final String URL_PARAM = "url";
 	public static final String MD5_PARAM = "md5";
 	public static final String PACK200_PARAM = "pack200";
+	private static final String BASE_URL_PARAM_NAME = "baseUrl";
 
 	public static final String CLASSPATH_PARAM = "classpath";
 
 	@Override
 	public boolean doTask(ProcessThread thread) {
 
-		
+		String baseUrlString = getParameterAsString(BASE_URL_PARAM_NAME);
 		String urlStr = getParameterAsString(URL_PARAM);
 		String remoteMd5 = getParameterAsString(URL_PARAM);
 		boolean usePack200 = Boolean.valueOf(getParameterAsString(PACK200_PARAM));
 		
 
+		if(baseUrlString != null) {
+			urlStr = baseUrlString + urlStr;
+		}
 		
 		URL fileUrl = null;
 		try {

@@ -21,12 +21,15 @@ public class ReadTasks extends AbstractTask {
 
 	/** The logger used by this class. */
 	private static final Logger LOG = Logger.getLogger(ReadTasks.class.getName());
-	
-	private static final String URL_PARAM_NAME = "descriptionUrl";
+
+	private static final String DESCR_URL_PARAM_NAME = "descriptionUrl";
+	private static final String BASE_URL_PARAM_NAME = "baseUrl";
 
 	@Override
 	public boolean doTask(ProcessThread thread) {
 
+		
+		
 		List<TaskDescription> tasks = loadTasks(thread);
 		if (tasks != null) {
 
@@ -53,8 +56,10 @@ public class ReadTasks extends AbstractTask {
 	}
 
 	private List<TaskDescription> loadTasks(ProcessThread thread) {
-		String urlStr = getParameterAsString(URL_PARAM_NAME);
-
+		String urlStr = getParameterAsString(DESCR_URL_PARAM_NAME);
+		String baseUrlStr = getParameterAsString(BASE_URL_PARAM_NAME);
+		
+		
 		if (urlStr == null) {
 			return null;
 		}
@@ -62,7 +67,8 @@ public class ReadTasks extends AbstractTask {
 		try {
 
 			thread.fireTaskProgressed(this, 40, "Connecting..", "Connecting to " + urlStr);
-			URL url = new URL(urlStr);
+			URL url = new URL(urlStr);		
+			
 			URLConnection connection = url.openConnection();
 			if (connection instanceof HttpURLConnection) {
 				HttpURLConnection httpConnection = (HttpURLConnection) connection;
@@ -80,8 +86,13 @@ public class ReadTasks extends AbstractTask {
 			XMLDescriptionReader reader = new XMLDescriptionReader(connection.getInputStream(), null);
 			ApplicationDescription descr = thread.getAppDescription();
 			reader.parseXML(descr);
-
-			return descr.getTasks();
+			List<TaskDescription> tasks = descr.getTasks();
+			if(baseUrlStr != null && tasks != null) {
+				for(TaskDescription task : tasks) {
+					task.getParameters().put(BASE_URL_PARAM_NAME, baseUrlStr);
+				}
+			}
+			return tasks;
 
 		} catch (MalformedURLException e) {
 			thread.handleError(this, "Malformed url.", "Malformed url:" + urlStr);
