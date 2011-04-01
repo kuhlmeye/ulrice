@@ -148,10 +148,14 @@ public class GenerateDescriptionMojo extends AbstractMojo {
 								pw.println("<tasklist>");
 								fileFound = true;
 							}
-
-							boolean pack200Used = false;
-
-							String md5 = calculateMd5(file);
+							
+							String md5 = null; 
+							if(useMd5) {
+								md5 = calculateMd5(file);
+								getLog().debug("-MD5 is " + md5);
+							}
+							
+							boolean pack200Used = false;						
 							if(usePack200 != null && !"".equals(usePack200.trim()) && filename.matches(usePack200)) {
 								getLog().debug("-Using pack200");
 								file = pack200(file.getParentFile(), file);
@@ -159,7 +163,6 @@ public class GenerateDescriptionMojo extends AbstractMojo {
 							}
 
 							
-
 							String urlStr = null;
 							if(baseUrl != null) {								
 								URL url = new URL(baseUrl, file.getName());
@@ -172,7 +175,6 @@ public class GenerateDescriptionMojo extends AbstractMojo {
 							pw.print("<task type=\"DownloadFile\" classpath=\"true\" ");							
 							pw.print("url=\"" + urlStr + "\" ");
 							if (md5 != null && useMd5) {
-								getLog().debug("-MD5 is " + md5);
 								pw.print("md5=\"" + md5 + "\" ");
 							}		
 							pw.print("pack200=\"" + pack200Used + "\"");
