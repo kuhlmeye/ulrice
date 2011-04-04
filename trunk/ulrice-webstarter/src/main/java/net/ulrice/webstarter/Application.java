@@ -78,7 +78,8 @@ public class Application implements IFProcessEventListener, ActionListener {
 		appSettings = new Properties();
 		try {
 			appSettings.load(new FileInputStream("webstarter.properties"));
-			frame.getUserIdField().setText(appSettings.getProperty("UserId"));
+			String userId = appSettings.getProperty("UserId");
+			frame.getUserIdField().setText(userId);						
 			frame.setSelectedApplication(appSettings.getProperty("Application"));
 		} catch (FileNotFoundException e) {
 			LOG.log(Level.FINE, "Settings-file not found. Ignoring.", e);
@@ -89,7 +90,6 @@ public class Application implements IFProcessEventListener, ActionListener {
 
 	private void saveSettings() {
 		try {
-
 			appSettings.put("UserId", frame.getUserIdField().getText());
 			appSettings.put("Application", frame.getSelectedApplication().getId());
 			appSettings.store(new FileOutputStream("webstarter.properties"), "");
@@ -103,6 +103,10 @@ public class Application implements IFProcessEventListener, ActionListener {
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		if (ApplicationFrame.START_CMD.equals(e.getActionCommand())) {
+			frame.getPasswordField().setEnabled(false);
+			frame.getUserIdField().setEnabled(false);
+			frame.getApplicationChooser().setEnabled(false);
+			frame.getStartButton().setEnabled(false);
 			startProcess();
 		} else if (ApplicationFrame.CANCEL_CMD.equals(e.getActionCommand())) {
 			frame.dispose();
@@ -163,6 +167,10 @@ public class Application implements IFProcessEventListener, ActionListener {
 
 	@Override
 	public void handleError(ProcessThread thread, IFTask task, String shortMessage, String longMessage) {
+		frame.getPasswordField().setEnabled(true);
+		frame.getUserIdField().setEnabled(true);
+		frame.getApplicationChooser().setEnabled(true);
+		
 		frame.getStartButton().setEnabled(true);
 		frame.appendMessage("Error: " + shortMessage + "\n" + longMessage);
 

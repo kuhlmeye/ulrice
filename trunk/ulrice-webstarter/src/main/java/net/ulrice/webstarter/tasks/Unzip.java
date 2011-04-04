@@ -91,7 +91,7 @@ public class Unzip extends AbstractTask {
 							}
 							
 						}
-						thread.fireTaskProgressed(this, 0, entry.getName(), "Unzipping " + entry.getName() + "(" + entry.getSize() + "bytes) ...");
+						thread.fireTaskProgressed(this, 0, entry.getName(), "Unzipping " + entry.getName() + " (" + entry.getSize() + "bytes) ...");
 						
 						FileOutputStream fos = new FileOutputStream(localDirStr + entry.getName());
 						dest = new BufferedOutputStream(fos, 1024);
