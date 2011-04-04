@@ -5,6 +5,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Properties;
 
 /**
  * Class storing the global settings. 
@@ -18,6 +19,8 @@ public class ProcessContext {
 	
 	/** Stores all classpath entries. */
 	private List<String> classPath= new LinkedList<String>();
+	
+	private Properties persistentProperties = new Properties();
 	
 	private String userId;
 	
@@ -65,5 +68,13 @@ public class ProcessContext {
 
 	public void setCookieMap(Map<String, String> cookieMap) {
 		this.cookieMap = cookieMap;
+	}
+
+	public Properties getPersistentProperties() {
+		return persistentProperties;
+	}
+
+	public void setPersistentProperties(Properties persistentProperties) {
+		this.persistentProperties = persistentProperties;
 	}
 }

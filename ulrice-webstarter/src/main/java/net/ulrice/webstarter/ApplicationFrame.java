@@ -61,7 +61,6 @@ public class ApplicationFrame extends JFrame implements ActionListener, ItemList
 	private JScrollPane messageAreaScroller;
 	private ImageIcon defaultAppImage;
 	private JToggleButton messageToggleButton;
-	private boolean showApplicationChooser = true;
 
 	public ApplicationFrame() {
 		this.globalProgress = new JProgressBar();
@@ -214,7 +213,6 @@ public class ApplicationFrame extends JFrame implements ActionListener, ItemList
 	}
 	
 	public void setShowApplicationDialog(boolean showApplicationChooser) {
-		this.showApplicationChooser = showApplicationChooser;
 		applicationChooser.setVisible(showApplicationChooser);
 		this.invalidate();
 		this.repaint();
@@ -237,7 +235,9 @@ public class ApplicationFrame extends JFrame implements ActionListener, ItemList
 		messageArea.append(message);
 		SwingUtilities.invokeLater(new Runnable() {
 			public void run() {
-				messageArea.setCaretPosition(messageArea.getText().length());
+				if(messageArea != null) {					
+					messageArea.setCaretPosition(messageArea.getText() == null ? 0 : messageArea.getText().length());
+				}
 			}
 		});
 	}
@@ -310,5 +310,9 @@ public class ApplicationFrame extends JFrame implements ActionListener, ItemList
 			}
 			applicationLabel.invalidate();
 		}
+	}
+
+	public JComboBox getApplicationChooser() {
+		return applicationChooser;
 	}
 }

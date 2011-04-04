@@ -120,6 +120,7 @@ public class StartApplication extends AbstractTask {
 			try {
 				while ((line = br.readLine()) != null) {
 					pw.println(name + " > " + line);
+					System.out.println(line);
 				}
 			} catch (IOException e) {
 				e.printStackTrace(pw);

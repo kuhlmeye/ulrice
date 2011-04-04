@@ -152,7 +152,7 @@ public class GenerateDescriptionMojo extends AbstractMojo {
 							String md5 = null; 
 							if(useMd5) {
 								md5 = calculateMd5(file);
-								getLog().debug("-MD5 is " + md5);
+								getLog().info("-MD5 for file: " + file + " is " + md5);
 							}
 							
 							boolean pack200Used = false;						

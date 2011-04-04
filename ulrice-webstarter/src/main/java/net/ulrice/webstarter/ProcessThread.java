@@ -1,5 +1,10 @@
 package net.ulrice.webstarter;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
@@ -159,6 +164,15 @@ public class ProcessThread {
 		@Override
 		public void run() {
 			
+			File propertyFile = new File(getAppDescription().getLocalDir(), getAppDescription().getId() + ".properties");
+			try {
+				getContext().getPersistentProperties().load(new FileInputStream(propertyFile));
+			} catch (FileNotFoundException e) {
+				LOG.warning("Could not found property file " + propertyFile + ". Creating empty file.");
+			} catch (IOException e) {
+				LOG.log(Level.WARNING, "Error reading from property file.", e);
+			}
+			
 			if(taskQueue != null && !threadStopped) {
 
 				// Prefill the task-queue
@@ -170,7 +184,7 @@ public class ProcessThread {
 					IFTask task = taskQueue.get(numberOfCurrentTask);
 					fireTaskStarted(task);
 					if(!task.doTask(ProcessThread.this)) {
-						return;												
+						break;
 					}
 					fireTaskFinished(task);						
 
@@ -181,6 +195,16 @@ public class ProcessThread {
 				
 				
 			}
+			
+			try {
+				getContext().getPersistentProperties().store(new FileOutputStream(propertyFile), "");
+			} catch (FileNotFoundException e) {
+				LOG.warning("Could not found property file " + propertyFile + ". Creating empty file.");
+			} catch (IOException e) {
+				LOG.log(Level.WARNING, "Error reading from property file.", e);
+			}
+			
+			
 		}
 
 		private void fillTaskQueue() {
