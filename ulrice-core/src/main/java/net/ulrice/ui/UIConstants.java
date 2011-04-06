@@ -35,5 +35,8 @@ public interface UIConstants {
 	public static final String CLOSE_ACTION_TEXT = "Ulrice.TabbedWorkarea.CloseActionText";
 	public static final String CLOSE_OTHER_ACTION_TEXT = "Ulrice.TabbedWorkarea.CloseOtherActionText";
 	public static final String CLOSE_ALL_ACTION_TEXT = "Ulrice.TabbedWorkarea.CloseAllActionText";
+	
+	public static final String MESSAGEDIALOG_OPAQUE = "MessageDialog.Opaque";
+	public static final String MESSAGEDIALOG_FOREGROUND = "MessageDialog.Foreground";
 
 }

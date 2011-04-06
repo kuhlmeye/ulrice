@@ -29,6 +29,9 @@ public class UI implements UIConstants {
         UIManager.put(CHANGEOVER_NONMARKED_BORDER, BorderFactory.createEmptyBorder(9, 9, 9, 9));
         UIManager.put(CHANGEOVER_ICON_INSETS, new Insets(5, 5, 5, 5));
         UIManager.put(CHANGEOVER_ICONS_PER_ROW, Integer.valueOf(4));
+        
+        UIManager.put(MESSAGEDIALOG_FOREGROUND, Color.BLACK);
+        UIManager.put(MESSAGEDIALOG_OPAQUE, Boolean.FALSE);
 
         Font labelFont = UIManager.getFont("Label.font");
         if (null != labelFont) {
