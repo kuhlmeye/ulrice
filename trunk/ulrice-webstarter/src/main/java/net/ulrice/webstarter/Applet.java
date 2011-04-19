@@ -7,7 +7,9 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.net.URL;
 import java.util.StringTokenizer;
+import java.util.logging.Logger;
 
 import net.ulrice.webstarter.tasks.IFTask;
 
@@ -23,11 +25,16 @@ public class Applet extends java.applet.Applet implements IFProcessEventListener
 	/** Default generated serial version uid. */
 	private static final long serialVersionUID = 7441995340585975668L;
 	private AppletComponent view;
+	
+	private static final Logger LOG = Logger.getLogger(Applet.class.getName());
 
 	@Override
 	public void init() {
 		super.init();
 
+		
+		
+		
 		String applicationUrl = getParameter("applicationUrl");
 		String cookieString = getParameter("cookie");
 
@@ -37,10 +44,12 @@ public class Applet extends java.applet.Applet implements IFProcessEventListener
 
 		if (applicationUrl != null) {
 			try {
-				URI uri = new URI(applicationUrl);
-				XMLDescriptionReader reader = new XMLDescriptionReader(new FileInputStream(new File(uri)), null);
+				URL url = new URL(getCodeBase(), applicationUrl);
+				LOG.info("Using Application Url: " + url.toString());
+				
+				XMLDescriptionReader reader = new XMLDescriptionReader(new FileInputStream(new File(url.toURI())), null);
 				ApplicationDescription appDescription = new ApplicationDescription();
-				appDescription.setId(uri.toString());
+				appDescription.setId(url.toString());
 				reader.parseXML(appDescription);
 
 				view.setApplString(appDescription.getName());
