@@ -47,7 +47,7 @@ public class Applet extends java.applet.Applet implements IFProcessEventListener
 				URL url = new URL(getCodeBase(), applicationUrl);
 				LOG.info("Using Application Url: " + url.toString());
 				
-				XMLDescriptionReader reader = new XMLDescriptionReader(new FileInputStream(new File(url.toURI())), null);
+				XMLDescriptionReader reader = new XMLDescriptionReader(url.openStream(), null);
 				ApplicationDescription appDescription = new ApplicationDescription();
 				appDescription.setId(url.toString());
 				reader.parseXML(appDescription);
@@ -76,8 +76,6 @@ public class Applet extends java.applet.Applet implements IFProcessEventListener
 				thread.addProcessEventListener(this);
 				thread.startProcess();
 
-			} catch (URISyntaxException e) {
-				e.printStackTrace();
 			} catch (FileNotFoundException e) {
 				e.printStackTrace();
 			} catch (SAXException e) {
