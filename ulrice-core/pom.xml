@@ -6,9 +6,9 @@
 
 	<parent>
 		<groupId>net.ulrice</groupId>
-		<artifactId>ulrice</artifactId>
-		<version>0.1-SNAPSHOT</version>
-		<relativePath>..</relativePath>
+		<artifactId>ulrice</artifactId>		
+		<version>0.2-SNAPSHOT</version>
+		<relativePath>../ulrice</relativePath>
 	</parent>
 
 	<build>

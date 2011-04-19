@@ -3,25 +3,25 @@
 	<modelVersion>4.0.0</modelVersion>
 	<artifactId>ulrice-sample</artifactId>
 	<name>Ulrice-Sample</name>
-	
+
 	<parent>
 		<groupId>net.ulrice</groupId>
 		<artifactId>ulrice</artifactId>
-		<version>0.1-SNAPSHOT</version>
-		<relativePath>..</relativePath>
+		<version>0.2-SNAPSHOT</version>
+		<relativePath>../ulrice</relativePath>
 	</parent>
-		
+
 	<description>The Ulrice Sample Application</description>
 	<dependencies>
 		<dependency>
 			<groupId>net.ulrice</groupId>
 			<artifactId>ulrice-core</artifactId>
-			<version>0.1-SNAPSHOT</version>
+			<version>0.2-SNAPSHOT</version>
 		</dependency>
 		<dependency>
 			<groupId>net.ulrice</groupId>
 			<artifactId>ulrice-databinding</artifactId>
-			<version>0.1-SNAPSHOT</version>
+			<version>0.2-SNAPSHOT</version>
 		</dependency>
 	</dependencies>
 
@@ -94,7 +94,7 @@
 					<allowSnapshots>true</allowSnapshots>
 					<uploads>
 						<upload>
-							<extensions>jar.pack200</extensions>			
+							<extensions>jar.pack200</extensions>
 						</upload>
 						<upload>
 							<extensions>ws.xml</extensions>
