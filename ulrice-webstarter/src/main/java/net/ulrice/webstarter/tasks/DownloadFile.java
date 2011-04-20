@@ -75,11 +75,9 @@ public class DownloadFile extends AbstractTask {
 				con.setRequestProperty("Cookie", reqCookieStr);
 			}
 			con.connect();
-
-			String lengthStr = con.getHeaderField("Content-Length");
-
-			Long length = Long.valueOf(lengthStr);
-			Long downloaded = 0l;
+			
+			long remoteFileLen = con.getContentLength();
+			int downloaded = 0;
 
 			File localDir = new File(localDirString);
 			localDir.mkdirs();
@@ -108,7 +106,6 @@ public class DownloadFile extends AbstractTask {
 					skipDownload = remoteMd5.equals(savedRemoteMd5) && localMd5.equals(savedLocalMd5);
 				} else {
 					long localFileLen = localFile.length();
-					long remoteFileLen = Long.valueOf(lengthStr);
 					if (localFileLen == remoteFileLen) {
 						// Skip file. It already exists.
 						thread.fireTaskProgressed(this, 100, fileName, "Downloading " + fileName + "... (skipped)");
@@ -137,7 +134,7 @@ public class DownloadFile extends AbstractTask {
 					while ((read = is.read(responseBuffer, 0, 1024)) > 0) {
 
 						downloaded += read;
-						int progress = (int) (100.0 / length * downloaded);
+						int progress = (int) (100.0 / remoteFileLen * downloaded);
 						thread.fireTaskProgressed(this, progress, fileName, null);
 						fos.write(responseBuffer, 0, read);
 					}
