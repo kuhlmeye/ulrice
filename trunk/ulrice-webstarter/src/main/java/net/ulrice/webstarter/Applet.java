@@ -36,8 +36,11 @@ public class Applet extends java.applet.Applet implements IFProcessEventListener
 		
 		
 		String applicationUrl = getParameter("applicationUrl");
+		String userId = getParameter("userId");
 		String cookieString = getParameter("cookie");
 
+		
+		
 		view = new AppletComponent();
 		setLayout(new BorderLayout());
 		add(view, BorderLayout.CENTER);
@@ -49,12 +52,14 @@ public class Applet extends java.applet.Applet implements IFProcessEventListener
 				
 				XMLDescriptionReader reader = new XMLDescriptionReader(url.openStream(), null);
 				ApplicationDescription appDescription = new ApplicationDescription();
-				appDescription.setId(url.toString());
+				
+				appDescription.setId(applicationUrl);
 				reader.parseXML(appDescription);
 
 				view.setApplString(appDescription.getName());
 				ProcessThread thread = new ProcessThread(appDescription);
-
+				thread.getContext().setUserId(userId);
+				
 				if (cookieString != null) {
 
 					StringTokenizer tok = new StringTokenizer(cookieString, ";");
