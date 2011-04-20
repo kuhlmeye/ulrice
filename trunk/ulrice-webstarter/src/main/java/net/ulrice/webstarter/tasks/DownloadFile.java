@@ -95,8 +95,8 @@ public class DownloadFile extends AbstractTask {
 
 			
 			Properties properties = thread.getContext().getPersistentProperties();
-			String remoteMd5Key = thread.getAppDescription().getId() + "#" + localFileName + "#remote";
-			String localMd5Key = thread.getAppDescription().getId() + "#" + localFileName + "#local";
+			String remoteMd5Key = localFileName + "#remote";
+			String localMd5Key = localFileName + "#local";
 			String savedRemoteMd5 = properties.getProperty(remoteMd5Key, null);
 			String savedLocalMd5 = properties.getProperty(localMd5Key, null);
 
@@ -156,6 +156,8 @@ public class DownloadFile extends AbstractTask {
 					}
 					
 				}
+			} else {
+				thread.fireTaskProgressed(this, 100, fileName, "Downloading " + fileName + "... (skipped)");
 			}
 
 			if (Boolean.valueOf(getParameterAsString(CLASSPATH_PARAM, "false"))) {

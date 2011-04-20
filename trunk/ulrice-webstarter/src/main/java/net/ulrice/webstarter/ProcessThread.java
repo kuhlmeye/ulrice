@@ -164,7 +164,7 @@ public class ProcessThread {
 		@Override
 		public void run() {
 			
-			File propertyFile = new File(getAppDescription().getLocalDir(), getAppDescription().getId() + ".properties");
+			File propertyFile = new File(getAppDescription().getLocalDir(), "ulrice-webstarter.properties");
 			try {
 				getContext().getPersistentProperties().load(new FileInputStream(propertyFile));
 			} catch (FileNotFoundException e) {

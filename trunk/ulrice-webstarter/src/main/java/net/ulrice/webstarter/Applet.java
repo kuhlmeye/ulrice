@@ -41,6 +41,7 @@ public class Applet extends java.applet.Applet implements IFProcessEventListener
 
 		
 		
+		
 		view = new AppletComponent();
 		setLayout(new BorderLayout());
 		add(view, BorderLayout.CENTER);
