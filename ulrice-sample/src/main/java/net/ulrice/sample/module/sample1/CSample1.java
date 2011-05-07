@@ -1,5 +1,6 @@
 package net.ulrice.sample.module.sample1;
 
+import net.ulrice.Ulrice;
 import net.ulrice.module.IFModel;
 import net.ulrice.module.IFModule;
 import net.ulrice.module.IFView;
@@ -17,6 +18,9 @@ public class CSample1 extends AbstractController {
 	 */
 	@Override
 	public void postCreationEvent(IFModule module) {
+		PSample1 process = new PSample1(this);
+		Ulrice.getProcessManager().registerProcess(process);
+		process.execute();
 		postInfoMessage("Sample controller 1 successfully initialized.");
 	}
 	
