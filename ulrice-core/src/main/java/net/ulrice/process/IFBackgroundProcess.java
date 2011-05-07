@@ -1,5 +1,7 @@
 package net.ulrice.process;
 
+import net.ulrice.module.IFController;
+
 public interface IFBackgroundProcess {
 
 	static enum ProcessState {
@@ -15,4 +17,10 @@ public interface IFBackgroundProcess {
 	public String getProcessProgressMessage();
 	
 	public String getProcessName();
+	
+	public IFController getOwningController();
+	
+	public void addProcessListener(IFProcessListener listener);
+	
+	public void removeProcessListener(IFProcessListener listener);
 }
