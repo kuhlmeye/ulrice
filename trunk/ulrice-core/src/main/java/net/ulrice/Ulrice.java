@@ -9,6 +9,7 @@ import net.ulrice.message.MessageHandler;
 import net.ulrice.module.IFModuleManager;
 import net.ulrice.module.IFModuleStructureManager;
 import net.ulrice.module.impl.action.ModuleActionManager;
+import net.ulrice.process.ProcessManager;
 import net.ulrice.ui.UI;
 
 /**
@@ -32,6 +33,8 @@ public class Ulrice {
 	
 	/** The action manager of ulrice. */
 	private static ModuleActionManager actionManager;
+	
+	private static ProcessManager processManager;
 
 	/** Contains all other configuration values. */
 	private static Properties configuration;
@@ -52,6 +55,7 @@ public class Ulrice {
 		Ulrice.moduleStructureManager = configuration.getModuleStructureManager();
 		Ulrice.messageHandler = new MessageHandler();
 		Ulrice.actionManager = new ModuleActionManager();
+		Ulrice.processManager = new ProcessManager();
 
 		Ulrice.mainFrame = configuration.getMainFrame();
 		Ulrice.mainFrame.inializeLayout();		
@@ -100,6 +104,10 @@ public class Ulrice {
 	 */
 	public static ModuleActionManager getActionManager() {
 		return actionManager;
+	}
+	
+	public static ProcessManager getProcessManager() {
+		return processManager;
 	}
 	
 	/**
