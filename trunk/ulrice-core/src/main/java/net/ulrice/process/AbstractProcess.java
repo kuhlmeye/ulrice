@@ -20,7 +20,10 @@ public abstract class AbstractProcess<T,V> extends SwingWorker<T, V> implements 
 		this.name = name;		
 		this.state = ProcessState.Initialized;
 		this.listenerList = new EventListenerList();
+
+		fireStateChanged();
 	}
+	
 	
 	@Override
 	public ProcessState getProcessState() {
@@ -52,16 +55,18 @@ public abstract class AbstractProcess<T,V> extends SwingWorker<T, V> implements 
 	@Override
 	protected T doInBackground() throws Exception {
 		this.state = ProcessState.Started;
-		T result = work();
-	
-		
-		return null;		
+		fireStateChanged();
+		T result = work();		
+		return result;		
 	}
 	
 	@Override
 	protected void done() {
 		super.done();
 
+		this.state = ProcessState.Done;
+		fireStateChanged();
+		
 		try {
 			finished(get());
 		} catch (InterruptedException e) {
