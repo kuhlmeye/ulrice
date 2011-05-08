@@ -4,6 +4,9 @@
 package net.ulrice.frame.impl.statusbar;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.util.List;
 import java.util.SortedSet;
 import java.util.Timer;
@@ -12,6 +15,7 @@ import java.util.TreeSet;
 
 import javax.swing.Box;
 import javax.swing.BoxLayout;
+import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JPanel;
 
@@ -29,7 +33,7 @@ import net.ulrice.module.event.IFModuleEventListener;
  * 
  * @author christof
  */
-public class Statusbar extends JPanel implements IFMainFrameComponent, IFMessageEventListener, IFModuleEventListener {
+public class Statusbar extends JPanel implements IFMainFrameComponent, IFMessageEventListener, IFModuleEventListener, ActionListener {
 
 	/** Default generated serial version uid. */
 	private static final long serialVersionUID = -4976672386681791073L;
@@ -57,6 +61,8 @@ public class Statusbar extends JPanel implements IFMainFrameComponent, IFMessage
 
 	/** The list of current messages. */
 	private SortedSet<Message> messageList;
+	
+	private JButton processButton;
 
 	public Statusbar() {
 		messageHandler = Ulrice.getMessageHandler();
@@ -78,10 +84,19 @@ public class Statusbar extends JPanel implements IFMainFrameComponent, IFMessage
 		clockTimerTask.run();
 		clockTimer.schedule(clockTimerTask, 60000);
 		
+		processButton = new JButton("B");
+		processButton.addActionListener(this);
+		processButton.setBorderPainted(false);
+		processButton.setOpaque(false);
+		processButton.setBackground(new Color(0, 0, 0, Color.TRANSLUCENT));
+		
 		setLayout(new BoxLayout(this, BoxLayout.X_AXIS));
 		add(messageRenderPanel);		
 		add(Box.createHorizontalGlue());
+		add(processButton);
 		add(clockRenderPanel);
+		
+		
 	}
 
 	/**
@@ -234,5 +249,11 @@ public class Statusbar extends JPanel implements IFMainFrameComponent, IFMessage
 	 */
 	public void setClockRenderer(IFStatusbarClockRenderer clockRenderer) {
 		this.clockRenderer = clockRenderer;
+	}
+
+	@Override
+	public void actionPerformed(ActionEvent e) {
+		// TODO Auto-generated method stub
+		
 	}
 }
