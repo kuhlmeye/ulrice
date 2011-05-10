@@ -5,6 +5,7 @@ import java.util.Properties;
 import net.ulrice.configuration.ConfigurationException;
 import net.ulrice.configuration.IFUlriceConfiguration;
 import net.ulrice.frame.IFMainFrame;
+import net.ulrice.message.I18NMessageProvider;
 import net.ulrice.message.MessageHandler;
 import net.ulrice.module.IFModuleManager;
 import net.ulrice.module.IFModuleStructureManager;
@@ -38,6 +39,9 @@ public class Ulrice {
 
 	/** Contains all other configuration values. */
 	private static Properties configuration;
+	
+	/** Contains the I18N-Support */
+	private static I18NMessageProvider messageProvider;
 		
 
 	/** 
@@ -97,7 +101,25 @@ public class Ulrice {
 		return messageHandler;
 	}
 
-	/**
+    /**
+     * Get the messageProvider
+     *
+     * @return I18NMessageProvider messageProvider
+     */
+    public static I18NMessageProvider getMessageProvider() {
+        return messageProvider;
+    }
+
+    /**
+     * Set the messageProvider
+     *
+     * @param messageProvider -
+     */
+    public static void setMessageProvider(I18NMessageProvider messageProvider) {
+        Ulrice.messageProvider = messageProvider;
+    }
+
+    /**
 	 * Returns the action manager of ulrice. 
 	 * 
 	 * @return the actionManager
