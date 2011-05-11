@@ -18,7 +18,8 @@ public class ProcessManager implements IFProcessListener {
 
 	private Map<IFController, List<IFBackgroundProcess>> processMap = new HashMap<IFController, List<IFBackgroundProcess>>();
 
-	private EventListenerList listenerList;
+	private EventListenerList listenerList = new EventListenerList();
+;
 
 	public ProcessManager() {
 
