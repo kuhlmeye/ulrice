@@ -10,7 +10,7 @@ import java.util.Map;
  * 
  * @author ckuhlmeyer
  */
-public abstract class AbstractUlriceConfiguration implements IFUlriceConfiguration {
+public abstract class AbstractUlriceConfiguration {
 
 	/** Map holding the loaded objects by full class name. */
 	private Map<String, Object> instanceMap = new HashMap<String, Object>();
