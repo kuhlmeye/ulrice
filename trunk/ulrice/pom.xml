@@ -18,6 +18,7 @@
 	
 	<modules>
 		<module>../ulrice-core</module>
+		<module>../ulrice-dashboard</module>
 		<module>../ulrice-databinding</module>
 		<module>../ulrice-sample</module>
 		<module>../ulrice-webstarter-maven-plugin</module>
