@@ -44,14 +44,14 @@ public class ProcessThread {
 	public ProcessThread(ApplicationDescription appDescription) {
 		this.context = new ProcessContext();
 		this.appDescription = appDescription;
-		this.taskQueue = new ArrayList<IFTask>();
 	}
 
 	/**
 	 * Starts the startup process of the application.
 	 */
 	public void startProcess() {
-		taskWorker = new Thread(new StartupProcess());		
+		this.taskQueue = new ArrayList<IFTask>();
+		taskWorker = new Thread(new StartupProcess());
 		taskWorker.start();
 	}
 
