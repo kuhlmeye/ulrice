@@ -29,6 +29,8 @@ public class ApplicationDescription {
 	
 	/** List of the tasks description needed to run for application startup. */
 	private List<TaskDescription> tasks = new ArrayList<TaskDescription>();
+
+	private List<TaskDescription> taskListBackup = new ArrayList<TaskDescription>();
 	
 	/** Boolean, if login is needed for this application and the fields in the application must be unblocked. */
 	private boolean needsLogin;
@@ -92,5 +94,13 @@ public class ApplicationDescription {
 	@Override
 	public String toString() {
 		return getName();
+	}
+	
+	public void backupTasks() {
+		taskListBackup = new ArrayList<TaskDescription>(tasks);
+	}
+	
+	public void restoreTasks() {
+		tasks = new ArrayList<TaskDescription>(taskListBackup);
 	}
 }

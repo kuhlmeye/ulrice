@@ -39,6 +39,8 @@ public class Application implements IFProcessEventListener, ActionListener {
 
 	/** The application setting properties. */
 	private Properties appSettings;
+	
+	private boolean isInErrorState = false;
 
 	public Application() {
 
@@ -123,10 +125,18 @@ public class Application implements IFProcessEventListener, ActionListener {
 		String password = new String(frame.getPasswordField().getPassword());
 
 		ApplicationDescription appDescription = frame.getSelectedApplication();
-		thread = new ProcessThread(appDescription);
+		if(thread == null) {
+			thread = new ProcessThread(appDescription);
+			thread.addProcessEventListener(this);
+		} else {
+			appDescription.restoreTasks();
+		}
 		thread.getContext().setUserId(userId);
 		thread.getContext().setPassword(password);
-		thread.addProcessEventListener(this);
+		
+		isInErrorState = false;
+		frame.setProgressError(false);
+		appDescription.backupTasks();
 		thread.startProcess();
 	}
 
@@ -167,6 +177,7 @@ public class Application implements IFProcessEventListener, ActionListener {
 
 	@Override
 	public void handleError(ProcessThread thread, IFTask task, String shortMessage, String longMessage) {
+		isInErrorState = true;
 		frame.getPasswordField().setEnabled(true);
 		frame.getUserIdField().setEnabled(true);
 		frame.getApplicationChooser().setEnabled(true);
@@ -174,7 +185,7 @@ public class Application implements IFProcessEventListener, ActionListener {
 		frame.getStartButton().setEnabled(true);
 		frame.appendMessage("Error: " + shortMessage + "\n" + longMessage);
 
-		frame.getTaskProgress().setBackground(new Color(250, 150, 150));
+		frame.setProgressError(true);
 		frame.getTaskProgress().getModel().setValue(0);
 		frame.getTaskProgress().setString(shortMessage);
 	}
@@ -249,6 +260,8 @@ public class Application implements IFProcessEventListener, ActionListener {
 
 	@Override
 	public void allTasksFinished(ProcessThread processThread) {
-		frame.dispose();
+		if(!isInErrorState) {
+			frame.dispose();
+		}
 	}
 }

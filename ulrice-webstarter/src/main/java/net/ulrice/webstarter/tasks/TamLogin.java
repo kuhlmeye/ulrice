@@ -138,7 +138,7 @@ public class TamLogin extends AbstractTask {
 						thread.handleError(this, "Wrong UserId/Password", tamResponseContent);
 						return false;
 					} else if ("HPDIA0205W".equalsIgnoreCase(errorCode)) {
-						// The user�s account has expired.
+						// The user's account has expired.
 						thread.handleError(this, "Your account has expired.", tamResponseContent);
 						return false;
 					} else if ("HPDIA0204W".equalsIgnoreCase(errorCode)) {

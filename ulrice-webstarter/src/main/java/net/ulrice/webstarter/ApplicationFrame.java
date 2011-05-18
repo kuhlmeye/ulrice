@@ -43,6 +43,9 @@ public class ApplicationFrame extends JFrame implements ActionListener, ItemList
 	
 	private static final long serialVersionUID = 5214287073693526828L;
 
+	private Color standardProgressBarBGColor;
+	private Color errorProgressBarBGColor;
+	
 	public static final String START_CMD = "START";
 	public static final String CANCEL_CMD = "CANCEL";
 
@@ -70,6 +73,8 @@ public class ApplicationFrame extends JFrame implements ActionListener, ItemList
 		this.taskProgress = new JProgressBar();
 		this.taskProgress.setString("");
 		this.taskProgress.setStringPainted(true);
+		standardProgressBarBGColor = taskProgress.getBackground();
+		errorProgressBarBGColor = new Color(250, 150, 150);
 
 		this.messageArea = new JTextArea();
 		this.messageArea.setEditable(false);
@@ -224,6 +229,14 @@ public class ApplicationFrame extends JFrame implements ActionListener, ItemList
 
 	public JProgressBar getTaskProgress() {
 		return taskProgress;
+	}
+	
+	public void setProgressError(boolean errorMode) {
+		if(errorMode) {
+			taskProgress.setBackground(errorProgressBarBGColor);
+		} else {
+			taskProgress.setBackground(standardProgressBarBGColor);
+		}
 	}
 
 	/**
