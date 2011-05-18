@@ -20,6 +20,7 @@
 		<module>../ulrice-core</module>
 		<module>../ulrice-databinding</module>
 		<module>../ulrice-sample</module>
+		<module>../ulrice-webstarter</module>
 		<module>../ulrice-webstarter-maven-plugin</module>
 	</modules>
 </project>
