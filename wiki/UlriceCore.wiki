@@ -39,12 +39,12 @@ net.ulrice.frame.impl.Toolbar.ActionOrder=CLOSE, TEST3, TEST1, TEST2, Toolbar.Pl
 
 The initialization code from the sample application is as follows:
 {{{
-		// Initialize ulrice.
-		try {
-			InputStream configurationStream = UlriceSampleApplication.class.getResourceAsStream("ulrice.properties");
-			UlriceFileConfiguration.initializeUlrice(configurationStream);
-		} catch (ConfigurationException e) {
-			LOG.log(Level.SEVERE, "Configuration exception occurred.", e);
-			System.exit(0);
-		}
+// Initialize ulrice.
+try {
+	InputStream configurationStream = UlriceSampleApplication.class.getResourceAsStream("ulrice.properties");
+	UlriceFileConfiguration.initializeUlrice(configurationStream);
+} catch (ConfigurationException e) {
+	LOG.log(Level.SEVERE, "Configuration exception occurred.", e);
+	System.exit(0);
+}
 }}}
