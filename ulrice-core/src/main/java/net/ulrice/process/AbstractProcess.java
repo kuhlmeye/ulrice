@@ -20,8 +20,6 @@ public abstract class AbstractProcess<T,V> extends SwingWorker<T, V> implements 
 		this.name = name;		
 		this.state = ProcessState.Initialized;
 		this.listenerList = new EventListenerList();
-
-		fireStateChanged();
 	}
 	
 	
