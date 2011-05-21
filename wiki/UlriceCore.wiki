@@ -17,7 +17,7 @@ components:
 == How to configure ulrice ==
 
 Main ulrice configuration is done by providing an implementation of IFUlriceConfiguration interface to the Ulrice.initialize-Method. This interface provides the
-implementations of all management classes and additional information needed by ulrice. You can use the provided class UlriceFileConfiguration for loading the 
+implementations of all management classes and additional information needed by ulrice. You can use the provided class !UlriceFileConfiguration for loading the 
 ulrice configuration from a property file. 
 
 The property file from the sample application looks like this:
