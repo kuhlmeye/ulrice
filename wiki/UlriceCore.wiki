@@ -7,7 +7,7 @@ It provides the application frame and manages the modules running in the applica
 components:
 
  * [ModuleManager Module Manager]
- * Module Structure Manager
+ * [ModuleStructureManager Module Structure Manager]
  * Message Handler
  * Action Manager
  * [ProcessManager Process Manager]
