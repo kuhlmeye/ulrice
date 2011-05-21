@@ -5,6 +5,8 @@ package net.ulrice.frame.impl.statusbar;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Image;
+import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.List;
@@ -13,11 +15,17 @@ import java.util.Timer;
 import java.util.TimerTask;
 import java.util.TreeSet;
 
+import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComponent;
+import javax.swing.JFrame;
+import javax.swing.JLayeredPane;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.SwingUtilities;
 
 import net.ulrice.Ulrice;
 import net.ulrice.frame.IFMainFrameComponent;
@@ -34,6 +42,8 @@ import net.ulrice.module.event.IFModuleEventListener;
  * @author christof
  */
 public class Statusbar extends JPanel implements IFMainFrameComponent, IFMessageEventListener, IFModuleEventListener, ActionListener {
+
+	private static final String SHOW_PROCESS_LIST = "SHOW_PROCESS_LIST";
 
 	/** Default generated serial version uid. */
 	private static final long serialVersionUID = -4976672386681791073L;
@@ -63,6 +73,9 @@ public class Statusbar extends JPanel implements IFMainFrameComponent, IFMessage
 	private SortedSet<Message> messageList;
 	
 	private JButton processButton;
+	
+	/** Panel in which the process state is displayed. */
+	private JPanel processPanel;
 
 	public Statusbar() {
 		messageHandler = Ulrice.getMessageHandler();
@@ -84,11 +97,18 @@ public class Statusbar extends JPanel implements IFMainFrameComponent, IFMessage
 		clockTimerTask.run();
 		clockTimer.schedule(clockTimerTask, 60000);
 		
-		processButton = new JButton("B");
+		processButton = new JButton(new ImageIcon(getClass().getResource("showprocesslist.png")));
+		processButton.setActionCommand(SHOW_PROCESS_LIST);
+		processButton.setFocusPainted(false);
 		processButton.addActionListener(this);
 		processButton.setBorderPainted(false);
 		processButton.setOpaque(false);
 		processButton.setBackground(new Color(0, 0, 0, Color.TRANSLUCENT));
+		
+		processPanel = new JPanel();
+		processPanel.setBorder(BorderFactory.createLineBorder(Color.black));
+		processPanel.setLayout(new BorderLayout());
+		processPanel.add(new JScrollPane(new ProcessList()), BorderLayout.CENTER);
 		
 		setLayout(new BoxLayout(this, BoxLayout.X_AXIS));
 		add(messageRenderPanel);		
@@ -253,7 +273,26 @@ public class Statusbar extends JPanel implements IFMainFrameComponent, IFMessage
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
-		// TODO Auto-generated method stub
-		
+		if(SHOW_PROCESS_LIST.equals(e.getActionCommand())) {			
+			JFrame frame = Ulrice.getMainFrame().getFrame();
+			JLayeredPane layeredPane = frame.getLayeredPane();
+			if(layeredPane.isAncestorOf(processPanel)) {				
+				layeredPane.remove(processPanel);
+			} else {
+				Point buttonLoc = processButton.getLocation();
+				SwingUtilities.convertPointToScreen(buttonLoc, processButton);
+				SwingUtilities.convertPointFromScreen(buttonLoc, layeredPane);
+				int y = buttonLoc.y;
+				int w = 250;
+				int h = 100;
+				processPanel.setBounds(processButton.getX(), y - h, w, h);								
+				layeredPane.add(processPanel, JLayeredPane.POPUP_LAYER);
+			}
+			
+			processPanel.doLayout();
+			processPanel.repaint();
+			layeredPane.doLayout();
+			layeredPane.repaint();
+		}
 	}
 }
