@@ -39,13 +39,14 @@ import javax.swing.border.BevelBorder;
  * 
  * @author christof
  */
-public class ApplicationFrame extends JFrame implements ActionListener, ItemListener {
-	
+public class ApplicationFrame extends JFrame implements ActionListener,
+		ItemListener {
+
 	private static final long serialVersionUID = 5214287073693526828L;
 
 	private Color standardProgressBarBGColor;
 	private Color errorProgressBarBGColor;
-	
+
 	public static final String START_CMD = "START";
 	public static final String CANCEL_CMD = "CANCEL";
 
@@ -82,7 +83,8 @@ public class ApplicationFrame extends JFrame implements ActionListener, ItemList
 
 		this.applicationLabel = new JLabel();
 		this.applicationLabel.setPreferredSize(new Dimension(210, 210));
-		this.applicationLabel.setBorder(BorderFactory.createBevelBorder(BevelBorder.LOWERED));
+		this.applicationLabel.setBorder(BorderFactory
+				.createBevelBorder(BevelBorder.LOWERED));
 		this.applicationLabel.setBackground(Color.WHITE);
 		this.applicationLabel.setOpaque(true);
 		this.applicationLabel.setHorizontalAlignment(JLabel.CENTER);
@@ -103,6 +105,7 @@ public class ApplicationFrame extends JFrame implements ActionListener, ItemList
 		this.cancelButton.setActionCommand(CANCEL_CMD);
 
 		this.proxyButton = new JButton("...");
+		this.proxyButton.addActionListener(this);
 		this.proxyButton.setToolTipText("Proxy Settings");
 
 		JPanel applicationChooserPanel = new JPanel();
@@ -175,48 +178,53 @@ public class ApplicationFrame extends JFrame implements ActionListener, ItemList
 		messageAreaScroller.setPreferredSize(new Dimension(getWidth(), 150));
 
 		messageToggleButton = new JToggleButton();
-		messageToggleButton.setIcon(new ImageIcon(ApplicationFrame.class.getResource("up.png")));
-		messageToggleButton.setSelectedIcon(new ImageIcon(ApplicationFrame.class.getResource("down.png")));
+		messageToggleButton.setIcon(new ImageIcon(ApplicationFrame.class
+				.getResource("up.png")));
+		messageToggleButton.setSelectedIcon(new ImageIcon(
+				ApplicationFrame.class.getResource("down.png")));
 		messageToggleButton.addActionListener(this);
-		
+
 		getContentPane().setLayout(new BorderLayout());
 		getContentPane().add(upperPanel, BorderLayout.NORTH);
 		getContentPane().add(messageToggleButton, BorderLayout.SOUTH);
 
-		URL defaultIconUrl = ApplicationFrame.class.getResource("default_icon.png");
+		URL defaultIconUrl = ApplicationFrame.class
+				.getResource("default_icon.png");
 		if (defaultIconUrl != null) {
 			setIconImage(new ImageIcon(defaultIconUrl).getImage());
 		}
-		
-		URL defaultAppImageUrl = ApplicationFrame.class.getResource("default_image.png");
-		if(defaultAppImageUrl != null) {
+
+		URL defaultAppImageUrl = ApplicationFrame.class
+				.getResource("default_image.png");
+		if (defaultAppImageUrl != null) {
 			defaultAppImage = new ImageIcon(defaultAppImageUrl);
 		}
 		applicationLabel.setIcon(defaultAppImage);
-		
-        InputMap inputMap = getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW);
-        inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), "EXIT");
 
-        ActionMap actionMap = getRootPane().getActionMap();
+		InputMap inputMap = getRootPane().getInputMap(
+				JComponent.WHEN_IN_FOCUSED_WINDOW);
+		inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), "EXIT");
 
-        actionMap.put("EXIT", new AbstractAction() {
-            /** Default generated serial version uid. */
-            private static final long serialVersionUID = 1326732178398549894L;
+		ActionMap actionMap = getRootPane().getActionMap();
 
-            public void actionPerformed(ActionEvent e) {
-                dispose();
-            }
-        });
+		actionMap.put("EXIT", new AbstractAction() {
+			/** Default generated serial version uid. */
+			private static final long serialVersionUID = 1326732178398549894L;
 
-        getRootPane().setDefaultButton(startButton);
-        
-		pack();		
+			public void actionPerformed(ActionEvent e) {
+				dispose();
+			}
+		});
+
+		getRootPane().setDefaultButton(startButton);
+
+		pack();
 		setSize(500, getHeight());
 		setResizable(false);
 		setLocationRelativeTo(null);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 	}
-	
+
 	public void setShowApplicationDialog(boolean showApplicationChooser) {
 		applicationChooser.setVisible(showApplicationChooser);
 		this.invalidate();
@@ -230,9 +238,9 @@ public class ApplicationFrame extends JFrame implements ActionListener, ItemList
 	public JProgressBar getTaskProgress() {
 		return taskProgress;
 	}
-	
+
 	public void setProgressError(boolean errorMode) {
-		if(errorMode) {
+		if (errorMode) {
 			taskProgress.setBackground(errorProgressBarBGColor);
 		} else {
 			taskProgress.setBackground(standardProgressBarBGColor);
@@ -240,16 +248,18 @@ public class ApplicationFrame extends JFrame implements ActionListener, ItemList
 	}
 
 	/**
-	 * Append the message in the log window. 
+	 * Append the message in the log window.
 	 * 
-	 * @param message The message that should be displayed in the text area.
+	 * @param message
+	 *            The message that should be displayed in the text area.
 	 */
 	public void appendMessage(String message) {
 		messageArea.append(message);
 		SwingUtilities.invokeLater(new Runnable() {
 			public void run() {
-				if(messageArea != null) {					
-					messageArea.setCaretPosition(messageArea.getText() == null ? 0 : messageArea.getText().length());
+				if (messageArea != null) {
+					messageArea.setCaretPosition(messageArea.getText() == null ? 0
+							: messageArea.getText().length());
 				}
 			}
 		});
@@ -277,48 +287,52 @@ public class ApplicationFrame extends JFrame implements ActionListener, ItemList
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
-		if(messageToggleButton.isSelected()) {
+		if (messageToggleButton.isSelected()) {
 			getContentPane().add(messageAreaScroller, BorderLayout.CENTER);
 		} else {
-			getContentPane().remove(messageAreaScroller);	
+			getContentPane().remove(messageAreaScroller);
+		}
+		if(proxyButton.equals(e.getSource())) {
+			ApplicationProxyDialog proxyDialog = new ApplicationProxyDialog(this);
+			proxyDialog.setVisible(true);
 		}
 		setSize(500, getPreferredSize().height);
 	}
-	
+
 	public ApplicationDescription getSelectedApplication() {
 		return (ApplicationDescription) applicationChooser.getSelectedItem();
 	}
-	
+
 	public void addApplication(ApplicationDescription appDescription) {
 		applicationChooser.addItem(appDescription);
 	}
+
 	public void setSelectedApplication(String applicationId) {
-		if(applicationId == null) {
+		if (applicationId == null) {
 			return;
 		}
-		
-		for(int i = 0; i < applicationChooser.getItemCount(); i++) {
-			ApplicationDescription app = (ApplicationDescription) applicationChooser.getItemAt(i);
-			if(app.getId().equals(applicationId)) {
+
+		for (int i = 0; i < applicationChooser.getItemCount(); i++) {
+			ApplicationDescription app = (ApplicationDescription) applicationChooser
+					.getItemAt(i);
+			if (app.getId().equals(applicationId)) {
 				applicationChooser.setSelectedIndex(i);
 				return;
 			}
 		}
 	}
 
-
 	@Override
-	public void itemStateChanged(ItemEvent e) {		
-		if(ItemEvent.SELECTED == e.getStateChange()) {
+	public void itemStateChanged(ItemEvent e) {
+		if (ItemEvent.SELECTED == e.getStateChange()) {
 			// Adapt display settings to selected applications.
 			ApplicationDescription application = getSelectedApplication();
 			userIdField.setEnabled(application.isNeedsLogin());
 			passwordField.setEnabled(application.isNeedsLogin());
 			setTitle("Start: " + application.getName());
-			if(application.getIcon() != null) {
+			if (application.getIcon() != null) {
 				applicationLabel.setIcon(application.getIcon());
-			}
-			else {
+			} else {
 				applicationLabel.setIcon(defaultAppImage);
 			}
 			applicationLabel.invalidate();
