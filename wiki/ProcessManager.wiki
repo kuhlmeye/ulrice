@@ -51,4 +51,4 @@ If you use the abstract implementation of the background process all you have to
 == How to start a process ==  
 
 To start a process from a controller you have to register the process at the process manager and than execute the process.
-For convenience you can use the CtrlProcessExecutor class.
+For convenience you can use the !CtrlProcessExecutor class.
