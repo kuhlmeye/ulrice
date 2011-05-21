@@ -36,5 +36,18 @@ You need to implement the following methods to use the AbstractProcess for backg
 	protected abstract void finished(T result);
 }}}
 
+To update the progress of the background process you have to inform all the registered listeners by calling 
+{{{
+	/**
+	 * Called, if the progress of the process changed.
+	 * 
+	 * @param process The process.
+	 */
+	public void progressChanged(IFBackgroundProcess process);}}}
+
+If you use the abstract implementation of the background process all you have to do is to call fireProgressChanged-method.
+
 == How to start a process ==  
 
+To start a process from a controller you have to register the process at the process manager and than execute the process.
+For convenience you can use the CtrlProcessExecutor class.
