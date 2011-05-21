@@ -4,10 +4,11 @@
 
 The ulrice core project is the main framework for building ulrice based rich client applications. 
 It provides the application frame and manages the modules running in the application. The framework consists of several main 
-components 
-* Module Manager
-* Module Structure Manager
-* Message Handler
-* Action Manager
-* Process Manager
+components:
+
+ * Module Manager
+ * Module Structure Manager
+ * Message Handler
+ * Action Manager
+ * Process Manager
 
