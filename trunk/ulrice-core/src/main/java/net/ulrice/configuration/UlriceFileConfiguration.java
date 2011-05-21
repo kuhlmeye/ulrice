@@ -16,7 +16,7 @@ import net.ulrice.module.impl.ModuleManager;
  * 
  * @author ckuhlmeyer
  */
-public class UlriceFileConfiguration extends AbstractUlriceConfiguration implements IFUlriceConfiguration {
+public class UlriceFileConfiguration extends ClassLoadingHelper implements IFUlriceConfiguration {
 
 	/** The properties. */
 	private Properties properties;

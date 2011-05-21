@@ -6,11 +6,11 @@ import java.util.Map;
 
 
 /**
- * Abstract ulrice configuration class providing helper methods.
+ * Class loading helper methods.
  * 
  * @author ckuhlmeyer
  */
-public abstract class AbstractUlriceConfiguration {
+public abstract class ClassLoadingHelper {
 
 	/** Map holding the loaded objects by full class name. */
 	private Map<String, Object> instanceMap = new HashMap<String, Object>();
@@ -18,7 +18,7 @@ public abstract class AbstractUlriceConfiguration {
 	/**
 	 * Creates a new abstract ulrice configuration.
 	 */
-	public AbstractUlriceConfiguration() {
+	public ClassLoadingHelper() {
 		super();
 	}
 
