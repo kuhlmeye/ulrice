@@ -43,6 +43,7 @@ public class ProcessList extends JList implements IFProcessListener {
 			model.addProcess(process);
 			break;
 		case Initialized:
+			model.addProcess(process);
 			break;
 		case Done:
 			model.delProcess(process);

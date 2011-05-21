@@ -2,7 +2,7 @@ package net.ulrice.process;
 
 import net.ulrice.module.IFController;
 
-public interface IFBackgroundProcess {
+public interface IFBackgroundProcess extends Runnable {
 
 	static enum ProcessState {
 		Initialized,

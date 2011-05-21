@@ -19,7 +19,7 @@ public class ProcessManager implements IFProcessListener {
 	private Map<IFController, List<IFBackgroundProcess>> processMap = new HashMap<IFController, List<IFBackgroundProcess>>();
 
 	private EventListenerList listenerList = new EventListenerList();
-;
+
 
 	public ProcessManager() {
 
@@ -33,8 +33,8 @@ public class ProcessManager implements IFProcessListener {
 			processMap.put(owningController, processList);
 		}
 		processList.add(process);
-
 		process.addProcessListener(this);
+		fireStateChanged(process);
 	}
 
 	public List<IFBackgroundProcess> getRunningProcesses(IFController controller) {
