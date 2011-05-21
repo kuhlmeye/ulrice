@@ -43,7 +43,8 @@ To update the progress of the background process you have to inform all the regi
 	 * 
 	 * @param process The process.
 	 */
-	public void progressChanged(IFBackgroundProcess process);}}}
+	public void progressChanged(IFBackgroundProcess process);
+}}}
 
 If you use the abstract implementation of the background process all you have to do is to call fireProgressChanged-method.
 
