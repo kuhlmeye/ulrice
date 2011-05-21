@@ -10,5 +10,5 @@ components:
  * Module Structure Manager
  * Message Handler
  * Action Manager
- * Process Manager
+ * [ProcessManager Process Manager]
 
