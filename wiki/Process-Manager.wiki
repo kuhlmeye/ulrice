@@ -1,0 +1,39 @@
+#summary Describes the process manager contained in the ulrice-core project
+
+= Introduction =
+
+The main task of the process manager is the management of background tasks started within 
+the modules. It controls the lifecycle of the processes and notifies listener about 
+changed state or progress of the background processes
+
+The process manager can be obtained by calling 
+{{{
+  Ulrice.getProcessManager();
+}}}
+
+= How To =
+
+== How to implement a process ==
+Every process that should be controlled by the ulrice process manager has to implement 
+the IFBackgroundProcess-Interface. This interface extends the Java-Runnable interface.
+
+There is an abstract default implementation called AbstractProcess using the SwingWorker-Class from Java
+
+You need to implement the following methods to use the AbstractProcess for background processes:
+{{{
+	/**
+	 * This method is executed in background. 
+	 * 
+	 * @return The result of the background process
+	 */
+	protected abstract T work();
+
+	/**
+	 * Called in the awt-thread after the background process was finished.
+	 * 
+	 * @param result The result of the background process
+	 */
+	protected abstract void finished(T result);
+}}}
+
+== How to start a process ==  

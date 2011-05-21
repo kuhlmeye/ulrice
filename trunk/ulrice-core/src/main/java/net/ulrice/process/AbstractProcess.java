@@ -112,7 +112,17 @@ public abstract class AbstractProcess<T,V> extends SwingWorker<T, V> implements 
 		listenerList.remove(IFProcessListener.class, listener);
 	}
 
+	/**
+	 * This method is executed in background. 
+	 * 
+	 * @return The result of the background process
+	 */
 	protected abstract T work();
 
+	/**
+	 * Called in the awt-thread after the background process was finished.
+	 * 
+	 * @param result The result of the background process
+	 */
 	protected abstract void finished(T result);
 }

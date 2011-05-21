@@ -5,6 +5,7 @@
 Ulrice (Universal Rich Client Environment) is a framework for building rich client applications. It consists of the following subprojects 
  * The core framework
  * A Data binding framework
+ * A Dashboard module.
  * A webstarter
 
 
