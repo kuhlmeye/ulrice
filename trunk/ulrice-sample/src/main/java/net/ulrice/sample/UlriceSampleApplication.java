@@ -42,7 +42,6 @@ public class UlriceSampleApplication {
 		try {
 			InputStream configurationStream = UlriceSampleApplication.class.getResourceAsStream("ulrice.properties");
 			UlriceFileConfiguration.initializeUlrice(configurationStream);
-
 		} catch (ConfigurationException e) {
 			LOG.log(Level.SEVERE, "Configuration exception occurred.", e);
 			System.exit(0);
