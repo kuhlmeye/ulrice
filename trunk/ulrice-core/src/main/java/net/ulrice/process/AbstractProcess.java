@@ -33,7 +33,7 @@ public abstract class AbstractProcess<T,V> extends SwingWorker<T, V> implements 
 	@Override
 	public double getProcessProgress() {
 		// TODO Auto-generated method stub
-		return 0;
+		return getProgress() / 100.0;
 	}
 
 	@Override
