@@ -13,9 +13,14 @@ import java.awt.dnd.DropTargetAdapter;
 import java.awt.dnd.DropTargetDragEvent;
 import java.awt.dnd.DropTargetDropEvent;
 import java.awt.dnd.DropTargetEvent;
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionListener;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -52,6 +57,12 @@ public class VDashboard implements IFView, Dashboard, MouseMotionListener {
 
     /** The logger used by this class. */
     private static final Logger LOG = Logger.getLogger(VDashboard.class.getName());
+    
+    /** List of cell components */
+    private List<CellComponent> dashboard;
+    
+    /** the default space between components on the grid*/
+    private int spaceBetweenCell = 1;
 
     /** The view component. */
     private JPanel view;
@@ -97,6 +108,8 @@ public class VDashboard implements IFView, Dashboard, MouseMotionListener {
 
     /** The grid color */
     private Color gridColor = new Color(210, 210, 210);
+    
+    private boolean initialized;
 
     {
         currentMode = Mode.NON;
@@ -160,9 +173,9 @@ public class VDashboard implements IFView, Dashboard, MouseMotionListener {
                 numberOfCellY = 0;
                 if (y > 0) {
                     while (y < view.getSize().getHeight()) {
-                        if (!currentMode.equals(Mode.NON)) {
+                        //if (!currentMode.equals(Mode.NON)) {
                             g2.drawLine(0, (int) y, (int) view.getSize().getWidth(), (int) y);
-                        }
+                        //}
                         y += getCellSize();
                         numberOfCellY++;
                     }
@@ -170,9 +183,9 @@ public class VDashboard implements IFView, Dashboard, MouseMotionListener {
                 y = getCellSize();
                 if (y > 0) {
                     while (y < view.getSize().getWidth()) {
-                        if (!currentMode.equals(Mode.NON)) {
+                        //if (!currentMode.equals(Mode.NON)) {
                             g2.drawLine((int) y, 0, (int) y, (int) view.getSize().getHeight());
-                        }
+                        //}
                         y += getCellSize();
                         numberOfCellX++;
                     }
@@ -180,6 +193,7 @@ public class VDashboard implements IFView, Dashboard, MouseMotionListener {
                 g2.setStroke(stroke);
             }
         };
+        view.addComponentListener(new DashboardListener());
         view.addMouseListener(new DashboardMouseAdapter());
         view.addMouseMotionListener(this);
         view.setLayout(null);
@@ -215,6 +229,29 @@ public class VDashboard implements IFView, Dashboard, MouseMotionListener {
         int startX = (int) getXPosition(startCell);
         int startY = (int) getYPosition(startCell);
 
+        component.setBounds(startX, startY, (int) (cellComponent.getWidth() * getCellSize()),
+            (int) (cellComponent.getHeight() * getCellSize()));
+
+        view.add(component);
+
+        controller.saveDashBoardComponentProperties(cellComponent);
+
+        view.revalidate();
+        view.repaint();
+    }
+    
+    private void placeDashboardComponentOnDashboard(CellComponent cellComponent) {
+        JComponent component = cellComponent.getJComponent();
+        
+        cellComponent.setWidth(cellComponent.getEndCell().getX() - cellComponent.getStartCell().getX() + 1);
+        cellComponent.setHeight(cellComponent.getEndCell().getY() - cellComponent.getStartCell().getY() + 1);
+
+        controller.addDashboardComponent(cellComponent.getDashboardComponent().getUniqueId(), cellComponent);
+
+        // draw the new added component
+        int startX = (int) getXPosition(cellComponent.getStartCell());
+        int startY = (int) getYPosition(cellComponent.getStartCell());
+        
         component.setBounds(startX, startY, (int) (cellComponent.getWidth() * getCellSize()),
             (int) (cellComponent.getHeight() * getCellSize()));
 
@@ -267,6 +304,7 @@ public class VDashboard implements IFView, Dashboard, MouseMotionListener {
 
             component.setBounds(startX, startY, (int) (cellComponent.getWidth() * getCellSize()),
                 (int) (cellComponent.getHeight() * getCellSize()));
+            
             view.add(component);
 
             view.revalidate();
@@ -284,6 +322,14 @@ public class VDashboard implements IFView, Dashboard, MouseMotionListener {
      */
     private double getCellSize() {
         return Cell.CELLSIZE;
+    }
+    
+    private int getDashboardWidthInCellUnits() {
+        return numberOfCellX;
+    }
+    
+    private int getDashboardHeightInCellUnits() {
+        return numberOfCellY;
     }
 
     /**
@@ -374,7 +420,7 @@ public class VDashboard implements IFView, Dashboard, MouseMotionListener {
      * @return The translated x position
      */
     private double getXPosition(Cell cell) {
-        return (cell.getX() - 1) * getCellSize();
+        return (cell.getX() -1) * getCellSize();
     }
 
     /**
@@ -384,7 +430,7 @@ public class VDashboard implements IFView, Dashboard, MouseMotionListener {
      * @return The translated y position
      */
     private double getYPosition(Cell cell) {
-        return (cell.getY() - 1) * getCellSize();
+        return (cell.getY() -1) * getCellSize();//- 1
     }
 
     /**
@@ -419,17 +465,247 @@ public class VDashboard implements IFView, Dashboard, MouseMotionListener {
         }
     }
 
-    @Override
+    
     /**
      * Restores the modules that are placed on the dashbord before. At first the
      * information are received from the properties file later by a database.
      */
+    @Override
     public void restoreModules() {
-        for (DashboardComponent dashboardComponent : controller.getDashboardComponentProvider().getDashboardComponentList()) {
-                String value = UlriceDashboard.getSettings().getValue(dashboardComponent.getUniqueId());
-                if (value != null) {
-                    restoreModule(dashboardComponent, value);
+//        List<String> list = new ArrayList<String>();
+//        for (DashboardComponent dashboardComponent : controller.getDashboardComponentProvider().getDashboardComponentList()) {
+//            String value = UlriceDashboard.getSettings().getValue(dashboardComponent.getUniqueId());
+//            list.add(value);
+//            if (value != null) {
+//                restoreModule(dashboardComponent, value);
+//            }
+//        }
+    }
+    
+    /**
+     * The algorithm to order dashboard components on the dashboard.
+     * The strategy is from left to right and top to bottom
+     * 
+     * @param list Complete list of dashboard components
+     */
+    private void binPack(List<DashboardComponent> list) {
+        
+        List<Cell> possibleStartCell = new ArrayList<Cell>();
+        dashboard = new ArrayList<CellComponent>();
+        
+        int startX = 1 + spaceBetweenCell;
+        int startY = 1 + spaceBetweenCell;
+        
+        
+        int dashboardWidth = getDashboardWidthInCellUnits();
+        int dashboardHeight = getDashboardHeightInCellUnits();
+
+        A:
+        for(DashboardComponent dashboardComponent : list) {
+            //calculate width and height
+            int componentWidthInXCell = getExpectedCellX(dashboardComponent.getDashboardSize().getWidth());
+            int componentHeightInYCell = getExpectedCellY(dashboardComponent.getDashboardSize().getHeight());
+            
+            Collections.sort(possibleStartCell);
+            //dashboard is clean
+            if (possibleStartCell.isEmpty()) {
+                if ((startX + componentWidthInXCell -1) < dashboardWidth 
+                        && (startX+ componentHeightInYCell -1) < dashboardHeight) {
+                    
+                    dashboard.add(new CellComponent(dashboardComponent.getDashboardComponent(), 
+                        dashboardComponent, new Cell(startX, startY), 
+                        new Cell(startX + componentWidthInXCell -1, componentHeightInYCell)));   
+                    
+                    //possible start cell
+                    possibleStartCell.add(new Cell(startX, startY + componentHeightInYCell));
+                    
+                    //new pos below this component
+                    startX = startX + componentWidthInXCell + spaceBetweenCell;
+                    possibleStartCell.add(new Cell(startX, startY));
                 }
+            }
+            else {
+                for (Cell posStartCell : possibleStartCell) {
+                    if ((posStartCell.getX() + componentWidthInXCell - 1) < dashboardWidth) {
+                        //not 1. row, collision with lower  comps is possible
+                        if (posStartCell.getY() > 1) {
+
+                            Cell expectedEndCellX = new Cell((posStartCell.getX() + componentWidthInXCell -1), 
+                                posStartCell.getY());
+
+                            // find the startCell
+                            Cell newCell = findOptimalStartCell(posStartCell, expectedEndCellX);
+                            dashboard.add(new CellComponent(dashboardComponent.getDashboardComponent(), 
+                                dashboardComponent, 
+                                newCell, 
+                                new Cell(newCell.getX() + componentWidthInXCell - 1, 
+                                    newCell.getY() + componentHeightInYCell -1)));
+                            
+                            possibleStartCell.remove(posStartCell);
+                            
+                            //add new possible start position
+                            Cell nextPossibleStartCell = findBestStartPosition(new Cell(newCell.getX() + 
+                                componentWidthInXCell + 1, newCell.getY()));
+                            possibleStartCell.add(nextPossibleStartCell);
+                            
+                            // if the new component is placed on the left side, add a additional start position
+                            if (posStartCell.getX() == 2) {
+                                possibleStartCell.add(new Cell(posStartCell.getX(), 
+                                    posStartCell.getY() + componentHeightInYCell +1));
+                            }
+                            continue A;
+                        }
+                        else {
+                            dashboard.add(new CellComponent(dashboardComponent.getDashboardComponent(), dashboardComponent, 
+                                posStartCell, new Cell(startX + componentWidthInXCell - 1, componentHeightInYCell)));
+                            
+                            startX = startX + componentWidthInXCell + spaceBetweenCell ;
+                            
+                            possibleStartCell.add(new Cell(startX, startY));
+                            possibleStartCell.remove(posStartCell);
+                            continue A;
+                        }
+                    }
+                }
+            }
+        }
+        
+        for (CellComponent cellComponent : dashboard) {
+            placeDashboardComponentOnDashboard(cellComponent);
+        }
+        
+        dashboard = null;
+        possibleStartCell = null;
+        initialized = true;
+    }
+    
+    /**
+     * If a collision occurred then look for the next possible start position along 
+     * the y-axis or x-axis.
+     * 
+     * @param startCell The possible start position of the component
+     * @param expectedEndCellX The expected end position along the x-axis
+     * 
+     * @return If a collision is detected then an correction along the y-axis will be done
+     */
+    private Cell findOptimalStartCell(Cell startCell, Cell expectedEndCellX) {
+        int differenceY = 0;
+        Cell newStartCell = new Cell(startCell.getX(), startCell.getY());
+        
+        for (int i = dashboard.size() - 1; i >= 0; i--) {
+            CellComponent cellComponent = dashboard.get(i);
+            if (cellComponent.getEndCell().getX() < startCell.getX()) {
+                continue;
+            }
+            //expected end cell is higher then the end y position of another component
+            if (expectedEndCellX.getX() >= cellComponent.getStartCell().getX() //if (expectedEndCellX.getX() >= cellComponent.getStartCell().getX() 
+                    && expectedEndCellX.getY() <= (cellComponent.getEndCell().getY() + spaceBetweenCell)) {
+                
+                differenceY = (((cellComponent.getEndCell().getY() + spaceBetweenCell) - expectedEndCellX.getY() + 1) > differenceY) ? 
+                        ((cellComponent.getEndCell().getY() + spaceBetweenCell) - expectedEndCellX.getY() + 1) : differenceY;
+            }
+            else if ((expectedEndCellX.getX() + spaceBetweenCell) >= cellComponent.getStartCell().getX() 
+                    && expectedEndCellX.getY() <= cellComponent.getEndCell().getY()) {
+                if ((cellComponent.getEndCell().getY() - expectedEndCellX.getY()) >= 0) {
+                    
+                    differenceY = (((cellComponent.getEndCell().getY() - expectedEndCellX.getY()) + 2) > differenceY)? 
+                            (((cellComponent.getEndCell().getY() - expectedEndCellX.getY()) + 2)) : differenceY;
+                }
+            }
+        }
+        newStartCell.setY(newStartCell.getY() + differenceY);
+        return newStartCell;
+    }
+    
+    /**
+     * Find the optimal next start position for a given component. In the case that the
+     * first try is not valid, take a look for the next possible position. The strategy for the
+     * search is to analyze the component where a collision is occurred. There a two ways. 
+     * At first take a look in x-axis and then y-axis. If a possible start position lays on a 
+     * component then analyze the area. Is the hit inside the upper 2/3 of the height the look 
+     * for the next position along the x-axis otherwise the y-axis.
+     * 
+     * @param cellToTest The first position for the start cell
+     * 
+     * @return The correction of the cell position or the first try if fine
+     */
+    private Cell findBestStartPosition(Cell cellToTest) {
+        int differenceY = 0;
+        //ignore last position. this is the recently placed component
+        for (int i = dashboard.size() -2; i >= 0 ; i--) {
+            CellComponent cellComponent = dashboard.get(i);
+            //cellToTest is located inside of an other component
+            if ((cellToTest.getX() <= cellComponent.getEndCell().getX() 
+                    && cellToTest.getX() >= cellComponent.getStartCell().getX()) 
+                    && (cellToTest.getY() <= cellComponent.getEndCell().getY() 
+                    && cellToTest.getY() >= cellComponent.getStartCell().getY())) {
+                
+                int height = cellComponent.getEndCell().getY() - cellComponent.getStartCell().getY() + 1;
+                
+                //check y position to find an other position
+                if (cellToTest.getY() <= (height / 3) * 2) {
+                    cellToTest.setX(cellComponent.getEndCell().getX() + spaceBetweenCell + 1);
+                    //call recursive because the new position is to check as well for another collision
+                    findBestStartPosition(cellToTest);
+                }
+                else {
+                    differenceY = ((cellComponent.getEndCell().getY() + spaceBetweenCell) - cellToTest.getY());
+                    differenceY += 1;
+                    cellToTest.setY(cellToTest.getY() + differenceY);
+                    break;
+                }
+                
+            }
+            //outside of an component but on the space buffer between components
+            else if ((cellToTest.getX() <= cellComponent.getEndCell().getX() 
+                    && cellToTest.getX()>= cellComponent.getStartCell().getX()) 
+                    && cellComponent.getEndCell().getY() + spaceBetweenCell >= cellToTest.getY()
+                    && !(cellToTest.getY() <= cellComponent.getEndCell().getY() 
+                    && cellToTest.getY() >= cellComponent.getStartCell().getY())) {
+                differenceY = ((cellComponent.getEndCell().getY() + spaceBetweenCell) - cellToTest.getY()) + 1;
+                cellToTest.setY(cellToTest.getY() + differenceY);
+                break;
+            }
+        }
+        return cellToTest;
+    }
+    
+    /**
+     * 
+     * TODO: description
+     *
+     * @author dv20jac
+     *
+     */
+    private class DashboardListener extends ComponentAdapter {
+       
+        /**
+         * 
+         * {@inheritDoc}
+         * @see java.awt.event.ComponentAdapter#componentResized(java.awt.event.ComponentEvent)
+         */
+        public void componentResized(ComponentEvent ev) {
+            if (getDashboardWidthInCellUnits() > 0  && !initialized) {
+                int countStoredModules = 0;
+                for (DashboardComponent dashboardComponent : controller.getDashboardComponentProvider().getDashboardComponentList()) {
+                    String value = UlriceDashboard.getSettings().getValue(dashboardComponent.getUniqueId());
+                    if (value != null) {
+                        countStoredModules++;
+                    }
+                }
+
+                if (controller.getDashboardComponentProvider().getDashboardComponentList().size() != countStoredModules) {
+                    binPack(controller.getDashboardComponentProvider().getDashboardComponentList());
+                }
+                else {
+                    for (DashboardComponent dashboardComponent : controller.getDashboardComponentProvider().getDashboardComponentList()) {
+                        String value = UlriceDashboard.getSettings().getValue(dashboardComponent.getUniqueId());
+                        if (value != null) {
+                            restoreModule(dashboardComponent, value);
+                        }
+                    }
+                }
+            }
         }
     }
 
@@ -651,7 +927,7 @@ public class VDashboard implements IFView, Dashboard, MouseMotionListener {
      * 
      * @author dv20jac
      */
-    protected class Cell {
+    protected class Cell implements Comparable<Cell>{
 
         /** The X position */
         private int x;
@@ -708,6 +984,39 @@ public class VDashboard implements IFView, Dashboard, MouseMotionListener {
         public void setY(int y) {
             this.y = y;
         }
+        
+        /**
+         * 
+         * {@inheritDoc}
+         * @see java.lang.Object#hashCode()
+         */
+        public int hashCode() {
+            int hashMultiplicator = 59;
+            int hashCode = 17;
+            
+            hashCode = hashCode * hashMultiplicator + getX();
+            hashCode = hashCode * hashMultiplicator + getY();
+            
+            return hashCode;
+        }
+        
+        /**
+         * 
+         * {@inheritDoc}
+         * @see java.lang.Object#equals(java.lang.Object)
+         */
+        public boolean equals(Object o) {
+            if (o instanceof Cell) {
+                if (((Cell) o).getX() == this.getX() &&
+                        ((Cell) o).getY() == this.getY()) {
+                    return true;
+                }
+                else {
+                    return false;
+                }
+            }
+            return false;
+        }
 
         /**
          * {@inheritDoc}
@@ -715,7 +1024,33 @@ public class VDashboard implements IFView, Dashboard, MouseMotionListener {
          * @see java.lang.Object#toString()
          */
         public String toString() {
-            return "Cell Position x: " + x + " y: " + y;
+            return "Cell Position x: " + x + " y: " + y +" hashCode "+hashCode();
+        }
+
+        /**
+         * 
+         * {@inheritDoc}
+         * @see java.lang.Comparable#compareTo(java.lang.Object)
+         */
+        @Override
+        public int compareTo(Cell cell) {
+            if (y > cell.getY()){
+                return 1;
+            }
+            else if (y < cell.getY()) {
+                return -1;
+            }
+            else {
+                if (x > cell.getX()){
+                    return 1;
+                }
+                else if (x < cell.getX()) {
+                    return -1;
+                }
+                else {
+                    return 0;
+                }
+            }
         }
     }
 
@@ -729,7 +1064,7 @@ public class VDashboard implements IFView, Dashboard, MouseMotionListener {
     protected class CellComponent {
 
         /** The corresponding dashboard interface */
-        private DashboardComponent dashboard;
+        private DashboardComponent dashboardComponent;
 
         /** The special dashboard UI component */
         private JComponent component;
@@ -755,12 +1090,13 @@ public class VDashboard implements IFView, Dashboard, MouseMotionListener {
          * @param start The start cell of the component
          * @param end The end cell of the component
          */
-        public CellComponent(JComponent component, DashboardComponent dashboard, Cell start, Cell end) {
+        public CellComponent(JComponent component, DashboardComponent dashboardComponent, Cell start, Cell end) {
             this.component = component;
-            this.dashboard = dashboard;
+            this.dashboardComponent = dashboardComponent;
             this.start = start;
             this.end = end;
         }
+
 
         /**
          * Sets the start position of the component
@@ -849,7 +1185,7 @@ public class VDashboard implements IFView, Dashboard, MouseMotionListener {
          * @return The DashboarComponent
          */
         public DashboardComponent getDashboardComponent() {
-            return dashboard;
+            return dashboardComponent;
         }
 
         /**

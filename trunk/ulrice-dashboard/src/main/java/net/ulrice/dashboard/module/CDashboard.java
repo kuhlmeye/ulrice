@@ -145,12 +145,11 @@ public class CDashboard extends AbstractController {
 	 *            The CellComponent that is to be saved
 	 */
 	protected void saveDashBoardComponentProperties(CellComponent cellComponent) {
-		UlriceDashboard.getSettings().saveProperties(cellComponent.getDashboardComponent()
+	    UlriceDashboard.getSettings().saveProperties(cellComponent.getDashboardComponent()
 				.getUniqueId(), cellComponent.getStartCell().getX() + ";"
 				+ cellComponent.getStartCell().getY() + "-"
 				+ cellComponent.getEndCell().getX() + ";"
 				+ cellComponent.getEndCell().getY());
-
 	}
 
 	/**
