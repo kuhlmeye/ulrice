@@ -7,7 +7,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
 
-import net.ulrice.configuration.AbstractUlriceConfiguration;
+import net.ulrice.configuration.ClassLoadingHelper;
 import net.ulrice.configuration.ConfigurationException;
 import net.ulrice.dashboard.IFDashboardComponentProvider;
 import net.ulrice.dashboard.IFSettings;
@@ -18,7 +18,7 @@ import net.ulrice.dashboard.UlriceDashboard;
  *
  */
 public class UlriceDashboardFileConfiguration extends
-		AbstractUlriceConfiguration implements IFUlriceDashboardFileConfiguration {
+    ClassLoadingHelper implements IFUlriceDashboardFileConfiguration {
 	
 	/** The properties. */
 	private Properties properties;
