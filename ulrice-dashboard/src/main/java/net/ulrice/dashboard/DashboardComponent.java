@@ -20,13 +20,15 @@ import net.ulrice.dashboard.gui.RoundedBorder;
  */
 public abstract class DashboardComponent {
     
+    private Dimension dashboardDefaultSize = new Dimension(200, 150);
+    
     /**
      * Return the default size for the dashboard component
      * 
      * @return The component size
      */
     public Dimension getDashboardSize() {
-        return new Dimension(200, 150);
+        return dashboardDefaultSize;
     }
     
     /**
