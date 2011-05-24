@@ -5,6 +5,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.net.Authenticator;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
@@ -171,6 +172,12 @@ public class ProcessThread {
 				LOG.warning("Could not found property file " + propertyFile + ". Creating empty file.");
 			} catch (IOException e) {
 				LOG.log(Level.WARNING, "Error reading from property file.", e);
+			}
+			
+
+			System.setProperty("http.proxySet", Boolean.toString(getAppDescription().isUseProxy()));
+			if(System.getProperty("http.proxyUser") != null) {
+				Authenticator.setDefault(new ProxyAuthenticator(System.getProperty("http.proxyUser"), System.getProperty("http.proxyPassword")));
 			}
 			
 			if(taskQueue != null && !threadStopped) {

@@ -24,6 +24,17 @@ public class ApplicationDescription {
 	/** Icon of the application displayed in the frontend. */
 	private ImageIcon icon;
 	
+	/** Flag, if the proxy should be used. */
+	private boolean useProxy = false;
+	
+	public boolean isUseProxy() {
+		return useProxy;
+	}
+
+	public void setUseProxy(boolean useProxy) {
+		this.useProxy = useProxy;
+	}
+
 	/** List of application parameters. */
 	private List<String> appParameters = new ArrayList<String>();
 	

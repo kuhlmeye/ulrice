@@ -96,6 +96,7 @@ public class XMLDescriptionReader extends DefaultHandler {
 
 		} else if ("application".equalsIgnoreCase(localName)) {
 			appDescription.setName(atts.getValue("applicationName"));
+			appDescription.setUseProxy(Boolean.valueOf(atts.getValue("useProxy")));
 
 			String localDirString = atts.getValue("localDir");
 			if (localDirString != null) {
