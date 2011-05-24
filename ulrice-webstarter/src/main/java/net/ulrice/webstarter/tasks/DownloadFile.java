@@ -145,7 +145,9 @@ public class DownloadFile extends AbstractTask {
 						unpack200(tempFile, localFile);
 					}
 
-					properties.setProperty(remoteMd5Key, remoteMd5);
+					if(remoteMd5 != null) {
+						properties.setProperty(remoteMd5Key, remoteMd5);
+					}
 					try {
 						localMd5 = calculateMd5(localFile);
 						properties.setProperty(localMd5Key, localMd5);
