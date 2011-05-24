@@ -211,8 +211,8 @@ public class Application implements IFProcessEventListener, ActionListener {
 	@Override
 	public void handleError(ProcessThread thread, IFTask task, String shortMessage, String longMessage) {
 		isInErrorState = true;
-		frame.getPasswordField().setEnabled(true);
-		frame.getUserIdField().setEnabled(true);
+		frame.getPasswordField().setEnabled(frame.getSelectedApplication().isNeedsLogin());
+		frame.getUserIdField().setEnabled(frame.getSelectedApplication().isNeedsLogin());
 		frame.getApplicationChooser().setEnabled(true);
 
 		frame.getStartButton().setEnabled(true);
