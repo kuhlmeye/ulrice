@@ -90,7 +90,7 @@ public class Application implements IFProcessEventListener, ActionListener {
 			
 
 
-			if (proxyHost != null) {
+			if (proxyHost != null || !"".equals(proxyHost)) {
 				System.setProperty("http.proxyHost", proxyHost);
 			}
 

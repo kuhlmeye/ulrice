@@ -176,8 +176,10 @@ public class ProcessThread {
 			
 
 			System.setProperty("http.proxySet", Boolean.toString(getAppDescription().isUseProxy()));
-			if(System.getProperty("http.proxyUser") != null) {
+			if(getAppDescription().isUseProxy() && System.getProperty("http.proxyUser") != null) {
 				Authenticator.setDefault(new ProxyAuthenticator(System.getProperty("http.proxyUser"), System.getProperty("http.proxyPassword")));
+			} else {
+				Authenticator.setDefault(null);
 			}
 			
 			if(taskQueue != null && !threadStopped) {
