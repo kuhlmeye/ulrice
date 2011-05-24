@@ -173,9 +173,9 @@ public class VDashboard implements IFView, Dashboard, MouseMotionListener {
                 numberOfCellY = 0;
                 if (y > 0) {
                     while (y < view.getSize().getHeight()) {
-                        //if (!currentMode.equals(Mode.NON)) {
+                        if (!currentMode.equals(Mode.NON)) {
                             g2.drawLine(0, (int) y, (int) view.getSize().getWidth(), (int) y);
-                        //}
+                        }
                         y += getCellSize();
                         numberOfCellY++;
                     }
@@ -183,9 +183,9 @@ public class VDashboard implements IFView, Dashboard, MouseMotionListener {
                 y = getCellSize();
                 if (y > 0) {
                     while (y < view.getSize().getWidth()) {
-                        //if (!currentMode.equals(Mode.NON)) {
+                        if (!currentMode.equals(Mode.NON)) {
                             g2.drawLine((int) y, 0, (int) y, (int) view.getSize().getHeight());
-                        //}
+                        }
                         y += getCellSize();
                         numberOfCellX++;
                     }
