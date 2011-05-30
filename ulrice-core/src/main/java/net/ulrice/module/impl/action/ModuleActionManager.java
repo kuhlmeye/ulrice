@@ -1,16 +1,20 @@
 package net.ulrice.module.impl.action;
 
 import java.awt.event.ActionEvent;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.logging.Logger;
 
 import javax.swing.event.EventListenerList;
 
 import net.ulrice.Ulrice;
 import net.ulrice.module.IFController;
+import net.ulrice.module.IFModuleTitleRenderer.Usage;
 import net.ulrice.module.event.IFModuleActionManagerEventListener;
 import net.ulrice.module.event.IFModuleEventListener;
 import net.ulrice.module.impl.ModuleActionState;
@@ -20,7 +24,10 @@ import net.ulrice.module.impl.ModuleActionState;
  * 
  * @author christof
  */
-public class ModuleActionManager implements IFModuleEventListener {
+public class ModuleActionManager implements IFModuleEventListener, PropertyChangeListener {
+
+	/** The logger used by this class. */
+	private static final Logger LOG = Logger.getLogger(ModuleActionManager.class.getName());
 
 	/** The controller that is currently active. */
 	private IFController activeController;
@@ -65,8 +72,7 @@ public class ModuleActionManager implements IFModuleEventListener {
 	 * Informs all listners that the list of application actions has changed.
 	 */
 	public void fireApplicationActionsChanged() {
-		IFModuleActionManagerEventListener[] listeners = listenerList
-				.getListeners(IFModuleActionManagerEventListener.class);
+		IFModuleActionManagerEventListener[] listeners = listenerList.getListeners(IFModuleActionManagerEventListener.class);
 		if (listeners != null) {
 			for (IFModuleActionManagerEventListener listener : listeners) {
 				listener.applicationActionsChanged();
@@ -84,7 +90,16 @@ public class ModuleActionManager implements IFModuleEventListener {
 	 *            The action event.
 	 */
 	public void performAction(Action moduleAction, ActionEvent e) {
+
 		if (activeController != null) {
+
+			if (!Ulrice.getSecurityManager().allowExecuteAction(activeController, moduleAction)) {
+				LOG.info("Action [Id: " + moduleAction.getUniqueId() + ", Module: "
+						+ activeController.getModule().getModuleTitle(Usage.Default)
+						+ "] will not be executed. Not authorized by ulrice security manager.");
+				return;
+			}
+
 			Map<Action, ModuleActionState> actionStateMap = controllerActionStateMap.get(activeController);
 			if (actionStateMap != null) {
 				ModuleActionState moduleActionState = actionStateMap.get(moduleAction);
@@ -102,6 +117,14 @@ public class ModuleActionManager implements IFModuleEventListener {
 	 *            The action.
 	 */
 	public void addApplicationAction(Action moduleAction) {
+
+		if (!Ulrice.getSecurityManager().allowRegisterAction(activeController, moduleAction)) {
+			LOG.info("Application-Action [Id: " + moduleAction.getUniqueId() + "] will not be added. Not authorized by ulrice security manager.");
+			return;
+		}
+
+		moduleAction.addPropertyChangeListener(this);
+
 		applicationActions.put(moduleAction.getUniqueId(), moduleAction);
 		fireApplicationActionsChanged();
 	}
@@ -113,6 +136,8 @@ public class ModuleActionManager implements IFModuleEventListener {
 	 *            The action.
 	 */
 	public void removeApplicationAction(Action moduleAction) {
+		moduleAction.removePropertyChangeListener(this);
+
 		applicationActions.remove(moduleAction.getUniqueId());
 		fireApplicationActionsChanged();
 	}
@@ -183,9 +208,18 @@ public class ModuleActionManager implements IFModuleEventListener {
 	public void openModule(IFController activeController) {
 		this.activeController = activeController;
 		Set<ModuleActionState> moduleActionStates = activeController.getModuleActionStates();
+
 		Map<Action, ModuleActionState> actionStateMap = new HashMap<Action, ModuleActionState>();
 		if (moduleActionStates != null) {
 			for (ModuleActionState moduleActionState : moduleActionStates) {
+				Action moduleAction = moduleActionState.getAction();
+				if (!Ulrice.getSecurityManager().allowRegisterAction(activeController, moduleAction)) {
+					LOG.info("Action [Id: " + moduleAction.getUniqueId() + ", Module: "
+							+ activeController.getModule().getModuleTitle(Usage.Default)
+							+ "] will not be added. Not authorized by ulrice security manager.");
+					return;
+				}
+
 				actionStateMap.put(moduleActionState.getAction(), moduleActionState);
 			}
 		}
@@ -200,6 +234,7 @@ public class ModuleActionManager implements IFModuleEventListener {
 	 */
 	@Override
 	public void closeModule(IFController activeController) {
+
 		this.activeController = null;
 		controllerActionStateMap.remove(activeController);
 
@@ -227,5 +262,22 @@ public class ModuleActionManager implements IFModuleEventListener {
 
 		adaptActionStates();
 		fireApplicationActionsChanged();
+	}
+
+	@Override
+	public void propertyChange(PropertyChangeEvent evt) {
+		if ("enabled".equalsIgnoreCase(evt.getPropertyName())) {
+			Object source = evt.getSource();
+
+			if (source instanceof Action) {
+				Action moduleAction = (Action) source;
+				if (!Ulrice.getSecurityManager().allowEnableAction(activeController, moduleAction)) {
+					LOG.info("Action [Id: " + moduleAction.getUniqueId() + ", Module: "
+							+ activeController.getModule().getModuleTitle(Usage.Default)
+							+ "] will not be enabled. Not authorized by ulrice security manager.");
+					return;
+				}
+			}
+		}
 	}
 }

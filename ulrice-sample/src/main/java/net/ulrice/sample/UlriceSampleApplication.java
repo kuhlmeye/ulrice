@@ -10,17 +10,17 @@ import javax.swing.JFrame;
 import net.ulrice.Ulrice;
 import net.ulrice.configuration.ConfigurationException;
 import net.ulrice.configuration.UlriceFileConfiguration;
-import net.ulrice.module.IFModule;
 import net.ulrice.module.IFModuleManager;
 import net.ulrice.module.IFModuleStructureManager;
 import net.ulrice.module.ModuleType;
-import net.ulrice.module.impl.ReflectionModule;
+import net.ulrice.module.impl.AuthReflectionModule;
 import net.ulrice.module.impl.SimpleModuleTitleRenderer;
 import net.ulrice.module.impl.action.CloseAllModulesAction;
 import net.ulrice.module.impl.action.CloseModuleAction;
 import net.ulrice.module.impl.action.ExitApplicationAction;
 import net.ulrice.module.impl.action.ModuleAction;
 import net.ulrice.module.impl.action.ModuleActionManager;
+import net.ulrice.security.Authorization;
 
 public class UlriceSampleApplication {
 
@@ -41,25 +41,32 @@ public class UlriceSampleApplication {
 		// Initialize ulrice.
 		try {
 			InputStream configurationStream = UlriceSampleApplication.class.getResourceAsStream("ulrice.properties");
-			UlriceFileConfiguration.initializeUlrice(configurationStream);
+			UlriceFileConfiguration.initializeUlrice(configurationStream);			
 		} catch (ConfigurationException e) {
 			LOG.log(Level.SEVERE, "Configuration exception occurred.", e);
 			System.exit(0);
 		}
 
 		// Define the modules.
-		IFModule sampleModule1 = new ReflectionModule("sampleModule1", ModuleType.NormalModule,
+		AuthReflectionModule sampleModule1 = new AuthReflectionModule("sampleModule1", ModuleType.NormalModule,
 				"net.ulrice.sample.module.sample1.CSample1", "net/ulrice/sample/module/sample1/moduleicon.png",
 				new SimpleModuleTitleRenderer("Sample 1"));
-		IFModule sampleModule2 = new ReflectionModule("sampleModule2", ModuleType.NormalModule,
+		sampleModule1.setAuthorization(new Authorization(SampleSecurityCallback.TYPE_MODULE_REGISTER, "SAMPLE1"));
+		
+		AuthReflectionModule sampleModule2 = new AuthReflectionModule("sampleModule2", ModuleType.NormalModule,
 				"net.ulrice.sample.module.sample2.CSample2", "net/ulrice/sample/module/sample2/moduleicon.png",
 				new SimpleModuleTitleRenderer("Sample 2"));
-		IFModule lafListModule = new ReflectionModule("lafList", ModuleType.NormalModule,
+		sampleModule2.setAuthorization(new Authorization(SampleSecurityCallback.TYPE_MODULE_REGISTER, "SAMPLE2"));
+		
+		AuthReflectionModule lafListModule = new AuthReflectionModule("lafList", ModuleType.NormalModule,
 				"net.ulrice.sample.module.laflist.CLafList", "net/ulrice/sample/module/laflist/moduleicon.png",
 				new SimpleModuleTitleRenderer("Look And Feel Constants"));
-		IFModule dataBindingSample = new ReflectionModule("databinding", ModuleType.NormalModule,
+		lafListModule.setAuthorization(new Authorization(SampleSecurityCallback.TYPE_MODULE_REGISTER, "LAFLIST"));
+		
+		AuthReflectionModule dataBindingSample = new AuthReflectionModule("databinding", ModuleType.NormalModule,
 				"net.ulrice.sample.module.databinding.CDataBinding", "net/ulrice/sample/module/databinding/moduleicon.png",
 				new SimpleModuleTitleRenderer("Data Binding Sample"));
+		dataBindingSample.setAuthorization(new Authorization(SampleSecurityCallback.TYPE_MODULE_REGISTER, "DATABINDING"));
 
 		// Add the modules.
 		IFModuleManager moduleManager = Ulrice.getModuleManager();
@@ -75,6 +82,7 @@ public class UlriceSampleApplication {
 		moduleStructureManager.addModule(lafListModule);
 		moduleStructureManager.addModule(dataBindingSample);
 
+		
 
 		// Add the application actions.
 		

@@ -22,7 +22,9 @@ public abstract class Action extends AbstractAction {
 	private boolean initiallyEnabled;
 
 	private ActionType type;
+
 	
+
 	/**
 	 * Creates a new action handled by the module.
 	 * 

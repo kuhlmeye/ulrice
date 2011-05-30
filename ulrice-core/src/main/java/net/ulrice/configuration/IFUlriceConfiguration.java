@@ -5,6 +5,7 @@ import java.util.Properties;
 import net.ulrice.frame.IFMainFrame;
 import net.ulrice.module.IFModuleManager;
 import net.ulrice.module.IFModuleStructureManager;
+import net.ulrice.security.IFAuthCallback;
 
 /**
  * The ulrice application configuration.
@@ -48,4 +49,11 @@ public interface IFUlriceConfiguration {
 	 * @return The configuration properties.
 	 */
 	Properties getConfigurationProperties();
+	
+	/**
+	 * Returns the callback for authentication
+	 * 
+	 * @return The auth callback
+	 */
+	IFAuthCallback getAuthCallback();
 }

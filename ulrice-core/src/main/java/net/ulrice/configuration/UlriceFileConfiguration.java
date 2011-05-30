@@ -10,6 +10,7 @@ import net.ulrice.frame.impl.MainFrame;
 import net.ulrice.module.IFModuleManager;
 import net.ulrice.module.IFModuleStructureManager;
 import net.ulrice.module.impl.ModuleManager;
+import net.ulrice.security.IFAuthCallback;
 
 /**
  * Loads the ulrice configuration from a java properties file.
@@ -28,6 +29,9 @@ public class UlriceFileConfiguration extends ClassLoadingHelper implements IFUlr
 	private IFMainFrame mainFrame;
 
 	private IFModuleStructureManager moduleStructureManager;
+	
+	/** The authorization callback. */
+	private IFAuthCallback authCallback;
 
 	/**
 	 * Initialize ulrice by a file configuration.
@@ -100,6 +104,12 @@ public class UlriceFileConfiguration extends ClassLoadingHelper implements IFUlr
 				IFModuleStructureManager.class.getName(), ModuleManager.class.getName()));
 		mainFrame = (IFMainFrame) loadClass(properties.getProperty(IFMainFrame.class.getName(), MainFrame.class
 				.getName()));
+		authCallback = (IFAuthCallback) loadClass(properties.getProperty(IFAuthCallback.class.getName(), null));
 
+	}
+
+	@Override
+	public IFAuthCallback getAuthCallback() {		
+		return authCallback;
 	}
 }

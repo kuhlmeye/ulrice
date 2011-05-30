@@ -11,6 +11,8 @@ import net.ulrice.module.IFModuleManager;
 import net.ulrice.module.IFModuleStructureManager;
 import net.ulrice.module.impl.action.ModuleActionManager;
 import net.ulrice.process.ProcessManager;
+import net.ulrice.security.GrantAllAuthCallback;
+import net.ulrice.security.IFAuthCallback;
 import net.ulrice.ui.UI;
 
 /**
@@ -43,6 +45,9 @@ public class Ulrice {
 	/** Contains the I18N-Support */
 	private static I18NMessageProvider messageProvider;
 		
+	/** The callback used to handle authorization requests. */
+	private static IFAuthCallback securityManager;	
+
 
 	/** 
 	 * Initializes ulrice.
@@ -60,9 +65,15 @@ public class Ulrice {
 		Ulrice.messageHandler = new MessageHandler();
 		Ulrice.actionManager = new ModuleActionManager();
 		Ulrice.processManager = new ProcessManager();
-
+		
+		if(configuration.getAuthCallback() != null) {
+			Ulrice.securityManager = configuration.getAuthCallback();
+		} else {
+			Ulrice.securityManager = new GrantAllAuthCallback();
+		}
+		
 		Ulrice.mainFrame = configuration.getMainFrame();
-		Ulrice.mainFrame.inializeLayout();		
+		Ulrice.mainFrame.inializeLayout();
 	}
 
 	/** 
@@ -151,4 +162,12 @@ public class Ulrice {
 		return Ulrice.configuration.getProperty(builder.toString(), defaultValue);
 	}
 
+	/**
+	 * Returns the authorization callback.
+	 * 
+	 * @return The class handling the authorization callback
+	 */
+	public static IFAuthCallback getSecurityManager() {
+		return securityManager;
+	}
 }
