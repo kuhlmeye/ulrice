@@ -94,6 +94,6 @@ public interface IFAuthCallback {
 For convenience you can use the default !GrantAllAuthCallback-Class to implement only the methods you really need for your application security.
 
 == How to use simple typed authorizations ==
-There is an extension for !ReflectionModules and !Actions giving you a standard way to add string based security markers to actions and modules. 
+There is an extension for !ReflectionModules and Actions giving you a standard way to add string based security markers to actions and modules. 
 
 If you want to use this, you have to use the !AuthReflectionModule and !AuthAction implementations instead of the standard implementations. You can add an authorization object to this classes saving the strings you can use to query your authorization module. The sample applications shows the usage of this !AuthCallback implementation.
