@@ -11,6 +11,7 @@ components:
  * Message Handler
  * Action Manager
  * [ProcessManager Process Manager]
+ * [AuthCallback Authorization Callback]
 
 = How To = 
 
