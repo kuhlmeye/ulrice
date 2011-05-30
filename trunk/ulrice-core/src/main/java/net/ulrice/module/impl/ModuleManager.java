@@ -6,14 +6,17 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Logger;
 
 import javax.swing.event.EventListenerList;
 
+import net.ulrice.Ulrice;
 import net.ulrice.module.IFController;
 import net.ulrice.module.IFModule;
 import net.ulrice.module.IFModuleGroup;
 import net.ulrice.module.IFModuleManager;
 import net.ulrice.module.IFModuleStructureManager;
+import net.ulrice.module.IFModuleTitleRenderer.Usage;
 import net.ulrice.module.ModuleType;
 import net.ulrice.module.event.IFModuleEventListener;
 import net.ulrice.module.event.IFModuleStructureEventListener;
@@ -25,6 +28,9 @@ import net.ulrice.module.exception.ModuleInstanciationException;
  * @author ckuhlmeyer
  */
 public class ModuleManager implements IFModuleManager, IFModuleStructureManager {
+
+	/** The logger used by the module manager. */
+	private static final Logger LOG = Logger.getLogger(ModuleManager.class.getName());
 
 	/** The mapping between module and module id. */
 	private Map<String, IFModule> moduleMap = new HashMap<String, IFModule>();
@@ -66,13 +72,19 @@ public class ModuleManager implements IFModuleManager, IFModuleStructureManager 
 		} else {
 			// Create a new instance
 			ctrlInstance = module.instanciateModule();
+			ctrlInstance.preCreationEvent(module);
+
+			if (!Ulrice.getSecurityManager().allowOpenModule(module, ctrlInstance)) {
+				LOG.info("Module [Id: " + module.getUniqueId() + ", Name: " + module.getModuleTitle(Usage.Default)
+						+ "] will not be created. Not authorized by ulrice security manager.");
+				throw new ModuleInstanciationException("Not allowed by security manager", null);
+			}
+
 			activeInstances.add(0, ctrlInstance);
 
 			if (isSingleModule) {
 				singleModules.put(module, ctrlInstance);
 			}
-
-			ctrlInstance.preCreationEvent(module);
 
 			// Inform event listeners.
 			IFModuleEventListener[] listeners = listenerList.getListeners(IFModuleEventListener.class);
@@ -118,7 +130,7 @@ public class ModuleManager implements IFModuleManager, IFModuleStructureManager 
 				listener.activateModule(activeController);
 			}
 		}
-	}	
+	}
 
 	/**
 	 * @see net.ulrice.module.IFModuleManager#closeAllModules()
@@ -126,43 +138,42 @@ public class ModuleManager implements IFModuleManager, IFModuleStructureManager 
 	@Override
 	public void closeAllModules() {
 		List<IFController> activeModules = getActiveModules();
-		
-		if(activeModules != null) {
-			for(IFController controller : activeModules) {
+
+		if (activeModules != null) {
+			for (IFController controller : activeModules) {
 				closeModule(controller);
 			}
 		}
 	}
-	
 
 	@Override
 	public void closeOtherModules(IFController controller) {
 		List<IFController> activeModules = getActiveModules();
-		
-		if(activeModules != null) {
-			for(IFController closeController : activeModules) {
-				if(!closeController.equals(controller)) {
+
+		if (activeModules != null) {
+			for (IFController closeController : activeModules) {
+				if (!closeController.equals(controller)) {
 					closeModule(closeController);
 				}
 			}
 		}
 	}
-	
+
 	/**
 	 * @see net.ulrice.module.IFModuleManager#closeModule(net.ulrice.module.IFController)
 	 */
 	public void closeModule(IFController controller) {
-		if(controller == null) {
+		if (controller == null) {
 			return;
 		}
-		
+
 		boolean isSingleModule = ModuleType.SingleModule.equals(controller.getModule().getModuleInstanceType());
 
 		if (isSingleModule) {
 			singleModules.remove(controller.getModel());
 		}
 		activeInstances.remove(controller);
-		
+
 		// Inform event listeners.
 		IFModuleEventListener[] listeners = listenerList.getListeners(IFModuleEventListener.class);
 		if (listeners != null) {
@@ -172,7 +183,7 @@ public class ModuleManager implements IFModuleManager, IFModuleStructureManager 
 		}
 
 		activeController = null;
-		if(activeInstances.size() > 0) {
+		if (activeInstances.size() > 0) {
 			activateModule(activeInstances.get(0));
 		}
 
@@ -201,6 +212,13 @@ public class ModuleManager implements IFModuleManager, IFModuleStructureManager 
 		if (module == null) {
 			throw new IllegalArgumentException("Module must not be null.");
 		}
+
+		if (!Ulrice.getSecurityManager().allowRegisterModule(module)) {
+			LOG.info("Module [Id: " + module.getUniqueId() + ", Name: " + module.getModuleTitle(Usage.Default)
+					+ "] will not be registered. Not authorized by ulrice security manager.");
+			return;
+		}
+
 		moduleMap.put(module.getUniqueId(), module);
 	}
 
@@ -232,6 +250,12 @@ public class ModuleManager implements IFModuleManager, IFModuleStructureManager 
 	 *            The module that should be added to this group.
 	 */
 	public void addModule(IFModule module) {
+		if (!Ulrice.getSecurityManager().allowRegisterModule(module)) {
+			LOG.info("Module [Id: " + module.getUniqueId() + ", Name: " + module.getModuleTitle(Usage.Default)
+					+ "] will not be added. Not authorized by ulrice security manager.");
+			return;
+		}
+
 		rootGroup.addModule(module);
 		fireModuleStructureChanged();
 	}
