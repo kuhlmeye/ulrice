@@ -10,16 +10,20 @@ public class CtrlProcessExecutor {
 	private ExecutorService executorService;
 
 	public CtrlProcessExecutor(int parallelExecutions) {
-		executorService = Executors.newFixedThreadPool(parallelExecutions);
+		this(Executors.newFixedThreadPool(parallelExecutions));
 	}
-	
+
 	public CtrlProcessExecutor(ExecutorService executorService) {
 		this.executorService = executorService;
 	}
-	
+
 	public void executeProcess(IFBackgroundProcess process) {
 		Ulrice.getProcessManager().registerProcess(process);
 		executorService.execute(process);
+	}
+	
+	public void executeProcess(IFBackgroundProcess process, IFBackgroundProcess dependsOnProcess) {
+		dependsOnProcess.addProcessListener(new ChainingListener(this, process));
 	}
 	
 }

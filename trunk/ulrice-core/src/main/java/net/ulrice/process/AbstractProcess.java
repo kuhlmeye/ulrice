@@ -8,6 +8,14 @@ import javax.swing.event.EventListenerList;
 
 import net.ulrice.module.IFController;
 
+/**
+ * ABstract job implementation.
+ * 
+ * @author DL10KUH
+ *
+ * @param <T> The type of the provisional result.
+ * @param <V> The result.
+ */
 public abstract class AbstractProcess<T,V> extends SwingWorker<T, V> implements IFBackgroundProcess {
 
 	private IFController owner;
@@ -30,7 +38,6 @@ public abstract class AbstractProcess<T,V> extends SwingWorker<T, V> implements 
 
 	@Override
 	public double getProcessProgress() {
-		// TODO Auto-generated method stub
 		return getProgress() / 100.0;
 	}
 
