@@ -12,18 +12,20 @@ import net.ulrice.module.IFController;
 import net.ulrice.module.IFModuleTitleRenderer.Usage;
 import net.ulrice.process.IFBackgroundProcess.ProcessState;
 
+/**
+ * This class manages the execution of background processes started by modules.
+ * 
+ * @author DL10KUH
+ */
 public class ProcessManager implements IFProcessListener {
 
 	private static final Logger LOG = Logger.getLogger(ProcessManager.class.getName());
 
+	/** Map holding the processes grouped by controller. */
 	private Map<IFController, List<IFBackgroundProcess>> processMap = new HashMap<IFController, List<IFBackgroundProcess>>();
 
 	private EventListenerList listenerList = new EventListenerList();
 
-
-	public ProcessManager() {
-
-	}
 
 	public void registerProcess(IFBackgroundProcess process) {
 		IFController owningController = process.getOwningController();

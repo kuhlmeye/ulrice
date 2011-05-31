@@ -25,13 +25,9 @@ public class CSample1 extends AbstractController {
 	 */
 	@Override
 	public void postCreationEvent(IFModule module) {
-		processExecutor.executeProcess(new PSample1(this));
-		processExecutor.executeProcess(new PSample1(this));
-		processExecutor.executeProcess(new PSample1(this));
-		processExecutor.executeProcess(new PSample1(this));
-		processExecutor.executeProcess(new PSample1(this));
-		processExecutor.executeProcess(new PSample1(this));
-		processExecutor.executeProcess(new PSample1(this));
+		PSample1 process = new PSample1(this);
+		processExecutor.executeProcess(process);
+		processExecutor.executeProcess(new PSample1(this), process);
 		postInfoMessage("Sample controller 1 successfully initialized.");
 	}
 	
