@@ -10,7 +10,7 @@ public class PSample1 extends AbstractProcess<Void, Void>  {
 	private int progress;
 
 	public PSample1(IFController controller) {
-		super(controller, "Sample Process");
+		super(controller, "Sample Process", true);
 	}
 
 	@Override
@@ -24,7 +24,7 @@ public class PSample1 extends AbstractProcess<Void, Void>  {
 			} catch (InterruptedException e) {
 				Ulrice.getMessageHandler().handleException(e);
 			}
-			System.out.println(progress + "%");
+			//System.out.println(progress + "%");
 		}
 
 		return null;		

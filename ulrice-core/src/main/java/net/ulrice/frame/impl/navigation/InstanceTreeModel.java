@@ -274,4 +274,16 @@ public class InstanceTreeModel implements TreeModel, IFModuleEventListener {
 			}
 		}
 	}
+
+	@Override
+	public void moduleBlocked(IFController controller) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void moduleUnblocked(IFController controller) {
+		// TODO Auto-generated method stub
+		
+	}
 }

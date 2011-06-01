@@ -23,4 +23,6 @@ public interface IFBackgroundProcess extends Runnable {
 	public void addProcessListener(IFProcessListener listener);
 	
 	public void removeProcessListener(IFProcessListener listener);
+	
+	public boolean blocksWorkarea();
 }

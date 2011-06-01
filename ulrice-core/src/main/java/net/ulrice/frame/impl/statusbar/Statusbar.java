@@ -295,4 +295,16 @@ public class Statusbar extends JPanel implements IFMainFrameComponent, IFMessage
 			layeredPane.repaint();
 		}
 	}
+
+	@Override
+	public void moduleBlocked(IFController controller) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void moduleUnblocked(IFController controller) {
+		// TODO Auto-generated method stub
+		
+	}
 }

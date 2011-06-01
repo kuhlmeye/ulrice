@@ -4,7 +4,6 @@ import java.awt.BorderLayout;
 
 import javax.swing.JFrame;
 import javax.swing.JScrollPane;
-import javax.swing.SwingConstants;
 
 import net.ulrice.Ulrice;
 import net.ulrice.frame.IFMainFrame;
@@ -12,6 +11,7 @@ import net.ulrice.frame.IFWorkarea;
 import net.ulrice.frame.impl.navigation.InstanceTree;
 import net.ulrice.frame.impl.navigation.ModuleTree;
 import net.ulrice.frame.impl.statusbar.Statusbar;
+import net.ulrice.frame.impl.workarea.SingleWorkarea;
 import net.ulrice.frame.impl.workarea.TabbedWorkarea;
 
 /**

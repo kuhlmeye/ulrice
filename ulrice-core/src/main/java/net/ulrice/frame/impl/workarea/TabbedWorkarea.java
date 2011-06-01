@@ -7,11 +7,12 @@ import java.awt.event.ActionEvent;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.net.URL;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.logging.Logger;
 
 import javax.swing.AbstractAction;
 import javax.swing.BorderFactory;
-import javax.swing.Box;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComponent;
@@ -44,6 +45,8 @@ public class TabbedWorkarea extends JTabbedPane implements IFWorkarea, MouseList
 
 	/** The close icon. */
 	private ImageIcon closeIcon;
+	
+	private Map<JComponent, GlassPanel> glassPanelMap = new HashMap<JComponent, GlassPanel>();
 
 	/**
 	 * Creates a new tabbed workarea.
@@ -84,8 +87,7 @@ public class TabbedWorkarea extends JTabbedPane implements IFWorkarea, MouseList
 	public void activateModule(IFController activeController) {
 
 		// Get the component of the controller.
-		JComponent controllerComponent = getControllerComponent(activeController);
-		int idx = indexOfComponent(controllerComponent);
+		int idx = getTabIndex(activeController);
 		if (idx >= 0) {
 			setSelectedIndex(idx);
 		} else {
@@ -98,6 +100,20 @@ public class TabbedWorkarea extends JTabbedPane implements IFWorkarea, MouseList
 
 			openModule(activeController);
 		}
+		
+
+		if(activeController.isBlocked()) {
+			moduleBlocked(activeController);			
+		} else {
+			moduleUnblocked(activeController);	
+		}
+	}
+
+	private int getTabIndex(IFController activeController) {
+		JComponent controllerComponent = getControllerComponent(activeController);
+		GlassPanel glassPanel = glassPanelMap.get(controllerComponent);
+		int idx = indexOfComponent(glassPanel);
+		return idx;
 	}
 
 	/**
@@ -109,9 +125,7 @@ public class TabbedWorkarea extends JTabbedPane implements IFWorkarea, MouseList
 		}
 
 		// Get the component of the controller.
-		JComponent controllerComponent = getControllerComponent(activeController);
-		controllerComponent.remove(controllerComponent);
-		int idx = indexOfComponent(controllerComponent);
+		int idx = getTabIndex(activeController);
 		if (idx >= 0) {
 			remove(idx);
 		} else {
@@ -122,7 +136,8 @@ public class TabbedWorkarea extends JTabbedPane implements IFWorkarea, MouseList
 			}
 			LOG.warning("Closed module [id:" + moduleId + "] could not be found in the tab.");
 		}
-		remove(controllerComponent);
+
+		remove(getControllerComponent(activeController));
 	}
 
 	/**
@@ -142,6 +157,11 @@ public class TabbedWorkarea extends JTabbedPane implements IFWorkarea, MouseList
 
 		// Get the component of the controller.
 		JComponent controllerComponent = getControllerComponent(activeController);
+		GlassPanel glassPanel = new GlassPanel();
+		glassPanel.setLayout(new BorderLayout());
+		glassPanel.add(controllerComponent, BorderLayout.CENTER);
+		
+		glassPanelMap.put(controllerComponent, glassPanel);
 
 		// Get the insert position.
 		int selectedIdx = getSelectedIndex();
@@ -152,15 +172,20 @@ public class TabbedWorkarea extends JTabbedPane implements IFWorkarea, MouseList
 		// Add the tab.
 		if (selectedIdx + 1 >= getTabCount()) {
 			// Add the tab to the end.
-			addTab(null, controllerComponent);
+			addTab(null, glassPanel);
 		} else {
 			// Insert the tab after current selected one.
-			insertTab(null, null, controllerComponent, null, selectedIdx);
-			setSelectedComponent(controllerComponent);
+			insertTab(null, null, glassPanel, null, selectedIdx);
 		}
-		setSelectedComponent(controllerComponent);
+		setSelectedComponent(glassPanel);
 		selectedIdx = getSelectedIndex();
 		setTabComponentAt(selectedIdx, new TabControllerPanel(activeController));
+		
+		if(activeController.isBlocked()) {
+			moduleBlocked(activeController);			
+		} else {
+			moduleUnblocked(activeController);	
+		}
 	}
 
 	/**
@@ -332,5 +357,28 @@ public class TabbedWorkarea extends JTabbedPane implements IFWorkarea, MouseList
 
 	@Override
 	public void mouseExited(MouseEvent e) {
+	}
+
+
+	@Override
+	public void moduleBlocked(IFController controller) {
+		System.out.println("Block: " + controller.getClass().getCanonicalName());
+		// Get the component of the controller.
+		JComponent controllerComponent = getControllerComponent(controller);
+		GlassPanel glassPanel = glassPanelMap.get(controllerComponent);
+		if(glassPanel != null) {
+			glassPanel.setBlocked(true);
+		}
+	}
+
+	@Override
+	public void moduleUnblocked(IFController controller) {
+		System.out.println("Unblock: " + controller.getClass().getCanonicalName());
+		// Get the component of the controller.
+		JComponent controllerComponent = getControllerComponent(controller);
+		GlassPanel glassPanel = glassPanelMap.get(controllerComponent);
+		if(glassPanel != null) {
+			glassPanel.setBlocked(false);
+		}
 	}
 }

@@ -66,5 +66,26 @@ public interface IFController {
 	 * 
 	 * @return An array of module action state objects.
 	 */
-	Set<ModuleActionState> getModuleActionStates(); 	
+	Set<ModuleActionState> getModuleActionStates(); 
+		
+	/**
+	 * Block the controller.
+	 * 
+	 * @param blocker Object that blocks the workarea
+	 */
+	void block(Object blocker);
+	
+	/**
+	 * Unblock the controller.
+	 * 
+	 * @param blocker Object that unblocks the workarea
+	 */
+	void unblock(Object blocker);
+	
+	/**
+	 * Returns, if the controller is currently blocked.
+	 * 
+	 * @return true, if blocked. False otherwise.
+	 */
+	boolean isBlocked();
 }

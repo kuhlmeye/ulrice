@@ -359,4 +359,30 @@ public class ModuleManager implements IFModuleManager, IFModuleStructureManager 
 		listenerList.remove(IFModuleStructureEventListener.class, listener);
 	}
 
+	@Override
+	public void fireControllerBlocked(IFController abstractController) {
+		// Inform event listeners.
+		IFModuleEventListener[] listeners = listenerList.getListeners(IFModuleEventListener.class);
+		if (activeController != null) {
+			if (listeners != null) {
+				for (IFModuleEventListener listener : listeners) {
+					listener.moduleBlocked(activeController);
+				}
+			}
+		}
+	}
+
+	@Override
+	public void fireControllerUnblocked(IFController abstractController) {
+		// Inform event listeners.
+		IFModuleEventListener[] listeners = listenerList.getListeners(IFModuleEventListener.class);
+		if (activeController != null) {
+			if (listeners != null) {
+				for (IFModuleEventListener listener : listeners) {
+					listener.moduleUnblocked(activeController);
+				}
+			}
+		}
+	}
+
 }
