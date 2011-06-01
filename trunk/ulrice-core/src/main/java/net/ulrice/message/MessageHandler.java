@@ -257,4 +257,16 @@ public class MessageHandler implements UncaughtExceptionHandler, IFModuleEventLi
 	public void deactivateModule(IFController controller) {
 		// Nothing to do in here.
 	}
+
+	@Override
+	public void moduleBlocked(IFController controller) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void moduleUnblocked(IFController controller) {
+		// TODO Auto-generated method stub
+		
+	}
 }

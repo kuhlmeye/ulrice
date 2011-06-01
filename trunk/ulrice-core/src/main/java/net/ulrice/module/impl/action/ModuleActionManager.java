@@ -280,4 +280,16 @@ public class ModuleActionManager implements IFModuleEventListener, PropertyChang
 			}
 		}
 	}
+
+	@Override
+	public void moduleBlocked(IFController controller) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void moduleUnblocked(IFController controller) {
+		// TODO Auto-generated method stub
+		
+	}
 }

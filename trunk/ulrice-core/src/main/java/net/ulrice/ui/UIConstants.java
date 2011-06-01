@@ -38,5 +38,7 @@ public interface UIConstants {
 	
 	public static final String MESSAGEDIALOG_OPAQUE = "MessageDialog.Opaque";
 	public static final String MESSAGEDIALOG_FOREGROUND = "MessageDialog.Foreground";
+	
+	public static final String GLASSPANEL_COLOR = "GlassPanel.Color";
 
 }

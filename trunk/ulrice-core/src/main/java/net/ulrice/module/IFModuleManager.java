@@ -88,4 +88,8 @@ public interface IFModuleManager {
 	 * @param controller The module the should be left open.
 	 */
 	void closeOtherModules(IFController controller);
+
+	void fireControllerBlocked(IFController abstractController);
+
+	void fireControllerUnblocked(IFController abstractController);
 }

@@ -2,6 +2,7 @@ package net.ulrice.sample.module.sample1;
 
 import java.awt.BorderLayout;
 
+import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -32,5 +33,6 @@ public class VSample1 implements IFView {
 		view = new JPanel();
 		view.setLayout(new BorderLayout());
 		view.add(new JLabel("Sample 1 module."), BorderLayout.CENTER);
+		view.add(new JButton("Hallo"), BorderLayout.SOUTH);
 	}
 }

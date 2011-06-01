@@ -28,6 +28,10 @@ public class CSample1 extends AbstractController {
 		PSample1 process = new PSample1(this);
 		processExecutor.executeProcess(process);
 		processExecutor.executeProcess(new PSample1(this), process);
+		processExecutor.executeProcess(new PSample1(this), process);
+		processExecutor.executeProcess(new PSample1(this), process);
+		processExecutor.executeProcess(new PSample1(this), process);
+		processExecutor.executeProcess(new PSample1(this), process);
 		postInfoMessage("Sample controller 1 successfully initialized.");
 	}
 	

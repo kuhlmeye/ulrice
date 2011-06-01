@@ -8,6 +8,7 @@ import java.util.logging.Logger;
 
 import javax.swing.event.EventListenerList;
 
+import net.ulrice.Ulrice;
 import net.ulrice.module.IFController;
 import net.ulrice.module.IFModuleTitleRenderer.Usage;
 import net.ulrice.process.IFBackgroundProcess.ProcessState;
@@ -33,10 +34,17 @@ public class ProcessManager implements IFProcessListener {
 		if (processList == null) {
 			processList = new ArrayList<IFBackgroundProcess>();
 			processMap.put(owningController, processList);
-		}
-		processList.add(process);
-		process.addProcessListener(this);
+		}		
+		processList.add(process);		
+		process.addProcessListener(this);			
 		fireStateChanged(process);
+		
+
+		if(ProcessState.Started.equals(process.getProcessState())) {
+			if(process.blocksWorkarea()) {
+				process.getOwningController().block(process);
+			}
+		}
 	}
 
 	public List<IFBackgroundProcess> getRunningProcesses(IFController controller) {
@@ -50,7 +58,17 @@ public class ProcessManager implements IFProcessListener {
 
 	@Override
 	public void stateChanged(IFBackgroundProcess process) {
+		if(ProcessState.Started.equals(process.getProcessState())) {
+			if(process.blocksWorkarea()) {
+				process.getOwningController().block(process);
+			}
+		}
 		if (ProcessState.Done.equals(process.getProcessState())) {
+			if(process.blocksWorkarea()) {
+				process.getOwningController().unblock(process);
+			}
+
+			
 			List<IFBackgroundProcess> list = processMap.get(process.getOwningController());
 
 			if (!list.remove(process)) {

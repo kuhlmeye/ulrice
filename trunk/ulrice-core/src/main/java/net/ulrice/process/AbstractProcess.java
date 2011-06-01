@@ -22,13 +22,20 @@ public abstract class AbstractProcess<T,V> extends SwingWorker<T, V> implements 
 	private String name;
 	private ProcessState state;
 	private EventListenerList listenerList;
+	private boolean blocksWorkarea = false;
 
 	public AbstractProcess(IFController owner, String name) {
+		this(owner, name, false);
+	}
+
+	public AbstractProcess(IFController owner, String name, boolean blocksWorkarea) {
+		this.blocksWorkarea = blocksWorkarea;
 		this.owner = owner;
 		this.name = name;		
 		this.state = ProcessState.Initialized;
 		this.listenerList = new EventListenerList();
 	}
+	
 	
 	
 	@Override
@@ -70,6 +77,7 @@ public abstract class AbstractProcess<T,V> extends SwingWorker<T, V> implements 
 		super.done();
 
 		this.state = ProcessState.Done;
+
 		fireStateChanged();
 		
 		try {
@@ -132,4 +140,10 @@ public abstract class AbstractProcess<T,V> extends SwingWorker<T, V> implements 
 	 * @param result The result of the background process
 	 */
 	protected abstract void finished(T result);
+	
+	
+	public boolean blocksWorkarea() {
+		return blocksWorkarea;		
+	}	
 }
+

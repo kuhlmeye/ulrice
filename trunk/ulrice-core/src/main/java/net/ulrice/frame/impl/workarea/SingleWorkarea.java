@@ -1,7 +1,11 @@
 package net.ulrice.frame.impl.workarea;
 
+import java.awt.AWTEvent;
+import java.awt.BorderLayout;
+import java.awt.Toolkit;
+import java.awt.event.AWTEventListener;
+
 import javax.swing.JComponent;
-import javax.swing.JPanel;
 
 import net.ulrice.Ulrice;
 import net.ulrice.frame.IFWorkarea;
@@ -12,16 +16,24 @@ import net.ulrice.module.IFController;
  * 
  * @author ckuhlmeyer
  */
-public class SingleWorkarea extends JPanel implements IFWorkarea {
+public class SingleWorkarea implements IFWorkarea, AWTEventListener {
 
 	/** Default generated serial version uid. */
 	private static final long serialVersionUID = -791167547594342060L;
 
+	private GlassPanel workareaPanel = new GlassPanel();
+
+	private IFController activeController;
+
+	public SingleWorkarea() {
+		workareaPanel.setLayout(new BorderLayout());
+	}
+	
 	/**
 	 * @see net.ulrice.frame.IFWorkarea#getView()
 	 */
 	public JComponent getView() {
-		return this;
+		return workareaPanel;
 	}
 
 	/**
@@ -29,35 +41,45 @@ public class SingleWorkarea extends JPanel implements IFWorkarea {
 	 */
 	public void onActivateWorkarea() {
 		Ulrice.getModuleManager().addModuleEventListener(this);
-	}
+	}	
 
 	/**
 	 * @see net.ulrice.frame.IFWorkarea#onDeactivateWorkarea()
 	 */
 	public void onDeactivateWorkarea() {
 		Ulrice.getModuleManager().removeModuleEventListener(this);
+        Toolkit.getDefaultToolkit().removeAWTEventListener(this);
 	}
 
 	/**
 	 * @see net.ulrice.module.event.IFModuleEventListener#activateModule(net.ulrice.module.IFController)
 	 */
 	public void activateModule(IFController activeController) {
-		if (activeController != null && activeController.getView() != null
-				&& activeController.getView().getView() != null) {
-			add(activeController.getView().getView());
-			invalidate();
+		this.activeController = activeController;
+		
+		if(activeController.isBlocked()) {
+			moduleBlocked(activeController);
 		} else {
-			removeAll();
-			invalidate();
+			moduleUnblocked(activeController);
 		}
+		
+		if (activeController != null && activeController.getView() != null && activeController.getView().getView() != null) {
+			workareaPanel.add(activeController.getView().getView(), BorderLayout.CENTER);
+		} else {
+			workareaPanel.removeAll();
+		}
+		workareaPanel.revalidate();	
+		workareaPanel.repaint();
 	}
 
 	/**
 	 * @see net.ulrice.module.event.IFModuleEventListener#deactivateModule(net.ulrice.module.IFController)
 	 */
 	public void deactivateModule(IFController activeController) {
-		removeAll();
-		invalidate();
+		this.activeController = null;
+		workareaPanel.removeAll();
+		workareaPanel.revalidate();	
+		workareaPanel.repaint();
 	}
 
 	/**
@@ -72,6 +94,9 @@ public class SingleWorkarea extends JPanel implements IFWorkarea {
 	 */
 	public void closeModule(IFController activeController) {
 		// This event can be ignored.
+		workareaPanel.removeAll();
+		workareaPanel.revalidate();	
+		workareaPanel.repaint();
 	}
 
 	/**
@@ -80,5 +105,27 @@ public class SingleWorkarea extends JPanel implements IFWorkarea {
 	@Override
 	public String getComponentId() {
 		return getClass().getName();
+	}
+
+	@Override
+	public void eventDispatched(AWTEvent event) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void moduleBlocked(IFController controller) {
+		if(activeController != null && activeController.equals(controller)) {
+			workareaPanel.setBlocked(true);
+			Toolkit.getDefaultToolkit().addAWTEventListener(this, 0xFFF);
+		}
+	}
+
+	@Override
+	public void moduleUnblocked(IFController controller) {
+		if(activeController != null && activeController.equals(controller)) {
+			workareaPanel.setBlocked(false);
+			Toolkit.getDefaultToolkit().removeAWTEventListener(this);
+		}
 	}
 }

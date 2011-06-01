@@ -29,7 +29,13 @@ public abstract class AbstractController implements IFController {
 	
 	/** The set of all module actions that are handled by this controller. */
 	private Set<ModuleActionState> moduleActionStates;
-
+	
+	private Set<Object> blockSet = new HashSet<Object>();
+	
+	@Override
+	public boolean isBlocked() {
+		return !blockSet.isEmpty();
+	}
 	/**
 	 * Creates an abstract controller.
 	 */
@@ -198,5 +204,22 @@ public abstract class AbstractController implements IFController {
 	@Override
 	public boolean performModuleAction(String actionId) {
 		return false;
-	}			
+	}
+	
+
+	@Override
+	public void block(Object blocker) {
+		if(blockSet.isEmpty()) {
+			Ulrice.getModuleManager().fireControllerBlocked(this);
+		}
+		blockSet.add(blocker);
+	}
+
+	@Override
+	public void unblock(Object blocker) {
+		blockSet.remove(blocker);
+		if(blockSet.isEmpty()) {
+			Ulrice.getModuleManager().fireControllerUnblocked(this);
+		}
+	}
 }
