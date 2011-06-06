@@ -28,7 +28,7 @@ You can block the execution of an action by returning false from this method. Th
 
 == How to register your own security callback ==
 
-You can use your self written security callback to handle application security within your client. The only thing you have to do is to implement the IFAuthCallback interface in you class and to return the class in getAuthCallback-Method of your implementation of the ulrice configuration.
+You can use your self written security callback to handle application security within your client. The only thing you have to do is to implement the IFAuthCallback interface in your class and return the class in getAuthCallback-Method of your implementation of the ulrice configuration.
 
 The interface forces you to implement the following methods.
 {{{
@@ -96,4 +96,4 @@ For convenience you can use the default !GrantAllAuthCallback-Class to implement
 == How to use simple typed authorizations ==
 There is an extension for !ReflectionModules and Actions giving you a standard way to add string based security markers to actions and modules. 
 
-If you want to use this, you have to use the !AuthReflectionModule and !AuthAction implementations instead of the standard implementations. You can add an authorization object to this classes saving the strings you can use to query your authorization module. The sample applications shows the usage of this !AuthCallback implementation.
+If you want to use this, you have to use the !AuthReflectionModule and !AuthAction implementations instead of the standard implementations. You can add an authorization object to these classes saving the strings you can use to query your authorization module. The sample application shows the usage of this !AuthCallback implementation.
