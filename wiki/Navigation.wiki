@@ -4,4 +4,3 @@
   * [UlriceCore Ulrice Core]
   * [DataBinding Data Binding]
   * [Webstarter]
-  * [AuthCallback]
