@@ -1,0 +1,99 @@
+#summary This page describes the authorization callback.
+
+= Introduction =
+
+The authorization callback could be used to block/allow following actions within ulrice. 
+  * Registration of modules
+  * Start of modules
+  * Registration of actions
+  * Enabling actions
+  * Execution of actions
+
+== Registration of modules ==
+This method is called during the registration of a module in the module structure manager. If false is returned from this method the registration of the module will be skipped. The module is not known within the application.
+
+== Start of modules ==
+You can prohibit the start of a module by returning false from this method. It is called shortly after instanciation of the controller and before registration of the controller in the module manager.
+
+== Registration of actions ==
+If false is returned by this method the registration of module and application action is prohibited. The action is then not registered.
+
+== Enable actions ==
+This method is called before an action is enabled. By returning false the action will never be enabled.
+
+== Execution of actions ==
+You can block the execution of an action by returning false from this method. This method is called by the !ModuleActionManager.
+
+= How To =
+
+== How to register your own security callback ==
+
+You can use your self written security callback to handle application security within your client. The only thing you have to do is to implement the IFAuthCallback interface in your class and return the class in getAuthCallback-Method of your implementation of the ulrice configuration.
+
+The interface forces you to implement the following methods.
+{{{
+package net.ulrice.security;
+
+import net.ulrice.module.IFController;
+import net.ulrice.module.IFModule;
+import net.ulrice.module.impl.action.Action;
+
+/**
+ * Authorization callback.
+ */
+public interface IFAuthCallback {
+
+	/**
+	 * Grants permission to open a module.
+	 * 
+	 * @param module The module of the controller
+	 * @param ctrl The controller that should be opened.
+	 * @return True, if permission is granted, false otherwise.
+	 */
+	boolean allowOpenModule(IFModule module, IFController ctrl);
+
+	/**
+	 * Grants permission to register an action
+	 * 
+	 * @param ctrl The controller in which wants to register the action. This
+	 *             param is null, if the action is a system action.
+	 * @param action The action that is registered.
+	 * @return True, if permission is granted, false otherwise.
+	 */
+	boolean allowRegisterAction(IFController ctrl, Action action);
+
+	/**
+	 * Grants permission to enable an action
+	 * 
+	 * @param ctrl The controller of the action. The controller is null if the
+	 *             action is a application action
+	 * @param action The action itself.
+	 * @return True, if permission is granted, false otherwise.
+	 */
+	boolean allowEnableAction(IFController ctrl, Action action);
+
+	/**
+	 * Grants permission to execute an action
+	 * 
+	 * @param ctrl The controller in which the action is executed.
+	 * @param action The action itself.
+	 * @return True, if permission is granted, false otherwise.
+	 */
+	boolean allowExecuteAction(IFController ctrl, Action action);
+
+	/**
+	 * Grants permission to register a module.
+	 * 
+	 * @param module The module that should be registered.
+	 * @return True, if permission is granted, false otherwise.
+	 */
+	boolean allowRegisterModule(IFModule module);
+}
+}}}
+
+For convenience you can use the default !GrantAllAuthCallback-Class to implement only the methods you really need for your application security.
+
+== How to use simple typed authorizations ==
+There is an extension for !ReflectionModules and Actions giving you a standard way to add string based security markers to actions and modules. 
+
+If you want to use this, you have to use the !AuthReflectionModule and !AuthAction implementations instead of the standard implementations. You can add an authorization object to these classes saving the strings you can use to query your authorization module. The sample application shows the usage of this !AuthCallback implementation.

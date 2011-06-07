@@ -1,0 +1,3 @@
+#summary Describes the functionality of the module manager
+
+TODO

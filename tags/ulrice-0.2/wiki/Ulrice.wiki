@@ -1,0 +1,14 @@
+#summary Describes the ulrice project.
+
+= Introduction =
+
+Ulrice (Universal Rich Client Environment) is a framework for building rich client applications. It consists of the following subprojects 
+ * [UlriceCore The core framework]
+ * [DataBinding A data binding framework]
+ * A Dashboard module
+ * [Webstarter A webstarter]
+
+
+= Screenshot =
+
+[https://ulrice.googlecode.com/svn/wiki/img/sample_application.png]
