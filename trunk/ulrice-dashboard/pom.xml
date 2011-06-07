@@ -103,10 +103,7 @@
 					<allowSnapshots>true</allowSnapshots>
 					<uploads>
 						<upload>
-							<extensions>jar.pack200</extensions>
-						</upload>
-						<upload>
-							<extensions>ws.xml</extensions>
+							<extensions>jar</extensions>
 							<labels>Featured</labels>
 						</upload>
 					</uploads>
