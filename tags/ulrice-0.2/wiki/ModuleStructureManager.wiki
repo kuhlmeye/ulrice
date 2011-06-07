@@ -1,3 +1,0 @@
-#summary Description of the module structure manager
-
-TODO

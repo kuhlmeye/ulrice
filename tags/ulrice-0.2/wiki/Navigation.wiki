@@ -1,6 +1,0 @@
-#sidebar TableOfContents
-
-  * [Ulrice]
-  * [UlriceCore Ulrice Core]
-  * [DataBinding Data Binding]
-  * [Webstarter]
