@@ -2,14 +2,14 @@
 	<modelVersion>4.0.0</modelVersion>
 	<artifactId>ulrice-webstarter</artifactId>
 	<scm>
-		<connection>scm:svn:https://ulrice.googlecode.com/svn/tags/ulrice-0.2/trunk</connection>
-		<developerConnection>scm:svn:https://ulrice.googlecode.com/svn/tags/ulrice-0.2/trunk</developerConnection>
+		<connection>scm:svn:https://ulrice.googlecode.com/svn/trunk</connection>
+		<developerConnection>scm:svn:https://ulrice.googlecode.com/svn/trunk</developerConnection>
 	</scm>
 	
 	<parent>
 		<groupId>net.ulrice</groupId>
 		<artifactId>ulrice</artifactId>
-		<version>0.2</version>
+		<version>0.3-SNAPSHOT</version>
 		<relativePath>../ulrice</relativePath>
 	</parent>
 	
