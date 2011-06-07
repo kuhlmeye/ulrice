@@ -27,6 +27,11 @@
 			<artifactId>ulrice-databinding</artifactId>
 			<version>0.2-SNAPSHOT</version>
 		</dependency>
+		<dependency>
+			<groupId>net.ulrice</groupId>
+			<artifactId>ulrice-webstarter-maven-plugin</artifactId>
+			<version>0.2-SNAPSHOT</version>
+		</dependency>
 	</dependencies>
 
 	<build>
@@ -68,7 +73,7 @@
 			<plugin>
 				<groupId>net.ulrice</groupId>
 				<artifactId>ulrice-webstarter-maven-plugin</artifactId>
-				<version>0.1-SNAPSHOT</version>
+				<version>0.2-SNAPSHOT</version>
 
 				<configuration>
 					<directories>
