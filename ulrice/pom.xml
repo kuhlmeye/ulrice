@@ -6,8 +6,8 @@
 	<name>Ulrice</name>
 	<packaging>pom</packaging>
 	<scm>
-		<connection>scm:svn:https://ulrice.googlecode.com/svn/trunk</connection>
-		<developerConnection>scm:svn:https://ulrice.googlecode.com/svn/trunk</developerConnection>
+		<connection>scm:svn:https://ulrice.googlecode.com/svn/trunk/ulrice</connection>
+		<developerConnection>scm:svn:https://ulrice.googlecode.com/svn/trunk/ulrice</developerConnection>
 	</scm>
 
 	<dependencies>

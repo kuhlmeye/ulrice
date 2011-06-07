@@ -7,8 +7,8 @@
 	<name>ulrice-webstarter-maven-plugin Maven Mojo</name>
 	<url>http://maven.apache.org</url>
 	<scm>
-		<connection>scm:svn:https://ulrice.googlecode.com/svn/trunk</connection>
-		<developerConnection>scm:svn:https://ulrice.googlecode.com/svn/trunk</developerConnection>
+		<connection>scm:svn:https://ulrice.googlecode.com/svn/trunk/ulrice-webstarter-maven-plugin</connection>
+		<developerConnection>scm:svn:https://ulrice.googlecode.com/svn/trunk/ulrice-webstarter-maven-plugin</developerConnection>
 	</scm>
 	<dependencies>
 		<dependency>

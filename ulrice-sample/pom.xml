@@ -3,8 +3,8 @@
 	<artifactId>ulrice-sample</artifactId>
 	<name>Ulrice-Sample</name>
 	<scm>
-		<connection>scm:svn:https://ulrice.googlecode.com/svn/trunk</connection>
-		<developerConnection>scm:svn:https://ulrice.googlecode.com/svn/trunk</developerConnection>
+		<connection>scm:svn:https://ulrice.googlecode.com/svn/trunk/ulrice-sample</connection>
+		<developerConnection>scm:svn:https://ulrice.googlecode.com/svn/trunk/ulrice-sample</developerConnection>
 	</scm>
 
 	<parent>

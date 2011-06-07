@@ -3,8 +3,8 @@
 	<artifactId>ulrice-databinding</artifactId>
 	<name>Ulrice Databinding</name>
 	<scm>
-		<connection>scm:svn:https://ulrice.googlecode.com/svn/trunk</connection>
-		<developerConnection>scm:svn:https://ulrice.googlecode.com/svn/trunk</developerConnection>
+		<connection>scm:svn:https://ulrice.googlecode.com/svn/trunk/ulrice-databinding</connection>
+		<developerConnection>scm:svn:https://ulrice.googlecode.com/svn/trunk/ulrice-databinding</developerConnection>
 	</scm>
 
 	<parent>
