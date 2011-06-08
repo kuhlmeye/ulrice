@@ -3,13 +3,35 @@
 	<groupId>net.ulrice</groupId>
 	<artifactId>ulrice-webstarter-maven-plugin</artifactId>
 	<packaging>maven-plugin</packaging>
-	<version>0.3-SNAPSHOT</version>
 	<name>ulrice-webstarter-maven-plugin Maven Mojo</name>
+	<version>0.3-SNAPSHOT</version>
+	<description>Ulrice-Webstarter-Maven-Plugin is a Mojo which is generating a ws.xml needed by the Ulrice-Webstarter to download all neccessary artifacts of your application</description>
 	<url>http://maven.apache.org</url>
+	<licenses>
+		<license>
+			<name>GNU LESSER GENERAL PUBLIC LICENSE</name>
+			<url>http://www.gnu.org/licenses/lgpl.html</url>
+			<distribution>repo</distribution>
+		</license>
+	</licenses>
 	<scm>
 		<connection>scm:svn:https://ulrice.googlecode.com/svn/trunk/ulrice-webstarter-maven-plugin</connection>
 		<developerConnection>scm:svn:https://ulrice.googlecode.com/svn/trunk/ulrice-webstarter-maven-plugin</developerConnection>
+		<url>http://ulrice.googlecode.com/svn/</url>
 	</scm>
+	<developers>
+		<developer>
+			<id>ckuhlmeyer</id>
+			<name>Christof Kuhlmeyer</name>
+			<email></email>
+		</developer>
+		<developer>
+			<id>apunahassaphemapetilon@hotmail.com</id>
+			<name>Tobias Kavemann</name>
+			<email>apunahassaphemapetilon@hotmail.com</email>
+		</developer>
+	</developers>
+	
 	<dependencies>
 		<dependency>
 			<groupId>org.apache.maven</groupId>
