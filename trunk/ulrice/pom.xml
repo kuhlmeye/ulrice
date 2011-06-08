@@ -2,12 +2,12 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>net.ulrice</groupId>
 	<artifactId>ulrice</artifactId>
-	<version>0.3-SNAPSHOT</version>
+	<version>0.2</version>
 	<name>Ulrice</name>
 	<packaging>pom</packaging>
 	<scm>
-		<connection>scm:svn:https://ulrice.googlecode.com/svn/trunk/ulrice</connection>
-		<developerConnection>scm:svn:https://ulrice.googlecode.com/svn/trunk/ulrice</developerConnection>
+		<connection>scm:svn:https://ulrice.googlecode.com/svn/tags/ulrice-0.2/ulrice</connection>
+		<developerConnection>scm:svn:https://ulrice.googlecode.com/svn/tags/ulrice-0.2/ulrice</developerConnection>
 	</scm>
 
 	<dependencies>
