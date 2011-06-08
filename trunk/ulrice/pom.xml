@@ -2,13 +2,35 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>net.ulrice</groupId>
 	<artifactId>ulrice</artifactId>
-	<version>0.3-SNAPSHOT</version>
-	<name>Ulrice</name>
 	<packaging>pom</packaging>
+	<name>Ulrice</name>
+	<version>0.3-SNAPSHOT</version>
+	<description>Ulrice is a framework for rich clients supporting the mvc-based (or module based) development of applications</description>
+	<url>http://ulrice.googlecode.com</url>
+	<licenses>
+		<license>
+			<name>GNU LESSER GENERAL PUBLIC LICENSE</name>
+			<url>http://www.gnu.org/licenses/lgpl.html</url>
+			<distribution>repo</distribution>
+		</license>
+	</licenses>
 	<scm>
 		<connection>scm:svn:https://ulrice.googlecode.com/svn/trunk/ulrice</connection>
 		<developerConnection>scm:svn:https://ulrice.googlecode.com/svn/trunk/ulrice</developerConnection>
+		<url>http://ulrice.googlecode.com/svn/</url>
 	</scm>
+	<developers>
+		<developer>
+			<id>ckuhlmeyer</id>
+			<name>Christof Kuhlmeyer</name>
+			<email></email>
+		</developer>
+		<developer>
+			<id>apunahassaphemapetilon@hotmail.com</id>
+			<name>Tobias Kavemann</name>
+			<email>apunahassaphemapetilon@hotmail.com</email>
+		</developer>
+	</developers>
 
 	<dependencies>
 		<dependency>
