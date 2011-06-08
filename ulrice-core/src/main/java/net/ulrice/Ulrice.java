@@ -4,6 +4,7 @@ import java.util.Properties;
 
 import net.ulrice.configuration.ConfigurationException;
 import net.ulrice.configuration.IFUlriceConfiguration;
+import net.ulrice.dialog.DialogManager;
 import net.ulrice.frame.IFMainFrame;
 import net.ulrice.message.I18NMessageProvider;
 import net.ulrice.message.MessageHandler;
@@ -47,6 +48,9 @@ public class Ulrice {
 		
 	/** The callback used to handle authorization requests. */
 	private static IFAuthCallback securityManager;	
+	
+	private static DialogManager dialogManager;
+	
 
 
 	/** 
@@ -65,6 +69,7 @@ public class Ulrice {
 		Ulrice.messageHandler = new MessageHandler();
 		Ulrice.actionManager = new ModuleActionManager();
 		Ulrice.processManager = new ProcessManager();
+		Ulrice.dialogManager = new DialogManager();
 		
 		if(configuration.getAuthCallback() != null) {
 			Ulrice.securityManager = configuration.getAuthCallback();
@@ -75,6 +80,7 @@ public class Ulrice {
 		Ulrice.mainFrame = configuration.getMainFrame();
 		Ulrice.mainFrame.inializeLayout();
 	}
+
 
 	/** 
 	 * Return the module manager of ulrice. 
@@ -141,6 +147,15 @@ public class Ulrice {
 	
 	public static ProcessManager getProcessManager() {
 		return processManager;
+	}
+	
+
+	public static DialogManager getDialogManager() {
+		return dialogManager;
+	}
+
+	public static void setDialogManager(DialogManager dialogManager) {
+		Ulrice.dialogManager = dialogManager;
 	}
 	
 	/**
