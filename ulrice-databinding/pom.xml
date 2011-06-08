@@ -3,14 +3,14 @@
 	<artifactId>ulrice-databinding</artifactId>
 	<name>Ulrice Databinding</name>
 	<scm>
-		<connection>scm:svn:https://ulrice.googlecode.com/svn/trunk/ulrice-databinding</connection>
-		<developerConnection>scm:svn:https://ulrice.googlecode.com/svn/trunk/ulrice-databinding</developerConnection>
+		<connection>scm:svn:https://ulrice.googlecode.com/svn/tags/ulrice-0.2/ulrice-databinding</connection>
+		<developerConnection>scm:svn:https://ulrice.googlecode.com/svn/tags/ulrice-0.2/ulrice-databinding</developerConnection>
 	</scm>
 
 	<parent>
 		<groupId>net.ulrice</groupId>
 		<artifactId>ulrice</artifactId>
-		<version>0.2-SNAPSHOT</version>
+		<version>0.2</version>
 		<relativePath>../ulrice</relativePath>
 	</parent>
 	
