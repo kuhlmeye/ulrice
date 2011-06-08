@@ -3,12 +3,12 @@
 	<groupId>net.ulrice</groupId>
 	<artifactId>ulrice-webstarter-maven-plugin</artifactId>
 	<packaging>maven-plugin</packaging>
-	<version>0.2</version>
+	<version>0.2-SNAPSHOT</version>
 	<name>ulrice-webstarter-maven-plugin Maven Mojo</name>
 	<url>http://maven.apache.org</url>
 	<scm>
-		<connection>scm:svn:https://ulrice.googlecode.com/svn/tags/ulrice-0.2/ulrice-webstarter-maven-plugin</connection>
-		<developerConnection>scm:svn:https://ulrice.googlecode.com/svn/tags/ulrice-0.2/ulrice-webstarter-maven-plugin</developerConnection>
+		<connection>scm:svn:https://ulrice.googlecode.com/svn/trunk/ulrice-webstarter-maven-plugin</connection>
+		<developerConnection>scm:svn:https://ulrice.googlecode.com/svn/trunk/ulrice-webstarter-maven-plugin</developerConnection>
 	</scm>
 	<dependencies>
 		<dependency>

@@ -3,14 +3,14 @@
 	<artifactId>ulrice-dashboard</artifactId>
 	<name>Ulrice-Dashboard</name>
 	<scm>
-		<connection>scm:svn:https://ulrice.googlecode.com/svn/tags/ulrice-0.2/ulrice-dashboard</connection>
-		<developerConnection>scm:svn:https://ulrice.googlecode.com/svn/tags/ulrice-0.2/ulrice-dashboard</developerConnection>
+		<connection>scm:svn:https://ulrice.googlecode.com/svn/trunk/ulrice-dashboard</connection>
+		<developerConnection>scm:svn:https://ulrice.googlecode.com/svn/trunk/ulrice-dashboard</developerConnection>
 	</scm>
 
 	<parent>
 		<groupId>net.ulrice</groupId>
 		<artifactId>ulrice</artifactId>
-		<version>0.2</version>
+		<version>0.2-SNAPSHOT</version>
 		<relativePath>../ulrice</relativePath>
 	</parent>
 
@@ -19,7 +19,7 @@
 		<dependency>
 			<groupId>net.ulrice</groupId>
 			<artifactId>ulrice-core</artifactId>
-			<version>0.2</version>
+			<version>0.2-SNAPSHOT</version>
 		</dependency>
 <!-- 		<dependency>
 			<groupId>net.ulrice</groupId>
