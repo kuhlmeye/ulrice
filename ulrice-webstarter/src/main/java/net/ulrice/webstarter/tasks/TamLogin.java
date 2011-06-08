@@ -141,6 +141,10 @@ public class TamLogin extends AbstractTask {
 						// The user's account has expired.
 						thread.handleError(this, "Your account has expired.", tamResponseContent);
 						return false;
+					} else if ("HPDIA0199W".equalsIgnoreCase(errorCode)) {
+						// The user's account has expired.
+						thread.handleError(this, "Authentication mechanism not available.", tamResponseContent);
+						return false;
 					} else if ("HPDIA0204W".equalsIgnoreCase(errorCode)) {
 						// The user's password has expired.
 						// TODO Handle password changed exception.
