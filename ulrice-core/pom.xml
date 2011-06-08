@@ -13,15 +13,15 @@
 		</license>
 	</licenses>
 	<scm>
-		<connection>scm:svn:https://ulrice.googlecode.com/svn/trunk/ulrice-core</connection>
-		<developerConnection>scm:svn:https://ulrice.googlecode.com/svn/trunk/ulrice-core</developerConnection>
-		<url>http://ulrice.googlecode.com/svn/</url>
+		<connection>scm:svn:https://ulrice.googlecode.com/svn/tags/ulrice-0.2/ulrice-core</connection>
+		<developerConnection>scm:svn:https://ulrice.googlecode.com/svn/tags/ulrice-0.2/ulrice-core</developerConnection>
+		<url>http://ulrice.googlecode.com/svn/tags/ulrice-0.2/svn</url>
 	</scm>
 	<developers>
 		<developer>
 			<id>ckuhlmeyer</id>
 			<name>Christof Kuhlmeyer</name>
-			<email></email>
+			<email />
 		</developer>
 		<developer>
 			<id>apunahassaphemapetilon@hotmail.com</id>
@@ -33,7 +33,7 @@
 	<parent>
 		<groupId>net.ulrice</groupId>
 		<artifactId>ulrice</artifactId>		
-		<version>0.3-SNAPSHOT</version>
+		<version>0.2</version>
 		<relativePath>../ulrice</relativePath>
 	</parent>
 
