@@ -8,8 +8,9 @@ components:
 
  * [ModuleManager Module Manager]
  * [ModuleStructureManager Module Structure Manager]
- * Message Handler
- * Action Manager
+ * [Message Handler]
+ * [Action Manager]
+ * [Dialog Manager]
  * [ProcessManager Process Manager]
  * [AuthCallback Authorization Callback]
 
