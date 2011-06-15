@@ -28,7 +28,17 @@
 			<name>Tobias Kavemann</name>
 			<email>apunahassaphemapetilon@hotmail.com</email>
 		</developer>
+		<developer>
+		    <name>Arno Haase</name>
+		</developer>
 	</developers>
+	
+	<dependencies>
+	    <dependency>
+	        <groupId>ognl</groupId>
+	        <artifactId>ognl</artifactId>
+	    </dependency>
+	</dependencies>
 
 	<parent>
 		<groupId>net.ulrice</groupId>
