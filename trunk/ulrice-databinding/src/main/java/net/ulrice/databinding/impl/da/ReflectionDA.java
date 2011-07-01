@@ -1,5 +1,8 @@
 package net.ulrice.databinding.impl.da;
 
+import java.lang.reflect.Field;
+import java.security.AccessController;
+import java.security.PrivilegedAction;
 import java.util.Arrays;
 
 import net.ulrice.databinding.IFDataAccessor;
@@ -79,36 +82,58 @@ public class ReflectionDA<T> implements IFDataAccessor<T>, IFDynDataAccessor<T> 
 	 */
 	@SuppressWarnings("unchecked")
 	@Override
-	public T readValue(Object root) {
+    public T readValue(Object root) {
 
-		if (readPath == null) {
-			return (T) root;
-		}
+        if (readPath == null) {
+            return (T) root;
+        }
 
+        String[] path = readPath.split(".");
 
-		String[] path = readPath.split(".");
+        Object object = root;
+        try {
+            for (String pathElement : path) {
+                object = object.getClass().getField(pathElement).get(object);
+            }
+            if (path == null || path.length == 0) {
+                Field field = object.getClass().getDeclaredField(readPath);
+                if (!field.isAccessible()) {
+                    setAccessible(field);
+                }
+                object = field.get(object);
+            }
+        }
+        catch (IllegalArgumentException e) {
+            throw new ReflectionDataAccessorException("Could not read object from path: " + readPath, e);
+        }
+        catch (SecurityException e) {
+            throw new ReflectionDataAccessorException("Could not read object from path: " + readPath, e);
+        }
+        catch (IllegalAccessException e) {
+            throw new ReflectionDataAccessorException("Could not read object from path: " + readPath, e);
+        }
+        catch (NoSuchFieldException e) {
+            throw new ReflectionDataAccessorException("Could not read object from path: " + readPath, e);
+        }
 
-		
-		Object object = root;
-		try {
-			for (String pathElement : path) {
-				object = object.getClass().getField(pathElement).get(object);
-			}
-			if(path == null || path.length == 0) {
-				object = object.getClass().getField(readPath).get(object);
-			}
-		} catch (IllegalArgumentException e) {
-			throw new ReflectionDataAccessorException("Could not read object from path: " + readPath, e);
-		} catch (SecurityException e) {
-			throw new ReflectionDataAccessorException("Could not read object from path: " + readPath, e);
-		} catch (IllegalAccessException e) {
-			throw new ReflectionDataAccessorException("Could not read object from path: " + readPath, e);
-		} catch (NoSuchFieldException e) {
-			throw new ReflectionDataAccessorException("Could not read object from path: " + readPath, e);
-		}
+        return (T) object;
+    }
+	
+	
+    /**
+     * Sets the accessible.
+     * 
+     * @param field the new accessible
+     */
+    public void setAccessible(final Field field) {
+        AccessController.doPrivileged(new PrivilegedAction<Object>() {
+            public Object run() {
+                field.setAccessible(true);
+                return null;
+            }
+        });
 
-		return (T) object;
-	}
+    }
 
 	/**
 	 * @see net.ulrice.databinding.IFDynDataAccessor#writeValue(java.lang.Object, java.lang.Object)
