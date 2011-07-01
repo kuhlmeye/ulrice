@@ -11,6 +11,7 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import net.ulrice.webstarter.EncryptionUtils;
 import net.ulrice.webstarter.ProcessThread;
 
 /**
@@ -84,21 +85,21 @@ public class StartApplication extends AbstractTask {
 		String proxyHost = thread.getAppSettings().getProperty("http.proxyHost");
 		String proxyPort = thread.getAppSettings().getProperty("http.proxyPort");
 		String proxyUser = thread.getAppSettings().getProperty("http.proxyUser");
-		String proxyPassword = thread.getAppSettings().getProperty("http.proxyPassword");
+		String proxyPass = thread.getAppSettings().getProperty("http.proxyPassword");
 
 		appParameter = appParameter.replace("${USERID}", thread.getContext().getUserId());
 
 		if (proxyHost != null) {
-			appParameter = appParameter.replace("${PROXY_HOST}", thread.getContext().getUserId());
+			appParameter = appParameter.replace("${PROXY_HOST}", proxyHost);
 		}
 		if (proxyPort != null) {
-			appParameter = appParameter.replace("${PROXY_PORT}", thread.getContext().getUserId());
+			appParameter = appParameter.replace("${PROXY_PORT}", proxyPort);
 		}
 		if (proxyUser != null) {
-			appParameter = appParameter.replace("${PROXY_USER}", thread.getContext().getUserId());
+			appParameter = appParameter.replace("${PROXY_USER}", proxyUser);
 		}
-		if (proxyPassword != null) {
-			appParameter = appParameter.replace("${PROXY_PASS}", thread.getContext().getUserId());
+		if (proxyPass != null) {
+			appParameter = appParameter.replace("${PROXY_PASS}", EncryptionUtils.decrypt(proxyPass));
 		}
 
 		int cookieIdxStart = appParameter.indexOf("${COOKIE=");
