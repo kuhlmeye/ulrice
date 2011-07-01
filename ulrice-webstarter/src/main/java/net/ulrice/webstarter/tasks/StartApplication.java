@@ -22,10 +22,10 @@ public class StartApplication extends AbstractTask {
 
 	/** The logger used by this class. */
 	private static final Logger LOG = Logger.getLogger(StartApplication.class.getName());
-	
+
 	/** Parameter containing the main class value. */
 	private static final String PARAM_MAIN_CLASS = "mainClass";
-	
+
 	/** Optional parameter containing a location jre path. */
 	private static final String PARAM_LOCAL_JRE = "localJre";
 
@@ -64,24 +64,42 @@ public class StartApplication extends AbstractTask {
 			}
 		}
 
-		try {			
-			// Start application			
-			Process process = Runtime.getRuntime().exec(commandBuffer.toString(), null, new File(localDir));						
+		try {
+			// Start application
+			Process process = Runtime.getRuntime().exec(commandBuffer.toString(), null, new File(localDir));
 			StreamGobbler isGobbler = new StreamGobbler("OUT", process.getInputStream(), System.out);
 			StreamGobbler esGobbler = new StreamGobbler("ERR", process.getErrorStream(), System.out);
 			isGobbler.start();
-			esGobbler.start();						
+			esGobbler.start();
 		} catch (IOException e) {
 			thread.handleError(this, "Error starting application.", "Error starting application: " + e.getMessage());
 			LOG.log(Level.SEVERE, "IOException during application startup", e);
 		}
 
-
 		return true;
 	}
 
 	protected String replacePlaceholders(ProcessThread thread, String appParameter) {
+
+		String proxyHost = thread.getAppSettings().getProperty("http.proxyHost");
+		String proxyPort = thread.getAppSettings().getProperty("http.proxyPort");
+		String proxyUser = thread.getAppSettings().getProperty("http.proxyUser");
+		String proxyPassword = thread.getAppSettings().getProperty("http.proxyPassword");
+
 		appParameter = appParameter.replace("${USERID}", thread.getContext().getUserId());
+
+		if (proxyHost != null) {
+			appParameter = appParameter.replace("${PROXY_HOST}", thread.getContext().getUserId());
+		}
+		if (proxyPort != null) {
+			appParameter = appParameter.replace("${PROXY_PORT}", thread.getContext().getUserId());
+		}
+		if (proxyUser != null) {
+			appParameter = appParameter.replace("${PROXY_USER}", thread.getContext().getUserId());
+		}
+		if (proxyPassword != null) {
+			appParameter = appParameter.replace("${PROXY_PASS}", thread.getContext().getUserId());
+		}
 
 		int cookieIdxStart = appParameter.indexOf("${COOKIE=");
 		int cookieIdxEnd = appParameter.indexOf("}", cookieIdxStart);
