@@ -88,24 +88,22 @@ public class Application implements IFProcessEventListener, ActionListener {
 			String proxyUser = appSettings.getProperty("http.proxyUser");
 			String proxyPassword = appSettings.getProperty("http.proxyPassword");
 
-
-
-			if (proxyHost != null || !"".equals(proxyHost)) {
+			if (proxyHost != null && !"".equals(proxyHost)) {
 				System.setProperty("http.proxyHost", proxyHost);
 				System.setProperty("https.proxyHost", proxyHost);
 			}
 
-			if (proxyPort != null) {
+			if (proxyPort != null && !"".equals(proxyPort)) {
 				System.setProperty("http.proxyPort", proxyPort);
 				System.setProperty("https.proxyPort", proxyPort);
 			}
 
-			if (proxyUser != null) {
+			if (proxyUser != null && !"".equals(proxyUser)) {
 				System.setProperty("http.proxyUser", proxyUser);
 				System.setProperty("https.proxyUser", proxyUser);
 			}
 
-			if (proxyPassword != null) {
+			if (proxyPassword != null && !"".equals(proxyPassword)) {
 				proxyPassword = EncryptionUtils.decrypt(proxyPassword);
 				if(proxyPassword != null) {
 					System.setProperty("http.proxyPassword", proxyPassword);
@@ -122,13 +120,38 @@ public class Application implements IFProcessEventListener, ActionListener {
 
 	private void saveSettings() {
 		try {
-			appSettings.put("UserId", frame.getUserIdField().getText());
-			appSettings.put("Application", frame.getSelectedApplication().getId());
-						
-			appSettings.put("http.proxyHost", System.getProperty("http.proxyHost"));
-			appSettings.put("http.proxyPort", System.getProperty("http.proxyPort"));
-			appSettings.put("http.proxyUser", System.getProperty("http.proxyUser"));
-			appSettings.put("http.proxyPassword", EncryptionUtils.encrypt(System.getProperty("http.proxyPassword")));
+			appSettings.clear();
+			
+			String userId = frame.getUserIdField().getText();
+			String application = frame.getSelectedApplication().getId();
+			String proxyHost = System.getProperty("http.proxyHost");
+			String proxyPort = System.getProperty("http.proxyPort");
+			String proxyUser = System.getProperty("http.proxyUser");
+			String proxyPass = System.getProperty("http.proxyPassword");
+
+			if(userId != null) {
+				appSettings.put("UserId", userId);
+			}
+			
+			if(application != null) {
+				appSettings.put("Application", application);
+			}
+
+			if(proxyHost != null) {
+				appSettings.put("http.proxyHost", proxyHost);
+			}
+			
+			if(proxyPort != null) {
+				appSettings.put("http.proxyPort", proxyPort);
+			}
+			
+			if(proxyUser != null) {
+				appSettings.put("http.proxyUser", proxyUser);
+			}
+			
+			if(proxyPass != null) {
+				appSettings.put("http.proxyPassword", EncryptionUtils.encrypt(proxyPass));
+			}
 
 			appSettings.store(new FileOutputStream("webstarter.properties"), "");
 		} catch (FileNotFoundException e) {
