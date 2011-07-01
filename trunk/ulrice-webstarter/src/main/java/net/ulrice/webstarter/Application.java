@@ -116,6 +116,7 @@ public class Application implements IFProcessEventListener, ActionListener {
 		} catch (IOException e) {
 			LOG.log(Level.WARNING, "Error reading application settings.", e);
 		}
+		
 	}
 
 	private void saveSettings() {
@@ -187,6 +188,7 @@ public class Application implements IFProcessEventListener, ActionListener {
 		ApplicationDescription appDescription = frame.getSelectedApplication();
 		if (thread == null) {
 			thread = new ProcessThread(appDescription);
+			thread.setAppSettings(appSettings);
 			thread.addProcessEventListener(this);
 		} else {
 			appDescription.restoreTasks();

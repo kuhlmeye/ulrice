@@ -8,6 +8,7 @@ import java.io.IOException;
 import java.net.Authenticator;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -41,6 +42,8 @@ public class ProcessThread {
 
 	private boolean threadStopped = false;
 
+	private Properties appSettings = new Properties();
+	
 	public ProcessThread(ApplicationDescription appDescription) {
 		this.context = new ProcessContext();
 		this.appDescription = appDescription;
@@ -232,4 +235,14 @@ public class ProcessThread {
 	public void cancelProcess() {
 		threadStopped = true;
 	}
+	
+
+	public Properties getAppSettings() {
+		return appSettings;
+	}
+
+	public void setAppSettings(Properties appSettings) {
+		this.appSettings = appSettings;
+	}
+
 }
