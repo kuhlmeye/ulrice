@@ -1,7 +1,7 @@
 package net.ulrice.webstarter;
 
+import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -18,8 +18,17 @@ public class ProcessContext {
 	private Map<String, String> cookieMap = new HashMap<String, String>();
 	
 	/** Stores all classpath entries. */
-	private List<String> classPath= new LinkedList<String>();
+	private List<String> classPath= new ArrayList<String>();
+	private Properties appSettings = new Properties();
 	
+	public Properties getAppSettings() {
+		return appSettings;
+	}
+
+	public void setAppSettings(Properties appSettings) {
+		this.appSettings = appSettings;
+	}
+
 	private Properties persistentProperties = new Properties();
 	
 	private String userId;

@@ -82,23 +82,23 @@ public class StartApplication extends AbstractTask {
 
 	protected String replacePlaceholders(ProcessThread thread, String appParameter) {
 
-		String proxyHost = thread.getAppSettings().getProperty("http.proxyHost");
-		String proxyPort = thread.getAppSettings().getProperty("http.proxyPort");
-		String proxyUser = thread.getAppSettings().getProperty("http.proxyUser");
-		String proxyPass = thread.getAppSettings().getProperty("http.proxyPassword");
+		String proxyHost = thread.getContext().getAppSettings().getProperty("http.proxyHost");
+		String proxyPort = thread.getContext().getAppSettings().getProperty("http.proxyPort");
+		String proxyUser = thread.getContext().getAppSettings().getProperty("http.proxyUser");
+		String proxyPass = thread.getContext().getAppSettings().getProperty("http.proxyPassword");
 
 		appParameter = appParameter.replace("${USERID}", thread.getContext().getUserId());
 
-		if (proxyHost != null) {
+		if (proxyHost != null && !"".equals(proxyHost)) {
 			appParameter = appParameter.replace("${PROXY_HOST}", proxyHost);
 		}
-		if (proxyPort != null) {
+		if (proxyPort != null && !"".equals(proxyPort)) {
 			appParameter = appParameter.replace("${PROXY_PORT}", proxyPort);
 		}
-		if (proxyUser != null) {
+		if (proxyUser != null && !"".equals(proxyUser)) {
 			appParameter = appParameter.replace("${PROXY_USER}", proxyUser);
 		}
-		if (proxyPass != null) {
+		if (proxyPass != null && !"".equals(proxyPass)) {
 			appParameter = appParameter.replace("${PROXY_PASS}", EncryptionUtils.decrypt(proxyPass));
 		}
 

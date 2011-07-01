@@ -34,6 +34,12 @@ public class EncryptionUtils {
 	}
 	
 	private static String handleCrypt(int mode, String value) {
+		if(value == null) {
+			return null;
+		}
+		if(value.equals("")) {
+			return "";
+		}
 		try {
 			SecretKeyFactory instance = SecretKeyFactory.getInstance("PBEWithMD5AndDES");
 			SecretKey key = instance.generateSecret(new PBEKeySpec(PASSWORD));

@@ -42,7 +42,6 @@ public class ProcessThread {
 
 	private boolean threadStopped = false;
 
-	private Properties appSettings = new Properties();
 	
 	public ProcessThread(ApplicationDescription appDescription) {
 		this.context = new ProcessContext();
@@ -236,13 +235,4 @@ public class ProcessThread {
 		threadStopped = true;
 	}
 	
-
-	public Properties getAppSettings() {
-		return appSettings;
-	}
-
-	public void setAppSettings(Properties appSettings) {
-		this.appSettings = appSettings;
-	}
-
 }

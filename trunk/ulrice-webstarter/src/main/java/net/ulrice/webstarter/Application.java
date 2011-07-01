@@ -130,27 +130,27 @@ public class Application implements IFProcessEventListener, ActionListener {
 			String proxyUser = System.getProperty("http.proxyUser");
 			String proxyPass = System.getProperty("http.proxyPassword");
 
-			if(userId != null) {
+			if(userId != null && !"".equals(userId)) {
 				appSettings.put("UserId", userId);
 			}
 			
-			if(application != null) {
+			if(application != null && !"".equals(application)) {
 				appSettings.put("Application", application);
 			}
 
-			if(proxyHost != null) {
+			if(proxyHost != null && !"".equals(proxyHost)) {
 				appSettings.put("http.proxyHost", proxyHost);
 			}
 			
-			if(proxyPort != null) {
+			if(proxyPort != null && !"".equals(proxyPort)) {
 				appSettings.put("http.proxyPort", proxyPort);
 			}
 			
-			if(proxyUser != null) {
+			if(proxyUser != null && !"".equals(proxyUser)) {
 				appSettings.put("http.proxyUser", proxyUser);
 			}
 			
-			if(proxyPass != null) {
+			if(proxyPass != null && !"".equals(proxyPass)) {
 				appSettings.put("http.proxyPassword", EncryptionUtils.encrypt(proxyPass));
 			}
 
@@ -188,7 +188,7 @@ public class Application implements IFProcessEventListener, ActionListener {
 		ApplicationDescription appDescription = frame.getSelectedApplication();
 		if (thread == null) {
 			thread = new ProcessThread(appDescription);
-			thread.setAppSettings(appSettings);
+			thread.getContext().setAppSettings(appSettings);
 			thread.addProcessEventListener(this);
 		} else {
 			appDescription.restoreTasks();
