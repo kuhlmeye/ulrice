@@ -13,6 +13,8 @@ import java.security.KeyManagementException;
 import java.security.NoSuchAlgorithmException;
 import java.util.List;
 import java.util.StringTokenizer;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.net.ssl.HttpsURLConnection;
 import javax.net.ssl.SSLContext;
@@ -28,6 +30,9 @@ import net.ulrice.webstarter.net.TrustAllTrustManager;
  */
 public class TamLogin extends AbstractTask {
 
+	/** The logger used by this class. */
+	private static final Logger LOG = Logger.getLogger(TamLogin.class.getName());
+	
 	public static final String URL_ATTRIBUTE = "url";
 
 	@Override
@@ -158,20 +163,25 @@ public class TamLogin extends AbstractTask {
 			}
 
 		} catch (MalformedURLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			thread.handleError(this, "TAM Login failed.", "URL is malformed. " + e.getMessage());
+			LOG.log(Level.SEVERE, "TAM Login failed.", e);
+			return false;
 		} catch (UnsupportedEncodingException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			thread.handleError(this, "TAM Login failed.", "Encoding is not supported.. " + e.getMessage());
+			LOG.log(Level.SEVERE, "TAM Login failed.", e);
+			return false;
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			thread.handleError(this, "TAM Login failed.", "IO exception occurred. " + e.getMessage());
+			LOG.log(Level.SEVERE, "TAM Login failed.", e);
+			return false;
 		} catch (NoSuchAlgorithmException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			thread.handleError(this, "TAM Login failed.", "Could not found algorithm. " + e.getMessage());
+			LOG.log(Level.SEVERE, "TAM Login failed.", e);
+			return false;
 		} catch (KeyManagementException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			thread.handleError(this, "TAM Login failed.", "Key management error. " + e.getMessage());
+			LOG.log(Level.SEVERE, "TAM Login failed.", e);
+			return false;
 		}
 		return true;
 	}
