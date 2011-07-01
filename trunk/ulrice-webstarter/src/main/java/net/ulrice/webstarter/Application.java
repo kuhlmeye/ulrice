@@ -87,25 +87,29 @@ public class Application implements IFProcessEventListener, ActionListener {
 			String proxyPort = appSettings.getProperty("http.proxyPort");
 			String proxyUser = appSettings.getProperty("http.proxyUser");
 			String proxyPassword = appSettings.getProperty("http.proxyPassword");
-			
+
 
 
 			if (proxyHost != null || !"".equals(proxyHost)) {
 				System.setProperty("http.proxyHost", proxyHost);
+				System.setProperty("https.proxyHost", proxyHost);
 			}
 
 			if (proxyPort != null) {
 				System.setProperty("http.proxyPort", proxyPort);
+				System.setProperty("https.proxyPort", proxyPort);
 			}
 
 			if (proxyUser != null) {
 				System.setProperty("http.proxyUser", proxyUser);
+				System.setProperty("https.proxyUser", proxyUser);
 			}
 
 			if (proxyPassword != null) {
 				proxyPassword = EncryptionUtils.decrypt(proxyPassword);
 				if(proxyPassword != null) {
 					System.setProperty("http.proxyPassword", proxyPassword);
+					System.setProperty("https.proxyPassword", proxyPassword);
 				}
 			}
 
