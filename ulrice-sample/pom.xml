@@ -13,9 +13,9 @@
 		</license>
 	</licenses>
 	<scm>
-		<connection>scm:svn:https://ulrice.googlecode.com/svn/trunk/ulrice-sample</connection>
-		<developerConnection>scm:svn:https://ulrice.googlecode.com/svn/trunk/ulrice-sample</developerConnection>
-		<url>http://ulrice.googlecode.com/svn/</url>
+		<connection>scm:svn:https://ulrice.googlecode.com/svn/tags/ulrice-0.2.1/ulrice-sample</connection>
+		<developerConnection>scm:svn:https://ulrice.googlecode.com/svn/tags/ulrice-0.2.1/ulrice-sample</developerConnection>
+		<url>http://ulrice.googlecode.com/svn/tags/ulrice-0.2.1/svn</url>
 	</scm>
 	<developers>
 		<developer>
@@ -33,7 +33,7 @@
 	<parent>
 		<groupId>net.ulrice</groupId>
 		<artifactId>ulrice</artifactId>
-		<version>0.3-SNAPSHOT</version>
+		<version>0.2.1</version>
 		<relativePath>../ulrice</relativePath>
 	</parent>
 
@@ -41,17 +41,17 @@
 		<dependency>
 			<groupId>net.ulrice</groupId>
 			<artifactId>ulrice-core</artifactId>
-			<version>0.3-SNAPSHOT</version>
+			<version>0.2.1</version>
 		</dependency>
 		<dependency>
 			<groupId>net.ulrice</groupId>
 			<artifactId>ulrice-databinding</artifactId>
-			<version>0.3-SNAPSHOT</version>
+			<version>0.2.1</version>
 		</dependency>
 		<dependency>
 			<groupId>net.ulrice</groupId>
 			<artifactId>ulrice-webstarter-maven-plugin</artifactId>
-			<version>0.3-SNAPSHOT</version>
+			<version>0.2.1</version>
 		</dependency>
 	</dependencies>
 
@@ -94,7 +94,7 @@
 			<plugin>
 				<groupId>net.ulrice</groupId>
 				<artifactId>ulrice-webstarter-maven-plugin</artifactId>
-				<version>0.3-SNAPSHOT</version>
+				<version>0.2.1</version>
 
 				<configuration>
 					<directories>
