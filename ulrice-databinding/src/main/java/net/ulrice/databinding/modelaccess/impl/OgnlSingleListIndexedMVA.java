@@ -2,14 +2,14 @@ package net.ulrice.databinding.modelaccess.impl;
 
 import java.util.List;
 
-import net.ulrice.databinding.modelaccess.IndexedModelValueAccessor;
+import net.ulrice.databinding.modelaccess.IFIndexedModelValueAccessor;
 
 import ognl.Ognl;
 import ognl.OgnlException;
 import net.ulrice.simpledatabinding.util.ErrorHandler;
 
 
-public class OgnlSingleListIndexedModelValueAccessor implements IndexedModelValueAccessor {
+public class OgnlSingleListIndexedMVA implements IFIndexedModelValueAccessor {
     private final Class<?> _type;
     private final boolean _isReadOnly;
 
@@ -18,7 +18,7 @@ public class OgnlSingleListIndexedModelValueAccessor implements IndexedModelValu
     private final Object _ognlBaseTree;
     private final Object _ognlElementTree;
 
-    public OgnlSingleListIndexedModelValueAccessor (Class<?> type, Boolean isReadOnly, Object model, String baseExpression, String elementExpression) {
+    public OgnlSingleListIndexedMVA (Class<?> type, Boolean isReadOnly, Object model, String baseExpression, String elementExpression) {
         _type = type;
         _model = model;
         try {

@@ -3,8 +3,9 @@ package net.ulrice.databinding.impl;
 import static org.junit.Assert.assertEquals;
 
 import net.ulrice.databinding.DataState;
+import net.ulrice.databinding.IFExtdAttributeModel;
 import net.ulrice.databinding.impl.am.GenericAM;
-import net.ulrice.databinding.modelaccess.impl.ReflectionDA;
+import net.ulrice.databinding.modelaccess.impl.ReflectionMVA;
 import net.ulrice.databinding.validation.impl.RegExValidator;
 
 import org.junit.After;
@@ -16,7 +17,7 @@ import org.junit.Test;
  * 
  * @author christof
  */
-public class TestDataGroup {
+public class DataGroupTest {
 
     private DataGroup dataGroup;
 
@@ -39,10 +40,10 @@ public class TestDataGroup {
     @SuppressWarnings("unchecked")
     @Before
     public void setUp() throws Exception {
-        stringAAM = new GenericAM<String>("stringA", new ReflectionDA(this, "stringA"));
-        stringBAM = new GenericAM<String>("stringB", new ReflectionDA(this, "stringB"));
-        intAAM = new GenericAM<Integer>("intA", new ReflectionDA(this, "intA"));
-        intBAM = new GenericAM<Integer>("intB", new ReflectionDA(this, "intB"));
+        stringAAM = new GenericAM<String>("stringA", new ReflectionMVA(this, "stringA"));
+        stringBAM = new GenericAM<String>("stringB", new ReflectionMVA(this, "stringB"));
+        intAAM = new GenericAM<Integer>("intA", new ReflectionMVA(this, "intA"));
+        intBAM = new GenericAM<Integer>("intB", new ReflectionMVA(this, "intB"));
 
         dataGroup = new DataGroup();
         dataGroup.addAM(stringAAM);
@@ -64,14 +65,15 @@ public class TestDataGroup {
     /**
      * Tests, if the data is read into the attribute model by calling read.
      */
-    @Test
+    @SuppressWarnings("unchecked")
+	@Test
     public void read() {
         dataGroup.read();
 
-        assertEquals("StringA", dataGroup.getAttributeModel("stringA").getCurrentValue());
-        assertEquals("StringB", dataGroup.getAttributeModel("stringB").getCurrentValue());
-        assertEquals(1, dataGroup.getAttributeModel("intA").getCurrentValue());
-        assertEquals(2, dataGroup.getAttributeModel("intB").getCurrentValue());
+        assertEquals("StringA", ((IFExtdAttributeModel<String>)dataGroup.getAttributeModel("stringA")).getCurrentValue());
+        assertEquals("StringB", ((IFExtdAttributeModel<String>)dataGroup.getAttributeModel("stringB")).getCurrentValue());
+        assertEquals((Integer)1, ((IFExtdAttributeModel<Integer>)dataGroup.getAttributeModel("intA")).getCurrentValue());
+        assertEquals((Integer)2, ((IFExtdAttributeModel<Integer>)dataGroup.getAttributeModel("intB")).getCurrentValue());
     }
 
     /**
@@ -95,13 +97,13 @@ public class TestDataGroup {
         assertEquals(DataState.NotInitialized, dataGroup.getState());
         dataGroup.read();
         assertEquals(DataState.NotChanged, dataGroup.getState());
-        dataGroup.getAttributeModel("stringA").setCurrentValue("Changed");
+        ((IFExtdAttributeModel<String>)dataGroup.getAttributeModel("stringA")).setCurrentValue("Changed");
         assertEquals(DataState.Changed, dataGroup.getState());
-        dataGroup.getAttributeModel("stringA").setCurrentValue("StringA");
+        ((IFExtdAttributeModel<String>)dataGroup.getAttributeModel("stringA")).setCurrentValue("StringA");
         assertEquals(DataState.NotChanged, dataGroup.getState());
-        dataGroup.getAttributeModel("stringB").setCurrentValue("Changed");
+        ((IFExtdAttributeModel<String>)dataGroup.getAttributeModel("stringB")).setCurrentValue("Changed");
         assertEquals(DataState.Invalid, dataGroup.getState());
-        dataGroup.getAttributeModel("stringB").setCurrentValue("StringB");
+        ((IFExtdAttributeModel<String>)dataGroup.getAttributeModel("stringB")).setCurrentValue("StringB");
         assertEquals(DataState.NotChanged, dataGroup.getState());
     }
 }

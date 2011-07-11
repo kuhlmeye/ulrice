@@ -20,6 +20,7 @@ import javax.swing.table.TableModel;
 import net.ulrice.databinding.IFGuiAccessor;
 import net.ulrice.databinding.IFStateMarker;
 import net.ulrice.databinding.IFTooltipHandler;
+import net.ulrice.databinding.impl.am.AbstractTableAM;
 import net.ulrice.databinding.impl.am.ColumnDefinition;
 import net.ulrice.databinding.impl.am.ListAM;
 

@@ -5,7 +5,7 @@ package net.ulrice.databinding.modelaccess.impl;
  * 
  * @author christof
  */
-public class ReflectionDataAccessorException extends RuntimeException {
+public class ReflectionMVAException extends RuntimeException {
 
 	/** Default generated serial version uid. */
 	private static final long serialVersionUID = -3211120627063188216L;
@@ -16,7 +16,7 @@ public class ReflectionDataAccessorException extends RuntimeException {
 	 * @param message The message.
 	 * @param cause The cause.
 	 */
-	public ReflectionDataAccessorException(String message, Throwable cause) {
+	public ReflectionMVAException(String message, Throwable cause) {
 		super(message, cause);
 	}	
 }

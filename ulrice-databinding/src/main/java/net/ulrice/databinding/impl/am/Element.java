@@ -27,10 +27,10 @@ public class Element<T extends Object> {
     private List<ColumnDefinition<? extends Object>> columns;
 
     /** The list of models. */
-    private List<IFAttributeModel<? extends Object>> modelList;
+    private List<GenericAM<? extends Object>> modelList;
 
     /** The map of the models. Key is the column identifier. */
-    private Map<String, IFAttributeModel<? extends Object>> idModelMap;
+    private Map<String, GenericAM<? extends Object>> idModelMap;
 
     /** The value read from the list data. */
     private T valueObject;
@@ -54,8 +54,8 @@ public class Element<T extends Object> {
      */
     public Element(String uniqueId, List<ColumnDefinition<? extends Object>> columns, T valueObject, boolean editable) {
         this.uniqueId = uniqueId;
-        this.modelList = new ArrayList<IFAttributeModel<? extends Object>>();
-        this.idModelMap = new HashMap<String, IFAttributeModel<? extends Object>>();
+        this.modelList = new ArrayList<GenericAM<? extends Object>>();
+        this.idModelMap = new HashMap<String, GenericAM<? extends Object>>();
         this.valueObject = valueObject;
         this.columns = columns;
         this.editable = editable;
@@ -136,7 +136,7 @@ public class Element<T extends Object> {
      * @param aValue The value.
      */
     public void setValueAt(int columnIndex, Object aValue) {
-        IFAttributeModel<?> model = modelList.get(columnIndex);
+    	GenericAM<?> model = modelList.get(columnIndex);
         setValue(model, columns.get(columnIndex).getId(), aValue);
     }
 
@@ -147,7 +147,7 @@ public class Element<T extends Object> {
      * @param aValue The value
      */
     public void setValueAt(String columnId, Object aValue) {
-        IFAttributeModel<?> model = idModelMap.get(columnId);
+    	GenericAM<?> model = idModelMap.get(columnId);
         setValue(model, columnId, aValue);
     }
 
@@ -158,7 +158,7 @@ public class Element<T extends Object> {
      * @param columnId The identifier of the column 
      * @param aValue The value
      */
-    private void setValue(IFAttributeModel<?> model, String columnId, Object aValue) {
+    private void setValue(GenericAM<?> model, String columnId, Object aValue) {
         if (model == null) {
             return;
         }
@@ -241,11 +241,11 @@ public class Element<T extends Object> {
     public T writeObject() {
         if (modelList != null) {
             for (int i = 0; i < modelList.size(); i++) {
-                IFAttributeModel attributeModel = modelList.get(i);
+                GenericAM attributeModel = modelList.get(i);
                 IFDynDataAccessor dataAccessor = columns.get(i).getDataAccessor();
 
                 Object object = attributeModel.directWrite();
-                dataAccessor.writeValue(getValueObject(), object);
+                dataAccessor.setValue(getValueObject(), object);
             }
         }
         return getValueObject();
@@ -260,11 +260,11 @@ public class Element<T extends Object> {
 
         if (columns != null) {
             for (ColumnDefinition<? extends Object> column : columns) {
-                IFAttributeModel attributeModel = column.createAM();
+                GenericAM attributeModel = column.createAM();
                 modelList.add(attributeModel);
                 idModelMap.put(attributeModel.getId(), attributeModel);
 
-                Object value = column.getDataAccessor().readValue(getValueObject());
+                Object value = column.getDataAccessor().getValue(getValueObject());
                 attributeModel.directRead(value);
             }
         }

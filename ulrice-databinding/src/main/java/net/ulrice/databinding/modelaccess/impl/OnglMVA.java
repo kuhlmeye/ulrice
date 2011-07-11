@@ -6,7 +6,7 @@ import ognl.OgnlException;
 import net.ulrice.simpledatabinding.util.ErrorHandler;
 
 
-public class OgnlModelValueAccessor implements IFModelValueAccessor {
+public class OnglMVA implements IFModelValueAccessor {
     private final Object _model;
     private final Object _ognlTree;
     private final Class<?> _type;
@@ -14,14 +14,14 @@ public class OgnlModelValueAccessor implements IFModelValueAccessor {
     
     //TODO Typ und readOnly ermitteln
     
-    public OgnlModelValueAccessor (Object model, String ognlExpression, Class<?> type) {
+    public OnglMVA (Object model, String ognlExpression, Class<?> type) {
         _model = model;
         _ognlTree = ognlParse (ognlExpression);
         _type = type;
         _readOnly = guessReadOnly ();
     }
     
-    public OgnlModelValueAccessor (Object model, String ognlExpression, Class<?> type, boolean readOnly) {
+    public OnglMVA (Object model, String ognlExpression, Class<?> type, boolean readOnly) {
         _model = model;
         _ognlTree = ognlParse (ognlExpression);
         _type = type;
