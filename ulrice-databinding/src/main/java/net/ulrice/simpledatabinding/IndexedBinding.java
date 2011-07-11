@@ -1,14 +1,14 @@
 package net.ulrice.simpledatabinding;
 
+import net.ulrice.databinding.modelaccess.IndexedModelValueAccessor;
+import net.ulrice.databinding.modelaccess.IndexedPredicate;
+import net.ulrice.databinding.modelaccess.IFModelValueAccessor;
 import net.ulrice.simpledatabinding.converter.ValueConverter;
-import net.ulrice.simpledatabinding.modelaccess.IndexedModelValueAccessor;
-import net.ulrice.simpledatabinding.modelaccess.IndexedPredicate;
-import net.ulrice.simpledatabinding.modelaccess.ModelValueAccessor;
 import net.ulrice.simpledatabinding.viewaccess.IndexedViewAdapter;
 
 
 class IndexedBinding {
-    private final ModelValueAccessor _numEntriesAccessor;
+    private final IFModelValueAccessor _numEntriesAccessor;
     
     private final IndexedViewAdapter _viewAdapter;
     private final ValueConverter _converter;
@@ -18,7 +18,7 @@ class IndexedBinding {
     
     private final boolean _isReadOnly;
 
-    public IndexedBinding (ModelValueAccessor numEntriesAccessor, IndexedViewAdapter viewAdapter, ValueConverter converter, IndexedPredicate enabledPredicate, IndexedModelValueAccessor modelValueAccessor, boolean isReadOnly) {
+    public IndexedBinding (IFModelValueAccessor numEntriesAccessor, IndexedViewAdapter viewAdapter, ValueConverter converter, IndexedPredicate enabledPredicate, IndexedModelValueAccessor modelValueAccessor, boolean isReadOnly) {
         _numEntriesAccessor = numEntriesAccessor;
         _viewAdapter = viewAdapter;
         _converter = converter;
@@ -27,7 +27,7 @@ class IndexedBinding {
         _isReadOnly = isReadOnly;
     }
 
-    public ModelValueAccessor getNumEntriesAccessor () {
+    public IFModelValueAccessor getNumEntriesAccessor () {
         return _numEntriesAccessor;
     }
     

@@ -3,10 +3,10 @@ package net.ulrice.simpledatabinding;
 import java.util.List;
 
 import net.ulrice.databinding.IFBindingIdentifier;
-import net.ulrice.databinding.IFValidator;
+import net.ulrice.databinding.modelaccess.IFModelValueAccessor;
+import net.ulrice.databinding.modelaccess.Predicate;
+import net.ulrice.databinding.validation.IFValidator;
 import net.ulrice.simpledatabinding.converter.ValueConverter;
-import net.ulrice.simpledatabinding.modelaccess.ModelValueAccessor;
-import net.ulrice.simpledatabinding.modelaccess.Predicate;
 import net.ulrice.simpledatabinding.viewaccess.ViewAdapter;
 
 
@@ -16,12 +16,12 @@ class Binding implements IFBindingIdentifier {
     private final ViewAdapter _viewAdapter;
     private final ValueConverter _converter;
     private final Predicate _enabledPredicate;
-    private final ModelValueAccessor _modelValueAccessor;
+    private final IFModelValueAccessor _modelValueAccessor;
     private final List<IFValidator<?>> _validators;
     
     private final boolean _isReadOnly;
 
-    public Binding (ViewAdapter viewAdapter, ValueConverter converter, Predicate enabledPredicate, ModelValueAccessor modelValueAccessor, List<IFValidator<?>> validators, boolean isReadOnly) {
+    public Binding (ViewAdapter viewAdapter, ValueConverter converter, Predicate enabledPredicate, IFModelValueAccessor modelValueAccessor, List<IFValidator<?>> validators, boolean isReadOnly) {
         _viewAdapter = viewAdapter;
         _converter = converter;
         _enabledPredicate = enabledPredicate;
@@ -42,7 +42,7 @@ class Binding implements IFBindingIdentifier {
         return _enabledPredicate.getValue (isValid, model);
     }
     
-    public ModelValueAccessor getModelValueAccessor () {
+    public IFModelValueAccessor getModelValueAccessor () {
         return _modelValueAccessor;
     }
     
