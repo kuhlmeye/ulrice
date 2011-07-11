@@ -6,10 +6,11 @@ package net.ulrice.sample.module.databinding;
 import java.util.ArrayList;
 import java.util.List;
 
+import net.ulrice.databinding.impl.am.AbstractTableAM;
 import net.ulrice.databinding.impl.am.ColumnDefinition;
 import net.ulrice.databinding.impl.am.GenericAM;
 import net.ulrice.databinding.impl.am.ListAM;
-import net.ulrice.databinding.modelaccess.impl.ReflectionDA;
+import net.ulrice.databinding.modelaccess.impl.ReflectionMVA;
 import net.ulrice.databinding.validation.impl.RegExValidator;
 import net.ulrice.module.IFModel;
 
@@ -30,7 +31,7 @@ public class MDataBinding implements IFModel {
 	 */
 	@Override
 	public void initialize() {
-		nameAM = new GenericAM<String>("name", new ReflectionDA(this, "name"));
+		nameAM = new GenericAM<String>("name", new ReflectionMVA(this, "name"));
 		nameAM.setValidator(new RegExValidator<String>("(hallo|hi)", "Validation failed. Only 'hallo' or 'hi' is allowed"));
 		name = "hallo";
 
@@ -38,10 +39,10 @@ public class MDataBinding implements IFModel {
         personList.add(new Person("Petra", "Musterfrau", 20));
         personList.add(new Person("Otto", "Normal", 20));
         
-        listAM = new ListAM<List<Person>, Person>("list", new ReflectionDA(this, "personList"));
-        listAM.addColumn(new ColumnDefinition<String>("lastName", new ReflectionDA("lastName"), String.class));
-        listAM.addColumn(new ColumnDefinition<String>("firstName", new ReflectionDA("firstName"), String.class));
-        listAM.addColumn(new ColumnDefinition<Integer>("age", new ReflectionDA("age"), Integer.class));
+        listAM = new ListAM<List<Person>, Person>("list", new ReflectionMVA(this, "personList"));
+        listAM.addColumn(new ColumnDefinition<String>("lastName", new ReflectionMVA("lastName"), String.class));
+        listAM.addColumn(new ColumnDefinition<String>("firstName", new ReflectionMVA("firstName"), String.class));
+        listAM.addColumn(new ColumnDefinition<Integer>("age", new ReflectionMVA("age"), Integer.class));
 	}
 
 	/**
