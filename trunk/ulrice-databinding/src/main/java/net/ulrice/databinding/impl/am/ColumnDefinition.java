@@ -1,7 +1,7 @@
 package net.ulrice.databinding.impl.am;
 
 import net.ulrice.databinding.IFAttributeModel;
-import net.ulrice.databinding.IFDynDataAccessor;
+import net.ulrice.databinding.modelaccess.IFDynDataAccessor;
 
 /**
  * @author christof

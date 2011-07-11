@@ -5,8 +5,8 @@ import javax.swing.JComponent;
 import net.ulrice.databinding.IFAttributeModel;
 import net.ulrice.databinding.IFGuiAccessor;
 import net.ulrice.databinding.IFTooltipHandler;
-import net.ulrice.databinding.impl.validation.ValidationError;
-import net.ulrice.databinding.impl.validation.ValidationResult;
+import net.ulrice.databinding.validation.ValidationError;
+import net.ulrice.databinding.validation.ValidationResult;
 
 /**
  * Displays the detailed state of an attribute model as a tooltip in the

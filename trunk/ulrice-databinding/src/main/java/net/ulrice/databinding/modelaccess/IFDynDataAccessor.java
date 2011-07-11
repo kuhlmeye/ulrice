@@ -1,7 +1,7 @@
 /**
  * 
  */
-package net.ulrice.databinding;
+package net.ulrice.databinding.modelaccess;
 
 /**
  * @author christof

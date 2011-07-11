@@ -1,6 +1,7 @@
 package net.ulrice.databinding;
 
-import net.ulrice.databinding.impl.validation.ValidationResult;
+import net.ulrice.databinding.validation.IFValidator;
+import net.ulrice.databinding.validation.ValidationResult;
 
 /**
  * Interface of an attribute model.

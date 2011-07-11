@@ -9,8 +9,8 @@ import javax.swing.event.EventListenerList;
 
 import net.ulrice.databinding.DataState;
 import net.ulrice.databinding.IFAttributeModel;
-import net.ulrice.databinding.IFDynDataAccessor;
 import net.ulrice.databinding.IFElementChangeListener;
+import net.ulrice.databinding.modelaccess.IFDynDataAccessor;
 
 /**
  * The element of the list attribute model. It manages the models for all

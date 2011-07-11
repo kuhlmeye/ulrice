@@ -6,10 +6,10 @@ import net.ulrice.databinding.DataState;
 import net.ulrice.databinding.IFAttributeModel;
 import net.ulrice.databinding.IFAttributeModelEventListener;
 import net.ulrice.databinding.IFBindingIdentifier;
-import net.ulrice.databinding.IFDataAccessor;
 import net.ulrice.databinding.IFGuiAccessor;
-import net.ulrice.databinding.IFValidator;
-import net.ulrice.databinding.impl.validation.ValidationResult;
+import net.ulrice.databinding.modelaccess.IFModelValueAccessor;
+import net.ulrice.databinding.validation.IFValidator;
+import net.ulrice.databinding.validation.ValidationResult;
 
 /**
  * A generic attribute model.
@@ -25,7 +25,7 @@ public class GenericAM<T> implements IFAttributeModel<T>, IFBindingIdentifier {
     private String id;
 
     /** The data accessor used to write and read the data. */
-    private IFDataAccessor<T> dataAccessor;
+    private IFModelValueAccessor modelAccessor;
 
     /** The state of this attribute model. */
     private DataState state = DataState.NotInitialized;
@@ -45,9 +45,9 @@ public class GenericAM<T> implements IFAttributeModel<T>, IFBindingIdentifier {
      * @param id The Identifier.
      * @param dataAccessor The data accessor.
      */
-    public GenericAM(String id, IFDataAccessor<T> dataAccessor) {
+    public GenericAM(String id, IFModelValueAccessor modelAccessor) {
         this.id = id;
-        this.dataAccessor = dataAccessor;
+        this.modelAccessor = modelAccessor;
     }
 
     /**
@@ -150,12 +150,13 @@ public class GenericAM<T> implements IFAttributeModel<T>, IFBindingIdentifier {
     /**
      * @see net.ulrice.databinding.IFAttributeModel#read()
      */
-    @Override
+    @SuppressWarnings("unchecked")
+	@Override
     public void read() {
-        if (dataAccessor == null) {
+        if (modelAccessor == null) {
             throw new IllegalStateException("No data accessor is available.");
         }
-        directRead(dataAccessor.readValue());
+        directRead((T)modelAccessor.getValue());
     }
 
     /**
@@ -172,10 +173,10 @@ public class GenericAM<T> implements IFAttributeModel<T>, IFBindingIdentifier {
      */
     @Override
     public void write() {
-        if (dataAccessor == null) {
+        if (modelAccessor == null) {
             throw new IllegalStateException("No data accessor is available.");
         }
-        dataAccessor.writeValue(directWrite());
+        modelAccessor.setValue(directWrite());
     }
 
     /**
@@ -195,7 +196,7 @@ public class GenericAM<T> implements IFAttributeModel<T>, IFBindingIdentifier {
     }
 
     /**
-     * @see net.ulrice.databinding.IFAttributeModel#setValidator(net.ulrice.databinding.IFValidator)
+     * @see net.ulrice.databinding.IFAttributeModel#setValidator(net.ulrice.databinding.validation.IFValidator)
      */
     @Override
     public void setValidator(IFValidator<T> validator) {
