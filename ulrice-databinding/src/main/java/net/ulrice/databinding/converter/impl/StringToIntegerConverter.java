@@ -1,6 +1,6 @@
-package net.ulrice.databinding.impl.converter;
+package net.ulrice.databinding.converter.impl;
 
-import net.ulrice.databinding.IFConverter;
+import net.ulrice.databinding.converter.IFValueConverter;
 
 /**
  * String to Integer converter
@@ -8,7 +8,7 @@ import net.ulrice.databinding.IFConverter;
  * @author andre
  *
  */
-public class StringIntegerConverter implements IFConverter<String, Integer>{
+public class StringToIntegerConverter implements IFValueConverter {
 
     /**
      * 
@@ -16,8 +16,8 @@ public class StringIntegerConverter implements IFConverter<String, Integer>{
      * @see net.ulrice.databinding.IFConverter#mapToSource(java.lang.Object)
      */
     @Override
-    public String mapToSource(Integer target) {
-        return target.toString();
+    public Object viewToModel(Object view) {
+        return view.toString();
     }
 
     /**
@@ -26,12 +26,12 @@ public class StringIntegerConverter implements IFConverter<String, Integer>{
      * @see net.ulrice.databinding.IFConverter#mapToTarget(java.lang.Object)
      */
     @Override
-    public Integer mapToTarget(String source) {
-        if (source == null || source.equalsIgnoreCase("")){
+    public Object modelToView(Object model) {
+        if (model == null || model.toString().equalsIgnoreCase("")){
             return 0;
         }
         try{
-            return Integer.valueOf(source);
+            return Integer.valueOf(model.toString());
         } catch (NumberFormatException ex) {
             return 0;
         }

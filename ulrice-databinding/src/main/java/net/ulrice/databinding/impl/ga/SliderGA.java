@@ -4,8 +4,8 @@ import javax.swing.JSlider;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
-import net.ulrice.databinding.IFConverter;
 import net.ulrice.databinding.IFGuiAccessor;
+import net.ulrice.databinding.converter.IFValueConverter;
 
 /**
  * Gui accessor for sliders
@@ -23,7 +23,7 @@ public class SliderGA<U> extends AbstractGA<JSlider, U, Integer> implements Chan
      * @param id The id of this slider
      * @param guiConverter The converter
      */
-    public SliderGA(String id, IFConverter<U, Integer> guiConverter) {
+    public SliderGA(String id, IFValueConverter guiConverter) {
         super(id, new JSlider(), guiConverter);
         getComponent().addChangeListener(this);
     }
@@ -37,7 +37,7 @@ public class SliderGA<U> extends AbstractGA<JSlider, U, Integer> implements Chan
     protected void dataChangedIntern(IFGuiAccessor< ?, ?> gaSource, U oldValue, U newValue) {
         if (!this.equals(gaSource)) {
             getComponent().removeChangeListener(this);
-            getComponent().setValue(getGuiConverter().mapToTarget(newValue));
+        	getComponent().setValue((Integer)getGuiConverter().modelToView(newValue));
             getComponent().addChangeListener(this);
         }
     }
@@ -56,7 +56,7 @@ public class SliderGA<U> extends AbstractGA<JSlider, U, Integer> implements Chan
      * Called, if the gui has changed.
      */
     private void guiChanged() {
-        setAttributeValue(getGuiConverter().mapToSource(getComponent().getValue()));
+        setAttributeValue((U)getGuiConverter().viewToModel(getComponent().getValue()));
     }
 
 }
