@@ -4,8 +4,8 @@ import static org.junit.Assert.assertEquals;
 
 import net.ulrice.databinding.DataState;
 import net.ulrice.databinding.impl.am.GenericAM;
-import net.ulrice.databinding.impl.da.ReflectionDA;
-import net.ulrice.databinding.impl.validation.RegExValidator;
+import net.ulrice.databinding.modelaccess.impl.ReflectionDA;
+import net.ulrice.databinding.validation.impl.RegExValidator;
 
 import org.junit.After;
 import org.junit.Before;
@@ -39,10 +39,10 @@ public class TestDataGroup {
     @SuppressWarnings("unchecked")
     @Before
     public void setUp() throws Exception {
-        stringAAM = new GenericAM<String>("stringA", new ReflectionDA<String>(this, "stringA"));
-        stringBAM = new GenericAM<String>("stringB", new ReflectionDA<String>(this, "stringB"));
-        intAAM = new GenericAM<Integer>("intA", new ReflectionDA<Integer>(this, "intA"));
-        intBAM = new GenericAM<Integer>("intB", new ReflectionDA<Integer>(this, "intB"));
+        stringAAM = new GenericAM<String>("stringA", new ReflectionDA(this, "stringA"));
+        stringBAM = new GenericAM<String>("stringB", new ReflectionDA(this, "stringB"));
+        intAAM = new GenericAM<Integer>("intA", new ReflectionDA(this, "intA"));
+        intBAM = new GenericAM<Integer>("intB", new ReflectionDA(this, "intB"));
 
         dataGroup = new DataGroup();
         dataGroup.addAM(stringAAM);
