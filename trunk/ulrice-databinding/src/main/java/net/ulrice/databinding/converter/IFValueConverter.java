@@ -1,4 +1,4 @@
-package net.ulrice.simpledatabinding.converter;
+package net.ulrice.databinding.converter;
 
 
 /**
@@ -6,7 +6,7 @@ package net.ulrice.simpledatabinding.converter;
  * 
  * @author arno
  */
-public interface ValueConverter {
+public interface IFValueConverter {
     Object viewToModel (Object o);
     Object modelToView (Object o);
 }

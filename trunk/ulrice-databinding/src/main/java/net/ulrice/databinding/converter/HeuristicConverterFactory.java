@@ -1,12 +1,12 @@
-package net.ulrice.simpledatabinding.converter;
+package net.ulrice.databinding.converter;
 
-import net.ulrice.simpledatabinding.converter.impl.DoNothingConverter;
-import net.ulrice.simpledatabinding.converter.impl.IntAsStringConverter;
+import net.ulrice.databinding.converter.impl.DoNothingConverter;
+import net.ulrice.databinding.converter.impl.IntAsStringConverter;
 
 
 
 public class HeuristicConverterFactory {
-    public static ValueConverter createConverter (Class<?> presentationType, Class<?> modelType) {
+    public static IFValueConverter createConverter (Class<?> presentationType, Class<?> modelType) {
         if (presentationType.equals (modelType))
             return new DoNothingConverter ();
         

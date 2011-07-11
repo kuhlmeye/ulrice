@@ -1,11 +1,11 @@
-package net.ulrice.simpledatabinding.converter.impl;
+package net.ulrice.databinding.converter.impl;
 
-import net.ulrice.simpledatabinding.converter.ValueConverter;
-import net.ulrice.simpledatabinding.converter.ValueConverterException;
+import net.ulrice.databinding.converter.IFValueConverter;
+import net.ulrice.databinding.converter.ValueConverterException;
 
 
 
-public class IntAsStringConverter implements ValueConverter {
+public class IntAsStringConverter implements IFValueConverter {
     public Object modelToView (Object o) {
         if (o == null)
             return "";

@@ -1,4 +1,4 @@
-package net.ulrice.simpledatabinding.converter;
+package net.ulrice.databinding.converter;
 
 
 public class ValueConverterException extends RuntimeException {

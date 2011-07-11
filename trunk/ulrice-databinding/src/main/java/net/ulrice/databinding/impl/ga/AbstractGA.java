@@ -5,10 +5,10 @@ import javax.swing.JComponent;
 import net.ulrice.databinding.DataState;
 import net.ulrice.databinding.IFAttributeModel;
 import net.ulrice.databinding.IFAttributeModelEventListener;
-import net.ulrice.databinding.IFConverter;
 import net.ulrice.databinding.IFGuiAccessor;
 import net.ulrice.databinding.IFStateMarker;
 import net.ulrice.databinding.IFTooltipHandler;
+import net.ulrice.databinding.converter.IFValueConverter;
 import net.ulrice.databinding.impl.ga.tooltip.DetailedTooltipHandler;
 
 /**
@@ -25,7 +25,7 @@ public abstract class AbstractGA<T extends JComponent, U, V> implements IFGuiAcc
     /** The gui component. */
     private T component;
 
-    private IFConverter<U, V> guiConverter;
+    private IFValueConverter guiConverter;
 
     /** The connected attribute model. */
     private IFAttributeModel<U> attributeModel;
@@ -36,7 +36,7 @@ public abstract class AbstractGA<T extends JComponent, U, V> implements IFGuiAcc
     /** The tooltip handler of the component. */
     private IFTooltipHandler tooltipHandler;
 
-    public AbstractGA(String id, T component, IFConverter<U, V> guiConverter) {
+    public AbstractGA(String id, T component, IFValueConverter guiConverter) {
         this.id = id;
         this.guiConverter = guiConverter;
         this.component = component;
@@ -130,14 +130,14 @@ public abstract class AbstractGA<T extends JComponent, U, V> implements IFGuiAcc
     /**
      * @return the guiConverter
      */
-    public IFConverter<U, V> getGuiConverter() {
+    public IFValueConverter getGuiConverter() {
         return guiConverter;
     }
 
     /**
      * @param guiConverter the guiConverter to set
      */
-    public void setGuiConverter(IFConverter<U, V> guiConverter) {
+    public void setGuiConverter(IFValueConverter guiConverter) {
         this.guiConverter = guiConverter;
     }
 

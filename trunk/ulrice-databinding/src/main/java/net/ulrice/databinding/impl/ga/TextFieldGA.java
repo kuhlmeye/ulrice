@@ -7,10 +7,8 @@ import javax.swing.JTextField;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 
-import net.ulrice.databinding.DataState;
-import net.ulrice.databinding.IFAttributeModel;
-import net.ulrice.databinding.IFConverter;
 import net.ulrice.databinding.IFGuiAccessor;
+import net.ulrice.databinding.converter.IFValueConverter;
 
 /**
  * Gui accessor for text fields.
@@ -24,7 +22,7 @@ public class TextFieldGA<U> extends AbstractGA<JTextField, U, String> implements
      * 
      * @param id The id of this accessor.
      */
-    public TextFieldGA(String id, IFConverter<U, String> guiConverter) {
+    public TextFieldGA(String id, IFValueConverter guiConverter) {
         super(id, new JTextField(), guiConverter);
         getComponent().getDocument().addDocumentListener(this);
     }
@@ -37,7 +35,7 @@ public class TextFieldGA<U> extends AbstractGA<JTextField, U, String> implements
     public void dataChangedIntern(IFGuiAccessor<?, ?> gaSource, U oldValue, U newValue) {
         if (!this.equals(gaSource)) {
             getComponent().getDocument().removeDocumentListener(this);
-            getComponent().setText(getGuiConverter().mapToTarget(newValue));
+            getComponent().setText((String)getGuiConverter().modelToView(newValue));
             getComponent().getDocument().addDocumentListener(this);
         }
     }
@@ -70,6 +68,6 @@ public class TextFieldGA<U> extends AbstractGA<JTextField, U, String> implements
      * Called, if the gui has changed.
      */
     private void guiChanged() {
-        setAttributeValue(getGuiConverter().mapToSource(getComponent().getText()));
+        setAttributeValue((U)getGuiConverter().viewToModel(getComponent().getText()));
     }
 }

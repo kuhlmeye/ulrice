@@ -10,6 +10,9 @@ import javax.swing.event.TableModelListener;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableModel;
 
+import net.ulrice.databinding.converter.HeuristicConverterFactory;
+import net.ulrice.databinding.converter.IFValueConverter;
+import net.ulrice.databinding.converter.ValueConverterException;
 import net.ulrice.databinding.modelaccess.IFIndexedModelValueAccessor;
 import net.ulrice.databinding.modelaccess.IndexedPredicate;
 import net.ulrice.databinding.modelaccess.ModelChangeListener;
@@ -22,9 +25,6 @@ import net.ulrice.databinding.modelaccess.impl.OgnlPredicate;
 import net.ulrice.databinding.modelaccess.impl.OgnlSingleListIndexedMVA;
 import net.ulrice.databinding.validation.IFValidator;
 import net.ulrice.databinding.validation.ValidationResult;
-import net.ulrice.simpledatabinding.converter.HeuristicConverterFactory;
-import net.ulrice.simpledatabinding.converter.ValueConverter;
-import net.ulrice.simpledatabinding.converter.ValueConverterException;
 import net.ulrice.simpledatabinding.util.EditableTableModel;
 import net.ulrice.simpledatabinding.util.ErrorHandler;
 import net.ulrice.simpledatabinding.viewaccess.IndexedViewAdapter;
@@ -251,7 +251,7 @@ public class ModelBinding {
         register (viewAdapter, HeuristicConverterFactory.createConverter (viewAdapter.getViewType (), modelValueAccessor.getModelType ()), enabledPredicate, modelValueAccessor, validators, isReadOnly);
     }
 
-    public void register (ViewAdapter viewAdapter, ValueConverter viewConverter, Predicate enabledPredicate, IFModelValueAccessor modelValueAccessor, List<IFValidator<?>> validators, boolean isReadOnly) {
+    public void register (ViewAdapter viewAdapter, IFValueConverter viewConverter, Predicate enabledPredicate, IFModelValueAccessor modelValueAccessor, List<IFValidator<?>> validators, boolean isReadOnly) {
         ensureEventThread ();
         final Binding b = new Binding (viewAdapter, viewConverter, enabledPredicate, modelValueAccessor, validators, isReadOnly);
         _bindings.add (b);
@@ -285,7 +285,7 @@ public class ModelBinding {
         for (int col=0; col < columnSpecs.length; col++) {
             final String expr = columnSpecs [col].getExpression ();
             final Class<?> columnType = columnSpecs [col].getType ();
-            final ValueConverter converter = HeuristicConverterFactory.createConverter (columnType, columnType);
+            final IFValueConverter converter = HeuristicConverterFactory.createConverter (columnType, columnType);
 
             final IndexedViewAdapter viewAdapter = new DefaultTableModelColumnViewAdapter (tableModel, columnType, col, ! canBeEditable); //TODO readOnly noch über Typen filtern?
             final IFIndexedModelValueAccessor modelValueAccessor = new OgnlSingleListIndexedMVA (columnType, null, _model, baseExpression, expr);
