@@ -1,4 +1,4 @@
-package net.ulrice.databinding.impl.da;
+package net.ulrice.databinding.modelaccess.impl;
 
 /**
  * Exception thrown, if an error occurs during accessing data via reflection.

@@ -17,11 +17,11 @@ import javax.swing.table.TableModel;
 import net.ulrice.databinding.DataState;
 import net.ulrice.databinding.IFAttributeModel;
 import net.ulrice.databinding.IFAttributeModelEventListener;
-import net.ulrice.databinding.IFDataAccessor;
 import net.ulrice.databinding.IFElementChangeListener;
 import net.ulrice.databinding.IFGuiAccessor;
-import net.ulrice.databinding.IFValidator;
-import net.ulrice.databinding.impl.validation.ValidationResult;
+import net.ulrice.databinding.modelaccess.IFModelValueAccessor;
+import net.ulrice.databinding.validation.IFValidator;
+import net.ulrice.databinding.validation.ValidationResult;
 
 /**
  * @author christof
@@ -36,7 +36,7 @@ public class ListAM<T extends List<S>, S> implements IFAttributeModel<T>, ListMo
 	private List<Element<S>> elements = new ArrayList<Element<S>>();
 	private List<ColumnDefinition<? extends Object>> columns = new ArrayList<ColumnDefinition<? extends Object>>();
 	private boolean editable;
-	private IFDataAccessor<T> dataAccessor;
+	private IFModelValueAccessor dataAccessor;
 	private long nextUniqueId;
 	
 	private Map<String, Element<S>> elementIdMap = new HashMap<String, Element<S>>();
@@ -45,7 +45,7 @@ public class ListAM<T extends List<S>, S> implements IFAttributeModel<T>, ListMo
     private Set<Element<S>> delElements = new HashSet<Element<S>>();
     private Set<Element<S>> invElements = new HashSet<Element<S>>();
 
-	public ListAM(String id, IFDataAccessor<T> dataAccessor, boolean editable) {
+	public ListAM(String id, IFModelValueAccessor dataAccessor, boolean editable) {
 		
 		nextUniqueId = System.currentTimeMillis();
 		
@@ -56,7 +56,7 @@ public class ListAM<T extends List<S>, S> implements IFAttributeModel<T>, ListMo
 		this.dataAccessor = dataAccessor;
 	}
 	
-	public ListAM(String id, IFDataAccessor<T> dataAccessor) {
+	public ListAM(String id, IFModelValueAccessor dataAccessor) {
 		this(id, dataAccessor, true);
 	}
 
@@ -129,9 +129,10 @@ public class ListAM<T extends List<S>, S> implements IFAttributeModel<T>, ListMo
 	/**
 	 * @see net.ulrice.databinding.IFAttributeModel#read()
 	 */
+	@SuppressWarnings("unchecked")
 	@Override
 	public void read() {
-		directRead(getDataAccessor().readValue());	
+		directRead((T)getDataAccessor().getValue());	
 	}
 	
 	/**
@@ -170,7 +171,7 @@ public class ListAM<T extends List<S>, S> implements IFAttributeModel<T>, ListMo
 	 */
 	@Override
 	public void write() {
-		getDataAccessor().writeValue(directWrite());
+		getDataAccessor().setValue(directWrite());
 	}
 
 
@@ -207,7 +208,7 @@ public class ListAM<T extends List<S>, S> implements IFAttributeModel<T>, ListMo
 	}
 
 	/**
-	 * @see net.ulrice.databinding.IFAttributeModel#setValidator(net.ulrice.databinding.IFValidator)
+	 * @see net.ulrice.databinding.IFAttributeModel#setValidator(net.ulrice.databinding.validation.IFValidator)
 	 */
 	@Override
 	public void setValidator(IFValidator<T> validator) {
@@ -346,7 +347,7 @@ public class ListAM<T extends List<S>, S> implements IFAttributeModel<T>, ListMo
 	/**
 	 * @return the dataAccessor
 	 */
-	public IFDataAccessor<T> getDataAccessor() {
+	public IFModelValueAccessor getDataAccessor() {
 		return dataAccessor;
 	}
 
