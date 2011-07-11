@@ -6,7 +6,7 @@ import net.ulrice.databinding.IFAttributeModel;
 import net.ulrice.databinding.IFGuiAccessor;
 import net.ulrice.databinding.IFTooltipHandler;
 import net.ulrice.databinding.impl.validation.ValidationError;
-import net.ulrice.databinding.impl.validation.ValidationErrors;
+import net.ulrice.databinding.impl.validation.ValidationResult;
 
 /**
  * Displays the detailed state of an attribute model as a tooltip in the
@@ -40,7 +40,7 @@ public class DetailedTooltipHandler implements IFTooltipHandler {
                 StringBuffer buffer = new StringBuffer();
                 // TODO Add to UI class
                 buffer.append("<html>State: Invalid");
-                ValidationErrors validationErrors = attributeModel.getValidationErrors();
+                ValidationResult validationErrors = attributeModel.getValidationErrors();
                 if(validationErrors != null && validationErrors.getValidationErrors() != null) {
                     for(ValidationError validationError: validationErrors.getValidationErrors()) {
                         buffer.append("<br>");

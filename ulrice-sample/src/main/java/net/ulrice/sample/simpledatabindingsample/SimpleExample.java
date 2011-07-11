@@ -5,8 +5,8 @@ import java.awt.BorderLayout;
 import javax.swing.JFrame;
 import javax.swing.SwingUtilities;
 
+import net.ulrice.databinding.impl.validation.StringLengthValidator;
 import net.ulrice.simpledatabinding.ModelBinding;
-import net.ulrice.simpledatabinding.validation.StringLengthValidator;
 
 
 import net.ulrice.simpledatabinding.util.ObjectWithPresentation;

@@ -1,6 +1,6 @@
 package net.ulrice.databinding;
 
-import net.ulrice.databinding.impl.validation.ValidationErrors;
+import net.ulrice.databinding.impl.validation.ValidationResult;
 
 /**
  * Interface of an attribute model.
@@ -107,7 +107,7 @@ public interface IFAttributeModel<T> {
 	 * 
 	 * @return The validation errors. 
 	 */
-	ValidationErrors getValidationErrors();
+	ValidationResult getValidationErrors();
 	
 	/**
 	 * Adds an attribute model event listener to the list of event listeners.

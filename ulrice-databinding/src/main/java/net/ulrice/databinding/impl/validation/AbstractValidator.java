@@ -1,6 +1,6 @@
 package net.ulrice.databinding.impl.validation;
 
-import net.ulrice.databinding.IFAttributeModel;
+import net.ulrice.databinding.IFBindingIdentifier;
 import net.ulrice.databinding.IFValidator;
 
 /**
@@ -12,13 +12,13 @@ import net.ulrice.databinding.IFValidator;
 public abstract class AbstractValidator<T> implements IFValidator<T> {
 
     /** The last validation errors. */
-    private ValidationErrors errors;
+    private ValidationResult errors;
 
     /**
      * @see net.ulrice.databinding.IFValidator#getLastValidationErrors()
      */
     @Override
-    public ValidationErrors getLastValidationErrors() {
+    public ValidationResult getLastValidationErrors() {
         return this.errors;
     }
 
@@ -26,8 +26,8 @@ public abstract class AbstractValidator<T> implements IFValidator<T> {
      * @see net.ulrice.databinding.IFValidator#validate(java.lang.Object)
      */
     @Override
-    public ValidationErrors validate(IFAttributeModel<?> model, T attribute) {
-        this.errors = validateIntern(model, attribute);
+    public ValidationResult isValid(IFBindingIdentifier bindingId, T attribute) {
+        this.errors = validate(bindingId, attribute);
         return errors;
     }
 
@@ -42,10 +42,10 @@ public abstract class AbstractValidator<T> implements IFValidator<T> {
     /**
      * Validates the attribute. 
      *
-     * @param model The attribute model.
+     * @param bindingId The identifier of the binding
      * @param attribute The attribute to be validated.
      * @return The validation errors or null, if there are no validation errors.
      */
-    protected abstract ValidationErrors validateIntern(IFAttributeModel<?> model, T attribute);
+    protected abstract ValidationResult validate(IFBindingIdentifier bindingId, T attribute);
 
 }

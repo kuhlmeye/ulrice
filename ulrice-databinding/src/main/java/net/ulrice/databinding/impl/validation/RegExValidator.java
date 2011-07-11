@@ -2,7 +2,7 @@ package net.ulrice.databinding.impl.validation;
 
 import java.util.regex.Pattern;
 
-import net.ulrice.databinding.IFAttributeModel;
+import net.ulrice.databinding.IFBindingIdentifier;
 
 /**
  * Creates a new validator validating an attribute against a regular expression.
@@ -28,15 +28,12 @@ public class RegExValidator<T extends Object> extends AbstractValidator<T> {
         this.message = message;
     }
     
-    /**
-     * @see net.ulrice.databinding.impl.validation.AbstractValidator#validateIntern(java.lang.Object)
-     */
     @Override
-    protected ValidationErrors validateIntern(IFAttributeModel<?>model, T attribute) {
+    protected ValidationResult validate(IFBindingIdentifier bindingId, T attribute) {
 
         if(attribute != null) {
             if(!pattern.matcher(attribute.toString()).matches()) {
-                ValidationErrors errors = new ValidationErrors(new ValidationError(model.getId(), message, null));
+                ValidationResult errors = new ValidationResult(new ValidationError(bindingId, message, null));
                 return errors;
             }
         }
