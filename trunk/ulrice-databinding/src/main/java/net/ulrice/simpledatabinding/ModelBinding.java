@@ -10,21 +10,21 @@ import javax.swing.event.TableModelListener;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableModel;
 
-import net.ulrice.databinding.IFValidator;
-import net.ulrice.databinding.impl.validation.ValidationResult;
+import net.ulrice.databinding.modelaccess.IndexedModelValueAccessor;
+import net.ulrice.databinding.modelaccess.IndexedPredicate;
+import net.ulrice.databinding.modelaccess.ModelChangeListener;
+import net.ulrice.databinding.modelaccess.ModelNotificationAdapter;
+import net.ulrice.databinding.modelaccess.IFModelValueAccessor;
+import net.ulrice.databinding.modelaccess.Predicate;
+import net.ulrice.databinding.modelaccess.PropertyChangeSupportModelNotificationAdapter;
+import net.ulrice.databinding.modelaccess.impl.OgnlModelValueAccessor;
+import net.ulrice.databinding.modelaccess.impl.OgnlPredicate;
+import net.ulrice.databinding.modelaccess.impl.OgnlSingleListIndexedModelValueAccessor;
+import net.ulrice.databinding.validation.IFValidator;
+import net.ulrice.databinding.validation.ValidationResult;
 import net.ulrice.simpledatabinding.converter.HeuristicConverterFactory;
 import net.ulrice.simpledatabinding.converter.ValueConverter;
 import net.ulrice.simpledatabinding.converter.ValueConverterException;
-import net.ulrice.simpledatabinding.modelaccess.IndexedModelValueAccessor;
-import net.ulrice.simpledatabinding.modelaccess.IndexedPredicate;
-import net.ulrice.simpledatabinding.modelaccess.ModelChangeListener;
-import net.ulrice.simpledatabinding.modelaccess.ModelNotificationAdapter;
-import net.ulrice.simpledatabinding.modelaccess.ModelValueAccessor;
-import net.ulrice.simpledatabinding.modelaccess.Predicate;
-import net.ulrice.simpledatabinding.modelaccess.PropertyChangeSupportModelNotificationAdapter;
-import net.ulrice.simpledatabinding.modelaccess.impl.OgnlModelValueAccessor;
-import net.ulrice.simpledatabinding.modelaccess.impl.OgnlPredicate;
-import net.ulrice.simpledatabinding.modelaccess.impl.OgnlSingleListIndexedModelValueAccessor;
 import net.ulrice.simpledatabinding.util.EditableTableModel;
 import net.ulrice.simpledatabinding.util.ErrorHandler;
 import net.ulrice.simpledatabinding.viewaccess.IndexedViewAdapter;
@@ -227,7 +227,7 @@ public class ModelBinding {
 
     //TODO soll auch ohne Type gehen
     public void register (Object viewElement, String modelPath, Class<?> modelType, IFValidator<?>... validators) {
-        final ModelValueAccessor mva = new OgnlModelValueAccessor (_model, modelPath, modelType);
+        final IFModelValueAccessor mva = new OgnlModelValueAccessor (_model, modelPath, modelType);
         final ViewAdapter va = HeuristicViewAdapterFactory.createAdapter (viewElement);
         final Predicate enabledPredicate = mva.isReadOnly () ? Predicate.FALSE : Predicate.TRUE;
 
@@ -235,7 +235,7 @@ public class ModelBinding {
     }
 
     public void register (Object viewElement, String modelPath, Class<?> modelType, boolean enabled, IFValidator<?>... validators) { 
-        final ModelValueAccessor mva = new OgnlModelValueAccessor (_model, modelPath, modelType);
+        final IFModelValueAccessor mva = new OgnlModelValueAccessor (_model, modelPath, modelType);
         final ViewAdapter va = HeuristicViewAdapterFactory.createAdapter (viewElement);
         final Predicate enabledPredicate = enabled ? Predicate.FALSE : Predicate.TRUE;
 
@@ -243,15 +243,15 @@ public class ModelBinding {
     }
 
     public void register (Object viewElement, String modelPath, Class<?> modelType, String enabledExpression, IFValidator<?>... validators) {
-        final ModelValueAccessor mva = new OgnlModelValueAccessor (_model, modelPath, modelType);
+        final IFModelValueAccessor mva = new OgnlModelValueAccessor (_model, modelPath, modelType);
         register (HeuristicViewAdapterFactory.createAdapter (viewElement), mva, new OgnlPredicate (enabledExpression), Arrays.asList (validators), mva.isReadOnly ());
     }
 
-    public void register (ViewAdapter viewAdapter, ModelValueAccessor modelValueAccessor, Predicate enabledPredicate, List<IFValidator<?>> validators, boolean isReadOnly) {
+    public void register (ViewAdapter viewAdapter, IFModelValueAccessor modelValueAccessor, Predicate enabledPredicate, List<IFValidator<?>> validators, boolean isReadOnly) {
         register (viewAdapter, HeuristicConverterFactory.createConverter (viewAdapter.getViewType (), modelValueAccessor.getModelType ()), enabledPredicate, modelValueAccessor, validators, isReadOnly);
     }
 
-    public void register (ViewAdapter viewAdapter, ValueConverter viewConverter, Predicate enabledPredicate, ModelValueAccessor modelValueAccessor, List<IFValidator<?>> validators, boolean isReadOnly) {
+    public void register (ViewAdapter viewAdapter, ValueConverter viewConverter, Predicate enabledPredicate, IFModelValueAccessor modelValueAccessor, List<IFValidator<?>> validators, boolean isReadOnly) {
         ensureEventThread ();
         final Binding b = new Binding (viewAdapter, viewConverter, enabledPredicate, modelValueAccessor, validators, isReadOnly);
         _bindings.add (b);
@@ -277,7 +277,7 @@ public class ModelBinding {
         ensureEventThread ();
 
         final DefaultTableModel tableModel = (DefaultTableModel) oTableModel;
-        final ModelValueAccessor numRowsAccessor = new OgnlModelValueAccessor (_model, "(" + baseExpression + ").size()", Integer.class);
+        final IFModelValueAccessor numRowsAccessor = new OgnlModelValueAccessor (_model, "(" + baseExpression + ").size()", Integer.class);
 
         final boolean canBeEditable = tableModel instanceof EditableTableModel;
 
