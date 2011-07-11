@@ -7,12 +7,16 @@ todo
 * Label  
 * Combobox
 
+* Vereinheitlichung DA
+* Vereinheitlichung GA
+
 done
 ----
+* Vereinheitlichung der Validierung...
+
 * enabling / disabling per Binding ans Model
 * abgeleitete Attribute
   * read/only-Mappings
-* Validierung
 * Tabelle
 
 

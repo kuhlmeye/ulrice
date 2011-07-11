@@ -1,6 +1,6 @@
 package net.ulrice.databinding;
 
-import net.ulrice.databinding.impl.validation.ValidationErrors;
+import net.ulrice.databinding.impl.validation.ValidationResult;
 
 /**
  * Interface for an attribute validator.
@@ -12,18 +12,18 @@ public interface IFValidator<T> {
     /**
      * Returns validation errors or null, if the attribute is valid.
      * 
-     * @param model The attribute model.
+     * @param bindingId The identifier of the binding
      * @param attribute The attribute to be validated
      * @return Validation errors.
      */
-    ValidationErrors validate(IFAttributeModel<?> model, T attribute);
+    ValidationResult isValid(IFBindingIdentifier bindingId, T attribute);
     
     /**
      * Returns the last validation errors.
      * 
      * @return The last validation errors
      */
-    ValidationErrors getLastValidationErrors();
+    ValidationResult getLastValidationErrors();
 
     /**
      * Clear the validation errors.

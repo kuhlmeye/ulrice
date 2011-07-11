@@ -2,25 +2,26 @@ package net.ulrice.simpledatabinding;
 
 import java.util.List;
 
+import net.ulrice.databinding.IFBindingIdentifier;
+import net.ulrice.databinding.IFValidator;
 import net.ulrice.simpledatabinding.converter.ValueConverter;
 import net.ulrice.simpledatabinding.modelaccess.ModelValueAccessor;
 import net.ulrice.simpledatabinding.modelaccess.Predicate;
-import net.ulrice.simpledatabinding.validation.Validator;
 import net.ulrice.simpledatabinding.viewaccess.ViewAdapter;
 
 
 
 
-class Binding {
+class Binding implements IFBindingIdentifier {
     private final ViewAdapter _viewAdapter;
     private final ValueConverter _converter;
     private final Predicate _enabledPredicate;
     private final ModelValueAccessor _modelValueAccessor;
-    private final List<Validator> _validators;
+    private final List<IFValidator<?>> _validators;
     
     private final boolean _isReadOnly;
 
-    public Binding (ViewAdapter viewAdapter, ValueConverter converter, Predicate enabledPredicate, ModelValueAccessor modelValueAccessor, List<Validator> validators, boolean isReadOnly) {
+    public Binding (ViewAdapter viewAdapter, ValueConverter converter, Predicate enabledPredicate, ModelValueAccessor modelValueAccessor, List<IFValidator<?>> validators, boolean isReadOnly) {
         _viewAdapter = viewAdapter;
         _converter = converter;
         _enabledPredicate = enabledPredicate;
@@ -45,7 +46,7 @@ class Binding {
         return _modelValueAccessor;
     }
     
-    public List<Validator> getValidators () {
+    public List<IFValidator<?>> getValidators () {
         return _validators;
     }
     
@@ -56,4 +57,10 @@ class Binding {
     public boolean hasDataBinding () {
         return _modelValueAccessor != null;
     }
+
+	@Override
+	public String getId() {
+		// TODO Auto-generated method stub
+		return null;
+	}
 }

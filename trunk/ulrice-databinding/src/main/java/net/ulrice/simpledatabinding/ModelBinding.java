@@ -10,6 +10,8 @@ import javax.swing.event.TableModelListener;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableModel;
 
+import net.ulrice.databinding.IFValidator;
+import net.ulrice.databinding.impl.validation.ValidationResult;
 import net.ulrice.simpledatabinding.converter.HeuristicConverterFactory;
 import net.ulrice.simpledatabinding.converter.ValueConverter;
 import net.ulrice.simpledatabinding.converter.ValueConverterException;
@@ -25,7 +27,6 @@ import net.ulrice.simpledatabinding.modelaccess.impl.OgnlPredicate;
 import net.ulrice.simpledatabinding.modelaccess.impl.OgnlSingleListIndexedModelValueAccessor;
 import net.ulrice.simpledatabinding.util.EditableTableModel;
 import net.ulrice.simpledatabinding.util.ErrorHandler;
-import net.ulrice.simpledatabinding.validation.Validator;
 import net.ulrice.simpledatabinding.viewaccess.IndexedViewAdapter;
 import net.ulrice.simpledatabinding.viewaccess.ViewAdapter;
 import net.ulrice.simpledatabinding.viewaccess.ViewChangeListener;
@@ -183,7 +184,7 @@ public class ModelBinding {
             validate (b, validationResult);
 
         for (Binding b: _bindings) {
-            final List<String> raw = validationResult.getFailuresByBinding (b);
+            final List<String> raw = validationResult.getMessagesByBinding(b);
             b.getViewAdapter ().setValidationFailures (raw != null ? raw : new ArrayList<String> ());
 
             b.getViewAdapter ().setEnabled (b.isWidgetEnabled (validationResult.isValid (), _model));
@@ -198,9 +199,13 @@ public class ModelBinding {
             final Object raw = b.getViewAdapter ().getValue ();
             final Object converted = b.getConverter ().viewToModel (raw);
 
-            for (Validator v: b.getValidators ())
-                if (! v.isValid (converted))
-                    validationResult.addFailure (b, v.getFailureMessage (converted));
+            for (IFValidator v: b.getValidators ()) {
+				ValidationResult validationErrors = v.isValid(b, converted);
+				if(validationErrors != null) {
+					validationResult.addValidationErrors(validationErrors.getValidationErrors());
+				}
+			}
+
         }
         catch (ValueConverterException exc) {
             validationResult.addFailure (b, "Fehler bei der Konvertierung");
@@ -216,12 +221,12 @@ public class ModelBinding {
         ensureEventThread ();
         final ViewAdapter va = HeuristicViewAdapterFactory.createAdapter (viewElement);
         final Predicate enabledPredicate = new OgnlPredicate (enabledExpression);
-        _bindings.add (new Binding (va, null, enabledPredicate, null, new ArrayList<Validator> (), true));
+        _bindings.add (new Binding (va, null, enabledPredicate, null, new ArrayList<IFValidator<?>> (), true));
         updateViews ();
     }
 
     //TODO soll auch ohne Type gehen
-    public void register (Object viewElement, String modelPath, Class<?> modelType, Validator... validators) {
+    public void register (Object viewElement, String modelPath, Class<?> modelType, IFValidator<?>... validators) {
         final ModelValueAccessor mva = new OgnlModelValueAccessor (_model, modelPath, modelType);
         final ViewAdapter va = HeuristicViewAdapterFactory.createAdapter (viewElement);
         final Predicate enabledPredicate = mva.isReadOnly () ? Predicate.FALSE : Predicate.TRUE;
@@ -229,7 +234,7 @@ public class ModelBinding {
         register (va, mva, enabledPredicate, Arrays.asList (validators), mva.isReadOnly () || va.isReadOnly ());
     }
 
-    public void register (Object viewElement, String modelPath, Class<?> modelType, boolean enabled, Validator... validators) { 
+    public void register (Object viewElement, String modelPath, Class<?> modelType, boolean enabled, IFValidator<?>... validators) { 
         final ModelValueAccessor mva = new OgnlModelValueAccessor (_model, modelPath, modelType);
         final ViewAdapter va = HeuristicViewAdapterFactory.createAdapter (viewElement);
         final Predicate enabledPredicate = enabled ? Predicate.FALSE : Predicate.TRUE;
@@ -237,16 +242,16 @@ public class ModelBinding {
         register (va, mva, enabledPredicate, Arrays.asList (validators), mva.isReadOnly () || va.isReadOnly ());
     }
 
-    public void register (Object viewElement, String modelPath, Class<?> modelType, String enabledExpression, Validator... validators) {
+    public void register (Object viewElement, String modelPath, Class<?> modelType, String enabledExpression, IFValidator<?>... validators) {
         final ModelValueAccessor mva = new OgnlModelValueAccessor (_model, modelPath, modelType);
         register (HeuristicViewAdapterFactory.createAdapter (viewElement), mva, new OgnlPredicate (enabledExpression), Arrays.asList (validators), mva.isReadOnly ());
     }
 
-    public void register (ViewAdapter viewAdapter, ModelValueAccessor modelValueAccessor, Predicate enabledPredicate, List<Validator> validators, boolean isReadOnly) {
+    public void register (ViewAdapter viewAdapter, ModelValueAccessor modelValueAccessor, Predicate enabledPredicate, List<IFValidator<?>> validators, boolean isReadOnly) {
         register (viewAdapter, HeuristicConverterFactory.createConverter (viewAdapter.getViewType (), modelValueAccessor.getModelType ()), enabledPredicate, modelValueAccessor, validators, isReadOnly);
     }
 
-    public void register (ViewAdapter viewAdapter, ValueConverter viewConverter, Predicate enabledPredicate, ModelValueAccessor modelValueAccessor, List<Validator> validators, boolean isReadOnly) {
+    public void register (ViewAdapter viewAdapter, ValueConverter viewConverter, Predicate enabledPredicate, ModelValueAccessor modelValueAccessor, List<IFValidator<?>> validators, boolean isReadOnly) {
         ensureEventThread ();
         final Binding b = new Binding (viewAdapter, viewConverter, enabledPredicate, modelValueAccessor, validators, isReadOnly);
         _bindings.add (b);

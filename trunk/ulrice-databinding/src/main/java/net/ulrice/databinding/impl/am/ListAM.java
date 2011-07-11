@@ -21,7 +21,7 @@ import net.ulrice.databinding.IFDataAccessor;
 import net.ulrice.databinding.IFElementChangeListener;
 import net.ulrice.databinding.IFGuiAccessor;
 import net.ulrice.databinding.IFValidator;
-import net.ulrice.databinding.impl.validation.ValidationErrors;
+import net.ulrice.databinding.impl.validation.ValidationResult;
 
 /**
  * @author christof
@@ -435,7 +435,7 @@ public class ListAM<T extends List<S>, S> implements IFAttributeModel<T>, ListMo
      * @see net.ulrice.databinding.IFAttributeModel#getValidationErrors()
      */
     @Override
-    public ValidationErrors getValidationErrors() {
+    public ValidationResult getValidationErrors() {
         // TODO Auto-generated method stub
         return null;
     }

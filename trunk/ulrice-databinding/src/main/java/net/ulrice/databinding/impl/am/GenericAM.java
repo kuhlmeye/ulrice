@@ -5,17 +5,18 @@ import javax.swing.event.EventListenerList;
 import net.ulrice.databinding.DataState;
 import net.ulrice.databinding.IFAttributeModel;
 import net.ulrice.databinding.IFAttributeModelEventListener;
+import net.ulrice.databinding.IFBindingIdentifier;
 import net.ulrice.databinding.IFDataAccessor;
 import net.ulrice.databinding.IFGuiAccessor;
 import net.ulrice.databinding.IFValidator;
-import net.ulrice.databinding.impl.validation.ValidationErrors;
+import net.ulrice.databinding.impl.validation.ValidationResult;
 
 /**
  * A generic attribute model.
  * 
  * @author christof
  */
-public class GenericAM<T> implements IFAttributeModel<T> {
+public class GenericAM<T> implements IFAttributeModel<T>, IFBindingIdentifier {
 
     /** The event listener. */
     private EventListenerList listenerList = new EventListenerList();
@@ -107,7 +108,7 @@ public class GenericAM<T> implements IFAttributeModel<T> {
         DataState oldState = state;
         try {
             if (getValidator() != null) {
-                ValidationErrors errors = getValidator().validate(this, getCurrentValue());
+                ValidationResult errors = getValidator().isValid(this, getCurrentValue());
                 if (errors != null) {
                     state = DataState.Invalid;
                     return;
@@ -205,7 +206,7 @@ public class GenericAM<T> implements IFAttributeModel<T> {
      * @see net.ulrice.databinding.IFAttributeModel#getValidationErrors()
      */
     @Override
-    public ValidationErrors getValidationErrors() {
+    public ValidationResult getValidationErrors() {
         if(getValidator() != null) {
             return getValidator().getLastValidationErrors();
         }
