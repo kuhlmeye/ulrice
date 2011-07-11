@@ -7,7 +7,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import net.ulrice.databinding.DataState;
-import net.ulrice.databinding.impl.da.ReflectionDA;
+import net.ulrice.databinding.modelaccess.impl.ReflectionDA;
 
 import org.junit.After;
 import org.junit.Before;
@@ -28,9 +28,9 @@ public class TestListAM {
 	 */
 	@Before
 	public void setUp() throws Exception {
-		listAM = new ListAM<List<Person>, Person>("PersonList", new ReflectionDA<List<Person>>(this, "list"));
-		listAM.addColumn(new ColumnDefinition<String>("name", new ReflectionDA<String>(null, "name"), String.class));
-		listAM.addColumn(new ColumnDefinition<Integer>("age", new ReflectionDA<Integer>(null, "age"), Integer.class));
+		listAM = new ListAM<List<Person>, Person>("PersonList", new ReflectionDA(this, "list"));
+		listAM.addColumn(new ColumnDefinition<String>("name", new ReflectionDA(null, "name"), String.class));
+		listAM.addColumn(new ColumnDefinition<Integer>("age", new ReflectionDA(null, "age"), Integer.class));
 		list = new LinkedList<Person>();
 
 		Person a = new Person();
