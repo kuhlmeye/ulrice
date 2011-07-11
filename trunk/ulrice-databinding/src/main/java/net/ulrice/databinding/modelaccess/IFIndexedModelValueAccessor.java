@@ -1,7 +1,7 @@
 package net.ulrice.databinding.modelaccess;
 
 
-public interface IndexedModelValueAccessor {
+public interface IFIndexedModelValueAccessor {
     Object getValue (int index);
     void setValue (int index, Object value);
     

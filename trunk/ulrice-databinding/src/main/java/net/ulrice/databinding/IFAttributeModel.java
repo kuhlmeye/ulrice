@@ -22,13 +22,6 @@ public interface IFAttributeModel<T> {
 	 */
 	void read();
 
-	/**
-	 * Read the value without using the data accessor.
-	 * 
-	 * @param value
-	 *            The value.
-	 */
-	void directRead(T value);
 	
 	/**
 	 * Called by a gui accessor if a value was changed.
@@ -44,12 +37,6 @@ public interface IFAttributeModel<T> {
 	 */
 	void write();
 
-	/**
-	 * Write the value without using the data accessor.
-	 * 
-	 * @return The value.
-	 */
-	T directWrite();
 
 	/**
 	 * Returns the current state of this datamodel.
@@ -57,36 +44,6 @@ public interface IFAttributeModel<T> {
 	 * @return The state of this datamodel.
 	 */
 	DataState getState();
-
-	/**
-	 * Returns the original value read from the model.
-	 * 
-	 * @return The original value.
-	 */
-	T getOriginalValue();
-
-	/**
-	 * Returns the current value of this model.
-	 * 
-	 * @return The current value
-	 */
-	T getCurrentValue();
-
-	/**
-	 * Sets the object as the current value.
-	 * 
-	 * @param value
-	 *            The value.
-	 */
-	void setValue(Object value);
-
-	/**
-	 * Set the current value of this model.
-	 * 
-	 * @param value
-	 *            the current value.
-	 */
-	void setCurrentValue(T value);
 
 	/**
 	 * Set the validator if this model.

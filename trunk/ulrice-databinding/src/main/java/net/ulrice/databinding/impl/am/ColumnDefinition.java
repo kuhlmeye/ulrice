@@ -10,11 +10,11 @@ import net.ulrice.databinding.modelaccess.IFDynDataAccessor;
 public class ColumnDefinition<T extends Object> {
 
     private String id;
-    private IFDynDataAccessor<T> dataAccessor;
+    private IFDynDataAccessor dataAccessor;
     private Class<T> columnClass;
     private FilterMode filterMode;
 
-    public ColumnDefinition(String id, IFDynDataAccessor<T> dataAccessor, Class<T> columnClass) {
+    public ColumnDefinition(String id, IFDynDataAccessor dataAccessor, Class<T> columnClass) {
         this.id = id;
         this.dataAccessor = dataAccessor;
         this.columnClass = columnClass;
@@ -25,14 +25,14 @@ public class ColumnDefinition<T extends Object> {
         }
     }
     
-    public ColumnDefinition(String id, IFDynDataAccessor<T> dataAccessor, Class<T> columnClass, FilterMode filterMode) {
+    public ColumnDefinition(String id, IFDynDataAccessor dataAccessor, Class<T> columnClass, FilterMode filterMode) {
         this.id = id;
         this.dataAccessor = dataAccessor;
         this.columnClass = columnClass;
         this.filterMode = filterMode;
     }
 
-    public IFAttributeModel<T> createAM() {
+    public GenericAM<T> createAM() {
         return new GenericAM<T>(id);
     }
 
@@ -64,14 +64,14 @@ public class ColumnDefinition<T extends Object> {
     /**
      * @return the dataAccessor
      */
-    public IFDynDataAccessor<T> getDataAccessor() {
+    public IFDynDataAccessor getDataAccessor() {
         return dataAccessor;
     }
 
     /**
      * @param dataAccessor the dataAccessor to set
      */
-    public void setDataAccessor(IFDynDataAccessor<T> dataAccessor) {
+    public void setDataAccessor(IFDynDataAccessor dataAccessor) {
         this.dataAccessor = dataAccessor;
     }
 

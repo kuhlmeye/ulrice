@@ -7,15 +7,15 @@ public class ReflectionMATest extends TestCase {
 	protected String stringA = "Test";
 	protected int intA = 5;
 	
-	private ReflectionDA stringAModelAccess;
-	private ReflectionDA intAModelAccess;
+	private ReflectionMVA stringAModelAccess;
+	private ReflectionMVA intAModelAccess;
 
 	@Override
 	protected void setUp() throws Exception {
 		super.setUp();
 
-		stringAModelAccess = new ReflectionDA(this, "stringA");
-		intAModelAccess = new ReflectionDA(this, "intA");
+		stringAModelAccess = new ReflectionMVA(this, "stringA");
+		intAModelAccess = new ReflectionMVA(this, "intA");
 	}
 	
 	public void testGetModelType() {

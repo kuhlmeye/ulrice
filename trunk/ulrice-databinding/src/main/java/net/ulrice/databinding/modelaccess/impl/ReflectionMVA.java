@@ -4,8 +4,10 @@ import java.lang.reflect.Field;
 import java.security.AccessController;
 import java.security.PrivilegedAction;
 import java.util.Arrays;
+import java.util.List;
 
 import net.ulrice.databinding.modelaccess.IFDynDataAccessor;
+import net.ulrice.databinding.modelaccess.IFIndexedModelValueAccessor;
 import net.ulrice.databinding.modelaccess.IFModelValueAccessor;
 
 /**
@@ -13,7 +15,7 @@ import net.ulrice.databinding.modelaccess.IFModelValueAccessor;
  * 
  * @author christof
  */
-public class ReflectionDA implements IFModelValueAccessor, IFDynDataAccessor {
+public class ReflectionMVA implements IFModelValueAccessor, IFIndexedModelValueAccessor, IFDynDataAccessor {
 
 	private Object rootObject;
 
@@ -23,19 +25,19 @@ public class ReflectionDA implements IFModelValueAccessor, IFDynDataAccessor {
 
 	private boolean readOnly;
 
-	public ReflectionDA(Object rootObject, String path) {
+	public ReflectionMVA(Object rootObject, String path) {
 		this(rootObject, path, path, false);
 	}
 
-	public ReflectionDA(Object rootObject, String path, boolean readOnly) {
+	public ReflectionMVA(Object rootObject, String path, boolean readOnly) {
 		this(rootObject, path, path, readOnly);
 	}
 
-	public ReflectionDA(String path) {
+	public ReflectionMVA(String path) {
 		this(null, path);
 	}
 
-	public ReflectionDA(Object rootObject, String readPath, String writePath, boolean readOnly) {
+	public ReflectionMVA(Object rootObject, String readPath, String writePath, boolean readOnly) {
 		this.rootObject = rootObject;
 		this.readPath = readPath;
 		this.writePath = writePath;
@@ -43,7 +45,7 @@ public class ReflectionDA implements IFModelValueAccessor, IFDynDataAccessor {
 	}
 
 	@Override
-	public Object readValue(Object root) {
+	public Object getValue(Object root) {
 		
 		if (readPath == null) {
 			return root;
@@ -64,13 +66,13 @@ public class ReflectionDA implements IFModelValueAccessor, IFDynDataAccessor {
 				object = field.get(object);
 			}
 		} catch (IllegalArgumentException e) {
-			throw new ReflectionDataAccessorException("Could not read object from path: " + readPath, e);
+			throw new ReflectionMVAException("Could not read object from path: " + readPath, e);
 		} catch (SecurityException e) {
-			throw new ReflectionDataAccessorException("Could not read object from path: " + readPath, e);
+			throw new ReflectionMVAException("Could not read object from path: " + readPath, e);
 		} catch (IllegalAccessException e) {
-			throw new ReflectionDataAccessorException("Could not read object from path: " + readPath, e);
+			throw new ReflectionMVAException("Could not read object from path: " + readPath, e);
 		} catch (NoSuchFieldException e) {
-			throw new ReflectionDataAccessorException("Could not read object from path: " + readPath, e);
+			throw new ReflectionMVAException("Could not read object from path: " + readPath, e);
 		}
 
 		return object;
@@ -87,9 +89,9 @@ public class ReflectionDA implements IFModelValueAccessor, IFDynDataAccessor {
 	}
 
 	@Override
-	public void writeValue(Object root, Object value) {
+	public void setValue(Object root, Object value) {
 		if (writePath == null) {
-			throw new ReflectionDataAccessorException("Write path must not be null.", null);
+			throw new ReflectionMVAException("Write path must not be null.", null);
 		}
 
 		String[] path = writePath.split(".");
@@ -114,25 +116,25 @@ public class ReflectionDA implements IFModelValueAccessor, IFDynDataAccessor {
 			}
 			field.set(object, value);			
 		} catch (IllegalArgumentException e) {
-			throw new ReflectionDataAccessorException("Could not write object to path: " + path, e);
+			throw new ReflectionMVAException("Could not write object to path: " + path, e);
 		} catch (SecurityException e) {
-			throw new ReflectionDataAccessorException("Could not write object to path: " + path, e);
+			throw new ReflectionMVAException("Could not write object to path: " + path, e);
 		} catch (IllegalAccessException e) {
-			throw new ReflectionDataAccessorException("Could not write object to path: " + path, e);
+			throw new ReflectionMVAException("Could not write object to path: " + path, e);
 		} catch (NoSuchFieldException e) {
-			throw new ReflectionDataAccessorException("Could not write object to path: " + path, e);
+			throw new ReflectionMVAException("Could not write object to path: " + path, e);
 		}
 	}
 
 
 	@Override
 	public Object getValue() {
-		return readValue(rootObject);
+		return getValue(rootObject);
 	}
 
 	@Override
 	public void setValue(Object value) {
-		writeValue(rootObject, value);
+		setValue(rootObject, value);
 	}
 
 	@Override
@@ -159,15 +161,52 @@ public class ReflectionDA implements IFModelValueAccessor, IFDynDataAccessor {
 				}
 				return field.getType();
 			} catch (IllegalArgumentException e) {
-				throw new ReflectionDataAccessorException("Could not read object from path: " + readPath, e);
+				throw new ReflectionMVAException("Could not read object from path: " + readPath, e);
 			} catch (SecurityException e) {
-				throw new ReflectionDataAccessorException("Could not read object from path: " + readPath, e);
+				throw new ReflectionMVAException("Could not read object from path: " + readPath, e);
 			} catch (IllegalAccessException e) {
-				throw new ReflectionDataAccessorException("Could not read object from path: " + readPath, e);
+				throw new ReflectionMVAException("Could not read object from path: " + readPath, e);
 			} catch (NoSuchFieldException e) {
-				throw new ReflectionDataAccessorException("Could not read object from path: " + readPath, e);
+				throw new ReflectionMVAException("Could not read object from path: " + readPath, e);
 			}
 		}			
 		return null;
+	}
+
+	@Override
+	public Object getValue(int index) {
+		Object listValue = getValue(rootObject);
+		if(listValue == null) {
+			throw new NullPointerException();
+		}
+		
+		if(listValue instanceof List<?>) {
+			List<?> list = (List<?>)listValue;
+			return list.get(index);
+		}
+		if(listValue.getClass().isArray()) {
+			return ((Object[])listValue)[index];
+		}
+		
+		throw new ReflectionMVAException("Type: " + listValue.getClass() + " is not allowed for indexed model value access", null);
+	}
+
+	@SuppressWarnings({ "unchecked", "rawtypes" })
+	@Override
+	public void setValue(int index, Object value) {
+		Object listValue = getValue(rootObject);
+		if(listValue == null) {
+			throw new NullPointerException();
+		}
+		
+		if(listValue instanceof List) {
+			List list = (List)listValue;
+			list.set(index, value);
+		}
+		if(listValue.getClass().isArray()) {
+			((Object[])listValue)[index] = value;
+		}
+		
+		throw new ReflectionMVAException("Type: " + listValue.getClass() + " is not allowed for indexed model value access", null);
 	}
 }

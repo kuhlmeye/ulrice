@@ -7,11 +7,11 @@ package net.ulrice.databinding.modelaccess;
  * @author christof
  *
  */
-public interface IFDynDataAccessor<T> {
+public interface IFDynDataAccessor {
 	
 
-	T readValue(Object root);
+	Object getValue(Object root);
 	
 	
-	void writeValue(Object root, T value);
+	void setValue(Object root, Object value);
 }

@@ -6,6 +6,7 @@ import net.ulrice.databinding.DataState;
 import net.ulrice.databinding.IFAttributeModel;
 import net.ulrice.databinding.IFAttributeModelEventListener;
 import net.ulrice.databinding.IFBindingIdentifier;
+import net.ulrice.databinding.IFExtdAttributeModel;
 import net.ulrice.databinding.IFGuiAccessor;
 import net.ulrice.databinding.modelaccess.IFModelValueAccessor;
 import net.ulrice.databinding.validation.IFValidator;
@@ -16,7 +17,7 @@ import net.ulrice.databinding.validation.ValidationResult;
  * 
  * @author christof
  */
-public class GenericAM<T> implements IFAttributeModel<T>, IFBindingIdentifier {
+public class GenericAM<T> implements IFExtdAttributeModel<T>, IFBindingIdentifier {
 
     /** The event listener. */
     private EventListenerList listenerList = new EventListenerList();
@@ -49,6 +50,8 @@ public class GenericAM<T> implements IFAttributeModel<T>, IFBindingIdentifier {
         this.id = id;
         this.modelAccessor = modelAccessor;
     }
+    
+    
 
     /**
      * Creates a new generic attribute model.
@@ -70,7 +73,6 @@ public class GenericAM<T> implements IFAttributeModel<T>, IFBindingIdentifier {
     /**
      * @see net.ulrice.databinding.IFAttributeModel#getCurrentValue()
      */
-    @Override
     public T getCurrentValue() {
         return currentValue;
     }
@@ -134,7 +136,6 @@ public class GenericAM<T> implements IFAttributeModel<T>, IFBindingIdentifier {
     /**
      * @see net.ulrice.databinding.IFAttributeModel#getOriginalValue()
      */
-    @Override
     public T getOriginalValue() {
         return originalValue;
     }
@@ -162,7 +163,6 @@ public class GenericAM<T> implements IFAttributeModel<T>, IFBindingIdentifier {
     /**
      * @see net.ulrice.databinding.IFAttributeModel#directRead(java.lang.Object)
      */
-    @Override
     public void directRead(T value) {
         this.originalValue = value;
         setCurrentValue(value);
@@ -182,7 +182,6 @@ public class GenericAM<T> implements IFAttributeModel<T>, IFBindingIdentifier {
     /**
      * @see net.ulrice.databinding.IFAttributeModel#directWrite()
      */
-    @Override
     public T directWrite() {
         return currentValue;
     }

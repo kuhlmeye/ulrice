@@ -3,6 +3,7 @@ package net.ulrice.databinding.impl.ga.tooltip;
 import javax.swing.JComponent;
 
 import net.ulrice.databinding.IFAttributeModel;
+import net.ulrice.databinding.IFExtdAttributeModel;
 import net.ulrice.databinding.IFGuiAccessor;
 import net.ulrice.databinding.IFTooltipHandler;
 import net.ulrice.databinding.validation.ValidationError;
@@ -33,8 +34,14 @@ public class DetailedTooltipHandler implements IFTooltipHandler {
                 break;
             case Changed:
                 // TODO Add to UI class
-                component.setToolTipText("<html>State: Changed<br>Old value: " + attributeModel.getOriginalValue()
-                        + "<br>New value: " + attributeModel.getCurrentValue() + "</html>");
+            	if(attributeModel instanceof IFExtdAttributeModel) {
+            		IFExtdAttributeModel extdAM = (IFExtdAttributeModel)attributeModel;
+                    component.setToolTipText("<html>State: Changed<br>Old value: " + extdAM.getOriginalValue()
+                            + "<br>New value: " + extdAM.getCurrentValue() + "</html>");
+            	} else {
+            	
+                component.setToolTipText("<html>State: Changed</html>");
+            	}
                 break;
             case Invalid:
                 StringBuffer buffer = new StringBuffer();

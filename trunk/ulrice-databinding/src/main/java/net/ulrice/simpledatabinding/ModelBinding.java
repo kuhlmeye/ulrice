@@ -10,16 +10,16 @@ import javax.swing.event.TableModelListener;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableModel;
 
-import net.ulrice.databinding.modelaccess.IndexedModelValueAccessor;
+import net.ulrice.databinding.modelaccess.IFIndexedModelValueAccessor;
 import net.ulrice.databinding.modelaccess.IndexedPredicate;
 import net.ulrice.databinding.modelaccess.ModelChangeListener;
 import net.ulrice.databinding.modelaccess.ModelNotificationAdapter;
 import net.ulrice.databinding.modelaccess.IFModelValueAccessor;
 import net.ulrice.databinding.modelaccess.Predicate;
 import net.ulrice.databinding.modelaccess.PropertyChangeSupportModelNotificationAdapter;
-import net.ulrice.databinding.modelaccess.impl.OgnlModelValueAccessor;
+import net.ulrice.databinding.modelaccess.impl.OnglMVA;
 import net.ulrice.databinding.modelaccess.impl.OgnlPredicate;
-import net.ulrice.databinding.modelaccess.impl.OgnlSingleListIndexedModelValueAccessor;
+import net.ulrice.databinding.modelaccess.impl.OgnlSingleListIndexedMVA;
 import net.ulrice.databinding.validation.IFValidator;
 import net.ulrice.databinding.validation.ValidationResult;
 import net.ulrice.simpledatabinding.converter.HeuristicConverterFactory;
@@ -227,7 +227,7 @@ public class ModelBinding {
 
     //TODO soll auch ohne Type gehen
     public void register (Object viewElement, String modelPath, Class<?> modelType, IFValidator<?>... validators) {
-        final IFModelValueAccessor mva = new OgnlModelValueAccessor (_model, modelPath, modelType);
+        final IFModelValueAccessor mva = new OnglMVA (_model, modelPath, modelType);
         final ViewAdapter va = HeuristicViewAdapterFactory.createAdapter (viewElement);
         final Predicate enabledPredicate = mva.isReadOnly () ? Predicate.FALSE : Predicate.TRUE;
 
@@ -235,7 +235,7 @@ public class ModelBinding {
     }
 
     public void register (Object viewElement, String modelPath, Class<?> modelType, boolean enabled, IFValidator<?>... validators) { 
-        final IFModelValueAccessor mva = new OgnlModelValueAccessor (_model, modelPath, modelType);
+        final IFModelValueAccessor mva = new OnglMVA (_model, modelPath, modelType);
         final ViewAdapter va = HeuristicViewAdapterFactory.createAdapter (viewElement);
         final Predicate enabledPredicate = enabled ? Predicate.FALSE : Predicate.TRUE;
 
@@ -243,7 +243,7 @@ public class ModelBinding {
     }
 
     public void register (Object viewElement, String modelPath, Class<?> modelType, String enabledExpression, IFValidator<?>... validators) {
-        final IFModelValueAccessor mva = new OgnlModelValueAccessor (_model, modelPath, modelType);
+        final IFModelValueAccessor mva = new OnglMVA (_model, modelPath, modelType);
         register (HeuristicViewAdapterFactory.createAdapter (viewElement), mva, new OgnlPredicate (enabledExpression), Arrays.asList (validators), mva.isReadOnly ());
     }
 
@@ -277,7 +277,7 @@ public class ModelBinding {
         ensureEventThread ();
 
         final DefaultTableModel tableModel = (DefaultTableModel) oTableModel;
-        final IFModelValueAccessor numRowsAccessor = new OgnlModelValueAccessor (_model, "(" + baseExpression + ").size()", Integer.class);
+        final IFModelValueAccessor numRowsAccessor = new OnglMVA (_model, "(" + baseExpression + ").size()", Integer.class);
 
         final boolean canBeEditable = tableModel instanceof EditableTableModel;
 
@@ -288,7 +288,7 @@ public class ModelBinding {
             final ValueConverter converter = HeuristicConverterFactory.createConverter (columnType, columnType);
 
             final IndexedViewAdapter viewAdapter = new DefaultTableModelColumnViewAdapter (tableModel, columnType, col, ! canBeEditable); //TODO readOnly noch über Typen filtern?
-            final IndexedModelValueAccessor modelValueAccessor = new OgnlSingleListIndexedModelValueAccessor (columnType, null, _model, baseExpression, expr);
+            final IFIndexedModelValueAccessor modelValueAccessor = new OgnlSingleListIndexedMVA (columnType, null, _model, baseExpression, expr);
             columnBindings.add (new IndexedBinding (numRowsAccessor, viewAdapter, converter, IndexedPredicate.TRUE, modelValueAccessor, viewAdapter.isReadOnly () || modelValueAccessor.isReadOnly ())); //TODO: enabled
         }
 
