@@ -1,6 +1,6 @@
 package net.ulrice.databinding.validation.impl;
 
-import net.ulrice.databinding.IFBindingIdentifier;
+import net.ulrice.databinding.IFBinding;
 import net.ulrice.databinding.validation.AbstractValidator;
 import net.ulrice.databinding.validation.ValidationError;
 import net.ulrice.databinding.validation.ValidationResult;
@@ -16,7 +16,7 @@ public class StringLengthValidator extends AbstractValidator<String> {
     }
 
 	@Override
-	protected ValidationResult validate(IFBindingIdentifier bindingId, String attribute) {
+	protected ValidationResult validate(IFBinding bindingId, String attribute) {
         if (attribute.length () < _minLength) {
         	// TODO Christof Internationalize
             ValidationResult errors = new ValidationResult(new ValidationError(bindingId, "min. Länge: " + _minLength, null));
