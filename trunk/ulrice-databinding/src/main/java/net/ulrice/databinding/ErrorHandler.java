@@ -1,4 +1,4 @@
-package net.ulrice.databinding.directbinding.util;
+package net.ulrice.databinding;
 
 
 public class ErrorHandler {

@@ -1,7 +1,7 @@
 package net.ulrice.databinding.directbinding.table;
 
 
-public interface IndexedViewAdapter {
+public interface ColumnAdapter {
     Object getValue (int index);
     void setValue (int index, Object value);
 

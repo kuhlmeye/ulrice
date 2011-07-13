@@ -2,7 +2,7 @@ package net.ulrice.databinding.modelaccess.impl;
 
 import java.util.List;
 
-import net.ulrice.databinding.directbinding.util.ErrorHandler;
+import net.ulrice.databinding.ErrorHandler;
 import net.ulrice.databinding.modelaccess.IFIndexedModelValueAccessor;
 
 import ognl.Ognl;

@@ -2,21 +2,21 @@ package net.ulrice.databinding.directbinding;
 
 import java.util.List;
 
-import net.ulrice.databinding.directbinding.table.TableViewAdapter;
+import net.ulrice.databinding.directbinding.table.TableModelAdapter;
 
 
 
 class TableBinding {
-    private final TableViewAdapter _tableViewAdapter;
+    private final TableModelAdapter _tableViewAdapter;
     private final List<IndexedBinding> _columnBindings;
 //TODO    private final Predicate _enabledPredicate;
     
-    public TableBinding (TableViewAdapter tableViewAdapter, List<IndexedBinding> columnBindings) {
+    public TableBinding (TableModelAdapter tableViewAdapter, List<IndexedBinding> columnBindings) {
         _tableViewAdapter = tableViewAdapter;
         _columnBindings = columnBindings;
     }
 
-    public TableViewAdapter getTableViewAdapter () {
+    public TableModelAdapter getTableViewAdapter () {
         return _tableViewAdapter;
     }
     

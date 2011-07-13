@@ -1,4 +1,4 @@
-package net.ulrice.databinding.directbinding.util;
+package net.ulrice.databinding.directbinding.table;
 
 import java.util.List;
 
