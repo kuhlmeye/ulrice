@@ -7,12 +7,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import javax.swing.ListModel;
 import javax.swing.event.EventListenerList;
-import javax.swing.event.ListDataListener;
-import javax.swing.event.TableModelEvent;
-import javax.swing.event.TableModelListener;
-import javax.swing.table.TableModel;
 
 import net.ulrice.databinding.DataState;
 import net.ulrice.databinding.IFBinding;
