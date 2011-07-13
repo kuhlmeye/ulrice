@@ -3,8 +3,9 @@ package net.ulrice.databinding.impl;
 import static org.junit.Assert.assertEquals;
 
 import net.ulrice.databinding.DataState;
-import net.ulrice.databinding.IFExtdAttributeModel;
-import net.ulrice.databinding.impl.am.GenericAM;
+import net.ulrice.databinding.bufferedbinding.DataGroup;
+import net.ulrice.databinding.bufferedbinding.GenericAM;
+import net.ulrice.databinding.bufferedbinding.IFExtdAttributeModel;
 import net.ulrice.databinding.modelaccess.impl.ReflectionMVA;
 import net.ulrice.databinding.validation.impl.RegExValidator;
 

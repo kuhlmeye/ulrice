@@ -8,8 +8,8 @@ import javax.swing.JComboBox;
 import javax.swing.JComponent;
 
 import net.ulrice.databinding.IFBinding;
+import net.ulrice.databinding.ObjectWithPresentation;
 import net.ulrice.databinding.viewadapter.AbstractViewAdapter;
-import net.ulrice.simpledatabinding.util.ObjectWithPresentation;
 
 
 public class JComboBoxViewAdapter extends AbstractViewAdapter implements ItemListener {

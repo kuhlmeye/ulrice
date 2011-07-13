@@ -1,9 +1,9 @@
 package net.ulrice.databinding.modelaccess.impl;
 
+import net.ulrice.databinding.directbinding.util.ErrorHandler;
 import net.ulrice.databinding.modelaccess.IFModelValueAccessor;
 import ognl.Ognl;
 import ognl.OgnlException;
-import net.ulrice.simpledatabinding.util.ErrorHandler;
 
 
 public class OnglMVA implements IFModelValueAccessor {

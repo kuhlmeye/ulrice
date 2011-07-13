@@ -8,7 +8,7 @@ import java.awt.Component;
 import javax.swing.JTable;
 import javax.swing.table.TableCellRenderer;
 
-import net.ulrice.databinding.impl.am.ColumnDefinition;
+import net.ulrice.databinding.bufferedbinding.ColumnDefinition;
 
 /**
  * @author christof

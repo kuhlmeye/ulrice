@@ -10,7 +10,7 @@ import javax.swing.event.ListDataEvent;
 import javax.swing.event.ListDataListener;
 
 import net.ulrice.databinding.IFBinding;
-import net.ulrice.databinding.impl.am.ListAM;
+import net.ulrice.databinding.bufferedbinding.ListAM;
 import net.ulrice.databinding.viewadapter.AbstractViewAdapter;
 
 public class JListViewAdapter extends AbstractViewAdapter implements ListModel {

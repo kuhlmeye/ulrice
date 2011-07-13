@@ -22,8 +22,8 @@ import javax.swing.table.TableColumn;
 import javax.swing.table.TableColumnModel;
 import javax.swing.text.BadLocationException;
 
-import net.ulrice.databinding.impl.am.ColumnDefinition;
-import net.ulrice.databinding.impl.am.FilterMode;
+import net.ulrice.databinding.bufferedbinding.ColumnDefinition;
+import net.ulrice.databinding.bufferedbinding.FilterMode;
 
 /**
  * @author christof
