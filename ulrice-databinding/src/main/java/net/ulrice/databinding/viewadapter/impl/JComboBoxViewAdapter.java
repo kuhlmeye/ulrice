@@ -2,7 +2,6 @@ package net.ulrice.databinding.viewadapter.impl;
 
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
-import java.util.List;
 
 import javax.swing.JComboBox;
 import javax.swing.JComponent;

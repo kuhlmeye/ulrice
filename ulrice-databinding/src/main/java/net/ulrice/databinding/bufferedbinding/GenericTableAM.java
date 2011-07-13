@@ -1,13 +1,9 @@
 package net.ulrice.databinding.bufferedbinding;
 
-import java.util.List;
-
 import javax.swing.event.TableModelEvent;
 
 import net.ulrice.databinding.modelaccess.IFIndexedModelValueAccessor;
 import net.ulrice.databinding.modelaccess.IFModelValueAccessor;
-import net.ulrice.databinding.validation.ValidationResult;
-import net.ulrice.databinding.viewadapter.IFViewAdapter;
 
 /**
  * @author christof

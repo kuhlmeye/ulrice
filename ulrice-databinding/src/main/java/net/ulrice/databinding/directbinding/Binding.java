@@ -8,7 +8,6 @@ import net.ulrice.databinding.converter.IFValueConverter;
 import net.ulrice.databinding.modelaccess.IFModelValueAccessor;
 import net.ulrice.databinding.modelaccess.Predicate;
 import net.ulrice.databinding.validation.IFValidator;
-import net.ulrice.databinding.validation.ValidationResult;
 import net.ulrice.databinding.viewadapter.IFViewAdapter;
 
 
