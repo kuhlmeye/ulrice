@@ -1,9 +1,5 @@
 package net.ulrice.databinding.bufferedbinding;
 
-import javax.swing.event.TableModelEvent;
-
-import sun.text.normalizer.UProperty;
-
 import net.ulrice.databinding.modelaccess.IFIndexedModelValueAccessor;
 import net.ulrice.databinding.modelaccess.IFModelValueAccessor;
 

@@ -3,10 +3,6 @@ package net.ulrice.databinding.bufferedbinding;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.swing.event.TableModelEvent;
-
-import sun.text.normalizer.UProperty;
-
 import net.ulrice.databinding.DataState;
 import net.ulrice.databinding.modelaccess.IFModelValueAccessor;
 
