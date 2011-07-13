@@ -3,10 +3,10 @@ package net.ulrice.databinding.directbinding.table;
 import javax.swing.table.DefaultTableModel;
 
 
-public class DefaultTableModelViewAdapter implements TableViewAdapter {
+public class DefaultTableModelAdapter implements TableModelAdapter {
     private final DefaultTableModel _tableModel;
     
-    public DefaultTableModelViewAdapter (DefaultTableModel tableModel) {
+    public DefaultTableModelAdapter (DefaultTableModel tableModel) {
         _tableModel = tableModel;
     }
 

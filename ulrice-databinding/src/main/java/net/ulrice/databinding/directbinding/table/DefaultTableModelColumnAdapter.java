@@ -5,13 +5,13 @@ import javax.swing.table.DefaultTableModel;
 
 
 
-public class DefaultTableModelColumnViewAdapter implements IndexedViewAdapter {
+public class DefaultTableModelColumnAdapter implements ColumnAdapter {
     private final Class<?> _type;
     private final DefaultTableModel _tableModel;
     private final int _column;
     private final boolean _isReadOnly;
 
-    public DefaultTableModelColumnViewAdapter (DefaultTableModel tableModel, Class<?> type, int column, boolean isReadOnly) {
+    public DefaultTableModelColumnAdapter (DefaultTableModel tableModel, Class<?> type, int column, boolean isReadOnly) {
         _type = type;
         _tableModel = tableModel;
         _column = column;

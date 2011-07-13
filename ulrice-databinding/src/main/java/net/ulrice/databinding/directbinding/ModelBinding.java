@@ -11,17 +11,17 @@ import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableModel;
 
 import net.ulrice.databinding.DataState;
+import net.ulrice.databinding.ErrorHandler;
 import net.ulrice.databinding.converter.HeuristicConverterFactory;
 import net.ulrice.databinding.converter.IFValueConverter;
 import net.ulrice.databinding.converter.ValueConverterException;
-import net.ulrice.databinding.directbinding.table.DefaultTableModelColumnViewAdapter;
-import net.ulrice.databinding.directbinding.table.DefaultTableModelViewAdapter;
+import net.ulrice.databinding.directbinding.table.DefaultTableModelColumnAdapter;
+import net.ulrice.databinding.directbinding.table.DefaultTableModelAdapter;
+import net.ulrice.databinding.directbinding.table.EditableTableModel;
 import net.ulrice.databinding.directbinding.table.ExpressionColumnSpec;
-import net.ulrice.databinding.directbinding.table.IndexedViewAdapter;
-import net.ulrice.databinding.directbinding.table.TableViewAdapter;
+import net.ulrice.databinding.directbinding.table.ColumnAdapter;
+import net.ulrice.databinding.directbinding.table.TableModelAdapter;
 import net.ulrice.databinding.directbinding.table.WithTypesPerColumn;
-import net.ulrice.databinding.directbinding.util.EditableTableModel;
-import net.ulrice.databinding.directbinding.util.ErrorHandler;
 import net.ulrice.databinding.modelaccess.IFIndexedModelValueAccessor;
 import net.ulrice.databinding.modelaccess.IndexedPredicate;
 import net.ulrice.databinding.modelaccess.ModelChangeListener;
@@ -310,12 +310,12 @@ public class ModelBinding {
             final Class<?> columnType = columnSpecs [col].getType ();
             final IFValueConverter converter = HeuristicConverterFactory.createConverter (columnType, columnType);
 
-            final IndexedViewAdapter viewAdapter = new DefaultTableModelColumnViewAdapter (tableModel, columnType, col, ! canBeEditable); //TODO readOnly noch über Typen filtern?
+            final ColumnAdapter viewAdapter = new DefaultTableModelColumnAdapter (tableModel, columnType, col, ! canBeEditable); //TODO readOnly noch über Typen filtern?
             final IFIndexedModelValueAccessor modelValueAccessor = new OgnlSingleListIndexedMVA (columnType, null, _model, baseExpression, expr);
             columnBindings.add (new IndexedBinding (numRowsAccessor, viewAdapter, converter, IndexedPredicate.TRUE, modelValueAccessor, viewAdapter.isReadOnly () || modelValueAccessor.isReadOnly ())); //TODO: enabled
         }
 
-        final TableViewAdapter tableViewAdapter = new DefaultTableModelViewAdapter (tableModel);
+        final TableModelAdapter tableViewAdapter = new DefaultTableModelAdapter (tableModel);
         _tableBindings.add (new TableBinding (tableViewAdapter, columnBindings));
 
         if (tableModel instanceof WithTypesPerColumn) {

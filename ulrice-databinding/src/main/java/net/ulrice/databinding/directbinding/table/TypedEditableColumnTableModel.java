@@ -4,7 +4,6 @@ import java.util.List;
 
 import javax.swing.table.DefaultTableModel;
 
-import net.ulrice.databinding.directbinding.util.EditableTableModel;
 
 
 
