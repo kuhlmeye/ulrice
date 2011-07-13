@@ -52,7 +52,7 @@ public class GenericAM<T> implements IFExtdAttributeModel<T>, IFBinding, IFViewC
     public GenericAM(String id, IFModelValueAccessor modelAccessor) {
         this.id = id;
         this.modelAccessor = modelAccessor;
-        this.viewAdapterList = new ArrayList();
+        this.viewAdapterList = new ArrayList<IFViewAdapter>();
     }
     
     
