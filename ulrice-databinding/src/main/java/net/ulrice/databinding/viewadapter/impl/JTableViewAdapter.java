@@ -84,14 +84,8 @@ public class JTableViewAdapter extends AbstractViewAdapter implements TableModel
      * @see net.ulrice.databinding.IFGuiAccessor#setAttributeModel(net.ulrice.databinding.IFAttributeModel)
      */
     public void setAttributeModel(ListAM<? extends List<?>, ?> attributeModel) {
-        if (this.attributeModel != null) {
-            this.attributeModel.removeTableModelListener(this);
-        }
         this.attributeModel = attributeModel;
-        this.attributeModel.addTableModelListener(this);
-
         updateColumnModel(attributeModel);
-
         fireTableStructureChanged();
     }
 

@@ -20,7 +20,7 @@ import net.ulrice.databinding.validation.IFValidator;
 import net.ulrice.databinding.validation.ValidationResult;
 import net.ulrice.databinding.viewadapter.IFViewAdapter;
 
-public abstract class AbstractTableAM<T, S> implements IFBinding, IFAttributeModel<T>, ListModel, TableModel, IFElementChangeListener<S> {
+public abstract class AbstractTableAM<T, S> implements IFBinding, IFAttributeModel<T>, IFElementChangeListener<S> {
 
 	protected DataState state = DataState.NotChanged;
 	protected List<Element<S>> elements = new ArrayList<Element<S>>();
@@ -110,59 +110,13 @@ public abstract class AbstractTableAM<T, S> implements IFBinding, IFAttributeMod
 		return state;
 	}
 
-	/**
-	 * @see javax.swing.ListModel#addListDataListener(javax.swing.event.ListDataListener)
-	 */
-	@Override
-	public void addListDataListener(ListDataListener listener) {
-		listenerList.add(ListDataListener.class, listener);
-	}
-
-	/**
-	 * @see javax.swing.ListModel#removeListDataListener(javax.swing.event.ListDataListener)
-	 */
-	@Override
-	public void removeListDataListener(ListDataListener listener) {
-		listenerList.remove(ListDataListener.class, listener);
-	
-	}
-
-	/**
-	 * @see javax.swing.ListModel#getElementAt(int)
-	 */
-	@Override
 	public Element<S> getElementAt(int index) {
 		return elements.get(index);
 	}
 
 	/**
-	 * @see javax.swing.ListModel#getSize()
-	 */
-	@Override
-	public int getSize() {
-		return elements == null ? 0 : elements.size();
-	}
-
-	/**
-	 * @see javax.swing.table.TableModel#addTableModelListener(javax.swing.event.TableModelListener)
-	 */
-	@Override
-	public void addTableModelListener(TableModelListener listener) {
-		listenerList.add(TableModelListener.class, listener);
-	}
-
-	/**
-	 * @see javax.swing.table.TableModel#removeTableModelListener(javax.swing.event.TableModelListener)
-	 */
-	@Override
-	public void removeTableModelListener(TableModelListener listener) {
-		listenerList.remove(TableModelListener.class, listener);
-	}
-
-	/**
 	 * @see javax.swing.table.TableModel#getColumnCount()
 	 */
-	@Override
 	public int getColumnCount() {
 		return columns == null ? 0 : columns.size();
 	}
@@ -170,7 +124,6 @@ public abstract class AbstractTableAM<T, S> implements IFBinding, IFAttributeMod
 	/**
 	 * @see javax.swing.table.TableModel#getColumnClass(int)
 	 */
-	@Override
 	public Class<?> getColumnClass(int columnIndex) {
 		return columns.get(columnIndex).getColumnClass();
 	}
@@ -178,7 +131,6 @@ public abstract class AbstractTableAM<T, S> implements IFBinding, IFAttributeMod
 	/**
 	 * @see javax.swing.table.TableModel#getColumnName(int)
 	 */
-	@Override
 	public String getColumnName(int columnIndex) {
 		return columns.get(columnIndex).getColumnName();
 	}
@@ -186,7 +138,6 @@ public abstract class AbstractTableAM<T, S> implements IFBinding, IFAttributeMod
 	/**
 	 * @see javax.swing.table.TableModel#getRowCount()
 	 */
-	@Override
 	public int getRowCount() {
 		return elements == null ? 0 : elements.size();
 	}
@@ -194,7 +145,6 @@ public abstract class AbstractTableAM<T, S> implements IFBinding, IFAttributeMod
 	/**
 	 * @see javax.swing.table.TableModel#isCellEditable(int, int)
 	 */
-	@Override
 	public boolean isCellEditable(int rowIndex, int columnIndex) {
 		return getElementAt(rowIndex).isEditable(columnIndex);
 	}
@@ -202,7 +152,6 @@ public abstract class AbstractTableAM<T, S> implements IFBinding, IFAttributeMod
 	/**
 	 * @see javax.swing.table.TableModel#getValueAt(int, int)
 	 */
-	@Override
 	public Object getValueAt(int rowIndex, int columnIndex) {
 		return getElementAt(rowIndex).getValueAt(columnIndex);
 	}
@@ -210,7 +159,6 @@ public abstract class AbstractTableAM<T, S> implements IFBinding, IFAttributeMod
 	/**
 	 * @see javax.swing.table.TableModel#setValueAt(java.lang.Object, int, int)
 	 */
-	@Override
 	public void setValueAt(Object aValue, int rowIndex, int columnIndex) {
 		getElementAt(rowIndex).setValueAt(columnIndex, aValue);
 	}
@@ -228,23 +176,7 @@ public abstract class AbstractTableAM<T, S> implements IFBinding, IFAttributeMod
 	 */
 	@Override
 	public void dataChanged(Element<S> element, String columnId, Object newValue, Object oldValue) {
-	    // TODO Refine event.
-	    fireTableChanged(new TableModelEvent(this));
 	    fireUpdateViews();
-	}
-
-	/**
-	 * Informs all listeners about a table model event.
-	 * 
-	 * @param e The event.
-	 */
-	protected void fireTableChanged(TableModelEvent e) {
-	    TableModelListener[] listeners = listenerList.getListeners(TableModelListener.class);
-	    if(listeners != null)  {
-	        for(TableModelListener listener : listeners) {
-	            listener.tableChanged(e);
-	        }
-	    }
 	}
 
 	/**
@@ -316,10 +248,7 @@ public abstract class AbstractTableAM<T, S> implements IFBinding, IFAttributeMod
 	@Override
 	public void addViewAdapter(IFViewAdapter viewAdapter) {
 		viewAdapterList.add(viewAdapter);
-		if(viewAdapter instanceof TableModelListener) {
-			addTableModelListener(((TableModelListener)viewAdapter));
-			fireUpdateViews();
-		}
+		viewAdapter.updateBinding(this);
 	}
 
 	@Override

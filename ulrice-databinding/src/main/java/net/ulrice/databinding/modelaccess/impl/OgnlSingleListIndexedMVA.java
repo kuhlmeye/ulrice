@@ -4,6 +4,7 @@ import java.util.List;
 
 import net.ulrice.databinding.ErrorHandler;
 import net.ulrice.databinding.modelaccess.IFIndexedModelValueAccessor;
+
 import ognl.Ognl;
 import ognl.OgnlException;
 

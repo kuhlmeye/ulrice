@@ -9,9 +9,9 @@ import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
 
-import net.ulrice.simpledatabinding.ModelBinding;
-import net.ulrice.simpledatabinding.viewaccess.table.ExpressionColumnSpec;
-import net.ulrice.simpledatabinding.viewaccess.table.TypedEditableColumnTableModel;
+import net.ulrice.databinding.directbinding.ModelBinding;
+import net.ulrice.databinding.directbinding.table.ExpressionColumnSpec;
+import net.ulrice.databinding.directbinding.table.TypedEditableColumnTableModel;
 
 
 

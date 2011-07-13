@@ -6,10 +6,10 @@ package net.ulrice.sample.module.databinding;
 import java.util.ArrayList;
 import java.util.List;
 
-import net.ulrice.databinding.impl.am.AbstractTableAM;
-import net.ulrice.databinding.impl.am.ColumnDefinition;
-import net.ulrice.databinding.impl.am.GenericAM;
-import net.ulrice.databinding.impl.am.ListAM;
+import net.ulrice.databinding.bufferedbinding.AbstractTableAM;
+import net.ulrice.databinding.bufferedbinding.ColumnDefinition;
+import net.ulrice.databinding.bufferedbinding.GenericAM;
+import net.ulrice.databinding.bufferedbinding.ListAM;
 import net.ulrice.databinding.modelaccess.impl.ReflectionMVA;
 import net.ulrice.databinding.validation.impl.RegExValidator;
 import net.ulrice.module.IFModel;

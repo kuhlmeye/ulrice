@@ -30,7 +30,7 @@ public class JListViewAdapter extends AbstractViewAdapter implements ListModel {
 			attributeModel = (ListAM)binding;									
 		}
 		if(!isInNotification()) {
-			fireListChanged(new ListDataEvent(this, ListDataEvent.CONTENTS_CHANGED, 0, attributeModel.getSize()));
+			fireListChanged(new ListDataEvent(this, ListDataEvent.CONTENTS_CHANGED, 0, attributeModel.getRowCount()));
 		}		
 		if(getTooltipHandler() != null) {
 			getTooltipHandler().updateTooltip(binding, list);
