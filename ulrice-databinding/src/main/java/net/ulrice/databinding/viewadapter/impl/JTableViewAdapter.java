@@ -15,8 +15,8 @@ import javax.swing.table.TableColumnModel;
 import javax.swing.table.TableModel;
 
 import net.ulrice.databinding.IFBinding;
-import net.ulrice.databinding.impl.am.ColumnDefinition;
-import net.ulrice.databinding.impl.am.ListAM;
+import net.ulrice.databinding.bufferedbinding.ColumnDefinition;
+import net.ulrice.databinding.bufferedbinding.ListAM;
 import net.ulrice.databinding.viewadapter.AbstractViewAdapter;
 import net.ulrice.databinding.viewadapter.IFStateMarker;
 import net.ulrice.databinding.viewadapter.IFTooltipHandler;

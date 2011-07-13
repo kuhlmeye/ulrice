@@ -5,7 +5,7 @@ import java.util.List;
 import javax.swing.JComponent;
 
 import net.ulrice.databinding.IFBinding;
-import net.ulrice.databinding.IFExtdAttributeModel;
+import net.ulrice.databinding.bufferedbinding.IFExtdAttributeModel;
 import net.ulrice.databinding.validation.ValidationError;
 import net.ulrice.databinding.validation.ValidationResult;
 import net.ulrice.databinding.viewadapter.IFTooltipHandler;

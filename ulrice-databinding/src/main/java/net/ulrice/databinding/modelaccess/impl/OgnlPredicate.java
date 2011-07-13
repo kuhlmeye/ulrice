@@ -3,11 +3,11 @@ package net.ulrice.databinding.modelaccess.impl;
 import java.util.HashMap;
 import java.util.Map;
 
+import net.ulrice.databinding.directbinding.util.ErrorHandler;
 import net.ulrice.databinding.modelaccess.Predicate;
 
 import ognl.Ognl;
 import ognl.OgnlException;
-import net.ulrice.simpledatabinding.util.ErrorHandler;
 
 
 public class OgnlPredicate implements Predicate {
