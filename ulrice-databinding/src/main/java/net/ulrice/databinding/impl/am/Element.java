@@ -94,7 +94,7 @@ public class Element<T extends Object> {
 
         ColumnDefinition<?> columnDefinition = columns.get(columnIndex);
         if (columnDefinition.isEditable()) {
-            return modelList.get(columnIndex).isEditable();
+            return modelList.get(columnIndex).isReadOnly();
         }
 
         return false;

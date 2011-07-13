@@ -7,7 +7,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-import net.ulrice.databinding.IFBindingIdentifier;
+import net.ulrice.databinding.IFBinding;
 
 /**
  * Class containing the validation errors.
@@ -19,14 +19,14 @@ public class ValidationResult {
     /** The list of validation errors. */
     private List<ValidationError> validationErrors;
     
-    private Map<IFBindingIdentifier, List<String>> messagesByBindingMap;
+    private Map<IFBinding, List<String>> messagesByBindingMap;
     
     /**
      * Creates a new validation errors object.
      */
     public ValidationResult() {
         this.validationErrors = new LinkedList<ValidationError>();
-        this.messagesByBindingMap = new HashMap<IFBindingIdentifier, List<String>>();
+        this.messagesByBindingMap = new HashMap<IFBinding, List<String>>();
     }
     
     /**
@@ -53,7 +53,7 @@ public class ValidationResult {
         return validationErrors.isEmpty ();
     }
     
-    public List<String> getMessagesByBinding (IFBindingIdentifier b) {
+    public List<String> getMessagesByBinding (IFBinding b) {
         return messagesByBindingMap.get (b);
     }
        
@@ -67,7 +67,7 @@ public class ValidationResult {
 		messageList.add(validationError.getMessage());
     }
     
-	public void addFailure(IFBindingIdentifier bindingId, String message) {
+	public void addFailure(IFBinding bindingId, String message) {
 		addValidationError(new ValidationError(bindingId, message, null));
 	}    
 	

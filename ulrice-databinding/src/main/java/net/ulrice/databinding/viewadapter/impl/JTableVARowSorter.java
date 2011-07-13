@@ -1,4 +1,4 @@
-package net.ulrice.databinding.impl.ga;
+package net.ulrice.databinding.viewadapter.impl;
 
 import javax.swing.DefaultRowSorter;
 
@@ -7,15 +7,15 @@ import javax.swing.DefaultRowSorter;
  * 
  * @author christof
  */
-public class TableGARowSorter extends DefaultRowSorter<TableGA, String> {
+public class JTableVARowSorter extends DefaultRowSorter<JTableViewAdapter, String> {
 
     /**
      * Constructs a new row sorter for the list gui accessor.
      * 
      * @param listGA The list gui accessor.
      */
-    public TableGARowSorter(final TableGA listGA) {
-        setModelWrapper(new ModelWrapper<TableGA, String>() {
+    public JTableVARowSorter(final JTableViewAdapter listGA) {
+        setModelWrapper(new ModelWrapper<JTableViewAdapter, String>() {
 
             /**
              * @see javax.swing.DefaultRowSorter.ModelWrapper#getColumnCount()
@@ -37,7 +37,7 @@ public class TableGARowSorter extends DefaultRowSorter<TableGA, String> {
              * @see javax.swing.DefaultRowSorter.ModelWrapper#getModel()
              */
             @Override
-            public TableGA getModel() {
+            public JTableViewAdapter getModel() {
                 return listGA;
             }
 

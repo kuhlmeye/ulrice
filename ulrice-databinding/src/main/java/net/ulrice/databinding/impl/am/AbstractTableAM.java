@@ -17,12 +17,13 @@ import javax.swing.table.TableModel;
 import net.ulrice.databinding.DataState;
 import net.ulrice.databinding.IFAttributeModel;
 import net.ulrice.databinding.IFAttributeModelEventListener;
+import net.ulrice.databinding.IFBinding;
 import net.ulrice.databinding.IFElementChangeListener;
-import net.ulrice.databinding.IFGuiAccessor;
 import net.ulrice.databinding.validation.IFValidator;
 import net.ulrice.databinding.validation.ValidationResult;
+import net.ulrice.databinding.viewadapter.IFViewAdapter;
 
-public abstract class AbstractTableAM<T, S> implements IFAttributeModel<T>, ListModel, TableModel, IFElementChangeListener<S> {
+public abstract class AbstractTableAM<T, S> implements IFBinding, IFAttributeModel<T>, ListModel, TableModel, IFElementChangeListener<S> {
 
 	protected DataState state = DataState.NotChanged;
 	protected List<Element<S>> elements = new ArrayList<Element<S>>();
@@ -38,6 +39,8 @@ public abstract class AbstractTableAM<T, S> implements IFAttributeModel<T>, List
 	private Set<Element<S>> modElements = new HashSet<Element<S>>();
 	private Set<Element<S>> delElements = new HashSet<Element<S>>();
 	private Set<Element<S>> invElements = new HashSet<Element<S>>();
+	
+	private List<IFViewAdapter> viewAdapterList = new ArrayList<IFViewAdapter>();
 
 	public AbstractTableAM(String id, boolean editable) {
 		super();
@@ -65,7 +68,7 @@ public abstract class AbstractTableAM<T, S> implements IFAttributeModel<T>, List
 	 */
 	protected Element<S> createElement(S value) {
 		String uniqueId = Long.toHexString(nextUniqueId++);
-		Element<S> elem = new Element<S>(uniqueId, columns, value, isEditable());
+		Element<S> elem = new Element<S>(uniqueId, columns, value, isReadOnly());
 		elem.addElementChangeListener(this);
 		return elem;
 	}
@@ -216,10 +219,10 @@ public abstract class AbstractTableAM<T, S> implements IFAttributeModel<T>, List
 	}
 
 	/**
-	 * @see net.ulrice.databinding.IFAttributeModel#isEditable()
+	 * @see net.ulrice.databinding.IFAttributeModel#isReadOnly()
 	 */
 	@Override
-	public boolean isEditable() {
+	public boolean isReadOnly() {
 		return editable;
 	}
 
@@ -230,6 +233,7 @@ public abstract class AbstractTableAM<T, S> implements IFAttributeModel<T>, List
 	public void dataChanged(Element<S> element, String columnId, Object newValue, Object oldValue) {
 	    // TODO Refine event.
 	    fireTableChanged(new TableModelEvent(this));
+	    fireUpdateViews();
 	}
 
 	/**
@@ -300,17 +304,47 @@ public abstract class AbstractTableAM<T, S> implements IFAttributeModel<T>, List
 	 * @see net.ulrice.databinding.IFAttributeModel#gaChanged(net.ulrice.databinding.IFGuiAccessor, java.lang.Object)
 	 */
 	@Override
-	public void gaChanged(IFGuiAccessor<?, ?> guiAccessor, T value) {
-	    //TODO Implement me.
+	public void gaChanged(IFViewAdapter viewAdapter, T value) {
+		fireUpdateViews();
 	}
+    
+    public void fireUpdateViews() {
+    	if(viewAdapterList != null) {
+    		for(IFViewAdapter viewAdapter: viewAdapterList) {
+    			viewAdapter.updateBinding(this);
+    		}
+    	}
+    }
 
-	/**
-	 * @see net.ulrice.databinding.IFAttributeModel#getValidationErrors()
-	 */
 	@Override
-	public ValidationResult getValidationErrors() {
-	    // TODO Auto-generated method stub
-	    return null;
+	public void addViewAdapter(IFViewAdapter viewAdapter) {
+		viewAdapterList.add(viewAdapter);
+		if(viewAdapter instanceof TableModelListener) {
+			addTableModelListener(((TableModelListener)viewAdapter));
+			fireUpdateViews();
+		}
 	}
 
+	@Override
+	public ValidationResult getValidationResult() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public List<String> getValidationFailures() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+	
+	@Override
+	public Object getOriginalValue() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+	
+	@Override
+	public Object getCurrentValue() {
+		return elements;
+	}
 }

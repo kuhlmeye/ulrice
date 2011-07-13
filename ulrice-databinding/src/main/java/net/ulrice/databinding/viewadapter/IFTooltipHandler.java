@@ -1,6 +1,8 @@
-package net.ulrice.databinding;
+package net.ulrice.databinding.viewadapter;
 
 import javax.swing.JComponent;
+
+import net.ulrice.databinding.IFBinding;
 
 /**
  * Class defining the tooltip of the component.
@@ -16,6 +18,6 @@ public interface IFTooltipHandler {
      * @param guiAccessor The gui accessor.
      * @param component The component.
      */
-    void updateTooltip(IFAttributeModel<?> attributeModel, IFGuiAccessor<?, ?> guiAccessor, JComponent component);
+    void updateTooltip(IFBinding binding, JComponent component);
 
 }

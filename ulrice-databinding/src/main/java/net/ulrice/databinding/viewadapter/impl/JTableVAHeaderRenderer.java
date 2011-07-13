@@ -1,7 +1,7 @@
 /**
  * 
  */
-package net.ulrice.databinding.impl.ga;
+package net.ulrice.databinding.viewadapter.impl;
 
 import java.awt.Component;
 
@@ -14,7 +14,7 @@ import net.ulrice.databinding.impl.am.ColumnDefinition;
  * @author christof
  * 
  */
-public class TableGAHeaderRenderer implements TableCellRenderer {
+public class JTableVAHeaderRenderer implements TableCellRenderer {
 
     private TableCellRenderer labelRenderer;
 
@@ -22,7 +22,7 @@ public class TableGAHeaderRenderer implements TableCellRenderer {
      * @param tableGA
      * @param labelRenderer
      */
-    public TableGAHeaderRenderer(TableGA tableGA, TableCellRenderer labelRenderer) {
+    public JTableVAHeaderRenderer(JTableViewAdapter tableGA, TableCellRenderer labelRenderer) {
         this.labelRenderer = labelRenderer;
     }
 

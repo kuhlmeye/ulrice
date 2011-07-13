@@ -1,4 +1,4 @@
-package net.ulrice.databinding.impl.ga;
+package net.ulrice.databinding.viewadapter.impl;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -29,10 +29,10 @@ import net.ulrice.databinding.impl.am.FilterMode;
  * @author christof
  * 
  */
-public class TableGAFilter extends RowFilter<TableGA, String> implements DocumentListener, TableColumnModelListener {
+public class JTableVAFilter extends RowFilter<JTableViewAdapter, String> implements DocumentListener, TableColumnModelListener {
 
     /** The logger used by this class. */
-    private static final Logger LOG = Logger.getLogger(TableGAFilter.class.getName());
+    private static final Logger LOG = Logger.getLogger(JTableVAFilter.class.getName());
 
     /**
      * The constant of the property key holding the identifier of the column id.
@@ -40,7 +40,7 @@ public class TableGAFilter extends RowFilter<TableGA, String> implements Documen
     private static final String DOCUMENT_PROPERTY_FIELD_ID = "FIELD_ID";
 
     /** The table header. */
-    private TableGAHeader tableHeader;
+    private JTableVAHeader tableHeader;
 
     /** The list of column identifiers. */
     private List<String> columnIdentifiers = new ArrayList<String>(0);
@@ -52,14 +52,14 @@ public class TableGAFilter extends RowFilter<TableGA, String> implements Documen
     private Map<String, Pattern> regexExpressionMap = new HashMap<String, Pattern>();
     private Map<String, NumericPattern> numericPatternExpressionMap = new HashMap<String, NumericPattern>();
 
-    private TableGARowSorter rowSorter;
+    private JTableVARowSorter rowSorter;
 
     /**
      * @param rowSorter
      * @param tableHeader2
      * @param columnModel
      */
-    public TableGAFilter(TableGARowSorter rowSorter, TableGAHeader tableHeader, TableColumnModel columnModel) {
+    public JTableVAFilter(JTableVARowSorter rowSorter, JTableVAHeader tableHeader, TableColumnModel columnModel) {
         this.tableHeader = tableHeader;
         createFilterComponents(tableHeader);
         tableHeader.getColumnModel().addColumnModelListener(this);
@@ -69,7 +69,7 @@ public class TableGAFilter extends RowFilter<TableGA, String> implements Documen
     /**
      * @param columnModel
      */
-    private void createFilterComponents(TableGAHeader tableHeader) {
+    private void createFilterComponents(JTableVAHeader tableHeader) {
         TableColumnModel columnModel = tableHeader.getColumnModel();
         columnIdentifiers = new ArrayList<String>(columnModel.getColumnCount());
         for (int i = 0; i < columnModel.getColumnCount(); i++) {
@@ -105,7 +105,7 @@ public class TableGAFilter extends RowFilter<TableGA, String> implements Documen
      * @see javax.swing.RowFilter#include(javax.swing.RowFilter.Entry)
      */
     @Override
-    public boolean include(javax.swing.RowFilter.Entry<? extends TableGA, ? extends String> entry) {
+    public boolean include(javax.swing.RowFilter.Entry<? extends JTableViewAdapter, ? extends String> entry) {
         boolean include = true;
         for (int i = 0; i < entry.getValueCount() && include; i++) {
             String columnId = columnIdentifiers.get(i);

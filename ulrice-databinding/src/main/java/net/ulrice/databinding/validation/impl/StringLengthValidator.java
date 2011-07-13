@@ -19,12 +19,12 @@ public class StringLengthValidator extends AbstractValidator<String> {
 	protected ValidationResult validate(IFBinding bindingId, String attribute) {
         if (attribute.length () < _minLength) {
         	// TODO Christof Internationalize
-            ValidationResult errors = new ValidationResult(new ValidationError(bindingId, "min. Länge: " + _minLength, null));
+            ValidationResult errors = new ValidationResult(new ValidationError(bindingId, "min. LÃ¤nge: " + _minLength, null));
             return errors;
         }
         if (attribute.length () > _maxLength) {
         	// TODO Christof Internationalize
-            ValidationResult errors = new ValidationResult(new ValidationError(bindingId, "max. Länge: " + _minLength, null));
+            ValidationResult errors = new ValidationResult(new ValidationError(bindingId, "max. LÃ¤nge: " + _minLength, null));
             return errors;
         }
         

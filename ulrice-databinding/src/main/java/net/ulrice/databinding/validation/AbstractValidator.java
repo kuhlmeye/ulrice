@@ -1,6 +1,6 @@
 package net.ulrice.databinding.validation;
 
-import net.ulrice.databinding.IFBindingIdentifier;
+import net.ulrice.databinding.IFBinding;
 
 /**
  * Abstract implementation of the ifvalidator interface. This class handles the
@@ -25,7 +25,7 @@ public abstract class AbstractValidator<T> implements IFValidator<T> {
      * @see net.ulrice.databinding.validation.IFValidator#validate(java.lang.Object)
      */
     @Override
-    public ValidationResult isValid(IFBindingIdentifier bindingId, T attribute) {
+    public ValidationResult isValid(IFBinding bindingId, T attribute) {
         this.errors = validate(bindingId, attribute);
         return errors;
     }
@@ -45,6 +45,6 @@ public abstract class AbstractValidator<T> implements IFValidator<T> {
      * @param attribute The attribute to be validated.
      * @return The validation errors or null, if there are no validation errors.
      */
-    protected abstract ValidationResult validate(IFBindingIdentifier bindingId, T attribute);
+    protected abstract ValidationResult validate(IFBinding bindingId, T attribute);
 
 }

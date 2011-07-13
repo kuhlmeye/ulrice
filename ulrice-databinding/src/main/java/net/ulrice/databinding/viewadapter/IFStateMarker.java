@@ -1,6 +1,8 @@
-package net.ulrice.databinding;
+package net.ulrice.databinding.viewadapter;
 
 import javax.swing.JComponent;
+
+import net.ulrice.databinding.IFBinding;
 
 /**
  * Interface for all classes marking the state on jcomponents.
@@ -9,6 +11,6 @@ import javax.swing.JComponent;
  */
 public interface IFStateMarker {
 
-    void paintState(JComponent component, DataState state);
+    void updateState(IFBinding binding, JComponent component);
     
 }

@@ -2,7 +2,7 @@ package net.ulrice.databinding.validation.impl;
 
 import java.util.regex.Pattern;
 
-import net.ulrice.databinding.IFBindingIdentifier;
+import net.ulrice.databinding.IFBinding;
 import net.ulrice.databinding.validation.AbstractValidator;
 import net.ulrice.databinding.validation.ValidationError;
 import net.ulrice.databinding.validation.ValidationResult;
@@ -32,7 +32,7 @@ public class RegExValidator<T extends Object> extends AbstractValidator<T> {
     }
     
     @Override
-    protected ValidationResult validate(IFBindingIdentifier bindingId, T attribute) {
+    protected ValidationResult validate(IFBinding bindingId, T attribute) {
 
         if(attribute != null) {
             if(!pattern.matcher(attribute.toString()).matches()) {

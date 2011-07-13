@@ -10,6 +10,7 @@ import javax.swing.event.TableModelListener;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableModel;
 
+import net.ulrice.databinding.DataState;
 import net.ulrice.databinding.converter.HeuristicConverterFactory;
 import net.ulrice.databinding.converter.IFValueConverter;
 import net.ulrice.databinding.converter.ValueConverterException;
@@ -25,12 +26,12 @@ import net.ulrice.databinding.modelaccess.impl.OgnlPredicate;
 import net.ulrice.databinding.modelaccess.impl.OgnlSingleListIndexedMVA;
 import net.ulrice.databinding.validation.IFValidator;
 import net.ulrice.databinding.validation.ValidationResult;
+import net.ulrice.databinding.viewadapter.IFViewAdapter;
+import net.ulrice.databinding.viewadapter.IFViewChangeListener;
+import net.ulrice.databinding.viewadapter.impl.factory.HeuristicViewAdapterFactory;
 import net.ulrice.simpledatabinding.util.EditableTableModel;
 import net.ulrice.simpledatabinding.util.ErrorHandler;
 import net.ulrice.simpledatabinding.viewaccess.IndexedViewAdapter;
-import net.ulrice.simpledatabinding.viewaccess.ViewAdapter;
-import net.ulrice.simpledatabinding.viewaccess.ViewChangeListener;
-import net.ulrice.simpledatabinding.viewaccess.heuristic.HeuristicViewAdapterFactory;
 import net.ulrice.simpledatabinding.viewaccess.table.DefaultTableModelColumnViewAdapter;
 import net.ulrice.simpledatabinding.viewaccess.table.DefaultTableModelViewAdapter;
 import net.ulrice.simpledatabinding.viewaccess.table.ExpressionColumnSpec;
@@ -70,11 +71,13 @@ public class ModelBinding {
     }
 
     private void updateViews () {
-        for (Binding b: _bindings)
+        for (Binding b: _bindings) {
             updateView (b);
+        }
 
         for (TableBinding b: _tableBindings)
             updateView (b);
+
     }
 
     private void updateView (final TableBinding b) {
@@ -113,8 +116,7 @@ public class ModelBinding {
         if (! b.hasDataBinding ())
             return;
 
-        final Object raw = b.getModelValueAccessor ().getValue ();
-        final Object converted = b.getConverter ().modelToView (raw);
+        final Object converted = b.getCurrentValue();
 
         final Object oldValue = b.getViewAdapter ().getValue ();
         if (oldValue == null && converted == null)
@@ -123,8 +125,9 @@ public class ModelBinding {
             return;
 
         _isUpdatingView = true;
-        try {
-            b.getViewAdapter ().setValue (converted);
+        try {        
+            calculateState(b);        	        	
+            b.getViewAdapter ().updateBinding(b);
         }
         finally {
             _isUpdatingView = false;
@@ -166,8 +169,7 @@ public class ModelBinding {
 
             try {
                 final Object raw = b.getViewAdapter ().getValue ();
-                final Object converted = b.getConverter ().viewToModel (raw);
-                b.getModelValueAccessor ().setValue (converted);
+            	b.setCurrentValue(raw);
             }
             catch (ValueConverterException exc) {
             }
@@ -177,7 +179,22 @@ public class ModelBinding {
         }
     }
 
-    private void validateAll () {
+    private void calculateState(Binding b) {
+    	
+    	if(b.getValidationFailures() != null && !b.getValidationFailures().isEmpty()) {
+    		b.setState(DataState.Invalid);
+    		return;
+    	}
+    	
+    	// Dirty handling
+        if (b.getCurrentValue() != null && b.getOriginalValue() != null) {
+        	b.setState(b.getCurrentValue().equals(b.getOriginalValue()) ? DataState.NotChanged : DataState.Changed);
+        } else {
+        	b.setState(DataState.Changed);
+        }
+	}
+
+	private void validateAll () {
         final ValidationResult validationResult = new ValidationResult ();
 
         for (Binding b: _bindings)
@@ -185,8 +202,9 @@ public class ModelBinding {
 
         for (Binding b: _bindings) {
             final List<String> raw = validationResult.getMessagesByBinding(b);
-            b.getViewAdapter ().setValidationFailures (raw != null ? raw : new ArrayList<String> ());
-
+            b.setValidationFailures(raw != null ? raw : new ArrayList<String> ());
+            calculateState(b);
+            b.getViewAdapter ().updateBinding(b);
             b.getViewAdapter ().setEnabled (b.isWidgetEnabled (validationResult.isValid (), _model));
         }
     }
@@ -217,51 +235,56 @@ public class ModelBinding {
             ErrorHandler.handle (new RuntimeException ("nicht im Event-Thread")); //TODO Fehlerbehandlung
     }
 
-    public void registerWithoutData (Object viewElement, String enabledExpression) {
+    public Binding registerWithoutData (Object viewElement, String enabledExpression) {
         ensureEventThread ();
-        final ViewAdapter va = HeuristicViewAdapterFactory.createAdapter (viewElement);
+        final IFViewAdapter va = HeuristicViewAdapterFactory.createAdapter (viewElement);
         final Predicate enabledPredicate = new OgnlPredicate (enabledExpression);
-        _bindings.add (new Binding (va, null, enabledPredicate, null, new ArrayList<IFValidator<?>> (), true));
+        Binding binding = new Binding (va, null, enabledPredicate, null, new ArrayList<IFValidator<?>> (), true);
+		_bindings.add (binding);
+        va.setBindWithoutValue(true);
         updateViews ();
+        return binding;
     }
 
     //TODO soll auch ohne Type gehen
-    public void register (Object viewElement, String modelPath, Class<?> modelType, IFValidator<?>... validators) {
+    public Binding register (Object viewElement, String modelPath, Class<?> modelType, IFValidator<?>... validators) {
         final IFModelValueAccessor mva = new OnglMVA (_model, modelPath, modelType);
-        final ViewAdapter va = HeuristicViewAdapterFactory.createAdapter (viewElement);
+        final IFViewAdapter va = HeuristicViewAdapterFactory.createAdapter (viewElement);
         final Predicate enabledPredicate = mva.isReadOnly () ? Predicate.FALSE : Predicate.TRUE;
 
-        register (va, mva, enabledPredicate, Arrays.asList (validators), mva.isReadOnly () || va.isReadOnly ());
+        return register (va, mva, enabledPredicate, Arrays.asList (validators), mva.isReadOnly () || !va.isEnabled());
     }
 
-    public void register (Object viewElement, String modelPath, Class<?> modelType, boolean enabled, IFValidator<?>... validators) { 
+    public Binding register (Object viewElement, String modelPath, Class<?> modelType, boolean enabled, IFValidator<?>... validators) { 
         final IFModelValueAccessor mva = new OnglMVA (_model, modelPath, modelType);
-        final ViewAdapter va = HeuristicViewAdapterFactory.createAdapter (viewElement);
+        final IFViewAdapter va = HeuristicViewAdapterFactory.createAdapter (viewElement);
         final Predicate enabledPredicate = enabled ? Predicate.FALSE : Predicate.TRUE;
 
-        register (va, mva, enabledPredicate, Arrays.asList (validators), mva.isReadOnly () || va.isReadOnly ());
+        return register (va, mva, enabledPredicate, Arrays.asList (validators), mva.isReadOnly () || va.isEnabled());
     }
 
-    public void register (Object viewElement, String modelPath, Class<?> modelType, String enabledExpression, IFValidator<?>... validators) {
+    public Binding register (Object viewElement, String modelPath, Class<?> modelType, String enabledExpression, IFValidator<?>... validators) {
         final IFModelValueAccessor mva = new OnglMVA (_model, modelPath, modelType);
-        register (HeuristicViewAdapterFactory.createAdapter (viewElement), mva, new OgnlPredicate (enabledExpression), Arrays.asList (validators), mva.isReadOnly ());
+        return register (HeuristicViewAdapterFactory.createAdapter (viewElement), mva, new OgnlPredicate (enabledExpression), Arrays.asList (validators), mva.isReadOnly ());
     }
 
-    public void register (ViewAdapter viewAdapter, IFModelValueAccessor modelValueAccessor, Predicate enabledPredicate, List<IFValidator<?>> validators, boolean isReadOnly) {
-        register (viewAdapter, HeuristicConverterFactory.createConverter (viewAdapter.getViewType (), modelValueAccessor.getModelType ()), enabledPredicate, modelValueAccessor, validators, isReadOnly);
+    public Binding register (IFViewAdapter viewAdapter, IFModelValueAccessor modelValueAccessor, Predicate enabledPredicate, List<IFValidator<?>> validators, boolean isReadOnly) {
+        return register (viewAdapter, HeuristicConverterFactory.createConverter (viewAdapter.getViewType (), modelValueAccessor.getModelType ()), enabledPredicate, modelValueAccessor, validators, isReadOnly);
     }
 
-    public void register (ViewAdapter viewAdapter, IFValueConverter viewConverter, Predicate enabledPredicate, IFModelValueAccessor modelValueAccessor, List<IFValidator<?>> validators, boolean isReadOnly) {
+    public Binding register (IFViewAdapter viewAdapter, IFValueConverter viewConverter, Predicate enabledPredicate, IFModelValueAccessor modelValueAccessor, List<IFValidator<?>> validators, boolean isReadOnly) {
         ensureEventThread ();
         final Binding b = new Binding (viewAdapter, viewConverter, enabledPredicate, modelValueAccessor, validators, isReadOnly);
         _bindings.add (b);
         updateViews ();
 
-        viewAdapter.addViewChangeListener (new ViewChangeListener() {
-            public void viewValueChanged () {
-                updateModel (b);
-            }
+        viewAdapter.addViewChangeListener (new IFViewChangeListener() {
+			@Override
+			public void viewValueChanged(IFViewAdapter viewAdapter) {
+				updateModel (b);
+			}
         });
+        return b;
     }
 
     //TODO flexibleres Tabellen-Binding ohne BaseExpression, dafür mit #index
@@ -319,6 +342,23 @@ public class ModelBinding {
                 updateModelFromTable (tableModel, columnBindings, e);
             }
         });
+    }
+    
+    public void commit() {
+        for (Binding b: _bindings) {
+            b.setState(DataState.NotChanged);
+            Object value = b.getModelValueAccessor().getValue();
+            b.setCurrentValue(value);
+            b.setOriginalValue(value);
+        }
+    }
+    
+    public void rollback() {
+        for (Binding b: _bindings) {
+            b.setState(DataState.NotChanged);
+            b.setCurrentValue(b.getOriginalValue());
+            updateModel(b);
+        }
     }
 }
 
