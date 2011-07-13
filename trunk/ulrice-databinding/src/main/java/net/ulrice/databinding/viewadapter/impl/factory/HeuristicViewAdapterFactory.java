@@ -5,6 +5,7 @@ import java.util.List;
 
 import net.ulrice.databinding.viewadapter.IFViewAdapter;
 import net.ulrice.databinding.viewadapter.IFViewAdapterDescriptor;
+import net.ulrice.databinding.viewadapter.impl.JComboBoxViewAdapter;
 
 
 

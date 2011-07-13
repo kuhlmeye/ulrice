@@ -5,6 +5,8 @@ import java.util.List;
 
 import javax.swing.event.TableModelEvent;
 
+import sun.text.normalizer.UProperty;
+
 import net.ulrice.databinding.DataState;
 import net.ulrice.databinding.modelaccess.IFModelValueAccessor;
 
@@ -48,8 +50,7 @@ public class ListAM<T extends List<S>, S> extends AbstractTableAM<T, S> implemen
 				elementIdMap.put(elem.getUniqueId(), elem);				
 				elements.add(elem);
 			}
-			// TODO Refine event.
-			fireTableChanged(new TableModelEvent(this));
+			fireUpdateViews();
 		}	
 	}
 

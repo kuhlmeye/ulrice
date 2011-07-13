@@ -5,6 +5,7 @@ import java.util.Map;
 
 import net.ulrice.databinding.ErrorHandler;
 import net.ulrice.databinding.modelaccess.Predicate;
+
 import ognl.Ognl;
 import ognl.OgnlException;
 

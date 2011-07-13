@@ -3,8 +3,8 @@ package net.ulrice.databinding.directbinding;
 import net.ulrice.databinding.converter.IFValueConverter;
 import net.ulrice.databinding.directbinding.table.ColumnAdapter;
 import net.ulrice.databinding.modelaccess.IFIndexedModelValueAccessor;
-import net.ulrice.databinding.modelaccess.IFModelValueAccessor;
 import net.ulrice.databinding.modelaccess.IndexedPredicate;
+import net.ulrice.databinding.modelaccess.IFModelValueAccessor;
 
 
 class IndexedBinding {

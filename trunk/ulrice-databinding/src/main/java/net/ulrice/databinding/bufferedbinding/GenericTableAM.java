@@ -2,6 +2,8 @@ package net.ulrice.databinding.bufferedbinding;
 
 import javax.swing.event.TableModelEvent;
 
+import sun.text.normalizer.UProperty;
+
 import net.ulrice.databinding.modelaccess.IFIndexedModelValueAccessor;
 import net.ulrice.databinding.modelaccess.IFModelValueAccessor;
 
@@ -41,8 +43,7 @@ public class GenericTableAM<T, S> extends AbstractTableAM<T, S>  {
 			elementIdMap.put(elem.getUniqueId(), elem);				
 			elements.add(elem);
 		}
-		// TODO Refine event.
-		fireTableChanged(new TableModelEvent(this));
+		fireUpdateViews();
 	}
 
 

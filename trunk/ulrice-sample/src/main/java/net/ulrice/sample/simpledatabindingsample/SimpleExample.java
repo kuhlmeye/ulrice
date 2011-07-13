@@ -5,12 +5,12 @@ import java.awt.BorderLayout;
 import javax.swing.JFrame;
 import javax.swing.SwingUtilities;
 
+import net.ulrice.databinding.ObjectWithPresentation;
+import net.ulrice.databinding.directbinding.Binding;
+import net.ulrice.databinding.directbinding.ModelBinding;
 import net.ulrice.databinding.validation.impl.StringLengthValidator;
 import net.ulrice.databinding.viewadapter.impl.BorderStateMarker;
 import net.ulrice.databinding.viewadapter.impl.DetailedTooltipHandler;
-import net.ulrice.simpledatabinding.Binding;
-import net.ulrice.simpledatabinding.ModelBinding;
-import net.ulrice.simpledatabinding.util.ObjectWithPresentation;
 
 
 
