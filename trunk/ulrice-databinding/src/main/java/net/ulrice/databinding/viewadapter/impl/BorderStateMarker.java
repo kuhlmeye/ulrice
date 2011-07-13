@@ -1,4 +1,4 @@
-package net.ulrice.databinding.impl.ga;
+package net.ulrice.databinding.viewadapter.impl;
 
 import java.awt.Color;
 import java.awt.Component;
@@ -12,7 +12,8 @@ import javax.swing.JComponent;
 import javax.swing.border.Border;
 
 import net.ulrice.databinding.DataState;
-import net.ulrice.databinding.IFStateMarker;
+import net.ulrice.databinding.IFBinding;
+import net.ulrice.databinding.viewadapter.IFStateMarker;
 
 /**
  * Implementation of the state marker interface. Draws the border and an image
@@ -149,11 +150,11 @@ public class BorderStateMarker implements Border, ImageObserver, IFStateMarker {
     }
 
     /**
-     * @see net.ulrice.databinding.IFStateMarker#paintState(net.ulrice.databinding.DataState)
+     * @see net.ulrice.databinding.viewadapter.IFStateMarker#paintState(net.ulrice.databinding.DataState)
      */
     @Override
-    public void paintState(JComponent c, DataState state) {
-        this.state = state;
+    public void updateState(IFBinding binding, JComponent c) {
+        this.state = binding.getState();
         c.revalidate();
     }
 }

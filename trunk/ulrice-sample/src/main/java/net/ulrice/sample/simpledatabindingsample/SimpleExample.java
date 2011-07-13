@@ -6,9 +6,10 @@ import javax.swing.JFrame;
 import javax.swing.SwingUtilities;
 
 import net.ulrice.databinding.validation.impl.StringLengthValidator;
+import net.ulrice.databinding.viewadapter.impl.BorderStateMarker;
+import net.ulrice.databinding.viewadapter.impl.DetailedTooltipHandler;
+import net.ulrice.simpledatabinding.Binding;
 import net.ulrice.simpledatabinding.ModelBinding;
-
-
 import net.ulrice.simpledatabinding.util.ObjectWithPresentation;
 
 
@@ -33,8 +34,18 @@ public class SimpleExample {
                 
                 final ModelBinding binding = new ModelBinding (model);        
                 
-                binding.register (panel._vornameTF, "vorname", String.class); //TODO do not pass the type any more
-                binding.register (panel._vorname2TF, "vorname", String.class, new StringLengthValidator (2, 30)); 
+                Binding b = binding.register (panel._vornameTF, "vorname", String.class); //TODO do not pass the type any more
+                BorderStateMarker borderStateMarker = new BorderStateMarker();
+				b.getViewAdapter().setStateMarker(borderStateMarker);
+                panel._vornameTF.setBorder(borderStateMarker);
+                b.getViewAdapter().setTooltipHandler(new DetailedTooltipHandler());
+                
+                b = binding.register (panel._vorname2TF, "vorname", String.class, new StringLengthValidator (2, 30)); 
+                borderStateMarker = new BorderStateMarker();
+				b.getViewAdapter().setStateMarker(borderStateMarker);
+                panel._vorname2TF.setBorder(borderStateMarker);
+                b.getViewAdapter().setTooltipHandler(new DetailedTooltipHandler());
+                
                 binding.register (panel._nachnameTF, "nachname", String.class); 
                 binding.register (panel._zahlTF, "zahl", Integer.class);
                 binding.register (panel._nameTF, "name", String.class); 

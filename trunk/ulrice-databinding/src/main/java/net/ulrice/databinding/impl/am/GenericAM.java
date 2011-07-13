@@ -1,23 +1,26 @@
 package net.ulrice.databinding.impl.am;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.swing.event.EventListenerList;
 
 import net.ulrice.databinding.DataState;
-import net.ulrice.databinding.IFAttributeModel;
 import net.ulrice.databinding.IFAttributeModelEventListener;
-import net.ulrice.databinding.IFBindingIdentifier;
+import net.ulrice.databinding.IFBinding;
 import net.ulrice.databinding.IFExtdAttributeModel;
-import net.ulrice.databinding.IFGuiAccessor;
 import net.ulrice.databinding.modelaccess.IFModelValueAccessor;
 import net.ulrice.databinding.validation.IFValidator;
 import net.ulrice.databinding.validation.ValidationResult;
+import net.ulrice.databinding.viewadapter.IFViewAdapter;
+import net.ulrice.databinding.viewadapter.IFViewChangeListener;
 
 /**
  * A generic attribute model.
  * 
  * @author christof
  */
-public class GenericAM<T> implements IFExtdAttributeModel<T>, IFBindingIdentifier {
+public class GenericAM<T> implements IFExtdAttributeModel<T>, IFBinding, IFViewChangeListener {
 
     /** The event listener. */
     private EventListenerList listenerList = new EventListenerList();
@@ -40,6 +43,8 @@ public class GenericAM<T> implements IFExtdAttributeModel<T>, IFBindingIdentifie
     /** The validator of this attribute model. */
     private IFValidator<T> validator;
 
+	private List<IFViewAdapter> viewAdapterList;
+
     /**
      * Creates a new generic attribute model.
      * 
@@ -49,6 +54,7 @@ public class GenericAM<T> implements IFExtdAttributeModel<T>, IFBindingIdentifie
     public GenericAM(String id, IFModelValueAccessor modelAccessor) {
         this.id = id;
         this.modelAccessor = modelAccessor;
+        this.viewAdapterList = new ArrayList();
     }
     
     
@@ -96,17 +102,17 @@ public class GenericAM<T> implements IFExtdAttributeModel<T>, IFBindingIdentifie
         fireDataChanged(null, oldValue, getCurrentValue(), getState());
     }
 
-    public void gaChanged(IFGuiAccessor<?, ?> gaSource, T value) {
+    public void gaChanged(IFViewAdapter viewAdapter, T value) {
         T oldValue = this.currentValue;
         this.currentValue = value;
-        calculateState(gaSource);
-        fireDataChanged(gaSource, oldValue, getCurrentValue(), getState());
+        calculateState(viewAdapter);
+        fireDataChanged(viewAdapter, oldValue, getCurrentValue(), getState());
     }
 
     /**
 	 * 
 	 */
-    private void calculateState(IFGuiAccessor<?, ?> gaSource) {
+    private void calculateState(IFViewAdapter viewAdapter) {
         DataState oldState = state;
         try {
             if (getValidator() != null) {
@@ -128,7 +134,7 @@ public class GenericAM<T> implements IFExtdAttributeModel<T>, IFBindingIdentifie
             }
         } finally {
             if (!oldState.equals(state)) {
-                fireStateChanged(gaSource, oldState, state);
+                fireStateChanged(viewAdapter, oldState, state);
             }
         }
     }
@@ -203,14 +209,18 @@ public class GenericAM<T> implements IFExtdAttributeModel<T>, IFBindingIdentifie
     }
 
     /**
-     * @see net.ulrice.databinding.IFAttributeModel#getValidationErrors()
+     * @see net.ulrice.databinding.IFAttributeModel#getValidationResult()
      */
     @Override
-    public ValidationResult getValidationErrors() {
+    public ValidationResult getValidationResult() {
         if(getValidator() != null) {
             return getValidator().getLastValidationErrors();
         }
         return null;
+    }
+    
+    public List<String> getValidationFailures() {
+    	return getValidationResult() != null ? getValidationResult().getMessagesByBinding(this) : new ArrayList<String>();
     }
 
 
@@ -231,30 +241,55 @@ public class GenericAM<T> implements IFExtdAttributeModel<T>, IFBindingIdentifie
     }
 
     @SuppressWarnings("unchecked")
-    public void fireDataChanged(IFGuiAccessor<?, ?> gaSource, T oldValue, T newValue, DataState state) {
+    public void fireDataChanged(IFViewAdapter viewAdapter, T oldValue, T newValue, DataState state) {
         IFAttributeModelEventListener<T>[] listeners = listenerList.getListeners(IFAttributeModelEventListener.class);
         if (listeners != null) {
             for (IFAttributeModelEventListener<T> listener : listeners) {
-                listener.dataChanged(gaSource, this, oldValue, newValue, state);
+                listener.dataChanged(viewAdapter, this, oldValue, newValue, state);
             }
         }
+        fireUpdateViews();
     }
 
     @SuppressWarnings("unchecked")
-    public void fireStateChanged(IFGuiAccessor<?, ?> gaSource, DataState oldState, DataState newState) {
+    public void fireStateChanged(IFViewAdapter viewAdapter, DataState oldState, DataState newState) {
         IFAttributeModelEventListener<T>[] listeners = listenerList.getListeners(IFAttributeModelEventListener.class);
         if (listeners != null) {
             for (IFAttributeModelEventListener<T> listener : listeners) {
-                listener.stateChanged(gaSource, this, oldState, newState);
+                listener.stateChanged(viewAdapter, this, oldState, newState);
             }
         }
+        fireUpdateViews();
+    }
+    
+    public void fireUpdateViews() {
+    	if(viewAdapterList != null) {
+    		for(IFViewAdapter viewAdapter: viewAdapterList) {
+    			viewAdapter.updateBinding(this);
+    		}
+    	}
     }
 
     /**
-     * @see net.ulrice.databinding.IFAttributeModel#isEditable()
+     * @see net.ulrice.databinding.IFAttributeModel#isReadOnly()
      */
     @Override
-    public boolean isEditable() {
+    public boolean isReadOnly() {
         return true;
     }
+
+
+
+	@Override
+	public void addViewAdapter(IFViewAdapter viewAdapter) {
+		viewAdapterList.add(viewAdapter);
+		viewAdapter.addViewChangeListener(this);
+	}
+
+
+
+	@Override
+	public void viewValueChanged(IFViewAdapter viewAdapter) {
+		setCurrentValue((T)viewAdapter.getValue());
+	}
 }

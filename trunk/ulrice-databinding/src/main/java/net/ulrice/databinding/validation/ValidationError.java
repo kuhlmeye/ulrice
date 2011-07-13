@@ -1,6 +1,6 @@
 package net.ulrice.databinding.validation;
 
-import net.ulrice.databinding.IFBindingIdentifier;
+import net.ulrice.databinding.IFBinding;
 
 /**
  * A validation error. 
@@ -10,7 +10,7 @@ import net.ulrice.databinding.IFBindingIdentifier;
 public class ValidationError {
 
     /** The identifier of the attribute having the validation error. */
-    private IFBindingIdentifier bindingId;
+    private IFBinding bindingId;
     
     /** The message of the validation error. */
     private String message;
@@ -25,7 +25,7 @@ public class ValidationError {
      * @param message The message
      * @param th The throwable.
      */
-    public ValidationError(IFBindingIdentifier bindingId, String message, Throwable th) {
+    public ValidationError(IFBinding bindingId, String message, Throwable th) {
         this.bindingId = bindingId;
         this.message = message;
         this.th = th;
@@ -34,7 +34,7 @@ public class ValidationError {
     /**
      * @return the attributeId
      */
-    public IFBindingIdentifier getBindingId() {
+    public IFBinding getBindingId() {
         return bindingId;
     }
 

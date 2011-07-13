@@ -8,10 +8,13 @@ import java.awt.BorderLayout;
 import javax.swing.JComponent;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.JTable;
+import javax.swing.JTextField;
 
-import net.ulrice.databinding.converter.impl.DoNothingConverter;
-import net.ulrice.databinding.impl.ga.TableGA;
-import net.ulrice.databinding.impl.ga.TextFieldGA;
+import net.ulrice.databinding.viewadapter.impl.BorderStateMarker;
+import net.ulrice.databinding.viewadapter.impl.DetailedTooltipHandler;
+import net.ulrice.databinding.viewadapter.impl.JTableViewAdapter;
+import net.ulrice.databinding.viewadapter.impl.JTextComponentViewAdapter;
 import net.ulrice.module.IFView;
 
 /**
@@ -20,21 +23,26 @@ import net.ulrice.module.IFView;
  */
 public class VDataBinding extends JPanel implements IFView {
 
-	/** generated serialVersionUID */
-    private static final long serialVersionUID = -8885808334849700407L;
-    private TextFieldGA<String> textFieldGA1;
-	private TextFieldGA<String> textFieldGA2;
-    private TableGA listGA;
+	private JTextComponentViewAdapter textFieldGA1;
+	private JTextComponentViewAdapter textFieldGA2;
+    private JTableViewAdapter listGA;
 
 	/**
 	 * @see net.ulrice.module.IFView#initialize()
 	 */
 	@Override
 	public void initialize() {
-		textFieldGA1 = new TextFieldGA<String>("name", new DoNothingConverter());
-		textFieldGA2 = new TextFieldGA<String>("name", new DoNothingConverter());
+		JTextField tf1 = new JTextField();
+		JTextField tf2 = new JTextField();
 		
-		listGA = new TableGA("list");
+		textFieldGA1 = new JTextComponentViewAdapter(tf1);
+		BorderStateMarker borderStateMarker = new BorderStateMarker();
+		textFieldGA1.setStateMarker(borderStateMarker);
+		textFieldGA1.setTooltipHandler(new DetailedTooltipHandler());
+		tf1.setBorder(borderStateMarker);
+		textFieldGA2 = new JTextComponentViewAdapter(tf2);
+		
+		listGA = new JTableViewAdapter(new JTable());
 		
 		setLayout(new BorderLayout());
 		add(textFieldGA1.getComponent(), BorderLayout.NORTH);
@@ -53,21 +61,21 @@ public class VDataBinding extends JPanel implements IFView {
 	/**
 	 * @return the textFieldGA1
 	 */
-	public TextFieldGA<String> getTextFieldGA1() {
+	public JTextComponentViewAdapter getTextFieldGA1() {
 		return textFieldGA1;
 	}
 
 	/**
 	 * @return the textFieldGA2
 	 */
-	public TextFieldGA<String> getTextFieldGA2() {
+	public JTextComponentViewAdapter getTextFieldGA2() {
 		return textFieldGA2;
 	}
 
     /**
      * @return the listGA
      */
-    public TableGA getListGA() {
+    public JTableViewAdapter getListGA() {
         return listGA;
     }
 

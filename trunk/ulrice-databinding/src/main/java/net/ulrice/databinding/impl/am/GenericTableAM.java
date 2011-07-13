@@ -6,6 +6,8 @@ import javax.swing.event.TableModelEvent;
 
 import net.ulrice.databinding.modelaccess.IFIndexedModelValueAccessor;
 import net.ulrice.databinding.modelaccess.IFModelValueAccessor;
+import net.ulrice.databinding.validation.ValidationResult;
+import net.ulrice.databinding.viewadapter.IFViewAdapter;
 
 /**
  * @author christof
@@ -63,5 +65,6 @@ public class GenericTableAM<T, S> extends AbstractTableAM<T, S>  {
 			tableMVA.setValue(i, elem.getValueObject());
 		}
 	}
+
 }
 

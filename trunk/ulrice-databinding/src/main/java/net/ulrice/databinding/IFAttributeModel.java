@@ -2,6 +2,7 @@ package net.ulrice.databinding;
 
 import net.ulrice.databinding.validation.IFValidator;
 import net.ulrice.databinding.validation.ValidationResult;
+import net.ulrice.databinding.viewadapter.IFViewAdapter;
 
 /**
  * Interface of an attribute model.
@@ -10,6 +11,8 @@ import net.ulrice.databinding.validation.ValidationResult;
  */
 public interface IFAttributeModel<T> {
 
+	void addViewAdapter(IFViewAdapter viewAdapter);
+	
 	/**
 	 * Returns the identifier of this attribute model.
 	 * 
@@ -29,7 +32,7 @@ public interface IFAttributeModel<T> {
 	 * @param guiAccessor Gui accessor which changes the value.
 	 * @param value The new value.
 	 */
-	void gaChanged(IFGuiAccessor<?, ?> guiAccessor, T value);
+	void gaChanged(IFViewAdapter viewAdapter, T value);
 
 	/**
 	 * Write the value into the model. The data accessor is used to set the
@@ -65,7 +68,7 @@ public interface IFAttributeModel<T> {
 	 * 
 	 * @return The validation errors. 
 	 */
-	ValidationResult getValidationErrors();
+	ValidationResult getValidationResult();
 	
 	/**
 	 * Adds an attribute model event listener to the list of event listeners.
@@ -87,5 +90,5 @@ public interface IFAttributeModel<T> {
 	/**
 	 * @return
 	 */
-	boolean isEditable();
+	boolean isReadOnly();
 }

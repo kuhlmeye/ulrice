@@ -1,39 +1,34 @@
 /**
  * 
  */
-package net.ulrice.databinding.impl.ga;
+package net.ulrice.databinding.viewadapter.impl;
 
 import java.awt.Insets;
 import java.util.List;
 
 import javax.swing.JTable;
-import javax.swing.JTextField;
-import javax.swing.RowFilter;
 import javax.swing.event.EventListenerList;
 import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
-import javax.swing.table.JTableHeader;
 import javax.swing.table.TableColumn;
 import javax.swing.table.TableColumnModel;
 import javax.swing.table.TableModel;
 
-import net.ulrice.databinding.IFGuiAccessor;
-import net.ulrice.databinding.IFStateMarker;
-import net.ulrice.databinding.IFTooltipHandler;
-import net.ulrice.databinding.impl.am.AbstractTableAM;
+import net.ulrice.databinding.IFBinding;
 import net.ulrice.databinding.impl.am.ColumnDefinition;
 import net.ulrice.databinding.impl.am.ListAM;
+import net.ulrice.databinding.viewadapter.AbstractViewAdapter;
+import net.ulrice.databinding.viewadapter.IFStateMarker;
+import net.ulrice.databinding.viewadapter.IFTooltipHandler;
 
 /**
  * @author christof
  * 
  */
-public class TableGA implements IFGuiAccessor<JTable, ListAM<? extends List<?>, ?>>, TableModelListener, TableModel {
+public class JTableViewAdapter extends AbstractViewAdapter implements TableModelListener, TableModel {
 
     private ListAM<? extends List<?>, ?> attributeModel;
-    private String id;
-    private JTable component;
-    private TableGARowSorter rowSorter;
+    private JTableVARowSorter rowSorter;
     private EventListenerList listenerList = new EventListenerList();
 
     /** The class marking the current state at the component. */
@@ -41,50 +36,46 @@ public class TableGA implements IFGuiAccessor<JTable, ListAM<? extends List<?>, 
 
     /** The tooltip handler of the component. */
     private IFTooltipHandler tooltipHandler;
-    private TableGAFilter filter;
+    private JTableVAFilter filter;
+    
+    
+    
+	private JTable table;
 
-    public TableGA(String id) {
-        this.id = id;
+    public JTableViewAdapter(JTable table) {
+    	super(List.class);
+        this.table = table;
+
+    	table.setModel(this);
+        table.setAutoCreateColumnsFromModel(false);
+
+        rowSorter = new JTableVARowSorter(this);
+        table.setRowSorter(rowSorter);
+
+        table.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
+
+        table.setDefaultRenderer(Object.class, new JTableVADefaultRenderer());
+
+        // Add filter components to table header.
+        JTableVAHeader tableHeader = new JTableVAHeader(table.getColumnModel(), new Insets(1, 1, 3, 1));
+        table.setTableHeader(tableHeader);
+        filter = new JTableVAFilter(rowSorter, tableHeader, table.getColumnModel());
+        rowSorter.setRowFilter(filter);
+
     }
 
-    /**
-     * @see net.ulrice.databinding.IFGuiAccessor#getId()
-     */
-    @Override
-    public String getId() {
-        return id;
-    }
 
     /**
      * @see net.ulrice.databinding.IFGuiAccessor#getComponent()
      */
     @Override
     public JTable getComponent() {
-        if (component == null) {
-            component = new JTable(this);
-            component.setAutoCreateColumnsFromModel(false);
-
-            rowSorter = new TableGARowSorter(this);
-            component.setRowSorter(rowSorter);
-
-            component.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
-
-            component.setDefaultRenderer(Object.class, new TableGADefaultRenderer());
-
-            // Add filter components to table header.
-            TableGAHeader tableHeader = new TableGAHeader(component.getColumnModel(), new Insets(1, 1, 3, 1));
-            component.setTableHeader(tableHeader);
-            filter = new TableGAFilter(rowSorter, tableHeader, component.getColumnModel());
-            rowSorter.setRowFilter(filter);
-        }
-
-        return component;
+        return table;
     }
 
     /**
      * @see net.ulrice.databinding.IFGuiAccessor#getAttributeModel()
      */
-    @Override
     public ListAM<? extends List<?>, ?> getAttributeModel() {
         return attributeModel;
     }
@@ -92,7 +83,6 @@ public class TableGA implements IFGuiAccessor<JTable, ListAM<? extends List<?>, 
     /**
      * @see net.ulrice.databinding.IFGuiAccessor#setAttributeModel(net.ulrice.databinding.IFAttributeModel)
      */
-    @Override
     public void setAttributeModel(ListAM<? extends List<?>, ?> attributeModel) {
         if (this.attributeModel != null) {
             this.attributeModel.removeTableModelListener(this);
@@ -109,8 +99,8 @@ public class TableGA implements IFGuiAccessor<JTable, ListAM<? extends List<?>, 
      * @param attributeModel
      */
     private void updateColumnModel(ListAM<? extends List<?>, ?> attributeModel) {
-        if (component != null) {
-            TableColumnModel columnModel = component.getColumnModel();
+        if (table != null) {
+            TableColumnModel columnModel = table.getColumnModel();
             for (int i = columnModel.getColumnCount() - 1; i >= 0; i--) {
                 columnModel.removeColumn(columnModel.getColumn(i));
             }
@@ -258,7 +248,7 @@ public class TableGA implements IFGuiAccessor<JTable, ListAM<? extends List<?>, 
     }
 
     /**
-     * @see net.ulrice.databinding.IFGuiAccessor#setStateMarker(net.ulrice.databinding.IFStateMarker)
+     * @see net.ulrice.databinding.IFGuiAccessor#setStateMarker(net.ulrice.databinding.viewadapter.IFStateMarker)
      */
     public void setStateMarker(IFStateMarker stateMarker) {
         this.stateMarker = stateMarker;
@@ -272,7 +262,7 @@ public class TableGA implements IFGuiAccessor<JTable, ListAM<? extends List<?>, 
     }
 
     /**
-     * @see net.ulrice.databinding.IFGuiAccessor#setTooltipHandler(net.ulrice.databinding.IFTooltipHandler)
+     * @see net.ulrice.databinding.IFGuiAccessor#setTooltipHandler(net.ulrice.databinding.viewadapter.IFTooltipHandler)
      */
     public void setTooltipHandler(IFTooltipHandler tooltipHandler) {
         this.tooltipHandler = tooltipHandler;
@@ -281,14 +271,47 @@ public class TableGA implements IFGuiAccessor<JTable, ListAM<? extends List<?>, 
     /**
      * @return the rowSorter
      */
-    public TableGARowSorter getRowSorter() {
+    public JTableVARowSorter getRowSorter() {
         return rowSorter;
     }
 
     /**
      * @return the filter
      */
-    public TableGAFilter getFilter() {
+    public JTableVAFilter getFilter() {
         return filter;
     }
+
+	@Override
+	public void updateBinding(IFBinding binding) {
+		if(binding instanceof ListAM) {
+			setAttributeModel((ListAM)binding);						
+			
+		}
+		if(!isInNotification()) {    
+            fireTableChanged(new TableModelEvent(this));
+		}		
+		if(getTooltipHandler() != null) {
+			getTooltipHandler().updateTooltip(binding, table);
+		}
+		if(getStateMarker() != null) {
+			getStateMarker().updateState(binding, table);
+		}
+	}
+
+	@Override
+	public Object getValue() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void setEnabled(boolean enabled) {
+		table.setEnabled(enabled);
+	}
+
+	@Override
+	public boolean isEnabled() {
+		return table.isEnabled();
+	}
 }

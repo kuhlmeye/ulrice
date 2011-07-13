@@ -1,4 +1,4 @@
-package net.ulrice.databinding.impl.ga;
+package net.ulrice.databinding.viewadapter.impl;
 
 import java.awt.Component;
 import java.awt.Container;
@@ -25,7 +25,7 @@ import javax.swing.table.TableColumnModel;
  * Extended table header, adding the preferred height of the layout to its
  * preferred height and revalidates when the dragged column is released.
  */
-public class TableGAHeader extends JTableHeader {
+public class JTableVAHeader extends JTableHeader {
 
     /** Default generated serial version uid. */
     private static final long serialVersionUID = 9040213273578605389L;
@@ -35,7 +35,7 @@ public class TableGAHeader extends JTableHeader {
      * 
      * @param cm The table column model.
      */
-    TableGAHeader(TableColumnModel cm, Insets margin) {
+    JTableVAHeader(TableColumnModel cm, Insets margin) {
         super(cm);
 
         // Set the layout component.

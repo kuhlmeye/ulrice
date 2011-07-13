@@ -43,9 +43,10 @@ public class CDataBinding extends AbstractController {
         MDataBinding model = (MDataBinding) getModel();
         VDataBinding view = (VDataBinding) getView();
 
-        view.getTextFieldGA1().setAttributeModel(model.getNameAM());
-        view.getTextFieldGA2().setAttributeModel(model.getNameAM());
-        view.getListGA().setAttributeModel(model.getListAM());
+        model.getNameAM().addViewAdapter(view.getTextFieldGA1());
+        model.getNameAM().addViewAdapter(view.getTextFieldGA2());
+        
+        model.getListAM().addViewAdapter(view.getListGA());
 
         model.personList = new LinkedList<MDataBinding.Person>();
         for (int i = 0; i < 1000; i++) {

@@ -1,7 +1,7 @@
 /**
  * 
  */
-package net.ulrice.databinding.impl.ga;
+package net.ulrice.databinding.viewadapter.impl;
 
 import java.awt.Component;
 
@@ -14,7 +14,7 @@ import javax.swing.table.TableCellRenderer;
  * @author christof
  *
  */
-public class TableGADefaultRenderer extends DefaultTableCellRenderer {
+public class JTableVADefaultRenderer extends DefaultTableCellRenderer {
 
     
     /**

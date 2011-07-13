@@ -13,7 +13,7 @@ import net.ulrice.databinding.DataState;
 import net.ulrice.databinding.IFAttributeModel;
 import net.ulrice.databinding.IFAttributeModelEventListener;
 import net.ulrice.databinding.IFDataGroup;
-import net.ulrice.databinding.IFGuiAccessor;
+import net.ulrice.databinding.viewadapter.IFViewAdapter;
 
 /**
  * A data group is a set of attribute model gui accessor pairs.
@@ -24,13 +24,10 @@ import net.ulrice.databinding.IFGuiAccessor;
 public class DataGroup implements IFDataGroup, IFAttributeModelEventListener {
 
     /** The list of all gui accessors contained in this data group. */
-    private Map<String, List<IFGuiAccessor>> gaMap = new HashMap<String, List<IFGuiAccessor>>();
+    private Map<String, List<IFViewAdapter>> vaMap = new HashMap<String, List<IFViewAdapter>>();
 
     /** The list of all attribute models contained in this data group. */
     private Map<String, IFAttributeModel> amMap = new HashMap<String, IFAttributeModel>();
-
-    /** The list of the datagroup event listeners. */
-    private EventListenerList listenerList = new EventListenerList();
 
     /** The set of all changed attribute models. */
     private Set<String> changedSet = new HashSet<String>();
@@ -56,10 +53,10 @@ public class DataGroup implements IFDataGroup, IFAttributeModelEventListener {
             throw new IllegalStateException("Id of an attribute model must not be null.");
         }
 
-        List<IFGuiAccessor> gaList = gaMap.get(id);
+        List<IFViewAdapter> gaList = vaMap.get(id);
         if (gaList != null) {
-            for (IFGuiAccessor ga : gaList) {
-                ga.setAttributeModel(am);
+            for (IFViewAdapter va : gaList) {
+            	am.addViewAdapter(va);
             }
         }
         am.addAttributeModelEventListener(this);
@@ -69,29 +66,28 @@ public class DataGroup implements IFDataGroup, IFAttributeModelEventListener {
     /**
      * Add a gui accessor to this data group.
      * 
-     * @param ga The gui accessor.
+     * @param va The gui accessor.
      */
-    public void addGA(IFGuiAccessor ga) {
-        if (ga == null) {
+    public void addGA(String id, IFViewAdapter va) {
+        if (va == null) {
             throw new IllegalArgumentException("Could not add null gui accessor.");
         }
 
-        String id = ga.getId();
         if (id == null) {
             throw new IllegalStateException("Id of an attribute model must not be null.");
         }
 
         IFAttributeModel am = amMap.get(id);
         if (am != null) {
-            ga.setAttributeModel(am);
+        	am.addViewAdapter(va);
         }
 
-        List<IFGuiAccessor> gaList = gaMap.get(id);
+        List<IFViewAdapter> gaList = vaMap.get(id);
         if (gaList == null) {
-            gaList = new LinkedList<IFGuiAccessor>();
-            gaMap.put(id, gaList);
+            gaList = new LinkedList<IFViewAdapter>();
+            vaMap.put(id, gaList);
         }
-        gaList.add(ga);
+        gaList.add(va);
     }
 
     /**
@@ -123,7 +119,7 @@ public class DataGroup implements IFDataGroup, IFAttributeModelEventListener {
      *      net.ulrice.databinding.DataState, net.ulrice.databinding.DataState)
      */
     @Override
-    public void stateChanged(IFGuiAccessor gaSource, IFAttributeModel amSource, DataState oldState, DataState newState) {
+    public void stateChanged(IFViewAdapter gaSource, IFAttributeModel amSource, DataState oldState, DataState newState) {
         String id = amSource.getId();
         changedSet.remove(id);
         invalidSet.remove(id);
@@ -153,7 +149,7 @@ public class DataGroup implements IFDataGroup, IFAttributeModelEventListener {
      *      java.lang.Object, net.ulrice.databinding.DataState)
      */
     @Override
-    public void dataChanged(IFGuiAccessor gaSource, IFAttributeModel amSource, Object oldValue, Object newValue,
+    public void dataChanged(IFViewAdapter gaSource, IFAttributeModel amSource, Object oldValue, Object newValue,
             DataState state) {
         // Ignore these events.
     }
@@ -163,10 +159,10 @@ public class DataGroup implements IFDataGroup, IFAttributeModelEventListener {
      * 
      * @return The list of all gui accessors.
      */
-    public List<IFGuiAccessor> getGuiAccessors() {
-        List<IFGuiAccessor> result = new LinkedList<IFGuiAccessor>();
-        if (gaMap != null && !gaMap.isEmpty()) {
-            for (List<IFGuiAccessor> gaList : gaMap.values()) {
+    public List<IFViewAdapter> getGuiAccessors() {
+        List<IFViewAdapter> result = new LinkedList<IFViewAdapter>();
+        if (vaMap != null && !vaMap.isEmpty()) {
+            for (List<IFViewAdapter> gaList : vaMap.values()) {
                 result.addAll(gaList);
             }
         }
@@ -179,10 +175,10 @@ public class DataGroup implements IFDataGroup, IFAttributeModelEventListener {
      * @param id The identifier.
      * @return The list of all gui accessors.
      */
-    public List<IFGuiAccessor> getGuiAccessors(String id) {
-        List<IFGuiAccessor> result = new LinkedList<IFGuiAccessor>();
-        if (gaMap != null && !gaMap.isEmpty()) {
-            List<IFGuiAccessor> gaList = gaMap.get(id);
+    public List<IFViewAdapter> getGuiAccessors(String id) {
+        List<IFViewAdapter> result = new LinkedList<IFViewAdapter>();
+        if (vaMap != null && !vaMap.isEmpty()) {
+            List<IFViewAdapter> gaList = vaMap.get(id);
             result.addAll(gaList);
         }
         return result;
@@ -194,9 +190,9 @@ public class DataGroup implements IFDataGroup, IFAttributeModelEventListener {
      * @param id The identifier.
      * @return The first gui accessor.
      */
-    public IFGuiAccessor getFirstGuiAccessor(String id) {
-        if (gaMap != null && !gaMap.isEmpty()) {
-            List<IFGuiAccessor> gaList = gaMap.get(id);
+    public IFViewAdapter getFirstGuiAccessor(String id) {
+        if (vaMap != null && !vaMap.isEmpty()) {
+            List<IFViewAdapter> gaList = vaMap.get(id);
             return gaList != null && !gaList.isEmpty() ? gaList.get(0) : null;
         }
         return null;
