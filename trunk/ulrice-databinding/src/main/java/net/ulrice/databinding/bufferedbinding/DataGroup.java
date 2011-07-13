@@ -7,8 +7,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import javax.swing.event.EventListenerList;
-
 import net.ulrice.databinding.DataState;
 import net.ulrice.databinding.viewadapter.IFViewAdapter;
 
