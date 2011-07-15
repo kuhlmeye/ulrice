@@ -78,7 +78,9 @@ public class Ulrice {
 		}
 		
 		Ulrice.mainFrame = configuration.getMainFrame();
-		Ulrice.mainFrame.inializeLayout();
+		if(Ulrice.mainFrame != null) {
+			Ulrice.mainFrame.inializeLayout();
+		}
 	}
 
 
