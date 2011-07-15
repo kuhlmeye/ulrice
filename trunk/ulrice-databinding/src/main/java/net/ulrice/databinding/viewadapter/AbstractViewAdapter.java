@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import net.ulrice.databinding.IFBinding;
+import net.ulrice.databinding.converter.IFValueConverter;
 
 
 
@@ -18,6 +19,7 @@ public abstract class AbstractViewAdapter implements IFViewAdapter {
 	
 	private IFTooltipHandler tooltipHandler;
 	private IFStateMarker stateMarker;
+	private IFValueConverter valueConverter;
 	private boolean bindWithoutValue;
 
     public AbstractViewAdapter(Class<?> viewType) {
@@ -100,4 +102,26 @@ public abstract class AbstractViewAdapter implements IFViewAdapter {
 		this.bindWithoutValue = bindWithoutValue;
 	}
 
+	public void setValueConverter(IFValueConverter valueConverter) {
+		this.valueConverter = valueConverter;
+	}
+	
+	public IFValueConverter getValueConverter() {
+		return valueConverter;
+	}
+
+    
+	protected Object viewToModel(Object object) {
+		if(getValueConverter() != null) {
+			return getValueConverter().viewToModel(object);
+		}
+		return object;
+	}
+
+    protected Object modelToView(Object object) {
+		if(getValueConverter() != null) {
+			return getValueConverter().modelToView(object);
+		}
+		return object;
+	}
 }

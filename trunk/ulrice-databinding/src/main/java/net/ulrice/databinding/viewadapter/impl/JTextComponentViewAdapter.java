@@ -32,7 +32,12 @@ public class JTextComponentViewAdapter extends AbstractViewAdapter implements Do
 	
 	@Override
 	public Object getValue() {
-		return textComponent.getText();
+		return viewToModel(textComponent.getText());
+	}
+
+	@Override
+	protected void setValue(Object value) {
+		textComponent.setText((String)modelToView(value));
 	}
 
 	@Override
@@ -69,11 +74,6 @@ public class JTextComponentViewAdapter extends AbstractViewAdapter implements Do
 	@Override
 	protected void addComponentListener() {
 		textComponent.getDocument().removeDocumentListener(this);
-	}
-
-	@Override
-	protected void setValue(Object value) {
-		textComponent.setText((String)value);
 	}
 
 	@Override

@@ -48,12 +48,6 @@ public class JListViewAdapter extends AbstractViewAdapter implements ListModel {
             }
         }
     }
-
-	@Override
-	public Object getValue() {
-		return attributeModel.getCurrentValue();
-	}
-
 	@Override
 	public JList getComponent() {
 		return list;
@@ -95,21 +89,21 @@ public class JListViewAdapter extends AbstractViewAdapter implements ListModel {
 		listenerList.remove(ListDataListener.class, l);	
 	}
 
+
 	@Override
-	protected void addComponentListener() {
-		// TODO Auto-generated method stub
-		
+	public Object getValue() {
+		return null;
 	}
 
 	@Override
 	protected void setValue(Object value) {
-		// TODO Auto-generated method stub
-		
+	}
+
+	@Override
+	protected void addComponentListener() {
 	}
 
 	@Override
 	protected void removeComponentListener() {
-		// TODO Auto-generated method stub
-		
 	}
 }

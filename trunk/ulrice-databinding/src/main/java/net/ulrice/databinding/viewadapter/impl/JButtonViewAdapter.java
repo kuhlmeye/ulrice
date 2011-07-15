@@ -15,11 +15,17 @@ public class JButtonViewAdapter extends AbstractViewAdapter {
         this.button = button;
     }
 
+	@Override
     public Object getValue () {
-        return button.getText ();
+        return viewToModel(button.getText ());
     }
 
-    public void setEnabled (boolean enabled) {
+	@Override
+	protected void setValue(Object value) {
+		button.setText((String)modelToView(value));
+	}
+	
+	public void setEnabled (boolean enabled) {
         button.setEnabled (enabled);
     }
 
@@ -38,10 +44,6 @@ public class JButtonViewAdapter extends AbstractViewAdapter {
 	protected void addComponentListener() {
 	}
 
-	@Override
-	protected void setValue(Object value) {
-		button.setText((String)value);
-	}
 
 	@Override
 	protected void removeComponentListener() {
