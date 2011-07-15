@@ -31,23 +31,6 @@ public class JTextComponentViewAdapter extends AbstractViewAdapter implements Do
 	}
 	
 	@Override
-	public void updateBinding(IFBinding binding) {
-		if(!isInNotification()) {
-			textComponent.getDocument().removeDocumentListener(this);
-			textComponent.setText((String)binding.getCurrentValue());
-			textComponent.getDocument().addDocumentListener(this);
-		}
-		if(getTooltipHandler() != null) {
-			getTooltipHandler().updateTooltip(binding, textComponent);
-		}
-		if(getStateMarker() != null) {
-			getStateMarker().updateState(binding, textComponent);
-		}
-	}
-	
-
-
-	@Override
 	public Object getValue() {
 		return textComponent.getText();
 	}
@@ -81,6 +64,21 @@ public class JTextComponentViewAdapter extends AbstractViewAdapter implements Do
 	@Override
 	public boolean isEnabled() {
 		return textComponent.isEnabled();
+	}
+
+	@Override
+	protected void addComponentListener() {
+		textComponent.getDocument().removeDocumentListener(this);
+	}
+
+	@Override
+	protected void setValue(Object value) {
+		textComponent.setText((String)value);
+	}
+
+	@Override
+	protected void removeComponentListener() {
+		textComponent.getDocument().addDocumentListener(this);	
 	}
 
 }

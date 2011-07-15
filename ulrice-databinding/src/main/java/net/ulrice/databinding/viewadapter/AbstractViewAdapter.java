@@ -3,6 +3,8 @@ package net.ulrice.databinding.viewadapter;
 import java.util.ArrayList;
 import java.util.List;
 
+import net.ulrice.databinding.IFBinding;
+
 
 
 
@@ -29,8 +31,29 @@ public abstract class AbstractViewAdapter implements IFViewAdapter {
         }
     	inNotification = false;
     }
+	
+	@Override
+	public void updateBinding(IFBinding binding) {
+		if(!isInNotification()) {
+			removeComponentListener();
+			setValue(binding.getCurrentValue());
+			addComponentListener();
+		}
+		if(getTooltipHandler() != null) {
+			getTooltipHandler().updateTooltip(binding, getComponent());
+		}
+		if(getStateMarker() != null) {
+			getStateMarker().updateState(binding, getComponent());
+		}
+	}
     
-    @Override
+    protected abstract void addComponentListener();
+
+	protected abstract void setValue(Object value);
+
+	protected abstract void removeComponentListener();
+
+	@Override
     public void addViewChangeListener (IFViewChangeListener l) {
         _listeners.add (l);
     }

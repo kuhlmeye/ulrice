@@ -25,20 +25,6 @@ public class JSliderViewAdapter extends AbstractViewAdapter implements ChangeLis
         this.slider.addChangeListener(this);
     }
 
-	@Override
-	public void updateBinding(IFBinding binding) {
-		if(!isInNotification()) {
-            slider.removeChangeListener(this);
-            slider.setValue((Integer)binding.getCurrentValue());
-            slider.addChangeListener(this);
-		}
-		if(getTooltipHandler() != null) {
-			getTooltipHandler().updateTooltip(binding, slider);
-		}
-		if(getStateMarker() != null) {
-			getStateMarker().updateState(binding, slider);
-		}
-	}
 
 	@Override
 	public Object getValue() {
@@ -65,4 +51,18 @@ public class JSliderViewAdapter extends AbstractViewAdapter implements ChangeLis
 		fireViewChange();
 	}
 
+	@Override
+	protected void addComponentListener() {
+		slider.addChangeListener(this);
+	}
+
+	@Override
+	protected void setValue(Object value) {
+        slider.setValue((Integer)value);
+    }
+
+	@Override
+	protected void removeComponentListener() {
+		slider.removeChangeListener(this);
+	}
 }

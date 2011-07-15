@@ -35,18 +35,6 @@ public class JComboBoxViewAdapter extends AbstractViewAdapter implements ItemLis
         _combo.setEnabled (enabled);
     }
 
-	@Override
-	public void updateBinding(IFBinding binding) {
-		if(!isInNotification()) {
-	    	_combo.setSelectedItem (new ObjectWithPresentation(binding.getCurrentValue(), ""));
-		}
-		if(getTooltipHandler() != null) {
-			getTooltipHandler().updateTooltip(binding, _combo);
-		}
-		if(getStateMarker() != null) {
-			getStateMarker().updateState(binding, _combo);
-		}
-	}
 
 	@Override
 	public JComboBox getComponent() {
@@ -61,5 +49,20 @@ public class JComboBoxViewAdapter extends AbstractViewAdapter implements ItemLis
 	@Override
 	public void itemStateChanged(ItemEvent e) {
 		fireViewChange();
+	}
+
+	@Override
+	protected void addComponentListener() {
+		_combo.addItemListener(this);
+	}
+
+	@Override
+	protected void setValue(Object value) {
+    	_combo.setSelectedItem (new ObjectWithPresentation(value, ""));
+	}
+
+	@Override
+	protected void removeComponentListener() {
+		_combo.removeItemListener(this);
 	}
 }
