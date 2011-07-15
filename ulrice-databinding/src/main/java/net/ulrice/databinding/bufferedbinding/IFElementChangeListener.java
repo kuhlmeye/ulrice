@@ -11,10 +11,10 @@ import net.ulrice.databinding.DataState;
  * @author christof
  *
  */
-public interface IFElementChangeListener<T> extends EventListener {
+public interface IFElementChangeListener extends EventListener {
 
-	void dataChanged(Element<T> element, String columnId, Object newValue, Object oldValue);
+	void dataChanged(Element element, String columnId, Object newValue, Object oldValue);
 	
-	void stateChanged(Element<T> element, DataState newState, DataState oldState);
+	void stateChanged(Element element, DataState newState, DataState oldState);
 	
 }

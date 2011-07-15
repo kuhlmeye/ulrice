@@ -17,13 +17,6 @@ public interface IFExtdAttributeModel<T> extends IFAttributeModel<T> {
 	 */
 	T getCurrentValue();
 
-	/**
-	 * Sets the object as the current value.
-	 * 
-	 * @param value
-	 *            The value.
-	 */
-	void setValue(Object value);
 
 	/**
 	 * Set the current value of this model.

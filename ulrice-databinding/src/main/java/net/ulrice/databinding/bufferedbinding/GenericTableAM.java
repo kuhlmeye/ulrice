@@ -7,7 +7,7 @@ import net.ulrice.databinding.modelaccess.IFModelValueAccessor;
  * @author christof
  * 
  */
-public class GenericTableAM<T, S> extends AbstractTableAM<T, S>  {
+public class GenericTableAM extends AbstractTableAM  {
 
 
 	private IFIndexedModelValueAccessor tableMVA;
@@ -33,8 +33,8 @@ public class GenericTableAM<T, S> extends AbstractTableAM<T, S>  {
 		
 		int numRows = (Integer)numRowsMVA.getValue();
 		for(int i = 0; i < numRows; i++) {
-			S value = (S)tableMVA.getValue(i);
-			Element<S> elem = createElement(value);
+			Object value = tableMVA.getValue(i);
+			Element elem = createElement(value);
 			elem.readObject();
 			elementIdMap.put(elem.getUniqueId(), elem);				
 			elements.add(elem);
@@ -53,7 +53,7 @@ public class GenericTableAM<T, S> extends AbstractTableAM<T, S>  {
 		numRowsMVA.setValue(numRows);
 		
 		for(int i = 0; i < numRows; i++) {
-			Element<S> elem = elements.get(i);
+			Element elem = elements.get(i);
 			elem.writeObject();
 			tableMVA.setValue(i, elem.getValueObject());
 		}

@@ -21,7 +21,7 @@ import org.junit.Test;
  */
 public class ListAMTest {
 
-	private ListAM<List<Person>, Person> listAM;
+	private ListAM listAM;
 	
 	public List<Person> list;
 
@@ -30,7 +30,7 @@ public class ListAMTest {
 	 */
 	@Before
 	public void setUp() throws Exception {
-		listAM = new ListAM<List<Person>, Person>("PersonList", new ReflectionMVA(this, "list"));
+		listAM = new ListAM("PersonList", new ReflectionMVA(this, "list"));
 		listAM.addColumn(new ColumnDefinition<String>("name", new ReflectionMVA(null, "name"), String.class));
 		listAM.addColumn(new ColumnDefinition<Integer>("age", new ReflectionMVA(null, "age"), Integer.class));
 		list = new LinkedList<Person>();

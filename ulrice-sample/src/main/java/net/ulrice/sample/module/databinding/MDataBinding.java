@@ -24,7 +24,7 @@ public class MDataBinding implements IFModel {
     public List<Person> personList = new ArrayList<Person>();
 
     private GenericAM<String> nameAM;
-    private ListAM<List<Person>, Person> listAM;
+    private ListAM listAM;
 	
 	/**
 	 * @see net.ulrice.module.IFModel#initialize()
@@ -39,7 +39,7 @@ public class MDataBinding implements IFModel {
         personList.add(new Person("Petra", "Musterfrau", 20));
         personList.add(new Person("Otto", "Normal", 20));
         
-        listAM = new ListAM<List<Person>, Person>("list", new ReflectionMVA(this, "personList"));
+        listAM = new ListAM("list", new ReflectionMVA(this, "personList"));
         listAM.addColumn(new ColumnDefinition<String>("lastName", new ReflectionMVA("lastName"), String.class));
         listAM.addColumn(new ColumnDefinition<String>("firstName", new ReflectionMVA("firstName"), String.class));
         listAM.addColumn(new ColumnDefinition<Integer>("age", new ReflectionMVA("age"), Integer.class));
@@ -69,7 +69,7 @@ public class MDataBinding implements IFModel {
     /**
      * @return the listAM
      */
-    public ListAM<List<Person>, Person> getListAM() {
+    public ListAM getListAM() {
         return listAM;
     }
 }
