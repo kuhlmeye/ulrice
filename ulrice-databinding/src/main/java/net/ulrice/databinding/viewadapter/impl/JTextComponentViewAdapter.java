@@ -53,7 +53,7 @@ public class JTextComponentViewAdapter extends AbstractViewAdapter implements Do
 	}
 
 	@Override
-	public JComponent getComponent() {
+	public JTextComponent getComponent() {
 		return textComponent;
 	}
 

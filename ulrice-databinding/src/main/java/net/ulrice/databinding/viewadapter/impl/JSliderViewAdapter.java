@@ -46,7 +46,7 @@ public class JSliderViewAdapter extends AbstractViewAdapter implements ChangeLis
 	}
 
 	@Override
-	public JComponent getComponent() {
+	public JSlider getComponent() {
 		return slider;
 	}
 

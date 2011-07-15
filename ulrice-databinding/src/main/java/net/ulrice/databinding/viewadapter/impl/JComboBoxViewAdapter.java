@@ -49,7 +49,7 @@ public class JComboBoxViewAdapter extends AbstractViewAdapter implements ItemLis
 	}
 
 	@Override
-	public JComponent getComponent() {
+	public JComboBox getComponent() {
 		return _combo;
 	}
 
