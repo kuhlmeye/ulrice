@@ -26,8 +26,13 @@ public class JCheckBoxViewAdapter extends AbstractViewAdapter implements ActionL
 	}
 
     public Object getValue () {
-        return checkBox.isSelected ();
+        return viewToModel(checkBox.isSelected());
     }
+
+	@Override
+	protected void setValue(Object value) {
+		checkBox.setSelected((Boolean)modelToView(value));
+	}
 
     public void setEnabled (boolean enabled) {
         checkBox.setEnabled (enabled);
@@ -44,18 +49,10 @@ public class JCheckBoxViewAdapter extends AbstractViewAdapter implements ActionL
 		fireViewChange ();
 	}
 
-
 	@Override
 	protected void addComponentListener() {
 		checkBox.addActionListener(this);
 	}
-
-
-	@Override
-	protected void setValue(Object value) {
-		checkBox.setSelected((Boolean)value);
-	}
-
 
 	@Override
 	protected void removeComponentListener() {

@@ -28,8 +28,13 @@ public class JSliderViewAdapter extends AbstractViewAdapter implements ChangeLis
 
 	@Override
 	public Object getValue() {
-		return slider.getValue();
+		return viewToModel(slider.getValue());
 	}
+	
+	@Override
+	protected void setValue(Object value) {
+        slider.setValue((Integer)modelToView(value));
+    }
 
 	@Override
 	public JSlider getComponent() {
@@ -55,11 +60,6 @@ public class JSliderViewAdapter extends AbstractViewAdapter implements ChangeLis
 	protected void addComponentListener() {
 		slider.addChangeListener(this);
 	}
-
-	@Override
-	protected void setValue(Object value) {
-        slider.setValue((Integer)value);
-    }
 
 	@Override
 	protected void removeComponentListener() {

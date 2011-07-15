@@ -13,37 +13,37 @@ import net.ulrice.databinding.viewadapter.AbstractViewAdapter;
 
 
 public class JComboBoxViewAdapter extends AbstractViewAdapter implements ItemListener {
-    private final JComboBox _combo;
-//    private Color _rememberedColor;
-//    private String _rememberedTooltip;
-//    
-//    private boolean _isValid = true;
-    
+    private final JComboBox comboBox;
+
     public JComboBoxViewAdapter (JComboBox combo) {
         super (String.class);
-        _combo = combo;        
-        _combo.addItemListener(this);
+        comboBox = combo;        
+        comboBox.addItemListener(this);
     }
 
     @Override
     public Object getValue () {
-        return ((ObjectWithPresentation) _combo.getSelectedItem()).getValue();
+        return viewToModel(((ObjectWithPresentation) comboBox.getSelectedItem()).getValue());
     }
 
+	@Override
+	protected void setValue(Object value) {
+    	comboBox.setSelectedItem (new ObjectWithPresentation(modelToView(value), ""));
+	}
 
+	@Override
     public void setEnabled (boolean enabled) {
-        _combo.setEnabled (enabled);
+        comboBox.setEnabled (enabled);
     }
-
 
 	@Override
 	public JComboBox getComponent() {
-		return _combo;
+		return comboBox;
 	}
 
 	@Override
 	public boolean isEnabled() {
-		return _combo.isEnabled();
+		return comboBox.isEnabled();
 	}
 
 	@Override
@@ -53,16 +53,11 @@ public class JComboBoxViewAdapter extends AbstractViewAdapter implements ItemLis
 
 	@Override
 	protected void addComponentListener() {
-		_combo.addItemListener(this);
-	}
-
-	@Override
-	protected void setValue(Object value) {
-    	_combo.setSelectedItem (new ObjectWithPresentation(value, ""));
+		comboBox.addItemListener(this);
 	}
 
 	@Override
 	protected void removeComponentListener() {
-		_combo.removeItemListener(this);
+		comboBox.removeItemListener(this);
 	}
 }
