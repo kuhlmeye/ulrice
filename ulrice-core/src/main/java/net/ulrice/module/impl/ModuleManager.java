@@ -170,7 +170,7 @@ public class ModuleManager implements IFModuleManager, IFModuleStructureManager 
 		boolean isSingleModule = ModuleType.SingleModule.equals(controller.getModule().getModuleInstanceType());
 
 		if (isSingleModule) {
-			singleModules.remove(controller.getModel());
+			singleModules.remove(controller.getModule());
 		}
 		activeInstances.remove(controller);
 
