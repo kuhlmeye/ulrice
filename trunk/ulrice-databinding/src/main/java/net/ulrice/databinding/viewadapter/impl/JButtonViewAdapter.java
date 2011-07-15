@@ -42,7 +42,7 @@ public class JButtonViewAdapter extends AbstractViewAdapter {
 	}
 
 	@Override
-	public JComponent getComponent() {
+	public JButton getComponent() {
 		return button;
 	}
 }

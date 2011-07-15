@@ -55,7 +55,7 @@ public class JListViewAdapter extends AbstractViewAdapter implements ListModel {
 	}
 
 	@Override
-	public JComponent getComponent() {
+	public JList getComponent() {
 		return list;
 	}
 

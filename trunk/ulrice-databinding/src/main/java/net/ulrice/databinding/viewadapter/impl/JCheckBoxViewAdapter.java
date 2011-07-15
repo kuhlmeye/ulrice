@@ -37,7 +37,7 @@ public class JCheckBoxViewAdapter extends AbstractViewAdapter implements ActionL
 	}
 
 	@Override
-	public JComponent getComponent() {
+	public JCheckBox getComponent() {
 		return checkBox;
 	}
 
