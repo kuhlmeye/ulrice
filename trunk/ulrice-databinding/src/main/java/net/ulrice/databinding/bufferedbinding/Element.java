@@ -16,7 +16,7 @@ import net.ulrice.databinding.modelaccess.IFDynDataAccessor;
  * 
  * @author christof
  */
-public class Element<T extends Object> {
+public class Element {
 
     /** The unique identifier of this element. */
     private String uniqueId;
@@ -31,7 +31,7 @@ public class Element<T extends Object> {
     private Map<String, GenericAM<? extends Object>> idModelMap;
 
     /** The value read from the list data. */
-    private T valueObject;
+    private Object valueObject;
 
     /** The current state of the data in this element. */
     private DataState state = DataState.NotInitialized;
@@ -50,7 +50,7 @@ public class Element<T extends Object> {
      * @param valueObject The value.
      * @param editable True, if this element should be editable.
      */
-    public Element(String uniqueId, List<ColumnDefinition<? extends Object>> columns, T valueObject, boolean editable) {
+    public Element(String uniqueId, List<ColumnDefinition<? extends Object>> columns, Object valueObject, boolean editable) {
         this.uniqueId = uniqueId;
         this.modelList = new ArrayList<GenericAM<? extends Object>>();
         this.idModelMap = new HashMap<String, GenericAM<? extends Object>>();
@@ -65,7 +65,7 @@ public class Element<T extends Object> {
      * 
      * @param listener The listener to be added to this element.
      */
-    public void addElementChangeListener(IFElementChangeListener<T> listener) {
+    public void addElementChangeListener(IFElementChangeListener listener) {
         listenerList.add(IFElementChangeListener.class, listener);
     }
 
@@ -74,7 +74,7 @@ public class Element<T extends Object> {
      * 
      * @param listener The listener to be removed from this element.
      */
-    public void removeElementChangeListener(IFElementChangeListener<T> listener) {
+    public void removeElementChangeListener(IFElementChangeListener listener) {
         listenerList.remove(IFElementChangeListener.class, listener);
     }
 
@@ -210,7 +210,7 @@ public class Element<T extends Object> {
      */
     private void fireStateChanged(DataState newState, DataState oldState) {
         if (listenerList != null) {
-            for (IFElementChangeListener<T> listener : listenerList.getListeners(IFElementChangeListener.class)) {
+            for (IFElementChangeListener listener : listenerList.getListeners(IFElementChangeListener.class)) {
                 listener.stateChanged(this, newState, oldState);
             }
         }
@@ -225,7 +225,7 @@ public class Element<T extends Object> {
      */
     private void fireValueChanged(String columnId, Object newValue, Object oldValue) {
         if (listenerList != null) {
-            for (IFElementChangeListener<T> listener : listenerList.getListeners(IFElementChangeListener.class)) {
+            for (IFElementChangeListener listener : listenerList.getListeners(IFElementChangeListener.class)) {
                 listener.dataChanged(this, columnId, newValue, oldValue);
             }
         }
@@ -236,7 +236,7 @@ public class Element<T extends Object> {
      * @return The value object
      */
     @SuppressWarnings("unchecked")
-    public T writeObject() {
+    public Object writeObject() {
         if (modelList != null) {
             for (int i = 0; i < modelList.size(); i++) {
                 GenericAM attributeModel = modelList.get(i);
@@ -273,7 +273,7 @@ public class Element<T extends Object> {
      * 
      * @return The value object.
      */
-    public T getValueObject() {
+    public Object getValueObject() {
         return valueObject;
     }
 

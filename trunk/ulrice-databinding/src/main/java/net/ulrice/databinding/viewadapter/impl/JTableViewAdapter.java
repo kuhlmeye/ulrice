@@ -16,6 +16,7 @@ import javax.swing.table.TableModel;
 
 import net.ulrice.databinding.IFBinding;
 import net.ulrice.databinding.bufferedbinding.ColumnDefinition;
+import net.ulrice.databinding.bufferedbinding.Element;
 import net.ulrice.databinding.bufferedbinding.ListAM;
 import net.ulrice.databinding.viewadapter.AbstractViewAdapter;
 import net.ulrice.databinding.viewadapter.IFStateMarker;
@@ -27,7 +28,7 @@ import net.ulrice.databinding.viewadapter.IFTooltipHandler;
  */
 public class JTableViewAdapter extends AbstractViewAdapter implements TableModelListener, TableModel {
 
-    private ListAM<? extends List<?>, ?> attributeModel;
+    private ListAM attributeModel;
     private JTableVARowSorter rowSorter;
     private EventListenerList listenerList = new EventListenerList();
 
@@ -76,14 +77,14 @@ public class JTableViewAdapter extends AbstractViewAdapter implements TableModel
     /**
      * @see net.ulrice.databinding.IFGuiAccessor#getAttributeModel()
      */
-    public ListAM<? extends List<?>, ?> getAttributeModel() {
+    public ListAM getAttributeModel() {
         return attributeModel;
     }
 
     /**
      * @see net.ulrice.databinding.IFGuiAccessor#setAttributeModel(net.ulrice.databinding.IFAttributeModel)
      */
-    public void setAttributeModel(ListAM<? extends List<?>, ?> attributeModel) {
+    public void setAttributeModel(ListAM attributeModel) {
         this.attributeModel = attributeModel;
         updateColumnModel(attributeModel);
         fireTableStructureChanged();
@@ -92,7 +93,7 @@ public class JTableViewAdapter extends AbstractViewAdapter implements TableModel
     /**
      * @param attributeModel
      */
-    private void updateColumnModel(ListAM<? extends List<?>, ?> attributeModel) {
+    private void updateColumnModel(ListAM attributeModel) {
         if (table != null) {
             TableColumnModel columnModel = table.getColumnModel();
             for (int i = columnModel.getColumnCount() - 1; i >= 0; i--) {
@@ -292,6 +293,13 @@ public class JTableViewAdapter extends AbstractViewAdapter implements TableModel
 		}
 	}
 
+	public int insertEmptyRow() {
+		Element element = attributeModel.addElement(null);
+		int row = attributeModel.getIndexOfElement(element);
+		fireTableChanged(new TableModelEvent(this, row));
+		return row; 
+	}
+	
 
 	@Override
 	public void setEnabled(boolean enabled) {

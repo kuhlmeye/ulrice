@@ -16,7 +16,7 @@ import net.ulrice.databinding.viewadapter.AbstractViewAdapter;
 public class JListViewAdapter extends AbstractViewAdapter implements ListModel {
 
     private EventListenerList listenerList = new EventListenerList();
-    private ListAM<? extends List<?>, ?> attributeModel;
+    private ListAM attributeModel;
     private JList list;
     
     public JListViewAdapter(JList list) {

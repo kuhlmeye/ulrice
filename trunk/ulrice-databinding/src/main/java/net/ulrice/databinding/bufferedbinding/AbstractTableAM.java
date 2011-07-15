@@ -15,22 +15,22 @@ import net.ulrice.databinding.validation.IFValidator;
 import net.ulrice.databinding.validation.ValidationResult;
 import net.ulrice.databinding.viewadapter.IFViewAdapter;
 
-public abstract class AbstractTableAM<T, S> implements IFBinding, IFAttributeModel<T>, IFElementChangeListener<S> {
+public abstract class AbstractTableAM implements IFBinding, IFAttributeModel, IFElementChangeListener {
 
 	protected DataState state = DataState.NotChanged;
-	protected List<Element<S>> elements = new ArrayList<Element<S>>();
-	protected Map<String, Element<S>> elementIdMap = new HashMap<String, Element<S>>();
+	protected List<Element> elements = new ArrayList<Element>();
+	protected Map<String, Element> elementIdMap = new HashMap<String, Element>();
 	
-	private IFValidator<T> validator;
+	private IFValidator validator;
 	private EventListenerList listenerList;
 	private String id;
 	private List<ColumnDefinition<? extends Object>> columns = new ArrayList<ColumnDefinition<? extends Object>>();
 	private boolean editable;
 	private long nextUniqueId;
-	private Set<Element<S>> newElements = new HashSet<Element<S>>();
-	private Set<Element<S>> modElements = new HashSet<Element<S>>();
-	private Set<Element<S>> delElements = new HashSet<Element<S>>();
-	private Set<Element<S>> invElements = new HashSet<Element<S>>();
+	private Set<Element> newElements = new HashSet<Element>();
+	private Set<Element> modElements = new HashSet<Element>();
+	private Set<Element> delElements = new HashSet<Element>();
+	private Set<Element> invElements = new HashSet<Element>();
 	
 	private List<IFViewAdapter> viewAdapterList = new ArrayList<IFViewAdapter>();
 
@@ -58,9 +58,9 @@ public abstract class AbstractTableAM<T, S> implements IFBinding, IFAttributeMod
 	 * @param value
 	 * @return
 	 */
-	protected Element<S> createElement(S value) {
+	protected Element createElement(Object value) {
 		String uniqueId = Long.toHexString(nextUniqueId++);
-		Element<S> elem = new Element<S>(uniqueId, columns, value, isReadOnly());
+		Element elem = new Element(uniqueId, columns, value, isReadOnly());
 		elem.addElementChangeListener(this);
 		return elem;
 	}
@@ -69,7 +69,7 @@ public abstract class AbstractTableAM<T, S> implements IFBinding, IFAttributeMod
 	 * @see net.ulrice.databinding.bufferedbinding.IFAttributeModel#addAttributeModelEventListener(net.ulrice.databinding.bufferedbinding.IFAttributeModelEventListener)
 	 */
 	@Override
-	public void addAttributeModelEventListener(IFAttributeModelEventListener<T> listener) {
+	public void addAttributeModelEventListener(IFAttributeModelEventListener listener) {
 		listenerList.add(IFAttributeModelEventListener.class, listener);
 	}
 
@@ -77,7 +77,7 @@ public abstract class AbstractTableAM<T, S> implements IFBinding, IFAttributeMod
 	 * @see net.ulrice.databinding.bufferedbinding.IFAttributeModel#removeAttributeModelEventListener(net.ulrice.databinding.bufferedbinding.IFAttributeModelEventListener)
 	 */
 	@Override
-	public void removeAttributeModelEventListener(IFAttributeModelEventListener<T> listener) {
+	public void removeAttributeModelEventListener(IFAttributeModelEventListener listener) {
 		listenerList.remove(IFAttributeModelEventListener.class, listener);
 	}
 
@@ -85,7 +85,7 @@ public abstract class AbstractTableAM<T, S> implements IFBinding, IFAttributeMod
 	 * @see net.ulrice.databinding.bufferedbinding.IFAttributeModel#setValidator(net.ulrice.databinding.validation.IFValidator)
 	 */
 	@Override
-	public void setValidator(IFValidator<T> validator) {
+	public void setValidator(IFValidator validator) {
 		this.validator = validator;
 	}
 
@@ -93,7 +93,7 @@ public abstract class AbstractTableAM<T, S> implements IFBinding, IFAttributeMod
 	 * @see net.ulrice.databinding.bufferedbinding.IFAttributeModel#getValidator()
 	 */
 	@Override
-	public IFValidator<T> getValidator() {
+	public IFValidator getValidator() {
 		return validator;
 	}
 
@@ -105,7 +105,7 @@ public abstract class AbstractTableAM<T, S> implements IFBinding, IFAttributeMod
 		return state;
 	}
 
-	public Element<S> getElementAt(int index) {
+	public Element getElementAt(int index) {
 		return elements.get(index);
 	}
 
@@ -170,7 +170,7 @@ public abstract class AbstractTableAM<T, S> implements IFBinding, IFAttributeMod
 	 * @see net.ulrice.databinding.bufferedbinding.IFElementChangeListener#dataChanged(net.ulrice.databinding.impl.am.Element, java.lang.String, java.lang.String, java.lang.String)
 	 */
 	@Override
-	public void dataChanged(Element<S> element, String columnId, Object newValue, Object oldValue) {
+	public void dataChanged(Element element, String columnId, Object newValue, Object oldValue) {
 	    fireUpdateViews();
 	}
 
@@ -178,7 +178,7 @@ public abstract class AbstractTableAM<T, S> implements IFBinding, IFAttributeMod
 	 * @see net.ulrice.databinding.bufferedbinding.IFElementChangeListener#stateChanged(net.ulrice.databinding.impl.am.Element, net.ulrice.databinding.DataState, net.ulrice.databinding.DataState)
 	 */
 	@Override
-	public void stateChanged(Element<S> element, DataState newState, DataState oldState) {
+	public void stateChanged(Element element, DataState newState, DataState oldState) {
 	    if(!DataState.Invalid.equals(newState)) {
 	        invElements.remove(element);
 	    }
@@ -228,7 +228,7 @@ public abstract class AbstractTableAM<T, S> implements IFBinding, IFAttributeMod
 	 * @see net.ulrice.databinding.bufferedbinding.IFAttributeModel#gaChanged(net.ulrice.databinding.IFGuiAccessor, java.lang.Object)
 	 */
 	@Override
-	public void gaChanged(IFViewAdapter viewAdapter, T value) {
+	public void gaChanged(IFViewAdapter viewAdapter, Object value) {
 		fireUpdateViews();
 	}
     
@@ -246,6 +246,16 @@ public abstract class AbstractTableAM<T, S> implements IFBinding, IFAttributeMod
 		viewAdapter.updateBinding(this);
 	}
 
+	public Element addElement(Object value) {
+		Element element = createElement(value);
+		elements.add(element);
+		return element;
+	}
+	
+	public int getIndexOfElement(Element element) {
+		return elements.indexOf(element);
+	}
+	
 	@Override
 	public ValidationResult getValidationResult() {
 		// TODO Auto-generated method stub

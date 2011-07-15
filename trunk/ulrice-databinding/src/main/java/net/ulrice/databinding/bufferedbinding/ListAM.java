@@ -10,7 +10,7 @@ import net.ulrice.databinding.modelaccess.IFModelValueAccessor;
  * @author christof
  * 
  */
-public class ListAM<T extends List<S>, S> extends AbstractTableAM<T, S> implements IFExtdAttributeModel<T>  {
+public class ListAM extends AbstractTableAM implements IFExtdAttributeModel  {
 
 	private IFModelValueAccessor dataAccessor;
 	public ListAM(String id, IFModelValueAccessor dataAccessor, boolean editable) {
@@ -26,22 +26,21 @@ public class ListAM<T extends List<S>, S> extends AbstractTableAM<T, S> implemen
 	/**
 	 * @see net.ulrice.databinding.bufferedbinding.IFAttributeModel#read()
 	 */
-	@SuppressWarnings("unchecked")
 	@Override
 	public void read() {
-		directRead((T)getDataAccessor().getValue());	
+		directRead(getDataAccessor().getValue());	
 	}
 	
 	/**
 	 * @see net.ulrice.databinding.bufferedbinding.IFAttributeModel#directRead(java.lang.Object)
 	 */
-	public void directRead(T valueList) {
+	public void directRead(Object valueList) {
 		elements.clear();
         state = DataState.NotChanged;
 
 		if (valueList != null) {
-			for (S value : valueList) {
-				Element<S> elem = createElement(value);
+			for (Object value : (List<?>)valueList) {
+				Element elem = createElement(value);
 				elem.readObject();
 				elementIdMap.put(elem.getUniqueId(), elem);				
 				elements.add(elem);
@@ -63,10 +62,10 @@ public class ListAM<T extends List<S>, S> extends AbstractTableAM<T, S> implemen
 	 * @see net.ulrice.databinding.bufferedbinding.IFAttributeModel#directWrite()
 	 */
 	@SuppressWarnings("unchecked")
-	public T directWrite() {
-		T result = (T) new ArrayList<S>(elements == null ? 0 : elements.size());
+	public Object directWrite() {
+		List<Object> result = new ArrayList<Object>(elements == null ? 0 : elements.size());
 		if(elements != null) {
-			for(Element<S> elem : elements) {
+			for(Element elem : elements) {
 				elem.writeObject();
 				result.add(elem.getValueObject());
 			}
@@ -78,55 +77,37 @@ public class ListAM<T extends List<S>, S> extends AbstractTableAM<T, S> implemen
 	 * @see net.ulrice.databinding.bufferedbinding.IFAttributeModel#getCurrentValue()
 	 */
 	@SuppressWarnings("unchecked")
-	public T getCurrentValue() {
-		T result = (T) new ArrayList<S>(elements == null ? 0 : elements.size());
-		if(elements != null) {
-			for(Element<S> elem : elements) {
-				elem.writeObject();
-				result.add(elem.getValueObject());
-			}
-		}	
-		return result;
+	public Object getCurrentValue() {
+		return directWrite();
 	}
 
 	/**
 	 * @see net.ulrice.databinding.bufferedbinding.IFAttributeModel#getOriginalValue()
 	 */
 	@SuppressWarnings("unchecked")
-	public T getOriginalValue() {
-		T result = (T) new ArrayList<S>(elements == null ? 0 : elements.size());
+	public Object getOriginalValue() {
+		List<Object> result = new ArrayList<Object>(elements == null ? 0 : elements.size());
 		if(elements != null) {
-			for(Element<S> elem : elements) {
+			for(Element elem : elements) {
 				result.add(elem.getValueObject());
 			}
-		}	
+		}		
 		return result;
 	}
 
 	/**
 	 * @see net.ulrice.databinding.bufferedbinding.IFAttributeModel#setCurrentValue(java.lang.Object)
 	 */
-	public void setCurrentValue(T valueList) {
+	public void setCurrentValue(Object valueList) {
 		elements.clear();
 	
 		if (valueList != null) {
-			for (S value : valueList) {
-				Element<S> elem = createElement(value);
+			for (Object value : (List<?>)valueList) {
+				Element elem = createElement(value);
 				elem.readObject();
-				
 				elements.add(elem);				
 			}
 		}	 
-	}
-	
-
-	/**
-	 * @see net.ulrice.databinding.bufferedbinding.IFAttributeModel#setValue(java.lang.Object)
-	 */
-	@SuppressWarnings("unchecked")
-	public void setValue(Object value) {
-		T tValue = (T) value;
-		setCurrentValue(tValue);
 	}
 
 	/**
