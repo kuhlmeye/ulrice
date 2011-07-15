@@ -20,22 +20,6 @@ public class JCheckBoxViewAdapter extends AbstractViewAdapter implements ActionL
         this.checkBox.addActionListener (this);
     }
 
-
-	@Override
-	public void updateBinding(IFBinding binding) {
-		if(!isInNotification()) {
-	        this.checkBox.removeActionListener (this);
-			checkBox.setSelected((Boolean)binding.getCurrentValue());
-	        this.checkBox.addActionListener (this);
-		}
-		if(getTooltipHandler() != null) {
-			getTooltipHandler().updateTooltip(binding, checkBox);
-		}
-		if(getStateMarker() != null) {
-			getStateMarker().updateState(binding, checkBox);
-		}
-	}
-
 	@Override
 	public JCheckBox getComponent() {
 		return checkBox;
@@ -58,6 +42,24 @@ public class JCheckBoxViewAdapter extends AbstractViewAdapter implements ActionL
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		fireViewChange ();
+	}
+
+
+	@Override
+	protected void addComponentListener() {
+		checkBox.addActionListener(this);
+	}
+
+
+	@Override
+	protected void setValue(Object value) {
+		checkBox.setSelected((Boolean)value);
+	}
+
+
+	@Override
+	protected void removeComponentListener() {
+		checkBox.removeActionListener(this);
 	}
 
 }

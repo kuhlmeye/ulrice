@@ -28,22 +28,23 @@ public class JButtonViewAdapter extends AbstractViewAdapter {
 		return button.isEnabled();
 	}
 
-	@Override
-	public void updateBinding(IFBinding binding) {
-		if(!isInNotification() && !isBindWithoutValue()) {
-			button.setText((String)binding.getCurrentValue());
-		}
-		if(getTooltipHandler() != null) {
-			getTooltipHandler().updateTooltip(binding, button);
-		}
-		if(getStateMarker() != null) {
-			getStateMarker().updateState(binding, button);
-		}
-	}
 
 	@Override
 	public JButton getComponent() {
 		return button;
+	}
+
+	@Override
+	protected void addComponentListener() {
+	}
+
+	@Override
+	protected void setValue(Object value) {
+		button.setText((String)value);
+	}
+
+	@Override
+	protected void removeComponentListener() {
 	}
 }
 

@@ -94,4 +94,22 @@ public class JListViewAdapter extends AbstractViewAdapter implements ListModel {
 	public void removeListDataListener(ListDataListener l) {
 		listenerList.remove(ListDataListener.class, l);	
 	}
+
+	@Override
+	protected void addComponentListener() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	protected void setValue(Object value) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	protected void removeComponentListener() {
+		// TODO Auto-generated method stub
+		
+	}
 }

@@ -279,8 +279,7 @@ public class JTableViewAdapter extends AbstractViewAdapter implements TableModel
 	@Override
 	public void updateBinding(IFBinding binding) {
 		if(binding instanceof ListAM) {
-			setAttributeModel((ListAM)binding);						
-			
+			setAttributeModel((ListAM)binding);									
 		}
 		if(!isInNotification()) {    
             fireTableChanged(new TableModelEvent(this));
@@ -293,11 +292,6 @@ public class JTableViewAdapter extends AbstractViewAdapter implements TableModel
 		}
 	}
 
-	@Override
-	public Object getValue() {
-		// TODO Auto-generated method stub
-		return null;
-	}
 
 	@Override
 	public void setEnabled(boolean enabled) {
@@ -307,5 +301,25 @@ public class JTableViewAdapter extends AbstractViewAdapter implements TableModel
 	@Override
 	public boolean isEnabled() {
 		return table.isEnabled();
+	}
+
+
+	@Override
+	public Object getValue() {
+		return null;
+	}
+	
+	@Override
+	protected void addComponentListener() {
+	}
+
+
+	@Override
+	protected void setValue(Object value) {
+	}
+
+
+	@Override
+	protected void removeComponentListener() {
 	}
 }
