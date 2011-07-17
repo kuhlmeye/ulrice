@@ -1,6 +1,8 @@
 package net.ulrice.databinding.bufferedbinding;
 
+import net.ulrice.databinding.converter.IFValueConverter;
 import net.ulrice.databinding.modelaccess.IFDynDataAccessor;
+import net.ulrice.databinding.validation.IFValidator;
 
 /**
  * @author christof
@@ -12,6 +14,9 @@ public class ColumnDefinition<T extends Object> {
     private IFDynDataAccessor dataAccessor;
     private Class<T> columnClass;
     private FilterMode filterMode;
+    private IFValueConverter valueConverter;
+    private IFValidator validator;
+    private boolean readOnly = false;
 
     public ColumnDefinition(String id, IFDynDataAccessor dataAccessor, Class<T> columnClass) {
         this.id = id;
@@ -32,7 +37,11 @@ public class ColumnDefinition<T extends Object> {
     }
 
     public GenericAM<T> createAM() {
-        return new GenericAM<T>(id);
+        GenericAM<T> genericAM = new GenericAM<T>(id);
+        genericAM.setReadOnly(isReadOnly());        
+        genericAM.setValueConverter(getValueConverter());
+        genericAM.setValidator(getValidator());
+		return genericAM;
     }
 
     /**
@@ -52,13 +61,6 @@ public class ColumnDefinition<T extends Object> {
         return id;
     }
 
-    /**
-     * @return
-     */
-    public boolean isEditable() {
-        // TODO Auto-generated method stub
-        return false;
-    }
 
     /**
      * @return the dataAccessor
@@ -111,4 +113,27 @@ public class ColumnDefinition<T extends Object> {
         return filterMode;
     }
 
+	public IFValueConverter getValueConverter() {
+		return valueConverter;
+	}
+
+	public void setValueConverter(IFValueConverter valueConverter) {
+		this.valueConverter = valueConverter;
+	}
+
+	public boolean isReadOnly() {
+		return readOnly;
+	}
+	
+	public void setReadOnly(boolean readOnly) {
+		this.readOnly = readOnly;
+	}
+
+	public IFValidator getValidator() {
+		return validator;
+	}
+	
+	public void setValidator(IFValidator validator) {
+		this.validator = validator;
+	}
 }

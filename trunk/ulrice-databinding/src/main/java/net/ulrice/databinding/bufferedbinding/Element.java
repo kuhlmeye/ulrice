@@ -40,7 +40,7 @@ public class Element {
     private EventListenerList listenerList = new EventListenerList();
 
     /** Flag, if this element is editable. */
-    private boolean editable;
+    private boolean readOnly;
 
     /**
      * Creates a new element.
@@ -48,15 +48,15 @@ public class Element {
      * @param uniqueId The unique identifier.
      * @param columns The list of column definitions
      * @param valueObject The value.
-     * @param editable True, if this element should be editable.
+     * @param editable True, if this element should be readonly.
      */
-    public Element(String uniqueId, List<ColumnDefinition<? extends Object>> columns, Object valueObject, boolean editable) {
+    public Element(String uniqueId, List<ColumnDefinition<? extends Object>> columns, Object valueObject, boolean readOnly) {
         this.uniqueId = uniqueId;
         this.modelList = new ArrayList<GenericAM<? extends Object>>();
         this.idModelMap = new HashMap<String, GenericAM<? extends Object>>();
         this.valueObject = valueObject;
         this.columns = columns;
-        this.editable = editable;
+        this.readOnly = readOnly;
         readObject();
     }
 
@@ -79,23 +79,23 @@ public class Element {
     }
 
     /**
-     * Returns, if a cell is editable.
+     * Returns, if a cell is readonly.
      * 
      * @param columnIndex The index of the column.
-     * @return True, if the value is editable. False otherwise.
+     * @return True, if the value is readonly. False otherwise.
      */
-    public boolean isEditable(int columnIndex) {
+    public boolean isReadOnly(int columnIndex) {
 
-        if (!editable) {
-            return false;
+        if (readOnly) {
+            return true;
         }
 
         ColumnDefinition<?> columnDefinition = columns.get(columnIndex);
-        if (columnDefinition.isEditable()) {
+        if (!columnDefinition.isReadOnly()) {
             return modelList.get(columnIndex).isReadOnly();
         }
 
-        return false;
+        return true;
     }
 
     /**
@@ -242,8 +242,9 @@ public class Element {
                 GenericAM attributeModel = modelList.get(i);
                 IFDynDataAccessor dataAccessor = columns.get(i).getDataAccessor();
 
-                Object object = attributeModel.directWrite();
-                dataAccessor.setValue(getValueObject(), object);
+                Object value = attributeModel.directWrite();
+                Object converted = (attributeModel.getValueConverter() != null ? attributeModel.getValueConverter().viewToModel(value) : value);
+                dataAccessor.setValue(getValueObject(), converted);
             }
         }
         return getValueObject();
@@ -259,11 +260,13 @@ public class Element {
         if (columns != null) {
             for (ColumnDefinition<? extends Object> column : columns) {
                 GenericAM attributeModel = column.createAM();
+                attributeModel.setReadOnly(column.isReadOnly());
                 modelList.add(attributeModel);
                 idModelMap.put(attributeModel.getId(), attributeModel);
 
                 Object value = column.getDataAccessor().getValue(getValueObject());
-                attributeModel.directRead(value);
+                Object converted = (column.getValueConverter() != null ? column.getValueConverter().modelToView(value) : value);
+        		attributeModel.directRead(converted);
             }
         }
     }

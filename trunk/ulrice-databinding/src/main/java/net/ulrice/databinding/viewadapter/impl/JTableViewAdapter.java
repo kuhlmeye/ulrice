@@ -17,7 +17,7 @@ import javax.swing.table.TableModel;
 import net.ulrice.databinding.IFBinding;
 import net.ulrice.databinding.bufferedbinding.ColumnDefinition;
 import net.ulrice.databinding.bufferedbinding.Element;
-import net.ulrice.databinding.bufferedbinding.ListAM;
+import net.ulrice.databinding.bufferedbinding.AbstractTableAM;
 import net.ulrice.databinding.viewadapter.AbstractViewAdapter;
 import net.ulrice.databinding.viewadapter.IFStateMarker;
 import net.ulrice.databinding.viewadapter.IFTooltipHandler;
@@ -28,7 +28,7 @@ import net.ulrice.databinding.viewadapter.IFTooltipHandler;
  */
 public class JTableViewAdapter extends AbstractViewAdapter implements TableModelListener, TableModel {
 
-    private ListAM attributeModel;
+    private AbstractTableAM attributeModel;
     private JTableVARowSorter rowSorter;
     private EventListenerList listenerList = new EventListenerList();
 
@@ -55,7 +55,7 @@ public class JTableViewAdapter extends AbstractViewAdapter implements TableModel
 
         table.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
 
-        table.setDefaultRenderer(Object.class, new JTableVADefaultRenderer());
+        table.setDefaultRenderer(Object.class, new JTableVADefaultRenderer(this));
 
         // Add filter components to table header.
         JTableVAHeader tableHeader = new JTableVAHeader(table.getColumnModel(), new Insets(1, 1, 3, 1));
@@ -77,14 +77,14 @@ public class JTableViewAdapter extends AbstractViewAdapter implements TableModel
     /**
      * @see net.ulrice.databinding.IFGuiAccessor#getAttributeModel()
      */
-    public ListAM getAttributeModel() {
+    public AbstractTableAM getAttributeModel() {
         return attributeModel;
     }
 
     /**
      * @see net.ulrice.databinding.IFGuiAccessor#setAttributeModel(net.ulrice.databinding.IFAttributeModel)
      */
-    public void setAttributeModel(ListAM attributeModel) {
+    public void setAttributeModel(AbstractTableAM attributeModel) {
         this.attributeModel = attributeModel;
         updateColumnModel(attributeModel);
         fireTableStructureChanged();
@@ -93,7 +93,7 @@ public class JTableViewAdapter extends AbstractViewAdapter implements TableModel
     /**
      * @param attributeModel
      */
-    private void updateColumnModel(ListAM attributeModel) {
+    private void updateColumnModel(AbstractTableAM attributeModel) {
         if (table != null) {
             TableColumnModel columnModel = table.getColumnModel();
             for (int i = columnModel.getColumnCount() - 1; i >= 0; i--) {
@@ -279,8 +279,8 @@ public class JTableViewAdapter extends AbstractViewAdapter implements TableModel
 
 	@Override
 	public void updateBinding(IFBinding binding) {
-		if(binding instanceof ListAM) {
-			setAttributeModel((ListAM)binding);									
+		if(binding instanceof AbstractTableAM) {
+			setAttributeModel((AbstractTableAM)binding);									
 		}
 		if(!isInNotification()) {    
             fireTableChanged(new TableModelEvent(this));
