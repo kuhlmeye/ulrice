@@ -7,6 +7,7 @@ import javax.swing.event.EventListenerList;
 
 import net.ulrice.databinding.DataState;
 import net.ulrice.databinding.IFBinding;
+import net.ulrice.databinding.converter.IFValueConverter;
 import net.ulrice.databinding.modelaccess.IFModelValueAccessor;
 import net.ulrice.databinding.validation.IFValidator;
 import net.ulrice.databinding.validation.ValidationResult;
@@ -43,6 +44,12 @@ public class GenericAM<T> implements IFExtdAttributeModel<T>, IFBinding, IFViewC
 
 	private List<IFViewAdapter> viewAdapterList;
 
+	private boolean readOnly = false;
+	
+	private IFValueConverter valueConverter;
+	
+	
+	
     /**
      * Creates a new generic attribute model.
      * 
@@ -161,7 +168,10 @@ public class GenericAM<T> implements IFExtdAttributeModel<T>, IFBinding, IFViewC
         if (modelAccessor == null) {
             throw new IllegalStateException("No data accessor is available.");
         }
-        directRead((T)modelAccessor.getValue());
+        
+        Object value = modelAccessor.getValue();
+        T converted = (T)(getValueConverter() != null ? getValueConverter().modelToView(value) : value);
+		directRead((T)converted);
     }
 
     /**
@@ -180,7 +190,10 @@ public class GenericAM<T> implements IFExtdAttributeModel<T>, IFBinding, IFViewC
         if (modelAccessor == null) {
             throw new IllegalStateException("No data accessor is available.");
         }
-        modelAccessor.setValue(directWrite());
+        
+        T value = directWrite();
+        Object converted = (getValueConverter() != null ? getValueConverter().viewToModel(value) : value);
+        modelAccessor.setValue(converted);
     }
 
     /**
@@ -273,9 +286,12 @@ public class GenericAM<T> implements IFExtdAttributeModel<T>, IFBinding, IFViewC
      */
     @Override
     public boolean isReadOnly() {
-        return true;
+        return readOnly;
     }
 
+    public void setReadOnly(boolean readOnly) {
+		this.readOnly = readOnly;
+	}
 
 
 	@Override
@@ -289,5 +305,14 @@ public class GenericAM<T> implements IFExtdAttributeModel<T>, IFBinding, IFViewC
 	@Override
 	public void viewValueChanged(IFViewAdapter viewAdapter) {
 		setCurrentValue((T)viewAdapter.getValue());
+	}
+	
+	public IFValueConverter getValueConverter() {
+		return valueConverter;
+	}
+	
+	@Override
+	public void setValueConverter(IFValueConverter valueConverter) {
+		this.valueConverter = valueConverter;
 	}
 }

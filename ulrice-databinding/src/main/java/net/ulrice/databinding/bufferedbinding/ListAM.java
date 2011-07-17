@@ -13,14 +13,14 @@ import net.ulrice.databinding.modelaccess.IFModelValueAccessor;
 public class ListAM extends AbstractTableAM implements IFExtdAttributeModel  {
 
 	private IFModelValueAccessor dataAccessor;
-	public ListAM(String id, IFModelValueAccessor dataAccessor, boolean editable) {
-		super(id, editable);
+	public ListAM(String id, IFModelValueAccessor dataAccessor, boolean readOnly) {
+		super(id, readOnly);
 		this.dataAccessor = dataAccessor;
 	}
 
 	
 	public ListAM(String id, IFModelValueAccessor dataAccessor) {
-		this(id, dataAccessor, true);
+		this(id, dataAccessor, false);
 	}
 
 	/**

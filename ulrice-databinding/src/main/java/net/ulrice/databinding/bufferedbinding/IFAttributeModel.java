@@ -1,6 +1,7 @@
 package net.ulrice.databinding.bufferedbinding;
 
 import net.ulrice.databinding.DataState;
+import net.ulrice.databinding.converter.IFValueConverter;
 import net.ulrice.databinding.validation.IFValidator;
 import net.ulrice.databinding.validation.ValidationResult;
 import net.ulrice.databinding.viewadapter.IFViewAdapter;
@@ -92,4 +93,6 @@ public interface IFAttributeModel<T> {
 	 * @return
 	 */
 	boolean isReadOnly();
+	
+	void setValueConverter(IFValueConverter valueConverter);
 }

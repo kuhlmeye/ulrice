@@ -11,6 +11,7 @@ import javax.swing.event.EventListenerList;
 
 import net.ulrice.databinding.DataState;
 import net.ulrice.databinding.IFBinding;
+import net.ulrice.databinding.converter.IFValueConverter;
 import net.ulrice.databinding.validation.IFValidator;
 import net.ulrice.databinding.validation.ValidationResult;
 import net.ulrice.databinding.viewadapter.IFViewAdapter;
@@ -25,7 +26,7 @@ public abstract class AbstractTableAM implements IFBinding, IFAttributeModel, IF
 	private EventListenerList listenerList;
 	private String id;
 	private List<ColumnDefinition<? extends Object>> columns = new ArrayList<ColumnDefinition<? extends Object>>();
-	private boolean editable;
+	private boolean readOnly;
 	private long nextUniqueId;
 	private Set<Element> newElements = new HashSet<Element>();
 	private Set<Element> modElements = new HashSet<Element>();
@@ -33,8 +34,10 @@ public abstract class AbstractTableAM implements IFBinding, IFAttributeModel, IF
 	private Set<Element> invElements = new HashSet<Element>();
 	
 	private List<IFViewAdapter> viewAdapterList = new ArrayList<IFViewAdapter>();
+	
+	private IFValueConverter valueConverter;
 
-	public AbstractTableAM(String id, boolean editable) {
+	public AbstractTableAM(String id, boolean readOnly) {
 		super();
 
 		nextUniqueId = System.currentTimeMillis();
@@ -42,7 +45,7 @@ public abstract class AbstractTableAM implements IFBinding, IFAttributeModel, IF
 		this.id = id;
 		this.listenerList = new EventListenerList();
 		this.state = DataState.NotInitialized;
-		this.editable = editable;
+		this.readOnly = readOnly;
 	}
 
 	/**
@@ -141,7 +144,7 @@ public abstract class AbstractTableAM implements IFBinding, IFAttributeModel, IF
 	 * @see javax.swing.table.TableModel#isCellEditable(int, int)
 	 */
 	public boolean isCellEditable(int rowIndex, int columnIndex) {
-		return getElementAt(rowIndex).isEditable(columnIndex);
+		return !getElementAt(rowIndex).isReadOnly(columnIndex);
 	}
 
 	/**
@@ -163,7 +166,7 @@ public abstract class AbstractTableAM implements IFBinding, IFAttributeModel, IF
 	 */
 	@Override
 	public boolean isReadOnly() {
-		return editable;
+		return readOnly;
 	}
 
 	/**
@@ -277,5 +280,14 @@ public abstract class AbstractTableAM implements IFBinding, IFAttributeModel, IF
 	@Override
 	public Object getCurrentValue() {
 		return elements;
+	}
+	
+	public IFValueConverter getValueConverter() {
+		return valueConverter;
+	}
+	
+	@Override
+	public void setValueConverter(IFValueConverter valueConverter) {
+		this.valueConverter = valueConverter;
 	}
 }
