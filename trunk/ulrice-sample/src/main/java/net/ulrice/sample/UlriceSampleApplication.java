@@ -48,6 +48,11 @@ public class UlriceSampleApplication {
 		}
 
 		// Define the modules.
+		AuthReflectionModule movieDBModule = new AuthReflectionModule("movieDB", ModuleType.NormalModule,
+				"net.ulrice.sample.module.moviedb.CMovieDB", "net/ulrice/sample/module/sample1/moduleicon.png",
+				new SimpleModuleTitleRenderer("Movie DB"));
+		movieDBModule.setAuthorization(new Authorization(SampleSecurityCallback.TYPE_MODULE_REGISTER, "MOVIEDB"));
+
 		AuthReflectionModule sampleModule1 = new AuthReflectionModule("sampleModule1", ModuleType.NormalModule,
 				"net.ulrice.sample.module.sample1.CSample1", "net/ulrice/sample/module/sample1/moduleicon.png",
 				new SimpleModuleTitleRenderer("Sample 1"));
@@ -70,6 +75,7 @@ public class UlriceSampleApplication {
 
 		// Add the modules.
 		IFModuleManager moduleManager = Ulrice.getModuleManager();
+		moduleManager.registerModule(movieDBModule);
 		moduleManager.registerModule(sampleModule1);
 		moduleManager.registerModule(sampleModule2);
 		moduleManager.registerModule(lafListModule);
@@ -77,6 +83,7 @@ public class UlriceSampleApplication {
 
 		// Add the modules to the structure.
 		IFModuleStructureManager moduleStructureManager = Ulrice.getModuleStructureManager();
+		moduleStructureManager.addModule(movieDBModule);
 		moduleStructureManager.addModule(sampleModule1);
 		moduleStructureManager.addModule(sampleModule2);
 		moduleStructureManager.addModule(lafListModule);
