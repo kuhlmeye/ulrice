@@ -36,11 +36,7 @@ public class JTableViewAdapter extends AbstractViewAdapter implements TableModel
     private JTableVARowSorter rowSorter;
     private EventListenerList listenerList = new EventListenerList();
 
-    /** The class marking the current state at the component. */
-    private IFStateMarker stateMarker;
 
-    /** The tooltip handler of the component. */
-    private IFTooltipHandler tooltipHandler;
     private JTableVAFilter filter;
     
     
@@ -243,17 +239,13 @@ public class JTableViewAdapter extends AbstractViewAdapter implements TableModel
      * @see net.ulrice.databinding.IFGuiAccessor#getStateMarker()
      */
     public IFStateMarker getStateMarker() {
-        return stateMarker;
+        return defaultRenderer.getStateMarker();
     }
 
     /**
      * @see net.ulrice.databinding.IFGuiAccessor#setStateMarker(net.ulrice.databinding.viewadapter.IFStateMarker)
      */
     public void setStateMarker(IFStateMarker stateMarker) {
-        this.stateMarker = stateMarker;
-    }
-    
-    public void setCellStateMarker(IFStateMarker stateMarker) {
     	defaultRenderer.setStateMarker(stateMarker);
     }
 
@@ -261,14 +253,14 @@ public class JTableViewAdapter extends AbstractViewAdapter implements TableModel
      * @see net.ulrice.databinding.IFGuiAccessor#getTooltipHandler()
      */
     public IFTooltipHandler getTooltipHandler() {
-        return tooltipHandler;
+        return defaultRenderer.getTooltipHandler();
     }
 
     /**
      * @see net.ulrice.databinding.IFGuiAccessor#setTooltipHandler(net.ulrice.databinding.viewadapter.IFTooltipHandler)
      */
     public void setTooltipHandler(IFTooltipHandler tooltipHandler) {
-        this.tooltipHandler = tooltipHandler;
+        defaultRenderer.setTooltipHandler(tooltipHandler);
     }
 
     /**
