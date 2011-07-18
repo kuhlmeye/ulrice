@@ -11,6 +11,7 @@ import net.ulrice.databinding.IFBinding;
  */
 public interface IFStateMarker {
 
+	void initialize(JComponent component);
     void updateState(IFBinding binding, JComponent component);
     
 }

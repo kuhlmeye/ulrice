@@ -157,4 +157,9 @@ public class BorderStateMarker implements Border, ImageObserver, IFStateMarker {
         this.state = binding.getState();
         c.revalidate();
     }
+
+	@Override
+	public void initialize(JComponent component) {
+		component.setBorder(this);
+	}
 }

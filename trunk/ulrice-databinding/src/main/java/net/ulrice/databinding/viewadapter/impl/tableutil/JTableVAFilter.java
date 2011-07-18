@@ -1,4 +1,4 @@
-package net.ulrice.databinding.viewadapter.impl;
+package net.ulrice.databinding.viewadapter.impl.tableutil;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -24,6 +24,7 @@ import javax.swing.text.BadLocationException;
 
 import net.ulrice.databinding.bufferedbinding.ColumnDefinition;
 import net.ulrice.databinding.bufferedbinding.FilterMode;
+import net.ulrice.databinding.viewadapter.impl.JTableViewAdapter;
 
 /**
  * @author christof

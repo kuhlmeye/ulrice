@@ -1,4 +1,4 @@
-package net.ulrice.databinding.viewadapter.impl;
+package net.ulrice.databinding.viewadapter.impl.tableutil;
 
 import java.awt.Component;
 import java.awt.Container;
@@ -35,7 +35,7 @@ public class JTableVAHeader extends JTableHeader {
      * 
      * @param cm The table column model.
      */
-    JTableVAHeader(TableColumnModel cm, Insets margin) {
+    public JTableVAHeader(TableColumnModel cm, Insets margin) {
         super(cm);
 
         // Set the layout component.

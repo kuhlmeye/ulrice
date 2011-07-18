@@ -87,6 +87,8 @@ public class CMovieDB extends AbstractController {
 		((MMovieDB)getModel()).setMovieList(movieList);
 		
 		dataGroup.read();
+
+        ((VMovieDB)getView()).getTable().doLayout();
 	}
 
 }

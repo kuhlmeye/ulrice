@@ -1,5 +1,9 @@
 todo
 ----
+* Table: Autoresize-Mechanismus
+* Farben des DefaultRenderers in UI-Klasse
+
+
 * Formatierung - Tausendertrenner etc.?!
 * Snapshotable --> Dirty Handling
 * WidgetStatusVisualizationStrategy

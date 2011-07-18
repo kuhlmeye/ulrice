@@ -56,6 +56,9 @@ public abstract class AbstractTableAM implements IFBinding, IFAttributeModel, IF
 		return id;
 	}
 
+	public GenericAM getCellAttributeModel(int rowIndex, int columnIndex) {
+		return getElementAt(rowIndex).getCellAtributeModel(columnIndex);
+	}
 
 	/**
 	 * @param value

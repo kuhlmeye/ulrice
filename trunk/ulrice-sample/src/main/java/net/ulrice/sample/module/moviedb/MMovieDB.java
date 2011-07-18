@@ -5,6 +5,7 @@ import java.util.List;
 import net.ulrice.databinding.bufferedbinding.ColumnDefinition;
 import net.ulrice.databinding.bufferedbinding.ListAM;
 import net.ulrice.databinding.modelaccess.impl.ReflectionMVA;
+import net.ulrice.databinding.validation.impl.StringLengthValidator;
 import net.ulrice.module.IFModel;
 
 public class MMovieDB implements IFModel {
@@ -21,7 +22,9 @@ public class MMovieDB implements IFModel {
 	public void initialize() {
 
 		ListAM movieListAM = new ListAM("MovieList", new ReflectionMVA(this, "movieList"));
-		movieListAM.addColumn(new ColumnDefinition<String>("Name", new ReflectionMVA("name"), String.class));
+		ColumnDefinition<String> nameColumn = new ColumnDefinition<String>("Name", new ReflectionMVA("name"), String.class);
+		nameColumn.setValidator(new StringLengthValidator(1, 255));
+		movieListAM.addColumn(nameColumn);
 		movieListAM.addColumn(new ColumnDefinition<String>("Director", new ReflectionMVA("director"), String.class));
 		movieListAM.addColumn(new ColumnDefinition<String>("Year", new ReflectionMVA("year"), String.class));
 		ColumnDefinition<String> actorColumn = new ColumnDefinition<String>("Actors", new ReflectionMVA("actors"), String.class);
