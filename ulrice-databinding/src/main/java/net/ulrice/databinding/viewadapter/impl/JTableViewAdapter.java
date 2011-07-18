@@ -15,12 +15,16 @@ import javax.swing.table.TableColumnModel;
 import javax.swing.table.TableModel;
 
 import net.ulrice.databinding.IFBinding;
+import net.ulrice.databinding.bufferedbinding.AbstractTableAM;
 import net.ulrice.databinding.bufferedbinding.ColumnDefinition;
 import net.ulrice.databinding.bufferedbinding.Element;
-import net.ulrice.databinding.bufferedbinding.AbstractTableAM;
 import net.ulrice.databinding.viewadapter.AbstractViewAdapter;
 import net.ulrice.databinding.viewadapter.IFStateMarker;
 import net.ulrice.databinding.viewadapter.IFTooltipHandler;
+import net.ulrice.databinding.viewadapter.impl.tableutil.JTableVADefaultRenderer;
+import net.ulrice.databinding.viewadapter.impl.tableutil.JTableVAFilter;
+import net.ulrice.databinding.viewadapter.impl.tableutil.JTableVAHeader;
+import net.ulrice.databinding.viewadapter.impl.tableutil.JTableVARowSorter;
 
 /**
  * @author christof
@@ -42,6 +46,7 @@ public class JTableViewAdapter extends AbstractViewAdapter implements TableModel
     
     
 	private JTable table;
+	private JTableVADefaultRenderer defaultRenderer;
 
     public JTableViewAdapter(JTable table) {
     	super(List.class);
@@ -53,9 +58,8 @@ public class JTableViewAdapter extends AbstractViewAdapter implements TableModel
         rowSorter = new JTableVARowSorter(this);
         table.setRowSorter(rowSorter);
 
-        table.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
-
-        table.setDefaultRenderer(Object.class, new JTableVADefaultRenderer(this));
+        defaultRenderer = new JTableVADefaultRenderer(this);
+		table.setDefaultRenderer(Object.class, defaultRenderer);
 
         // Add filter components to table header.
         JTableVAHeader tableHeader = new JTableVAHeader(table.getColumnModel(), new Insets(1, 1, 3, 1));
@@ -247,6 +251,10 @@ public class JTableViewAdapter extends AbstractViewAdapter implements TableModel
      */
     public void setStateMarker(IFStateMarker stateMarker) {
         this.stateMarker = stateMarker;
+    }
+    
+    public void setCellStateMarker(IFStateMarker stateMarker) {
+    	defaultRenderer.setStateMarker(stateMarker);
     }
 
     /**

@@ -1,7 +1,7 @@
 /**
  * 
  */
-package net.ulrice.databinding.viewadapter.impl;
+package net.ulrice.databinding.viewadapter.impl.tableutil;
 
 import java.awt.Component;
 
@@ -9,6 +9,7 @@ import javax.swing.JTable;
 import javax.swing.table.TableCellRenderer;
 
 import net.ulrice.databinding.bufferedbinding.ColumnDefinition;
+import net.ulrice.databinding.viewadapter.impl.JTableViewAdapter;
 
 /**
  * @author christof

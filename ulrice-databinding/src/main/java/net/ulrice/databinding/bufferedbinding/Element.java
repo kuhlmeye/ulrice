@@ -297,4 +297,8 @@ public class Element {
     public Object getState() {
         return state;
     }
+
+	public GenericAM getCellAtributeModel(int columnIndex) {
+		return modelList.get(columnIndex);
+	}
 }

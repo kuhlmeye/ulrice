@@ -7,6 +7,8 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 
+import net.ulrice.databinding.viewadapter.impl.BackgroundStateMarker;
+import net.ulrice.databinding.viewadapter.impl.BorderStateMarker;
 import net.ulrice.databinding.viewadapter.impl.JTableViewAdapter;
 import net.ulrice.module.IFView;
 
@@ -14,6 +16,7 @@ public class VMovieDB implements IFView {
 
 	private CMovieDB ctrl;
 	private JPanel panel;
+	private JTable table;
 
 	public VMovieDB(CMovieDB ctrl) {
 		this.ctrl = ctrl;
@@ -24,8 +27,9 @@ public class VMovieDB implements IFView {
 		panel = new JPanel();
 		panel.setLayout(new BorderLayout());
 		
-		JTable table = new JTable();
+		table = new JTable();
 		JTableViewAdapter movieTableVA = new JTableViewAdapter(table);
+		movieTableVA.setCellStateMarker(new BackgroundStateMarker());
 		table.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
 		panel.add(new JScrollPane(movieTableVA.getComponent()), BorderLayout.CENTER);
 		
@@ -35,6 +39,10 @@ public class VMovieDB implements IFView {
 	@Override
 	public JComponent getView() {
 		return panel;
+	}
+
+	public JTable getTable() {
+		return table;
 	}
 
 }

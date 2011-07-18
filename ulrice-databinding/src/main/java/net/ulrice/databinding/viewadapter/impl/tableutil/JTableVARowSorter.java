@@ -1,6 +1,8 @@
-package net.ulrice.databinding.viewadapter.impl;
+package net.ulrice.databinding.viewadapter.impl.tableutil;
 
 import javax.swing.DefaultRowSorter;
+
+import net.ulrice.databinding.viewadapter.impl.JTableViewAdapter;
 
 /**
  * Default implementation of the row sorter of the list gui accessor.
