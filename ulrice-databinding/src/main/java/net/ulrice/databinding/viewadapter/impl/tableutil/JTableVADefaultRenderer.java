@@ -13,6 +13,7 @@ import javax.swing.table.DefaultTableCellRenderer;
 import net.ulrice.databinding.bufferedbinding.AbstractTableAM;
 import net.ulrice.databinding.bufferedbinding.ColumnDefinition;
 import net.ulrice.databinding.bufferedbinding.GenericAM;
+import net.ulrice.databinding.ui.BindingUI;
 import net.ulrice.databinding.viewadapter.IFStateMarker;
 import net.ulrice.databinding.viewadapter.IFTooltipHandler;
 import net.ulrice.databinding.viewadapter.impl.JTableViewAdapter;
@@ -28,10 +29,10 @@ public class JTableVADefaultRenderer extends DefaultTableCellRenderer {
 	private IFStateMarker stateMarker;
 	private IFTooltipHandler tooltipHandler;
 
-	private Color evenNormalBackground = new Color(230, 230, 230);
-	private Color oddNormalBackground = new Color(200, 200, 200);
-	private Color evenReadOnlyBackground = new Color(200, 230, 200);
-	private Color oddReadOnlyBackground = new Color(170, 200, 170);
+	private Color evenNormalBackground = BindingUI.getColor(BindingUI.BACKGROUND_NORMAL_EVEN_TABLE_ROW, new Color(230, 230, 230));
+	private Color oddNormalBackground = BindingUI.getColor(BindingUI.BACKGROUND_NORMAL_ODD_TABLE_ROW, new Color(200, 200, 200));
+	private Color evenReadOnlyBackground = BindingUI.getColor(BindingUI.BACKGROUND_READONLY_EVEN_TABLE_ROW, new Color(200, 230, 200));
+	private Color oddReadOnlyBackground = BindingUI.getColor(BindingUI.BACKGROUND_READONLY_ODD_TABLE_ROW, new Color(170, 200, 170));
 
 	public JTableVADefaultRenderer(JTableViewAdapter tableVA) {
 		this.tableVA = tableVA;
