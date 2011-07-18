@@ -9,6 +9,7 @@ import javax.swing.JTable;
 
 import net.ulrice.databinding.viewadapter.impl.BackgroundStateMarker;
 import net.ulrice.databinding.viewadapter.impl.BorderStateMarker;
+import net.ulrice.databinding.viewadapter.impl.DetailedTooltipHandler;
 import net.ulrice.databinding.viewadapter.impl.JTableViewAdapter;
 import net.ulrice.module.IFView;
 
@@ -29,7 +30,8 @@ public class VMovieDB implements IFView {
 		
 		table = new JTable();
 		JTableViewAdapter movieTableVA = new JTableViewAdapter(table);
-		movieTableVA.setCellStateMarker(new BackgroundStateMarker());
+		movieTableVA.setStateMarker(new BackgroundStateMarker());
+		movieTableVA.setTooltipHandler(new DetailedTooltipHandler());
 		table.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
 		panel.add(new JScrollPane(movieTableVA.getComponent()), BorderLayout.CENTER);
 		
