@@ -10,26 +10,25 @@ import javax.swing.event.TableModelListener;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableModel;
 
-import net.ulrice.databinding.DataState;
 import net.ulrice.databinding.ErrorHandler;
 import net.ulrice.databinding.converter.HeuristicConverterFactory;
 import net.ulrice.databinding.converter.IFValueConverter;
 import net.ulrice.databinding.converter.ValueConverterException;
-import net.ulrice.databinding.directbinding.table.DefaultTableModelColumnAdapter;
+import net.ulrice.databinding.directbinding.table.ColumnAdapter;
 import net.ulrice.databinding.directbinding.table.DefaultTableModelAdapter;
+import net.ulrice.databinding.directbinding.table.DefaultTableModelColumnAdapter;
 import net.ulrice.databinding.directbinding.table.EditableTableModel;
 import net.ulrice.databinding.directbinding.table.ExpressionColumnSpec;
-import net.ulrice.databinding.directbinding.table.ColumnAdapter;
 import net.ulrice.databinding.directbinding.table.TableModelAdapter;
 import net.ulrice.databinding.directbinding.table.WithTypesPerColumn;
 import net.ulrice.databinding.modelaccess.IFIndexedModelValueAccessor;
+import net.ulrice.databinding.modelaccess.IFModelValueAccessor;
 import net.ulrice.databinding.modelaccess.IndexedPredicate;
 import net.ulrice.databinding.modelaccess.ModelChangeListener;
 import net.ulrice.databinding.modelaccess.ModelNotificationAdapter;
-import net.ulrice.databinding.modelaccess.IFModelValueAccessor;
 import net.ulrice.databinding.modelaccess.Predicate;
 import net.ulrice.databinding.modelaccess.PropertyChangeSupportModelNotificationAdapter;
-import net.ulrice.databinding.modelaccess.impl.OnglMVA;
+import net.ulrice.databinding.modelaccess.impl.OgnlMVA;
 import net.ulrice.databinding.modelaccess.impl.OgnlPredicate;
 import net.ulrice.databinding.modelaccess.impl.OgnlSingleListIndexedMVA;
 import net.ulrice.databinding.validation.IFValidator;
@@ -127,7 +126,7 @@ public class ModelBinding {
         _isUpdatingView = true;
         try {        
             calculateState(b);        	        	
-            b.getViewAdapter ().updateBinding(b);
+            b.getViewAdapter ().updateFromBinding(b);
         }
         finally {
             _isUpdatingView = false;
@@ -179,19 +178,22 @@ public class ModelBinding {
         }
     }
 
-    private void calculateState(Binding b) {
+    private void calculateState(Binding bind) {
     	
-    	if(b.getValidationFailures() != null && !b.getValidationFailures().isEmpty()) {
-    		b.setState(DataState.Invalid);
+    	if(bind.getValidationFailures() != null && !bind.getValidationFailures().isEmpty()) {
+    		bind.setValid(false);
     		return;
     	}
     	
     	// Dirty handling
-        if (b.getCurrentValue() != null && b.getOriginalValue() != null) {
-        	b.setState(b.getCurrentValue().equals(b.getOriginalValue()) ? DataState.NotChanged : DataState.Changed);
-        } else {
-        	b.setState(DataState.Changed);
-        }
+    	Object curr = bind.getCurrentValue();
+    	Object orig = bind.getCurrentValue();
+    	
+    	if(curr == null) {
+    		bind.setDirty(orig != null);
+    	} else {
+    		bind.setDirty(curr.equals(curr));
+    	}
 	}
 
 	private void validateAll () {
@@ -204,7 +206,7 @@ public class ModelBinding {
             final List<String> raw = validationResult.getMessagesByBinding(b);
             b.setValidationFailures(raw != null ? raw : new ArrayList<String> ());
             calculateState(b);
-            b.getViewAdapter ().updateBinding(b);
+            b.getViewAdapter ().updateFromBinding(b);
             b.getViewAdapter ().setEnabled (b.isWidgetEnabled (validationResult.isValid (), _model));
         }
     }
@@ -248,7 +250,7 @@ public class ModelBinding {
 
     //TODO soll auch ohne Type gehen
     public Binding register (Object viewElement, String modelPath, Class<?> modelType, IFValidator<?>... validators) {
-        final IFModelValueAccessor mva = new OnglMVA (_model, modelPath, modelType);
+        final IFModelValueAccessor mva = new OgnlMVA (_model, modelPath, modelType);
         final IFViewAdapter va = HeuristicViewAdapterFactory.createAdapter (viewElement);
         final Predicate enabledPredicate = mva.isReadOnly () ? Predicate.FALSE : Predicate.TRUE;
 
@@ -256,7 +258,7 @@ public class ModelBinding {
     }
 
     public Binding register (Object viewElement, String modelPath, Class<?> modelType, boolean enabled, IFValidator<?>... validators) { 
-        final IFModelValueAccessor mva = new OnglMVA (_model, modelPath, modelType);
+        final IFModelValueAccessor mva = new OgnlMVA (_model, modelPath, modelType);
         final IFViewAdapter va = HeuristicViewAdapterFactory.createAdapter (viewElement);
         final Predicate enabledPredicate = enabled ? Predicate.FALSE : Predicate.TRUE;
 
@@ -264,7 +266,7 @@ public class ModelBinding {
     }
 
     public Binding register (Object viewElement, String modelPath, Class<?> modelType, String enabledExpression, IFValidator<?>... validators) {
-        final IFModelValueAccessor mva = new OnglMVA (_model, modelPath, modelType);
+        final IFModelValueAccessor mva = new OgnlMVA (_model, modelPath, modelType);
         return register (HeuristicViewAdapterFactory.createAdapter (viewElement), mva, new OgnlPredicate (enabledExpression), Arrays.asList (validators), mva.isReadOnly ());
     }
 
@@ -300,7 +302,7 @@ public class ModelBinding {
         ensureEventThread ();
 
         final DefaultTableModel tableModel = (DefaultTableModel) oTableModel;
-        final IFModelValueAccessor numRowsAccessor = new OnglMVA (_model, "(" + baseExpression + ").size()", Integer.class);
+        final IFModelValueAccessor numRowsAccessor = new OgnlMVA (_model, "(" + baseExpression + ").size()", Integer.class);
 
         final boolean canBeEditable = tableModel instanceof EditableTableModel;
 
@@ -346,7 +348,8 @@ public class ModelBinding {
     
     public void commit() {
         for (Binding b: _bindings) {
-            b.setState(DataState.NotChanged);
+            b.setDirty(false);
+            b.setValid(true);
             Object value = b.getModelValueAccessor().getValue();
             b.setCurrentValue(value);
             b.setOriginalValue(value);
@@ -355,10 +358,26 @@ public class ModelBinding {
     
     public void rollback() {
         for (Binding b: _bindings) {
-            b.setState(DataState.NotChanged);
+            b.setDirty(false);
+            b.setValid(true);
             b.setCurrentValue(b.getOriginalValue());
             updateModel(b);
         }
+    }
+
+    public boolean isValid() {
+    	boolean result = true;
+        for (Binding b: _bindings) {
+        	result &= b.isValid(); 
+        }
+    	return result;
+    }
+    public boolean isDirty() {
+    	boolean result = false;
+        for (Binding b: _bindings) {
+        	result |= b.isDirty(); 
+        }
+    	return result;
     }
 }
 

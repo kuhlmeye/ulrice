@@ -1,8 +1,6 @@
 package net.ulrice.databinding.impl;
 
 import static org.junit.Assert.assertEquals;
-
-import net.ulrice.databinding.DataState;
 import net.ulrice.databinding.bufferedbinding.DataGroup;
 import net.ulrice.databinding.bufferedbinding.GenericAM;
 import net.ulrice.databinding.bufferedbinding.IFExtdAttributeModel;
@@ -10,6 +8,7 @@ import net.ulrice.databinding.modelaccess.impl.ReflectionMVA;
 import net.ulrice.databinding.validation.impl.RegExValidator;
 
 import org.junit.After;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -95,16 +94,34 @@ public class DataGroupTest {
     @SuppressWarnings("unchecked")
     @Test
     public void states() {
-        assertEquals(DataState.NotInitialized, dataGroup.getState());
-        dataGroup.read();
-        assertEquals(DataState.NotChanged, dataGroup.getState());
+    	Assert.assertEquals(false, dataGroup.isInitialized());
+    	Assert.assertEquals(false, dataGroup.isDirty());
+    	Assert.assertEquals(true, dataGroup.isValid());
+        
+    	dataGroup.read();        
+    	Assert.assertEquals(true, dataGroup.isInitialized());
+    	Assert.assertEquals(false, dataGroup.isDirty());
+    	Assert.assertEquals(true, dataGroup.isValid());
+    	
         ((IFExtdAttributeModel<String>)dataGroup.getAttributeModel("stringA")).setCurrentValue("Changed");
-        assertEquals(DataState.Changed, dataGroup.getState());
+    	Assert.assertEquals(true, dataGroup.isInitialized());
+    	Assert.assertEquals(true, dataGroup.isDirty());
+    	Assert.assertEquals(true, dataGroup.isValid());
+
         ((IFExtdAttributeModel<String>)dataGroup.getAttributeModel("stringA")).setCurrentValue("StringA");
-        assertEquals(DataState.NotChanged, dataGroup.getState());
-        ((IFExtdAttributeModel<String>)dataGroup.getAttributeModel("stringB")).setCurrentValue("Changed");
-        assertEquals(DataState.Invalid, dataGroup.getState());
-        ((IFExtdAttributeModel<String>)dataGroup.getAttributeModel("stringB")).setCurrentValue("StringB");
-        assertEquals(DataState.NotChanged, dataGroup.getState());
+    	Assert.assertEquals(true, dataGroup.isInitialized());
+    	Assert.assertEquals(false, dataGroup.isDirty());
+    	Assert.assertEquals(true, dataGroup.isValid());
+
+    	((IFExtdAttributeModel<String>)dataGroup.getAttributeModel("stringB")).setCurrentValue("Changed");
+    	Assert.assertEquals(true, dataGroup.isInitialized());
+    	Assert.assertEquals(true, dataGroup.isDirty());
+    	Assert.assertEquals(false, dataGroup.isValid());
+
+    	((IFExtdAttributeModel<String>)dataGroup.getAttributeModel("stringB")).setCurrentValue("StringB");
+    	Assert.assertEquals(true, dataGroup.isInitialized());
+    	Assert.assertEquals(false, dataGroup.isDirty());
+    	Assert.assertEquals(true, dataGroup.isValid());
+
     }
 }

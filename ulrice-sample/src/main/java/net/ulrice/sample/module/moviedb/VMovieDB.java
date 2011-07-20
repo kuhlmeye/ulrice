@@ -17,7 +17,7 @@ public class VMovieDB implements IFView {
 
 	private CMovieDB ctrl;
 	private JPanel panel;
-	private JTable table;
+	private JTableViewAdapter movieTableVA;
 
 	public VMovieDB(CMovieDB ctrl) {
 		this.ctrl = ctrl;
@@ -28,8 +28,8 @@ public class VMovieDB implements IFView {
 		panel = new JPanel();
 		panel.setLayout(new BorderLayout());
 		
-		table = new JTable();
-		JTableViewAdapter movieTableVA = new JTableViewAdapter(table);
+		JTable table = new JTable();
+		movieTableVA = new JTableViewAdapter(table);
 		movieTableVA.setStateMarker(new BackgroundStateMarker());
 		movieTableVA.setTooltipHandler(new DetailedTooltipHandler());
 		table.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
@@ -43,8 +43,8 @@ public class VMovieDB implements IFView {
 		return panel;
 	}
 
-	public JTable getTable() {
-		return table;
+	public JTableViewAdapter getTableAdapter() {
+		return movieTableVA;
 	}
 
 }

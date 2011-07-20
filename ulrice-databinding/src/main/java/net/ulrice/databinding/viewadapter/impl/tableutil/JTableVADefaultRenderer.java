@@ -54,7 +54,7 @@ public class JTableVADefaultRenderer extends DefaultTableCellRenderer {
 			ColumnDefinition<? extends Object> columnDefinition = tableAM.getColumns().get(column);
 			readOnly = columnDefinition.isReadOnly();
 
-		}
+		}		
 
 		if (readOnly) {
 			component.setBackground(row % 2 == 0 ? evenReadOnlyBackground : oddReadOnlyBackground);

@@ -2,13 +2,11 @@ package net.ulrice.databinding.directbinding;
 
 import java.util.List;
 
-import net.ulrice.databinding.DataState;
 import net.ulrice.databinding.IFBinding;
 import net.ulrice.databinding.converter.IFValueConverter;
 import net.ulrice.databinding.modelaccess.IFModelValueAccessor;
 import net.ulrice.databinding.modelaccess.Predicate;
 import net.ulrice.databinding.validation.IFValidator;
-import net.ulrice.databinding.validation.ValidationResult;
 import net.ulrice.databinding.viewadapter.IFViewAdapter;
 
 
@@ -26,7 +24,8 @@ public class Binding implements IFBinding {
     
 	private Object originalValue;
 	private List<String> validationFailures;
-	private DataState state;
+	private boolean dirty;
+	private boolean valid;
 
     public Binding (IFViewAdapter viewAdapter, IFValueConverter converter, Predicate enabledPredicate, IFModelValueAccessor modelValueAccessor, List<IFValidator<?>> validators, boolean isReadOnly) {
         _viewAdapter = viewAdapter;
@@ -35,14 +34,12 @@ public class Binding implements IFBinding {
         _modelValueAccessor = modelValueAccessor;
         _validators = validators;
         _isReadOnly = isReadOnly;
+        setValid(true);
+        setDirty(false);
+
         if(modelValueAccessor != null) {
-	        state = DataState.NotChanged;
 	        originalValue = modelValueAccessor.getValue();
-        } else {
-        	state = DataState.NotInitialized;
         }
-       
-        
     }
 
     public IFViewAdapter getViewAdapter () {
@@ -79,14 +76,6 @@ public class Binding implements IFBinding {
 		return null;
 	}
 
-	@Override
-	public DataState getState() {
-		return state;
-	}
-
-	public void setState(DataState state) {
-		this.state = state;
-	}
 
 	@Override
 	public List<String> getValidationFailures() {
@@ -120,4 +109,21 @@ public class Binding implements IFBinding {
 		}
 	}
 
+	@Override
+	public boolean isDirty() {
+		return dirty;
+	}
+	
+	protected void setDirty(boolean dirty) {
+		this.dirty = dirty;
+	}
+		
+	@Override
+	public boolean isValid() {
+		return valid;
+	}
+	
+	protected void setValid(boolean valid) {
+		this.valid = valid;
+	}
 }

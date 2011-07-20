@@ -1,6 +1,5 @@
 package net.ulrice.databinding.bufferedbinding;
 
-import net.ulrice.databinding.DataState;
 import net.ulrice.databinding.converter.IFValueConverter;
 import net.ulrice.databinding.validation.IFValidator;
 import net.ulrice.databinding.validation.ValidationResult;
@@ -11,16 +10,9 @@ import net.ulrice.databinding.viewadapter.IFViewAdapter;
  * 
  * @author christof
  */
-public interface IFAttributeModel<T> {
+public interface IFAttributeModel<T> extends IFBufferedBinding {
 
 	void addViewAdapter(IFViewAdapter viewAdapter);
-	
-	/**
-	 * Returns the identifier of this attribute model.
-	 * 
-	 * @return The identifier as a string.
-	 */
-	String getId();
 
 	/**
 	 * Read the value from the model. The data accessor is used to get the value
@@ -48,7 +40,7 @@ public interface IFAttributeModel<T> {
 	 * 
 	 * @return The state of this datamodel.
 	 */
-	DataState getState();
+	
 
 	/**
 	 * Set the validator if this model.
@@ -88,11 +80,6 @@ public interface IFAttributeModel<T> {
 	 *            The listener to be removed from the list of listeners.
 	 */
 	void removeAttributeModelEventListener(IFAttributeModelEventListener<T> listener);
-
-	/**
-	 * @return
-	 */
-	boolean isReadOnly();
 	
-	void setValueConverter(IFValueConverter valueConverter);
+	void setValueConverter(IFValueConverter valueConverter);			
 }

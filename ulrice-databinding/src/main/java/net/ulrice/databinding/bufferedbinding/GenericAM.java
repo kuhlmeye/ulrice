@@ -5,7 +5,6 @@ import java.util.List;
 
 import javax.swing.event.EventListenerList;
 
-import net.ulrice.databinding.DataState;
 import net.ulrice.databinding.IFBinding;
 import net.ulrice.databinding.converter.IFValueConverter;
 import net.ulrice.databinding.modelaccess.IFModelValueAccessor;
@@ -30,9 +29,6 @@ public class GenericAM<T> implements IFExtdAttributeModel<T>, IFBinding, IFViewC
     /** The data accessor used to write and read the data. */
     private IFModelValueAccessor modelAccessor;
 
-    /** The state of this attribute model. */
-    private DataState state = DataState.NotInitialized;
-
     /** The original value read from the model. */
     private T originalValue;
 
@@ -47,6 +43,10 @@ public class GenericAM<T> implements IFExtdAttributeModel<T>, IFBinding, IFViewC
 	private boolean readOnly = false;
 	
 	private IFValueConverter valueConverter;
+	
+	private boolean dirty = false;	
+	private boolean valid = true;
+	private boolean initialized = false;
 	
 	
 	
@@ -102,47 +102,55 @@ public class GenericAM<T> implements IFExtdAttributeModel<T>, IFBinding, IFViewC
      */
     public void setCurrentValue(T value) {
         T oldValue = this.currentValue;
+        this.initialized = true;
         this.currentValue = value;
         calculateState(null);
-        fireDataChanged(null, oldValue, getCurrentValue(), getState());
+        fireDataChanged(null);
     }
 
     public void gaChanged(IFViewAdapter viewAdapter, T value) {
         T oldValue = this.currentValue;
         this.currentValue = value;
         calculateState(viewAdapter);
-        fireDataChanged(viewAdapter, oldValue, getCurrentValue(), getState());
+        fireDataChanged(viewAdapter);
     }
 
     /**
 	 * 
 	 */
     private void calculateState(IFViewAdapter viewAdapter) {
-        DataState oldState = state;
+        boolean stateChanged = false;
+        
         try {
             if (getValidator() != null) {
                 ValidationResult errors = getValidator().isValid(this, getCurrentValue());
                 if (errors != null) {
-                    state = DataState.Invalid;
-                    return;
+                	stateChanged |= (valid != false);
+                	valid = false;
                 } else {
                     getValidator().clear();
+                	stateChanged |= (valid != true);
+                    valid = true;
                 }
             }
 
             if (getCurrentValue() == null && getOriginalValue() == null) {
-                state = DataState.NotChanged;
+            	stateChanged |= (dirty != false);
+                dirty = false;
             } else if (getCurrentValue() != null && getOriginalValue() != null) {
-                state = getCurrentValue().equals(getOriginalValue()) ? DataState.NotChanged : DataState.Changed;
+                boolean newDirty = !getCurrentValue().equals(getOriginalValue());
+                stateChanged |= (newDirty != dirty);
+                dirty = newDirty;
             } else {
-                state = DataState.Changed;
+            	stateChanged |= (dirty != true);
+            	dirty = true;
             }
         } finally {
-            if (!oldState.equals(state)) {
-                fireStateChanged(viewAdapter, oldState, state);
+            if (stateChanged) {
+                fireStateChanged(viewAdapter);
             }
         }
-    }
+    }   
 
     /**
      * @see net.ulrice.databinding.bufferedbinding.IFAttributeModel#getOriginalValue()
@@ -152,19 +160,12 @@ public class GenericAM<T> implements IFExtdAttributeModel<T>, IFBinding, IFViewC
     }
 
     /**
-     * @see net.ulrice.databinding.bufferedbinding.IFAttributeModel#getState()
-     */
-    @Override
-    public DataState getState() {
-        return state;
-    }
-
-    /**
      * @see net.ulrice.databinding.bufferedbinding.IFAttributeModel#read()
      */
     @SuppressWarnings("unchecked")
 	@Override
     public void read() {
+    	this.initialized = true;
         if (modelAccessor == null) {
             throw new IllegalStateException("No data accessor is available.");
         }
@@ -252,22 +253,22 @@ public class GenericAM<T> implements IFExtdAttributeModel<T>, IFBinding, IFViewC
     }
 
     @SuppressWarnings("unchecked")
-    public void fireDataChanged(IFViewAdapter viewAdapter, T oldValue, T newValue, DataState state) {
+    public void fireDataChanged(IFViewAdapter viewAdapter) {
         IFAttributeModelEventListener<T>[] listeners = listenerList.getListeners(IFAttributeModelEventListener.class);
         if (listeners != null) {
             for (IFAttributeModelEventListener<T> listener : listeners) {
-                listener.dataChanged(viewAdapter, this, oldValue, newValue, state);
+                listener.dataChanged(viewAdapter, this);
             }
         }
         fireUpdateViews();
     }
 
     @SuppressWarnings("unchecked")
-    public void fireStateChanged(IFViewAdapter viewAdapter, DataState oldState, DataState newState) {
+    public void fireStateChanged(IFViewAdapter viewAdapter) {
         IFAttributeModelEventListener<T>[] listeners = listenerList.getListeners(IFAttributeModelEventListener.class);
         if (listeners != null) {
             for (IFAttributeModelEventListener<T> listener : listeners) {
-                listener.stateChanged(viewAdapter, this, oldState, newState);
+                listener.stateChanged(viewAdapter, this);
             }
         }
         fireUpdateViews();
@@ -276,7 +277,7 @@ public class GenericAM<T> implements IFExtdAttributeModel<T>, IFBinding, IFViewC
     public void fireUpdateViews() {
     	if(viewAdapterList != null) {
     		for(IFViewAdapter viewAdapter: viewAdapterList) {
-    			viewAdapter.updateBinding(this);
+    			viewAdapter.updateFromBinding(this);
     		}
     	}
     }
@@ -314,5 +315,20 @@ public class GenericAM<T> implements IFExtdAttributeModel<T>, IFBinding, IFViewC
 	@Override
 	public void setValueConverter(IFValueConverter valueConverter) {
 		this.valueConverter = valueConverter;
+	}
+	
+	@Override
+	public boolean isValid() {
+		return valid;
+	}
+	
+	@Override
+	public boolean isDirty() {
+		return dirty;
+	}
+	
+	@Override
+	public boolean isInitialized() {
+		return initialized;
 	}
 }

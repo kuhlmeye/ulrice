@@ -10,7 +10,8 @@ public interface IFBinding {
 	
 	Object getCurrentValue();
 	
-	DataState getState();
+	boolean isDirty();
+	boolean isValid();
 	
 	List<String> getValidationFailures();
 	

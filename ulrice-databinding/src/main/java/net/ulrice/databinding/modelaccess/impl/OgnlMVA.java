@@ -6,7 +6,7 @@ import ognl.Ognl;
 import ognl.OgnlException;
 
 
-public class OnglMVA implements IFModelValueAccessor {
+public class OgnlMVA implements IFModelValueAccessor {
     private final Object _model;
     private final Object _ognlTree;
     private final Class<?> _type;
@@ -14,14 +14,14 @@ public class OnglMVA implements IFModelValueAccessor {
     
     //TODO Typ und readOnly ermitteln
     
-    public OnglMVA (Object model, String ognlExpression, Class<?> type) {
+    public OgnlMVA (Object model, String ognlExpression, Class<?> type) {
         _model = model;
         _ognlTree = ognlParse (ognlExpression);
         _type = type;
         _readOnly = guessReadOnly ();
     }
     
-    public OnglMVA (Object model, String ognlExpression, Class<?> type, boolean readOnly) {
+    public OgnlMVA (Object model, String ognlExpression, Class<?> type, boolean readOnly) {
         _model = model;
         _ognlTree = ognlParse (ognlExpression);
         _type = type;

@@ -35,7 +35,7 @@ public abstract class AbstractViewAdapter implements IFViewAdapter {
     }
 	
 	@Override
-	public void updateBinding(IFBinding binding) {
+	public void updateFromBinding(IFBinding binding) {
 		if(!isInNotification()) {
 			removeComponentListener();
 			setValue(binding.getCurrentValue());
