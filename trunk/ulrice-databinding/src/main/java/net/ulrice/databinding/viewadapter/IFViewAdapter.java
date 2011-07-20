@@ -8,7 +8,7 @@ import net.ulrice.databinding.converter.IFValueConverter;
 
 public interface IFViewAdapter {
 
-	void updateBinding(IFBinding binding);
+	void updateFromBinding(IFBinding binding);
 	
 	Object getValue();
 

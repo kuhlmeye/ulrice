@@ -1,7 +1,13 @@
 package net.ulrice.sample.module.moviedb;
 
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.TimerTask;
+
+import javax.swing.SwingUtilities;
+import javax.swing.Timer;
 
 import net.ulrice.databinding.bufferedbinding.DataGroup;
 import net.ulrice.module.IFModel;
@@ -88,7 +94,20 @@ public class CMovieDB extends AbstractController {
 		
 		dataGroup.read();
 
-        ((VMovieDB)getView()).getTable().doLayout();
+		
+		
+		Timer timer = new Timer(1000, new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				System.out.println("Resize");
+				
+				((VMovieDB)getView()).getTableAdapter().sizeColumns();
+			}
+		});
+		timer.setRepeats(false);
+		timer.start();
+        
 	}
 
 }

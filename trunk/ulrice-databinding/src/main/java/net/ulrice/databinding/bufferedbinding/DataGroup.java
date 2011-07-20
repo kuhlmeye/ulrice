@@ -7,9 +7,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import javax.swing.event.EventListenerList;
-
-import net.ulrice.databinding.DataState;
 import net.ulrice.databinding.viewadapter.IFViewAdapter;
 
 /**
@@ -32,9 +29,15 @@ public class DataGroup implements IFDataGroup, IFAttributeModelEventListener {
     /** The set of all invalid attribute models. */
     private Set<String> invalidSet = new HashSet<String>();
 
-    /** The state of this connector group. */
-    private DataState state = DataState.NotInitialized;
+    boolean dirty;
+    boolean initialized;
+    boolean valid;
 
+    public DataGroup() {
+        initialized = false;
+        valid = true;
+        dirty = false;
+    }
     /**
      * Add an attribute model to this data group.
      * 
@@ -92,7 +95,9 @@ public class DataGroup implements IFDataGroup, IFAttributeModelEventListener {
      */
     public void read() {
         if (amMap != null && !amMap.isEmpty()) {
-            state = DataState.NotChanged;
+            initialized = true;
+            valid = true;
+            dirty = false;
             for (IFAttributeModel<?> am : amMap.values()) {
                 am.read();
             }
@@ -116,28 +121,21 @@ public class DataGroup implements IFDataGroup, IFAttributeModelEventListener {
      *      net.ulrice.databinding.DataState, net.ulrice.databinding.DataState)
      */
     @Override
-    public void stateChanged(IFViewAdapter gaSource, IFAttributeModel amSource, DataState oldState, DataState newState) {
+    public void stateChanged(IFViewAdapter gaSource, IFAttributeModel amSource) {
         String id = amSource.getId();
         changedSet.remove(id);
         invalidSet.remove(id);
-        switch (newState) {
-            case Invalid:
-                invalidSet.add(id);
-                break;
-            case Changed:
-                changedSet.add(id);
-                break;
-            default:
-                break;
+        
+        if(!amSource.isValid()) {
+        	invalidSet.add(id);
+        }
+        
+        if(amSource.isDirty()) {
+        	changedSet.add(id);
         }
 
-        if (!invalidSet.isEmpty()) {
-            state = DataState.Invalid;
-        } else if (!changedSet.isEmpty()) {
-            state = DataState.Changed;
-        } else {
-            state = DataState.NotChanged;
-        }
+        dirty = !changedSet.isEmpty();
+        valid = invalidSet.isEmpty();
     }
 
     /**
@@ -146,8 +144,7 @@ public class DataGroup implements IFDataGroup, IFAttributeModelEventListener {
      *      java.lang.Object, net.ulrice.databinding.DataState)
      */
     @Override
-    public void dataChanged(IFViewAdapter gaSource, IFAttributeModel amSource, Object oldValue, Object newValue,
-            DataState state) {
+    public void dataChanged(IFViewAdapter gaSource, IFAttributeModel amSource) {
         // Ignore these events.
     }
 
@@ -218,12 +215,15 @@ public class DataGroup implements IFDataGroup, IFAttributeModelEventListener {
         return amMap != null ? amMap.get(id) : null;
     }
     
-    /**
-     * Return the state of this connector group.
-     * 
-     * @return The state.
-     */
-    public DataState getState() {
-        return state;
-    }
+    public boolean isValid() {
+		return valid;
+	}
+    
+    public boolean isDirty() {
+		return dirty;
+	}
+    
+    public boolean isInitialized() {
+		return initialized;
+	}
 }

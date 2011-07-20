@@ -43,6 +43,7 @@ public class JTableViewAdapter extends AbstractViewAdapter implements TableModel
     
 	private JTable table;
 	private JTableVADefaultRenderer defaultRenderer;
+	private JTableVAHeader tableHeader;
 
     public JTableViewAdapter(JTable table) {
     	super(List.class);
@@ -57,8 +58,7 @@ public class JTableViewAdapter extends AbstractViewAdapter implements TableModel
         defaultRenderer = new JTableVADefaultRenderer(this);
 		table.setDefaultRenderer(Object.class, defaultRenderer);
 
-        // Add filter components to table header.
-        JTableVAHeader tableHeader = new JTableVAHeader(table.getColumnModel(), new Insets(1, 1, 3, 1));
+        tableHeader = new JTableVAHeader(table.getColumnModel(), new Insets(1, 1, 3, 1));
         table.setTableHeader(tableHeader);
         filter = new JTableVAFilter(rowSorter, tableHeader, table.getColumnModel());
         rowSorter.setRowFilter(filter);
@@ -98,7 +98,7 @@ public class JTableViewAdapter extends AbstractViewAdapter implements TableModel
             TableColumnModel columnModel = table.getColumnModel();
             for (int i = columnModel.getColumnCount() - 1; i >= 0; i--) {
                 columnModel.removeColumn(columnModel.getColumn(i));
-            }
+            }	
 
             List<ColumnDefinition<? extends Object>> columnDefinitions = attributeModel.getColumns();
             if (columnDefinitions != null) {
@@ -278,7 +278,7 @@ public class JTableViewAdapter extends AbstractViewAdapter implements TableModel
     }
 
 	@Override
-	public void updateBinding(IFBinding binding) {
+	public void updateFromBinding(IFBinding binding) {
 		if(binding instanceof AbstractTableAM) {
 			setAttributeModel((AbstractTableAM)binding);									
 		}
@@ -329,5 +329,15 @@ public class JTableViewAdapter extends AbstractViewAdapter implements TableModel
 
 	@Override
 	protected void removeComponentListener() {
+	}
+
+
+	public void sizeColumns() {
+		for(int i = 0; i < 4; i++) {
+			tableHeader.setResizingColumn(table.getColumnModel().getColumn(i));
+			table.doLayout();
+			table.revalidate();
+	        table.repaint();
+		}
 	}
 }

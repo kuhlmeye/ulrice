@@ -6,12 +6,12 @@ import static org.junit.Assert.assertEquals;
 import java.util.LinkedList;
 import java.util.List;
 
-import net.ulrice.databinding.DataState;
 import net.ulrice.databinding.bufferedbinding.ColumnDefinition;
 import net.ulrice.databinding.bufferedbinding.ListAM;
 import net.ulrice.databinding.modelaccess.impl.ReflectionMVA;
 
 import org.junit.After;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -71,9 +71,15 @@ public class ListAMTest {
 	 */
 	@Test
 	public void readCellValues() {
-        assertEquals(DataState.NotInitialized, listAM.getState());
+    	Assert.assertEquals(false, listAM.isInitialized());
+    	Assert.assertEquals(false, listAM.isDirty());
+    	Assert.assertEquals(true, listAM.isValid());
+		
 		listAM.read();
-		assertEquals(DataState.NotChanged, listAM.getState());
+    	Assert.assertEquals(true, listAM.isInitialized());
+    	Assert.assertEquals(false, listAM.isDirty());
+    	Assert.assertEquals(true, listAM.isValid());
+    	
 		assertEquals("Max Mustermann", listAM.getElementAt(0).getValueAt(0));
 		assertEquals(18, listAM.getElementAt(0).getValueAt(1));
 		assertEquals("Petra Musterfrau", listAM.getElementAt(1).getValueAt(0));
@@ -88,25 +94,37 @@ public class ListAMTest {
 		listAM.read();
         listAM.getElementAt(0).setValueAt(0, "Otto Normal");
         assertEquals("Otto Normal", listAM.getElementAt(0).getValueAt(0));
-        assertEquals(DataState.Changed, listAM.getElementAt(0).getState());
-        assertEquals(DataState.Changed, listAM.getState());
-        
+    	Assert.assertEquals(true, listAM.getElementAt(0).isDirty());
+    	Assert.assertEquals(true, listAM.getElementAt(0).isValid());
+    	Assert.assertEquals(true, listAM.isInitialized());
+    	Assert.assertEquals(true, listAM.isDirty());
+    	Assert.assertEquals(true, listAM.isValid());
+
         // Change back.
         listAM.getElementAt(0).setValueAt(0, "Max Mustermann");
         assertEquals("Max Mustermann", listAM.getElementAt(0).getValueAt(0));
-        assertEquals(DataState.NotChanged, listAM.getElementAt(0).getState());
-        assertEquals(DataState.NotChanged, listAM.getState());
+    	Assert.assertEquals(false, listAM.getElementAt(0).isDirty());
+    	Assert.assertEquals(true, listAM.getElementAt(0).isValid());
+    	Assert.assertEquals(true, listAM.isInitialized());
+    	Assert.assertEquals(false, listAM.isDirty());
+    	Assert.assertEquals(true, listAM.isValid());
         
         listAM.getElementAt(0).setValueAt("name", "Otto Normal");
         assertEquals("Otto Normal", listAM.getElementAt(0).getValueAt("name"));
-        assertEquals(DataState.Changed, listAM.getElementAt(0).getState());
-        assertEquals(DataState.Changed, listAM.getState());
+    	Assert.assertEquals(true, listAM.getElementAt(0).isDirty());
+    	Assert.assertEquals(true, listAM.getElementAt(0).isValid());
+    	Assert.assertEquals(true, listAM.isInitialized());
+    	Assert.assertEquals(true, listAM.isDirty());
+    	Assert.assertEquals(true, listAM.isValid());
         
         // Change back.
         listAM.getElementAt(0).setValueAt("name", "Max Mustermann");
         assertEquals("Max Mustermann", listAM.getElementAt(0).getValueAt("name"));
-        assertEquals(DataState.NotChanged, listAM.getElementAt(0).getState());
-        assertEquals(DataState.NotChanged, listAM.getState());
+    	Assert.assertEquals(false, listAM.getElementAt(0).isDirty());
+    	Assert.assertEquals(true, listAM.getElementAt(0).isValid());
+    	Assert.assertEquals(true, listAM.isInitialized());
+    	Assert.assertEquals(false, listAM.isDirty());
+    	Assert.assertEquals(true, listAM.isValid());
 	}
 
 	/**

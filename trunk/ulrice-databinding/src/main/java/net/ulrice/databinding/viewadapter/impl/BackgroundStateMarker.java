@@ -17,17 +17,14 @@ public class BackgroundStateMarker implements IFStateMarker {
 	
 	@Override
 	public void updateState(IFBinding binding, JComponent component) {
-		switch(binding.getState()) {
-		case Changed:
-			component.setBackground(CHANGED_BG_COLOR);
-			break;
-		case Invalid:
+		if(!binding.isValid()) {
 			component.setBackground(INVALID_BG_COLOR);
-			break;
-		case NotInitialized:
-		case NotChanged:
-			component.setBackground(normalBGColor);
-			break;			
+		} else {
+			if(binding.isDirty()) {
+				component.setBackground(CHANGED_BG_COLOR);
+			} else {
+				component.setBackground(normalBGColor);
+			}
 		}
 	}
 

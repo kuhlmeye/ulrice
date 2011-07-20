@@ -11,7 +11,6 @@ import javax.swing.ImageIcon;
 import javax.swing.JComponent;
 import javax.swing.border.Border;
 
-import net.ulrice.databinding.DataState;
 import net.ulrice.databinding.IFBinding;
 import net.ulrice.databinding.viewadapter.IFStateMarker;
 
@@ -29,8 +28,9 @@ public class BorderStateMarker implements Border, ImageObserver, IFStateMarker {
     /** The cross image draw, if the data is not valid. */
     private ImageIcon crossImage;
     
-    /** The current state of the data. */
-    private DataState state;
+    private boolean valid;
+    
+    private boolean dirty;
 
     /**
      * Creates a new border state marker.
@@ -65,21 +65,15 @@ public class BorderStateMarker implements Border, ImageObserver, IFStateMarker {
      */
     @Override
     public void paintBorder(Component c, Graphics g, int x, int y, int width, int height) {
-        if (state != null) {
-            switch (state) {
-                case Invalid:
-                    drawInvalid(g, x, y, width, height);
-                    break;
-                case Changed:
-                    drawChanged(g, x, y, width, height);
-                    break;
-                default:
-                    drawNormal(g, x, y, width, height);
-                    break;
-            }
-        } else {            
-            drawNormal(g, x, y, width, height);
-        }
+		if(!valid) {
+            drawInvalid(g, x, y, width, height);
+		} else {
+			if(dirty) {
+                drawChanged(g, x, y, width, height);
+			} else {
+                drawNormal(g, x, y, width, height);
+			}
+		}
     }
 
     /**
@@ -154,7 +148,9 @@ public class BorderStateMarker implements Border, ImageObserver, IFStateMarker {
      */
     @Override
     public void updateState(IFBinding binding, JComponent c) {
-        this.state = binding.getState();
+    	this.valid = binding.isValid();
+    	this.dirty = binding.isDirty();
+
         c.revalidate();
     }
 

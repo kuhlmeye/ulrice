@@ -9,16 +9,13 @@ import java.util.Set;
 
 import javax.swing.event.EventListenerList;
 
-import net.ulrice.databinding.DataState;
-import net.ulrice.databinding.IFBinding;
 import net.ulrice.databinding.converter.IFValueConverter;
 import net.ulrice.databinding.validation.IFValidator;
 import net.ulrice.databinding.validation.ValidationResult;
 import net.ulrice.databinding.viewadapter.IFViewAdapter;
 
-public abstract class AbstractTableAM implements IFBinding, IFAttributeModel, IFElementChangeListener {
+public abstract class AbstractTableAM implements IFAttributeModel, IFElementChangeListener {
 
-	protected DataState state = DataState.NotChanged;
 	protected List<Element> elements = new ArrayList<Element>();
 	protected Map<String, Element> elementIdMap = new HashMap<String, Element>();
 	
@@ -36,6 +33,9 @@ public abstract class AbstractTableAM implements IFBinding, IFAttributeModel, IF
 	private List<IFViewAdapter> viewAdapterList = new ArrayList<IFViewAdapter>();
 	
 	private IFValueConverter valueConverter;
+	private boolean initialized = false;
+	private boolean dirty = false;
+	private boolean valid = true;
 
 	public AbstractTableAM(String id, boolean readOnly) {
 		super();
@@ -43,9 +43,8 @@ public abstract class AbstractTableAM implements IFBinding, IFAttributeModel, IF
 		nextUniqueId = System.currentTimeMillis();
 		
 		this.id = id;
-		this.listenerList = new EventListenerList();
-		this.state = DataState.NotInitialized;
-		this.readOnly = readOnly;
+		this.listenerList = new EventListenerList();	
+		this.readOnly = readOnly;		
 	}
 
 	/**
@@ -101,14 +100,6 @@ public abstract class AbstractTableAM implements IFBinding, IFAttributeModel, IF
 	@Override
 	public IFValidator getValidator() {
 		return validator;
-	}
-
-	/**
-	 * @see net.ulrice.databinding.bufferedbinding.IFAttributeModel#getState()
-	 */
-	@Override
-	public DataState getState() {
-		return state;
 	}
 
 	public Element getElementAt(int index) {
@@ -184,36 +175,22 @@ public abstract class AbstractTableAM implements IFBinding, IFAttributeModel, IF
 	 * @see net.ulrice.databinding.bufferedbinding.IFElementChangeListener#stateChanged(net.ulrice.databinding.impl.am.Element, net.ulrice.databinding.DataState, net.ulrice.databinding.DataState)
 	 */
 	@Override
-	public void stateChanged(Element element, DataState newState, DataState oldState) {
-	    if(!DataState.Invalid.equals(newState)) {
-	        invElements.remove(element);
-	    }
+	public void stateChanged(Element element) {
+		if(element.isValid()) {
+			invElements.remove(element);
+		} else {
+			invElements.add(element);
+		}
+		
+		if(element.isDirty() && elementIdMap.containsKey(element.getUniqueId())) {
+            modElements.add(element);            
+		}
+		if(!element.isDirty() && elementIdMap.containsKey(element.getUniqueId())) {
+            modElements.remove(element);            
+		}		
 	    
-	    switch(newState) {
-	        case Invalid:
-	            invElements.add(element);
-	            break;
-	        case Changed:
-	            if(elementIdMap.containsKey(element.getUniqueId())) {
-	                modElements.add(element);
-	            }
-	            break;
-	        case NotInitialized:
-	        case NotChanged:
-	            if(elementIdMap.containsKey(element.getUniqueId())) {
-	                modElements.remove(element);
-	            }
-	            break;
-	    }
-	    
-	    if(!invElements.isEmpty()) {
-	        state = DataState.Invalid;
-	    }
-	    else if(!modElements.isEmpty() || !delElements.isEmpty() || !newElements.isEmpty()) {
-	        state = DataState.Changed;
-	    } else {
-	        state = DataState.NotChanged;
-	    }
+	    valid = invElements.isEmpty();
+	    dirty = !modElements.isEmpty() || !delElements.isEmpty() || !newElements.isEmpty();
 	}
 
 	/**
@@ -241,7 +218,7 @@ public abstract class AbstractTableAM implements IFBinding, IFAttributeModel, IF
     public void fireUpdateViews() {
     	if(viewAdapterList != null) {
     		for(IFViewAdapter viewAdapter: viewAdapterList) {
-    			viewAdapter.updateBinding(this);
+    			viewAdapter.updateFromBinding(this);
     		}
     	}
     }
@@ -249,7 +226,7 @@ public abstract class AbstractTableAM implements IFBinding, IFAttributeModel, IF
 	@Override
 	public void addViewAdapter(IFViewAdapter viewAdapter) {
 		viewAdapterList.add(viewAdapter);
-		viewAdapter.updateBinding(this);
+		viewAdapter.updateFromBinding(this);
 	}
 
 	public Element addElement(Object value) {
@@ -292,5 +269,32 @@ public abstract class AbstractTableAM implements IFBinding, IFAttributeModel, IF
 	@Override
 	public void setValueConverter(IFValueConverter valueConverter) {
 		this.valueConverter = valueConverter;
+	}
+	
+	@Override
+	public boolean isInitialized() {
+		return initialized;
+	}
+	
+	protected void setInitialized(boolean initialized) {
+		this.initialized = initialized;
+	}
+	
+	@Override
+	public boolean isDirty() {
+		return dirty;
+	}
+	
+	protected void setDirty(boolean dirty) {
+		this.dirty = dirty;
+	}
+	
+	@Override
+	public boolean isValid() {
+		return valid;
+	}
+	
+	protected void setValid(boolean valid) {
+		this.valid = valid;
 	}
 }

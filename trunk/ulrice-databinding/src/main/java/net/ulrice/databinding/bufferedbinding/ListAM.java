@@ -3,7 +3,6 @@ package net.ulrice.databinding.bufferedbinding;
 import java.util.ArrayList;
 import java.util.List;
 
-import net.ulrice.databinding.DataState;
 import net.ulrice.databinding.modelaccess.IFModelValueAccessor;
 
 /**
@@ -36,7 +35,9 @@ public class ListAM extends AbstractTableAM implements IFExtdAttributeModel  {
 	 */
 	public void directRead(Object valueList) {
 		elements.clear();
-        state = DataState.NotChanged;
+		setDirty(false);
+		setInitialized(true);
+		setValid(true);
 
 		if (valueList != null) {
 			for (Object value : (List<?>)valueList) {

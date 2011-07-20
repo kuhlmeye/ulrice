@@ -7,7 +7,6 @@ import java.util.Map;
 
 import javax.swing.event.EventListenerList;
 
-import net.ulrice.databinding.DataState;
 import net.ulrice.databinding.modelaccess.IFDynDataAccessor;
 
 /**
@@ -31,10 +30,7 @@ public class Element {
     private Map<String, GenericAM<? extends Object>> idModelMap;
 
     /** The value read from the list data. */
-    private Object valueObject;
-
-    /** The current state of the data in this element. */
-    private DataState state = DataState.NotInitialized;
+    private Object valueObject;       
 
     /** The event listeners. */
     private EventListenerList listenerList = new EventListenerList();
@@ -42,6 +38,9 @@ public class Element {
     /** Flag, if this element is editable. */
     private boolean readOnly;
 
+    private boolean dirty;
+    private boolean valid;
+    
     /**
      * Creates a new element.
      * 
@@ -57,6 +56,10 @@ public class Element {
         this.valueObject = valueObject;
         this.columns = columns;
         this.readOnly = readOnly;
+        
+        this.dirty = false;
+        this.valid = true;
+        
         readObject();
     }
 
@@ -172,34 +175,21 @@ public class Element {
      * and calculates the resulting state.
      */
     private void updateState() {
-        DataState newState = DataState.NotInitialized;
-        try {
-            if (modelList != null) {
-                for (IFAttributeModel<?> value : modelList) {
-                    switch (value.getState()) {
-                        case Invalid:
-                            newState = DataState.Invalid;
-                            return;
-                        case Changed:
-                            newState = DataState.Changed;
-                            break;
-                        case NotChanged:
-                            if (DataState.Changed.equals(state)) {
-                                newState = DataState.NotChanged;
-                            }
-                            break;
-                        case NotInitialized:
-                            break;
-                    }
-                }
-            }
-        } finally {
-            DataState oldState = this.state;
-            this.state = newState;
-            if (!newState.equals(oldState)) {
-                fireStateChanged(newState, oldState);
-            }
-        }
+    	boolean changed = false;
+    	boolean oldValid = valid;
+    	boolean oldDirty = dirty;
+    	
+    	if(modelList != null) {
+    		dirty = false;
+    		valid = true;
+    		for(IFAttributeModel<?> model : modelList) {
+    			dirty |= model.isDirty();
+    			valid &= model.isValid();
+    		}
+    	}
+    	if(oldDirty != dirty || oldValid != valid) {
+            fireStateChanged();
+    	}
     }
 
     /**
@@ -208,10 +198,10 @@ public class Element {
      * @param newState The new state
      * @param oldState The old state
      */
-    private void fireStateChanged(DataState newState, DataState oldState) {
+    private void fireStateChanged() {
         if (listenerList != null) {
             for (IFElementChangeListener listener : listenerList.getListeners(IFElementChangeListener.class)) {
-                listener.stateChanged(this, newState, oldState);
+                listener.stateChanged(this);
             }
         }
     }
@@ -289,16 +279,15 @@ public class Element {
         return uniqueId;
     }
 
-    /**
-     * Return the state of this element.
-     * 
-     * @return The state
-     */
-    public Object getState() {
-        return state;
-    }
-
 	public GenericAM getCellAtributeModel(int columnIndex) {
 		return modelList.get(columnIndex);
+	}
+	
+	public boolean isDirty() {
+		return dirty;
+	}
+	
+	public boolean isValid() {
+		return valid;
 	}
 }

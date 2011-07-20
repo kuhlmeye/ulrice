@@ -25,7 +25,7 @@ public class JListViewAdapter extends AbstractViewAdapter implements ListModel {
     }
     
 	@Override
-	public void updateBinding(IFBinding binding) {
+	public void updateFromBinding(IFBinding binding) {
 		if(binding instanceof ListAM) {
 			attributeModel = (ListAM)binding;									
 		}
