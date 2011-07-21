@@ -27,8 +27,8 @@ public class GenericAMTest {
 	 */
 	@Before
 	public void setUp() throws Exception {
-        stringAAM = new GenericAM<String>("stringA", new ReflectionMVA(this, "stringA"));
-        stringBAM = new GenericAM<String>("stringB", new ReflectionMVA(this, "stringB"));
+        stringAAM = new GenericAM<String>(new ReflectionMVA(this, "stringA"));
+        stringBAM = new GenericAM<String>(new ReflectionMVA(this, "stringB"));
         stringBAM.setValidator(
                 new RegExValidator<String>("StringB", "String is not 'stringB'"));
 

@@ -11,6 +11,7 @@ public class OgnlMVA implements IFModelValueAccessor {
     private final Object _ognlTree;
     private final Class<?> _type;
     private final boolean _readOnly;
+	private String id;
     
     //TODO Typ und readOnly ermitteln
     
@@ -19,6 +20,7 @@ public class OgnlMVA implements IFModelValueAccessor {
         _ognlTree = ognlParse (ognlExpression);
         _type = type;
         _readOnly = guessReadOnly ();
+        id = _model.getClass().getName() + "." + _ognlTree;
     }
     
     public OgnlMVA (Object model, String ognlExpression, Class<?> type, boolean readOnly) {
@@ -26,6 +28,7 @@ public class OgnlMVA implements IFModelValueAccessor {
         _ognlTree = ognlParse (ognlExpression);
         _type = type;
         _readOnly = readOnly;
+        id = _model.getClass().getName() + "." + _ognlTree;
     }
 
     private Object ognlParse (String ognlExpression) {
@@ -72,4 +75,9 @@ public class OgnlMVA implements IFModelValueAccessor {
     public Class<?> getModelType () {
         return _type;
     }
+
+	@Override
+	public String getAttributeId() {
+		return id;
+	}
 }

@@ -16,6 +16,7 @@ public class OgnlSingleListIndexedMVA implements IFIndexedModelValueAccessor {
 
     private final Object _ognlBaseTree;
     private final Object _ognlElementTree;
+    private String id;
 
     public OgnlSingleListIndexedMVA (Class<?> type, Boolean isReadOnly, Object model, String baseExpression, String elementExpression) {
         _type = type;
@@ -28,6 +29,7 @@ public class OgnlSingleListIndexedMVA implements IFIndexedModelValueAccessor {
             throw new RuntimeException (); // für den Compiler
         }
         _isReadOnly = isReadOnly != null ? isReadOnly : guessReadOnly ();
+        id = _model.getClass().getName() + "." + baseExpression + "." + elementExpression;
     }
 
     private boolean guessReadOnly () {
@@ -79,5 +81,10 @@ public class OgnlSingleListIndexedMVA implements IFIndexedModelValueAccessor {
         catch (OgnlException exc) {
             ErrorHandler.handle (exc);
         }
+    }
+    
+    @Override
+    public String getAttributeId() {
+    	return id;
     }
 }

@@ -7,4 +7,6 @@ public interface IFModelValueAccessor {
     
     boolean isReadOnly ();
     Class<?> getModelType ();
+    
+    String getAttributeId();
 }

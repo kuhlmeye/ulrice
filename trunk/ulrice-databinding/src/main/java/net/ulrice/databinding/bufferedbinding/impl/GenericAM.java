@@ -24,9 +24,6 @@ public class GenericAM<T> implements IFBufferedBinding<T>, IFViewChangeListener 
     /** The event listener. */
     private EventListenerList listenerList = new EventListenerList();
 
-    /** The identifier of this generic attribute model. */
-    private String id;
-
     /** The data accessor used to write and read the data. */
     private IFModelValueAccessor modelAccessor;
 
@@ -48,6 +45,8 @@ public class GenericAM<T> implements IFBufferedBinding<T>, IFViewChangeListener 
 	private boolean dirty = false;	
 	private boolean valid = true;
 	private boolean initialized = false;
+
+	private String id;
 	
 	
 	
@@ -57,10 +56,10 @@ public class GenericAM<T> implements IFBufferedBinding<T>, IFViewChangeListener 
      * @param id The Identifier.
      * @param dataAccessor The data accessor.
      */
-    public GenericAM(String id, IFModelValueAccessor modelAccessor) {
-        this.id = id;
+    public GenericAM(IFModelValueAccessor modelAccessor) {
         this.modelAccessor = modelAccessor;
         this.viewAdapterList = new ArrayList<IFViewAdapter>();
+        this.id = modelAccessor.getAttributeId();
     }
     
     
@@ -71,7 +70,7 @@ public class GenericAM<T> implements IFBufferedBinding<T>, IFViewChangeListener 
      * @param id The Identifier.
      */
     public GenericAM(String id) {
-        this.id = id;
+    	this.id = id;
     }
 
     /**
@@ -79,7 +78,7 @@ public class GenericAM<T> implements IFBufferedBinding<T>, IFViewChangeListener 
      */
     @Override
     public String getId() {
-        return id;
+    	return id;
     }
 
     /**
