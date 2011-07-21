@@ -9,6 +9,7 @@ import javax.swing.event.EventListenerList;
 
 import net.ulrice.databinding.bufferedbinding.IFBufferedBinding;
 import net.ulrice.databinding.modelaccess.IFDynamicModelValueAccessor;
+import net.ulrice.databinding.validation.ValidationError;
 
 /**
  * The element of the list attribute model. It manages the models for all
@@ -31,7 +32,7 @@ public class Element {
     private Map<String, GenericAM<? extends Object>> idModelMap;
 
     /** The value read from the list data. */
-    private Object valueObject;       
+    private Object originalValue;       
 
     /** The event listeners. */
     private EventListenerList listenerList = new EventListenerList();
@@ -58,7 +59,7 @@ public class Element {
         this.uniqueId = uniqueId;
         this.modelList = new ArrayList<GenericAM<? extends Object>>();
         this.idModelMap = new HashMap<String, GenericAM<? extends Object>>();
-        this.valueObject = valueObject;
+        this.originalValue = valueObject;
         this.columns = columns;
         this.readOnly = readOnly;
         
@@ -213,12 +214,26 @@ public class Element {
 
                 Object value = attributeModel.directWrite();
                 Object converted = (attributeModel.getValueConverter() != null ? attributeModel.getValueConverter().viewToModel(value) : value);
-                dataAccessor.setValue(getValueObject(), converted);
+                dataAccessor.setValue(getOriginalValue(), converted);
             }
         }
-        return getValueObject();
+        return getOriginalValue();
     }
+    
+    public Object getCurrentValue() {
+        if (modelList != null) {
+            for (int i = 0; i < modelList.size(); i++) {
+                GenericAM attributeModel = modelList.get(i);
+                IFDynamicModelValueAccessor dataAccessor = columns.get(i).getDataAccessor();
 
+                Object value = attributeModel.getCurrentValue();
+                Object converted = (attributeModel.getValueConverter() != null ? attributeModel.getValueConverter().viewToModel(value) : value);
+                dataAccessor.setValue(getOriginalValue(), converted);
+            }
+        }
+        return getOriginalValue();
+    }
+   
     /**
      * Read the object from the value object 
      */
@@ -233,7 +248,7 @@ public class Element {
                 modelList.add(attributeModel);
                 idModelMap.put(attributeModel.getId(), attributeModel);
 
-                Object value = column.getDataAccessor().getValue(getValueObject());
+                Object value = column.getDataAccessor().getValue(getOriginalValue());
                 Object converted = (column.getValueConverter() != null ? column.getValueConverter().modelToView(value) : value);
         		attributeModel.directRead(converted);
             }
@@ -245,8 +260,8 @@ public class Element {
      * 
      * @return The value object.
      */
-    public Object getValueObject() {
-        return valueObject;
+    public Object getOriginalValue() {
+        return originalValue;
     }
 
     /**
@@ -258,7 +273,7 @@ public class Element {
         return uniqueId;
     }
 
-	public GenericAM getCellAtributeModel(int columnIndex) {
+	protected GenericAM getCellAtributeModel(int columnIndex) {
 		return modelList.get(columnIndex);
 	}
 	
@@ -268,5 +283,29 @@ public class Element {
 	
 	public boolean isValid() {
 		return valid;
+	}
+
+	public List<ValidationError> getValidationErrors() {
+		List<ValidationError> errors = new ArrayList<ValidationError>();
+		if(modelList != null) {
+			for(GenericAM<?> model : modelList) {
+				if(model.getValidationResult() != null) {
+					errors.addAll(model.getValidationResult().getValidationErrors());
+				}
+			}
+		}
+		return errors;
+	}
+
+	public List<String> getValidationFailures() {
+		List<String> errors = new ArrayList<String>();
+		if(modelList != null) {
+			for(GenericAM<?> model : modelList) {
+				if(model.getValidationResult() != null) {
+					errors.addAll(model.getValidationFailures());
+				}
+			}
+		}
+		return errors;
 	}
 }

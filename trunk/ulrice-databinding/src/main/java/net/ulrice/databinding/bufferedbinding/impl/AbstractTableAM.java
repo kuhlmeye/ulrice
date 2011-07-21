@@ -237,29 +237,7 @@ public abstract class AbstractTableAM implements IFBufferedBinding {
 	public int getIndexOfElement(Element element) {
 		return elements.indexOf(element);
 	}
-	
-	@Override
-	public ValidationResult getValidationResult() {
-		// TODO Auto-generated method stub
-		return null;
-	}
 
-	@Override
-	public List<String> getValidationFailures() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-	
-	@Override
-	public Object getOriginalValue() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-	
-	@Override
-	public Object getCurrentValue() {
-		return elements;
-	}
 	
 	public IFValueConverter getValueConverter() {
 		return valueConverter;
@@ -295,5 +273,54 @@ public abstract class AbstractTableAM implements IFBufferedBinding {
 	
 	protected void setValid(boolean valid) {
 		this.valid = valid;
+	}
+	
+	
+	@Override
+	public ValidationResult getValidationResult() {
+		ValidationResult result = new ValidationResult();
+		if(invElements != null) {
+			for(Element element : invElements) {
+				result.addValidationErrors(element.getValidationErrors());
+			}
+		}
+		
+		return result;
+	}
+
+	@Override
+	public List<String> getValidationFailures() {
+		List<String> result = new ArrayList<String>();
+		if(invElements != null) {
+			for(Element element : invElements) {
+				result.addAll(element.getValidationFailures());
+			}
+		}
+		
+		return result;
+	}
+
+
+	
+	@Override
+	public Object getCurrentValue() {
+		List<Object> result = new ArrayList<Object>(elements == null ? 0 : elements.size());
+		
+		for(Element element : elements) {
+			result.add(element.getCurrentValue());
+		}
+		
+		return result;
+	}
+	
+	@Override
+	public Object getOriginalValue() {
+		List<Object> result = new ArrayList<Object>(elements == null ? 0 : elements.size());
+		
+		for(Element element : elements) {
+			result.add(element.getOriginalValue());
+		}
+		
+		return result;
 	}
 }
