@@ -6,8 +6,8 @@ import static org.junit.Assert.assertEquals;
 import java.util.LinkedList;
 import java.util.List;
 
-import net.ulrice.databinding.bufferedbinding.ColumnDefinition;
-import net.ulrice.databinding.bufferedbinding.ListAM;
+import net.ulrice.databinding.bufferedbinding.impl.ColumnDefinition;
+import net.ulrice.databinding.bufferedbinding.impl.ListAM;
 import net.ulrice.databinding.modelaccess.impl.ReflectionMVA;
 
 import org.junit.After;

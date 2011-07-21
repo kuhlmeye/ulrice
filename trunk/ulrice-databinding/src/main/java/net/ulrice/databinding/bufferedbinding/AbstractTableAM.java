@@ -9,6 +9,9 @@ import java.util.Set;
 
 import javax.swing.event.EventListenerList;
 
+import net.ulrice.databinding.bufferedbinding.impl.ColumnDefinition;
+import net.ulrice.databinding.bufferedbinding.impl.Element;
+import net.ulrice.databinding.bufferedbinding.impl.GenericAM;
 import net.ulrice.databinding.converter.IFValueConverter;
 import net.ulrice.databinding.validation.IFValidator;
 import net.ulrice.databinding.validation.ValidationResult;
@@ -164,7 +167,7 @@ public abstract class AbstractTableAM implements IFAttributeModel, IFElementChan
 	}
 
 	/**
-	 * @see net.ulrice.databinding.bufferedbinding.IFElementChangeListener#dataChanged(net.ulrice.databinding.impl.am.Element, java.lang.String, java.lang.String, java.lang.String)
+	 * @see net.ulrice.databinding.bufferedbinding.IFElementChangeListener#dataChanged(net.net.ulrice.databinding.bufferedbinding.impl.Element, java.lang.String, java.lang.String, java.lang.String)
 	 */
 	@Override
 	public void dataChanged(Element element, String columnId, Object newValue, Object oldValue) {
@@ -172,7 +175,7 @@ public abstract class AbstractTableAM implements IFAttributeModel, IFElementChan
 	}
 
 	/**
-	 * @see net.ulrice.databinding.bufferedbinding.IFElementChangeListener#stateChanged(net.ulrice.databinding.impl.am.Element, net.ulrice.databinding.DataState, net.ulrice.databinding.DataState)
+	 * @see net.ulrice.databinding.bufferedbinding.IFElementChangeListener#stateChanged(net.net.ulrice.databinding.bufferedbinding.impl.Element, net.ulrice.databinding.DataState, net.ulrice.databinding.DataState)
 	 */
 	@Override
 	public void stateChanged(Element element) {

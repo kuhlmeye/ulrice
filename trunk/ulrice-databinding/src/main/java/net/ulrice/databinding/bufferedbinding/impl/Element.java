@@ -1,4 +1,4 @@
-package net.ulrice.databinding.bufferedbinding;
+package net.ulrice.databinding.bufferedbinding.impl;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -7,6 +7,8 @@ import java.util.Map;
 
 import javax.swing.event.EventListenerList;
 
+import net.ulrice.databinding.bufferedbinding.IFAttributeModel;
+import net.ulrice.databinding.bufferedbinding.IFElementChangeListener;
 import net.ulrice.databinding.modelaccess.IFDynamicModelValueAccessor;
 
 /**

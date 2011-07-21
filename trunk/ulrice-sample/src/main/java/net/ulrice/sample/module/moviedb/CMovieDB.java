@@ -9,7 +9,7 @@ import java.util.TimerTask;
 import javax.swing.SwingUtilities;
 import javax.swing.Timer;
 
-import net.ulrice.databinding.bufferedbinding.DataGroup;
+import net.ulrice.databinding.bufferedbinding.impl.DataGroup;
 import net.ulrice.module.IFModel;
 import net.ulrice.module.IFView;
 import net.ulrice.module.impl.AbstractController;
