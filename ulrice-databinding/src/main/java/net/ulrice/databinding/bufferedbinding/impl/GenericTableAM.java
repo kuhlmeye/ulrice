@@ -14,14 +14,14 @@ public class GenericTableAM extends AbstractTableAM  {
 	
 	private IFModelValueAccessor numRowsMVA;
 	
-	public GenericTableAM(String id, IFIndexedModelValueAccessor tableMVA, IFModelValueAccessor numRowsMVA, boolean readOnly) {
-		super(id, readOnly);
+	public GenericTableAM(IFIndexedModelValueAccessor tableMVA, IFModelValueAccessor numRowsMVA, boolean readOnly) {
+		super(tableMVA.getAttributeId(), readOnly);
 		this.tableMVA = tableMVA;
 		this.numRowsMVA = numRowsMVA;
 	}
 	
-	public GenericTableAM(String id, IFIndexedModelValueAccessor tableMVA, IFModelValueAccessor numRowsMVA) {
-		this(id, tableMVA, numRowsMVA, false);
+	public GenericTableAM(IFIndexedModelValueAccessor tableMVA, IFModelValueAccessor numRowsMVA) {
+		this(tableMVA, numRowsMVA, false);
 	}
 
 	/**

@@ -14,4 +14,7 @@ public interface IFDynamicModelValueAccessor {
 	
 	
 	void setValue(Object root, Object value);
+	
+
+    String getAttributeId();
 }

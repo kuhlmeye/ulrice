@@ -13,14 +13,14 @@ import net.ulrice.databinding.modelaccess.IFModelValueAccessor;
 public class ListAM extends AbstractTableAM implements IFBufferedBinding  {
 
 	private IFModelValueAccessor dataAccessor;
-	public ListAM(String id, IFModelValueAccessor dataAccessor, boolean readOnly) {
-		super(id, readOnly);
+	public ListAM(IFModelValueAccessor dataAccessor, boolean readOnly) {
+		super(dataAccessor.getAttributeId(), readOnly);
 		this.dataAccessor = dataAccessor;
 	}
 
 	
-	public ListAM(String id, IFModelValueAccessor dataAccessor) {
-		this(id, dataAccessor, false);
+	public ListAM(IFModelValueAccessor dataAccessor) {
+		this(dataAccessor, false);
 	}
 
 	/**

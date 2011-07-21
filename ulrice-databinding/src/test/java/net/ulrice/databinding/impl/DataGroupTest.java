@@ -39,10 +39,10 @@ public class DataGroupTest {
     @SuppressWarnings("unchecked")
     @Before
     public void setUp() throws Exception {
-        stringAAM = new GenericAM<String>("stringA", new ReflectionMVA(this, "stringA"));
-        stringBAM = new GenericAM<String>("stringB", new ReflectionMVA(this, "stringB"));
-        intAAM = new GenericAM<Integer>("intA", new ReflectionMVA(this, "intA"));
-        intBAM = new GenericAM<Integer>("intB", new ReflectionMVA(this, "intB"));
+        stringAAM = new GenericAM<String>(new ReflectionMVA(this, "stringA"));
+        stringBAM = new GenericAM<String>(new ReflectionMVA(this, "stringB"));
+        intAAM = new GenericAM<Integer>(new ReflectionMVA(this, "intA"));
+        intBAM = new GenericAM<Integer>(new ReflectionMVA(this, "intB"));
 
         dataGroup = new DataGroup();
         dataGroup.addAM(stringAAM);

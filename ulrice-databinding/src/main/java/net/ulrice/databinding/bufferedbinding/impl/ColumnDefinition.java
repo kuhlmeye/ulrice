@@ -18,8 +18,8 @@ public class ColumnDefinition<T extends Object> {
     private IFValidator validator;
     private boolean readOnly = false;
 
-    public ColumnDefinition(String id, IFDynamicModelValueAccessor dataAccessor, Class<T> columnClass) {
-        this.id = id;
+    public ColumnDefinition(IFDynamicModelValueAccessor dataAccessor, Class<T> columnClass) {
+        this.id = dataAccessor.getAttributeId();
         this.dataAccessor = dataAccessor;
         this.columnClass = columnClass;
         
@@ -29,8 +29,8 @@ public class ColumnDefinition<T extends Object> {
         }
     }
     
-    public ColumnDefinition(String id, IFDynamicModelValueAccessor dataAccessor, Class<T> columnClass, FilterMode filterMode) {
-        this.id = id;
+    public ColumnDefinition(IFDynamicModelValueAccessor dataAccessor, Class<T> columnClass, FilterMode filterMode) {
+        this.id = dataAccessor.getAttributeId();
         this.dataAccessor = dataAccessor;
         this.columnClass = columnClass;
         this.filterMode = filterMode;

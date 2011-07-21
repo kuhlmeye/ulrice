@@ -333,7 +333,7 @@ public class JTableViewAdapter extends AbstractViewAdapter implements TableModel
 
 
 	public void sizeColumns() {
-		for(int i = 0; i < 4; i++) {
+		for(int i = 0; i < table.getColumnCount(); i++) {
 			tableHeader.setResizingColumn(table.getColumnModel().getColumn(i));
 			table.doLayout();
 			table.revalidate();

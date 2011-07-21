@@ -8,6 +8,7 @@ import java.util.List;
 
 import net.ulrice.databinding.bufferedbinding.impl.ColumnDefinition;
 import net.ulrice.databinding.bufferedbinding.impl.ListAM;
+import net.ulrice.databinding.modelaccess.impl.DynamicReflectionMVA;
 import net.ulrice.databinding.modelaccess.impl.ReflectionMVA;
 
 import org.junit.After;
@@ -30,9 +31,9 @@ public class ListAMTest {
 	 */
 	@Before
 	public void setUp() throws Exception {
-		listAM = new ListAM("PersonList", new ReflectionMVA(this, "list"));
-		listAM.addColumn(new ColumnDefinition<String>("name", new ReflectionMVA(null, "name"), String.class));
-		listAM.addColumn(new ColumnDefinition<Integer>("age", new ReflectionMVA(null, "age"), Integer.class));
+		listAM = new ListAM(new ReflectionMVA(this, "list"));
+		listAM.addColumn(new ColumnDefinition<String>(new DynamicReflectionMVA(Person.class, "name"), String.class));
+		listAM.addColumn(new ColumnDefinition<Integer>(new DynamicReflectionMVA(Person.class, "age"), Integer.class));
 		list = new LinkedList<Person>();
 
 		Person a = new Person();

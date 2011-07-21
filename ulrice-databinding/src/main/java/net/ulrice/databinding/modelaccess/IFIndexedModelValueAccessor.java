@@ -7,4 +7,6 @@ public interface IFIndexedModelValueAccessor {
     
     boolean isReadOnly ();
     Class<?> getModelType ();
+    
+    String getAttributeId();
 }
