@@ -6,7 +6,7 @@ package net.ulrice.sample.module.databinding;
 import java.util.ArrayList;
 import java.util.List;
 
-import net.ulrice.databinding.bufferedbinding.AbstractTableAM;
+import net.ulrice.databinding.bufferedbinding.impl.AbstractTableAM;
 import net.ulrice.databinding.bufferedbinding.impl.ColumnDefinition;
 import net.ulrice.databinding.bufferedbinding.impl.GenericAM;
 import net.ulrice.databinding.bufferedbinding.impl.ListAM;

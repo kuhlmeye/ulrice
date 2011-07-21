@@ -1,4 +1,4 @@
-package net.ulrice.databinding.bufferedbinding;
+package net.ulrice.databinding.bufferedbinding.impl;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -9,15 +9,14 @@ import java.util.Set;
 
 import javax.swing.event.EventListenerList;
 
-import net.ulrice.databinding.bufferedbinding.impl.ColumnDefinition;
-import net.ulrice.databinding.bufferedbinding.impl.Element;
-import net.ulrice.databinding.bufferedbinding.impl.GenericAM;
+import net.ulrice.databinding.bufferedbinding.IFAttributeModel;
+import net.ulrice.databinding.bufferedbinding.IFAttributeModelEventListener;
 import net.ulrice.databinding.converter.IFValueConverter;
 import net.ulrice.databinding.validation.IFValidator;
 import net.ulrice.databinding.validation.ValidationResult;
 import net.ulrice.databinding.viewadapter.IFViewAdapter;
 
-public abstract class AbstractTableAM implements IFAttributeModel, IFElementChangeListener {
+public abstract class AbstractTableAM implements IFAttributeModel {
 
 	protected List<Element> elements = new ArrayList<Element>();
 	protected Map<String, Element> elementIdMap = new HashMap<String, Element>();
@@ -68,8 +67,7 @@ public abstract class AbstractTableAM implements IFAttributeModel, IFElementChan
 	 */
 	protected Element createElement(Object value) {
 		String uniqueId = Long.toHexString(nextUniqueId++);
-		Element elem = new Element(uniqueId, columns, value, isReadOnly());
-		elem.addElementChangeListener(this);
+		Element elem = new Element(this, uniqueId, columns, value, isReadOnly());
 		return elem;
 	}
 
@@ -169,16 +167,14 @@ public abstract class AbstractTableAM implements IFAttributeModel, IFElementChan
 	/**
 	 * @see net.ulrice.databinding.bufferedbinding.IFElementChangeListener#dataChanged(net.net.ulrice.databinding.bufferedbinding.impl.Element, java.lang.String, java.lang.String, java.lang.String)
 	 */
-	@Override
-	public void dataChanged(Element element, String columnId, Object newValue, Object oldValue) {
+	protected void dataChanged(Element element, String columnId, Object newValue, Object oldValue) {
 	    fireUpdateViews();
 	}
 
 	/**
 	 * @see net.ulrice.databinding.bufferedbinding.IFElementChangeListener#stateChanged(net.net.ulrice.databinding.bufferedbinding.impl.Element, net.ulrice.databinding.DataState, net.ulrice.databinding.DataState)
 	 */
-	@Override
-	public void stateChanged(Element element) {
+	protected void stateChanged(Element element) {
 		if(element.isValid()) {
 			invElements.remove(element);
 		} else {
