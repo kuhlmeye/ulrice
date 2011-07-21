@@ -47,15 +47,14 @@ public class GenericTableAM extends AbstractTableAM  {
 	 * @see net.ulrice.databinding.bufferedbinding.IFAttributeModel#write()
 	 */
 	@Override
-	public void write() {
-		
+	public void write() {		
 		int numRows = elements.size();
 		numRowsMVA.setValue(numRows);
 		
 		for(int i = 0; i < numRows; i++) {
 			Element elem = elements.get(i);
 			elem.writeObject();
-			tableMVA.setValue(i, elem.getValueObject());
+			tableMVA.setValue(i, elem.getOriginalValue());
 		}
 	}
 
