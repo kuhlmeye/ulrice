@@ -8,7 +8,6 @@ import java.util.Map;
 import javax.swing.event.EventListenerList;
 
 import net.ulrice.databinding.bufferedbinding.IFAttributeModel;
-import net.ulrice.databinding.bufferedbinding.IFElementChangeListener;
 import net.ulrice.databinding.modelaccess.IFDynamicModelValueAccessor;
 
 /**
@@ -42,16 +41,20 @@ public class Element {
 
     private boolean dirty;
     private boolean valid;
+
+	private AbstractTableAM tableAM;
     
     /**
      * Creates a new element.
+     * @param tableAM 
      * 
      * @param uniqueId The unique identifier.
      * @param columns The list of column definitions
      * @param valueObject The value.
      * @param editable True, if this element should be readonly.
      */
-    public Element(String uniqueId, List<ColumnDefinition<? extends Object>> columns, Object valueObject, boolean readOnly) {
+    public Element(AbstractTableAM tableAM, String uniqueId, List<ColumnDefinition<? extends Object>> columns, Object valueObject, boolean readOnly) {
+    	this.tableAM = tableAM;
         this.uniqueId = uniqueId;
         this.modelList = new ArrayList<GenericAM<? extends Object>>();
         this.idModelMap = new HashMap<String, GenericAM<? extends Object>>();
@@ -63,24 +66,6 @@ public class Element {
         this.valid = true;
         
         readObject();
-    }
-
-    /**
-     * Adds an element change listener
-     * 
-     * @param listener The listener to be added to this element.
-     */
-    public void addElementChangeListener(IFElementChangeListener listener) {
-        listenerList.add(IFElementChangeListener.class, listener);
-    }
-
-    /**
-     * Removes an element change listener
-     * 
-     * @param listener The listener to be removed from this element.
-     */
-    public void removeElementChangeListener(IFElementChangeListener listener) {
-        listenerList.remove(IFElementChangeListener.class, listener);
     }
 
     /**
@@ -201,11 +186,7 @@ public class Element {
      * @param oldState The old state
      */
     private void fireStateChanged() {
-        if (listenerList != null) {
-            for (IFElementChangeListener listener : listenerList.getListeners(IFElementChangeListener.class)) {
-                listener.stateChanged(this);
-            }
-        }
+    	tableAM.stateChanged(this);
     }
 
 
@@ -216,11 +197,7 @@ public class Element {
      * @param oldValue 
      */
     private void fireValueChanged(String columnId, Object newValue, Object oldValue) {
-        if (listenerList != null) {
-            for (IFElementChangeListener listener : listenerList.getListeners(IFElementChangeListener.class)) {
-                listener.dataChanged(this, columnId, newValue, oldValue);
-            }
-        }
+    	tableAM.dataChanged(this, columnId, newValue, oldValue);
     }
     /**
      * Write the object managed by the element in the value object.

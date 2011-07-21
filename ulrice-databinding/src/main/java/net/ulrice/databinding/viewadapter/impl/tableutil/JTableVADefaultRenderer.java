@@ -10,7 +10,7 @@ import javax.swing.JComponent;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableCellRenderer;
 
-import net.ulrice.databinding.bufferedbinding.AbstractTableAM;
+import net.ulrice.databinding.bufferedbinding.impl.AbstractTableAM;
 import net.ulrice.databinding.bufferedbinding.impl.ColumnDefinition;
 import net.ulrice.databinding.bufferedbinding.impl.GenericAM;
 import net.ulrice.databinding.ui.BindingUI;

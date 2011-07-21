@@ -3,7 +3,6 @@ package net.ulrice.databinding.bufferedbinding.impl;
 import java.util.ArrayList;
 import java.util.List;
 
-import net.ulrice.databinding.bufferedbinding.AbstractTableAM;
 import net.ulrice.databinding.bufferedbinding.IFAttributeModel;
 import net.ulrice.databinding.bufferedbinding.IFExtdAttributeModel;
 import net.ulrice.databinding.modelaccess.IFModelValueAccessor;
