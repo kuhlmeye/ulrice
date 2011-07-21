@@ -3,15 +3,11 @@
  */
 package net.ulrice.databinding.viewadapter.impl;
 
-import javax.swing.JComponent;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.text.JTextComponent;
 
-import net.ulrice.databinding.IFBinding;
 import net.ulrice.databinding.viewadapter.AbstractViewAdapter;
-import net.ulrice.databinding.viewadapter.IFStateMarker;
-import net.ulrice.databinding.viewadapter.IFTooltipHandler;
 
 /**
  * Gui accessor for text fields.

@@ -2,7 +2,6 @@ package net.ulrice.databinding.viewadapter.impl;
 
 import java.util.List;
 
-import javax.swing.JComponent;
 import javax.swing.JList;
 import javax.swing.ListModel;
 import javax.swing.event.EventListenerList;

@@ -1,7 +1,6 @@
 package net.ulrice.databinding.impl;
 
 import static org.junit.Assert.assertEquals;
-import net.ulrice.databinding.bufferedbinding.IFExtdAttributeModel;
 import net.ulrice.databinding.bufferedbinding.impl.DataGroup;
 import net.ulrice.databinding.bufferedbinding.impl.GenericAM;
 import net.ulrice.databinding.modelaccess.impl.ReflectionMVA;
@@ -70,10 +69,10 @@ public class DataGroupTest {
     public void read() {
         dataGroup.read();
 
-        assertEquals("StringA", ((IFExtdAttributeModel<String>)dataGroup.getAttributeModel("stringA")).getCurrentValue());
-        assertEquals("StringB", ((IFExtdAttributeModel<String>)dataGroup.getAttributeModel("stringB")).getCurrentValue());
-        assertEquals((Integer)1, ((IFExtdAttributeModel<Integer>)dataGroup.getAttributeModel("intA")).getCurrentValue());
-        assertEquals((Integer)2, ((IFExtdAttributeModel<Integer>)dataGroup.getAttributeModel("intB")).getCurrentValue());
+        assertEquals("StringA", ((GenericAM<String>)dataGroup.getAttributeModel("stringA")).getCurrentValue());
+        assertEquals("StringB", ((GenericAM<String>)dataGroup.getAttributeModel("stringB")).getCurrentValue());
+        assertEquals((Integer)1, ((GenericAM<Integer>)dataGroup.getAttributeModel("intA")).getCurrentValue());
+        assertEquals((Integer)2, ((GenericAM<Integer>)dataGroup.getAttributeModel("intB")).getCurrentValue());
     }
 
     /**
@@ -103,22 +102,22 @@ public class DataGroupTest {
     	Assert.assertEquals(false, dataGroup.isDirty());
     	Assert.assertEquals(true, dataGroup.isValid());
     	
-        ((IFExtdAttributeModel<String>)dataGroup.getAttributeModel("stringA")).setCurrentValue("Changed");
+        ((GenericAM<String>)dataGroup.getAttributeModel("stringA")).setCurrentValue("Changed");
     	Assert.assertEquals(true, dataGroup.isInitialized());
     	Assert.assertEquals(true, dataGroup.isDirty());
     	Assert.assertEquals(true, dataGroup.isValid());
 
-        ((IFExtdAttributeModel<String>)dataGroup.getAttributeModel("stringA")).setCurrentValue("StringA");
+        ((GenericAM<String>)dataGroup.getAttributeModel("stringA")).setCurrentValue("StringA");
     	Assert.assertEquals(true, dataGroup.isInitialized());
     	Assert.assertEquals(false, dataGroup.isDirty());
     	Assert.assertEquals(true, dataGroup.isValid());
 
-    	((IFExtdAttributeModel<String>)dataGroup.getAttributeModel("stringB")).setCurrentValue("Changed");
+    	((GenericAM<String>)dataGroup.getAttributeModel("stringB")).setCurrentValue("Changed");
     	Assert.assertEquals(true, dataGroup.isInitialized());
     	Assert.assertEquals(true, dataGroup.isDirty());
     	Assert.assertEquals(false, dataGroup.isValid());
 
-    	((IFExtdAttributeModel<String>)dataGroup.getAttributeModel("stringB")).setCurrentValue("StringB");
+    	((GenericAM<String>)dataGroup.getAttributeModel("stringB")).setCurrentValue("StringB");
     	Assert.assertEquals(true, dataGroup.isInitialized());
     	Assert.assertEquals(false, dataGroup.isDirty());
     	Assert.assertEquals(true, dataGroup.isValid());

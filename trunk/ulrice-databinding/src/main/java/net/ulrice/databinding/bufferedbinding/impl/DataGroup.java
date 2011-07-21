@@ -7,8 +7,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import net.ulrice.databinding.bufferedbinding.IFAttributeModel;
-import net.ulrice.databinding.bufferedbinding.IFAttributeModelEventListener;
+import net.ulrice.databinding.bufferedbinding.IFBufferedBinding;
+import net.ulrice.databinding.bufferedbinding.IFBufferedBindingEventListener;
 import net.ulrice.databinding.bufferedbinding.IFDataGroup;
 import net.ulrice.databinding.viewadapter.IFViewAdapter;
 
@@ -18,13 +18,13 @@ import net.ulrice.databinding.viewadapter.IFViewAdapter;
  * @author christof
  */
 @SuppressWarnings("unchecked")
-public class DataGroup implements IFDataGroup, IFAttributeModelEventListener {
+public class DataGroup implements IFDataGroup, IFBufferedBindingEventListener {
 
     /** The list of all gui accessors contained in this data group. */
     private Map<String, List<IFViewAdapter>> vaMap = new HashMap<String, List<IFViewAdapter>>();
 
     /** The list of all attribute models contained in this data group. */
-    private Map<String, IFAttributeModel> amMap = new HashMap<String, IFAttributeModel>();
+    private Map<String, IFBufferedBinding> amMap = new HashMap<String, IFBufferedBinding>();
 
     /** The set of all changed attribute models. */
     private Set<String> changedSet = new HashSet<String>();
@@ -46,7 +46,7 @@ public class DataGroup implements IFDataGroup, IFAttributeModelEventListener {
      * 
      * @param am The attribute model.
      */
-    public void addAM(IFAttributeModel<?> am) {
+    public void addAM(IFBufferedBinding<?> am) {
         if (am == null) {
             throw new IllegalArgumentException("Could not add null attribute model.");
         }
@@ -80,7 +80,7 @@ public class DataGroup implements IFDataGroup, IFAttributeModelEventListener {
             throw new IllegalStateException("Id of an attribute model must not be null.");
         }
 
-        IFAttributeModel am = amMap.get(id);
+        IFBufferedBinding am = amMap.get(id);
         if (am != null) {
         	am.addViewAdapter(va);
         }
@@ -101,7 +101,7 @@ public class DataGroup implements IFDataGroup, IFAttributeModelEventListener {
             initialized = true;
             valid = true;
             dirty = false;
-            for (IFAttributeModel<?> am : amMap.values()) {
+            for (IFBufferedBinding<?> am : amMap.values()) {
                 am.read();
             }
         }
@@ -112,19 +112,19 @@ public class DataGroup implements IFDataGroup, IFAttributeModelEventListener {
      */
     public void write() {
         if (amMap != null && !amMap.isEmpty()) {
-            for (IFAttributeModel<?> am : amMap.values()) {
+            for (IFBufferedBinding<?> am : amMap.values()) {
                 am.write();
             }
         }
     }
 
     /**
-     * @see net.ulrice.databinding.bufferedbinding.IFAttributeModelEventListener#stateChanged(net.ulrice.databinding.IFGuiAccessor,
+     * @see net.ulrice.databinding.bufferedbinding.IFBufferedBindingEventListener#stateChanged(net.ulrice.databinding.IFGuiAccessor,
      *      net.ulrice.databinding.bufferedbinding.IFAttributeModel,
      *      net.ulrice.databinding.DataState, net.ulrice.databinding.DataState)
      */
     @Override
-    public void stateChanged(IFViewAdapter gaSource, IFAttributeModel amSource) {
+    public void stateChanged(IFViewAdapter gaSource, IFBufferedBinding amSource) {
         String id = amSource.getId();
         changedSet.remove(id);
         invalidSet.remove(id);
@@ -142,12 +142,12 @@ public class DataGroup implements IFDataGroup, IFAttributeModelEventListener {
     }
 
     /**
-     * @see net.ulrice.databinding.bufferedbinding.IFAttributeModelEventListener#dataChanged(net.ulrice.databinding.IFGuiAccessor,
+     * @see net.ulrice.databinding.bufferedbinding.IFBufferedBindingEventListener#dataChanged(net.ulrice.databinding.IFGuiAccessor,
      *      net.ulrice.databinding.bufferedbinding.IFAttributeModel, java.lang.Object,
      *      java.lang.Object, net.ulrice.databinding.DataState)
      */
     @Override
-    public void dataChanged(IFViewAdapter gaSource, IFAttributeModel amSource) {
+    public void dataChanged(IFViewAdapter gaSource, IFBufferedBinding amSource) {
         // Ignore these events.
     }
 
@@ -200,8 +200,8 @@ public class DataGroup implements IFDataGroup, IFAttributeModelEventListener {
      * 
      * @return The list of all attribute models.
      */
-    public List<IFAttributeModel> getAttributeModels() {
-        List<IFAttributeModel> result = new LinkedList<IFAttributeModel>();
+    public List<IFBufferedBinding> getAttributeModels() {
+        List<IFBufferedBinding> result = new LinkedList<IFBufferedBinding>();
         if (amMap != null && !amMap.isEmpty()) {
             result.addAll(amMap.values());
         }
@@ -214,7 +214,7 @@ public class DataGroup implements IFDataGroup, IFAttributeModelEventListener {
      * @param id The identifier.
      * @return The attribute model.
      */
-    public IFAttributeModel getAttributeModel(String id) {
+    public IFBufferedBinding getAttributeModel(String id) {
         return amMap != null ? amMap.get(id) : null;
     }
     

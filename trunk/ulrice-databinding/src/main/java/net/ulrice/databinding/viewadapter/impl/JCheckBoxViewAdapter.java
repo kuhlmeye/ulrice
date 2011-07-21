@@ -2,12 +2,9 @@ package net.ulrice.databinding.viewadapter.impl;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.List;
 
 import javax.swing.JCheckBox;
-import javax.swing.JComponent;
 
-import net.ulrice.databinding.IFBinding;
 import net.ulrice.databinding.viewadapter.AbstractViewAdapter;
 
 

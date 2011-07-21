@@ -1,11 +1,9 @@
 package net.ulrice.databinding.viewadapter.impl;
 
-import javax.swing.JComponent;
 import javax.swing.JSlider;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
-import net.ulrice.databinding.IFBinding;
 import net.ulrice.databinding.viewadapter.AbstractViewAdapter;
 
 /**
