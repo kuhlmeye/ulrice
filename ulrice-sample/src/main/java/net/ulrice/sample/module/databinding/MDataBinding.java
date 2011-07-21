@@ -7,9 +7,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import net.ulrice.databinding.bufferedbinding.AbstractTableAM;
-import net.ulrice.databinding.bufferedbinding.ColumnDefinition;
-import net.ulrice.databinding.bufferedbinding.GenericAM;
-import net.ulrice.databinding.bufferedbinding.ListAM;
+import net.ulrice.databinding.bufferedbinding.impl.ColumnDefinition;
+import net.ulrice.databinding.bufferedbinding.impl.GenericAM;
+import net.ulrice.databinding.bufferedbinding.impl.ListAM;
 import net.ulrice.databinding.modelaccess.impl.ReflectionMVA;
 import net.ulrice.databinding.validation.impl.RegExValidator;
 import net.ulrice.module.IFModel;

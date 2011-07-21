@@ -1,5 +1,7 @@
-package net.ulrice.databinding.bufferedbinding;
+package net.ulrice.databinding.bufferedbinding.impl;
 
+import net.ulrice.databinding.bufferedbinding.AbstractTableAM;
+import net.ulrice.databinding.bufferedbinding.IFAttributeModel;
 import net.ulrice.databinding.modelaccess.IFIndexedModelValueAccessor;
 import net.ulrice.databinding.modelaccess.IFModelValueAccessor;
 

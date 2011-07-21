@@ -1,4 +1,4 @@
-package net.ulrice.databinding.bufferedbinding;
+package net.ulrice.databinding.bufferedbinding.impl;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -6,6 +6,9 @@ import java.util.List;
 import javax.swing.event.EventListenerList;
 
 import net.ulrice.databinding.IFBinding;
+import net.ulrice.databinding.bufferedbinding.IFAttributeModel;
+import net.ulrice.databinding.bufferedbinding.IFAttributeModelEventListener;
+import net.ulrice.databinding.bufferedbinding.IFExtdAttributeModel;
 import net.ulrice.databinding.converter.IFValueConverter;
 import net.ulrice.databinding.modelaccess.IFModelValueAccessor;
 import net.ulrice.databinding.validation.IFValidator;

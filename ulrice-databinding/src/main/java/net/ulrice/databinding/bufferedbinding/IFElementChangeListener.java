@@ -5,6 +5,8 @@ package net.ulrice.databinding.bufferedbinding;
 
 import java.util.EventListener;
 
+import net.ulrice.databinding.bufferedbinding.impl.Element;
+
 /**
  * @author christof
  *

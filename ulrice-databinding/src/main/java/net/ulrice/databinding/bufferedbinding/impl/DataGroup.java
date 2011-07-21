@@ -1,4 +1,4 @@
-package net.ulrice.databinding.bufferedbinding;
+package net.ulrice.databinding.bufferedbinding.impl;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -7,6 +7,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import net.ulrice.databinding.bufferedbinding.IFAttributeModel;
+import net.ulrice.databinding.bufferedbinding.IFAttributeModelEventListener;
+import net.ulrice.databinding.bufferedbinding.IFDataGroup;
 import net.ulrice.databinding.viewadapter.IFViewAdapter;
 
 /**

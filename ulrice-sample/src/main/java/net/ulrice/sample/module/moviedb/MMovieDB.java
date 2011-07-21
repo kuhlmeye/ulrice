@@ -2,8 +2,8 @@ package net.ulrice.sample.module.moviedb;
 
 import java.util.List;
 
-import net.ulrice.databinding.bufferedbinding.ColumnDefinition;
-import net.ulrice.databinding.bufferedbinding.ListAM;
+import net.ulrice.databinding.bufferedbinding.impl.ColumnDefinition;
+import net.ulrice.databinding.bufferedbinding.impl.ListAM;
 import net.ulrice.databinding.modelaccess.impl.ReflectionMVA;
 import net.ulrice.databinding.validation.impl.StringLengthValidator;
 import net.ulrice.module.IFModel;

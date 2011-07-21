@@ -1,7 +1,7 @@
 /**
  * 
  */
-package net.ulrice.databinding.bufferedbinding;
+package net.ulrice.databinding.bufferedbinding.impl;
 
 /**
  * @author christof

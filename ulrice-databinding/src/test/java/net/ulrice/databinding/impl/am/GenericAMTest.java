@@ -6,11 +6,11 @@ import static org.junit.Assert.assertEquals;
 import java.util.LinkedList;
 import java.util.List;
 
-import net.ulrice.databinding.bufferedbinding.ColumnDefinition;
-import net.ulrice.databinding.bufferedbinding.DataGroup;
-import net.ulrice.databinding.bufferedbinding.GenericAM;
 import net.ulrice.databinding.bufferedbinding.IFExtdAttributeModel;
-import net.ulrice.databinding.bufferedbinding.ListAM;
+import net.ulrice.databinding.bufferedbinding.impl.ColumnDefinition;
+import net.ulrice.databinding.bufferedbinding.impl.DataGroup;
+import net.ulrice.databinding.bufferedbinding.impl.GenericAM;
+import net.ulrice.databinding.bufferedbinding.impl.ListAM;
 import net.ulrice.databinding.modelaccess.impl.ReflectionMVA;
 import net.ulrice.databinding.validation.impl.RegExValidator;
 
