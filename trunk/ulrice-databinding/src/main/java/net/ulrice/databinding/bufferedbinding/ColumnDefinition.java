@@ -1,7 +1,7 @@
 package net.ulrice.databinding.bufferedbinding;
 
 import net.ulrice.databinding.converter.IFValueConverter;
-import net.ulrice.databinding.modelaccess.IFDynDataAccessor;
+import net.ulrice.databinding.modelaccess.IFDynamicModelValueAccessor;
 import net.ulrice.databinding.validation.IFValidator;
 
 /**
@@ -11,14 +11,14 @@ import net.ulrice.databinding.validation.IFValidator;
 public class ColumnDefinition<T extends Object> {
 
     private String id;
-    private IFDynDataAccessor dataAccessor;
+    private IFDynamicModelValueAccessor dataAccessor;
     private Class<T> columnClass;
     private FilterMode filterMode;
     private IFValueConverter valueConverter;
     private IFValidator validator;
     private boolean readOnly = false;
 
-    public ColumnDefinition(String id, IFDynDataAccessor dataAccessor, Class<T> columnClass) {
+    public ColumnDefinition(String id, IFDynamicModelValueAccessor dataAccessor, Class<T> columnClass) {
         this.id = id;
         this.dataAccessor = dataAccessor;
         this.columnClass = columnClass;
@@ -29,7 +29,7 @@ public class ColumnDefinition<T extends Object> {
         }
     }
     
-    public ColumnDefinition(String id, IFDynDataAccessor dataAccessor, Class<T> columnClass, FilterMode filterMode) {
+    public ColumnDefinition(String id, IFDynamicModelValueAccessor dataAccessor, Class<T> columnClass, FilterMode filterMode) {
         this.id = id;
         this.dataAccessor = dataAccessor;
         this.columnClass = columnClass;
@@ -65,14 +65,14 @@ public class ColumnDefinition<T extends Object> {
     /**
      * @return the dataAccessor
      */
-    public IFDynDataAccessor getDataAccessor() {
+    public IFDynamicModelValueAccessor getDataAccessor() {
         return dataAccessor;
     }
 
     /**
      * @param dataAccessor the dataAccessor to set
      */
-    public void setDataAccessor(IFDynDataAccessor dataAccessor) {
+    public void setDataAccessor(IFDynamicModelValueAccessor dataAccessor) {
         this.dataAccessor = dataAccessor;
     }
 

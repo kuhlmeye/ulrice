@@ -6,7 +6,7 @@ import java.security.PrivilegedAction;
 import java.util.Arrays;
 import java.util.List;
 
-import net.ulrice.databinding.modelaccess.IFDynDataAccessor;
+import net.ulrice.databinding.modelaccess.IFDynamicModelValueAccessor;
 import net.ulrice.databinding.modelaccess.IFIndexedModelValueAccessor;
 import net.ulrice.databinding.modelaccess.IFModelValueAccessor;
 
@@ -15,7 +15,7 @@ import net.ulrice.databinding.modelaccess.IFModelValueAccessor;
  * 
  * @author christof
  */
-public class ReflectionMVA implements IFModelValueAccessor, IFIndexedModelValueAccessor, IFDynDataAccessor {
+public class ReflectionMVA implements IFModelValueAccessor, IFIndexedModelValueAccessor, IFDynamicModelValueAccessor {
 
 	private Object rootObject;
 
