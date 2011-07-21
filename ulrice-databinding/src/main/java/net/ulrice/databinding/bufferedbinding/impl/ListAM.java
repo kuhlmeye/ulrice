@@ -3,15 +3,14 @@ package net.ulrice.databinding.bufferedbinding.impl;
 import java.util.ArrayList;
 import java.util.List;
 
-import net.ulrice.databinding.bufferedbinding.IFAttributeModel;
-import net.ulrice.databinding.bufferedbinding.IFExtdAttributeModel;
+import net.ulrice.databinding.bufferedbinding.IFBufferedBinding;
 import net.ulrice.databinding.modelaccess.IFModelValueAccessor;
 
 /**
  * @author christof
  * 
  */
-public class ListAM extends AbstractTableAM implements IFExtdAttributeModel  {
+public class ListAM extends AbstractTableAM implements IFBufferedBinding  {
 
 	private IFModelValueAccessor dataAccessor;
 	public ListAM(String id, IFModelValueAccessor dataAccessor, boolean readOnly) {
