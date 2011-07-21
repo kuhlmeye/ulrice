@@ -7,7 +7,7 @@ package net.ulrice.databinding.modelaccess;
  * @author christof
  *
  */
-public interface IFDynDataAccessor {
+public interface IFDynamicModelValueAccessor {
 	
 
 	Object getValue(Object root);

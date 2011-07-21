@@ -7,7 +7,7 @@ import java.util.Map;
 
 import javax.swing.event.EventListenerList;
 
-import net.ulrice.databinding.modelaccess.IFDynDataAccessor;
+import net.ulrice.databinding.modelaccess.IFDynamicModelValueAccessor;
 
 /**
  * The element of the list attribute model. It manages the models for all
@@ -230,7 +230,7 @@ public class Element {
         if (modelList != null) {
             for (int i = 0; i < modelList.size(); i++) {
                 GenericAM attributeModel = modelList.get(i);
-                IFDynDataAccessor dataAccessor = columns.get(i).getDataAccessor();
+                IFDynamicModelValueAccessor dataAccessor = columns.get(i).getDataAccessor();
 
                 Object value = attributeModel.directWrite();
                 Object converted = (attributeModel.getValueConverter() != null ? attributeModel.getValueConverter().viewToModel(value) : value);
