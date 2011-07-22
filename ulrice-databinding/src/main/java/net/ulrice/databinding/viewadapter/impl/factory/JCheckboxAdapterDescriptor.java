@@ -4,6 +4,8 @@ import javax.swing.JCheckBox;
 
 import net.ulrice.databinding.viewadapter.IFViewAdapter;
 import net.ulrice.databinding.viewadapter.IFViewAdapterDescriptor;
+import net.ulrice.databinding.viewadapter.impl.BorderStateMarker;
+import net.ulrice.databinding.viewadapter.impl.DetailedTooltipHandler;
 import net.ulrice.databinding.viewadapter.impl.JCheckBoxViewAdapter;
 
 
@@ -14,6 +16,17 @@ public class JCheckboxAdapterDescriptor implements IFViewAdapterDescriptor {
     }
 
     public IFViewAdapter createInstance (Object widget) {
-        return new JCheckBoxViewAdapter ((JCheckBox) widget);
+        JCheckBox checkBox = (JCheckBox) widget;
+        JCheckBoxViewAdapter viewAdapter = new JCheckBoxViewAdapter(checkBox);
+
+        DetailedTooltipHandler tooltipHandler = new DetailedTooltipHandler();
+        BorderStateMarker stateMarker = new BorderStateMarker();
+    	
+		viewAdapter.setTooltipHandler(tooltipHandler);
+		viewAdapter.setStateMarker(stateMarker);
+		
+		checkBox.setBorder(stateMarker);
+		
+		return viewAdapter;
     }
 }

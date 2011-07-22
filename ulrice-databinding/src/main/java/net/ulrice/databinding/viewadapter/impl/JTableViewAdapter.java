@@ -8,6 +8,7 @@ import java.awt.Insets;
 import java.util.List;
 
 import javax.swing.JTable;
+import javax.swing.ListSelectionModel;
 import javax.swing.event.EventListenerList;
 import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
@@ -48,7 +49,7 @@ public class JTableViewAdapter extends AbstractViewAdapter implements TableModel
 	public JTableViewAdapter() {
 		this(new JTable());
 	}
-		
+
 	public JTableViewAdapter(JTable table) {
 		super(List.class);
 		this.table = table;
@@ -89,9 +90,11 @@ public class JTableViewAdapter extends AbstractViewAdapter implements TableModel
 	 * @see net.ulrice.databinding.IFGuiAccessor#setAttributeModel(net.ulrice.databinding.IFAttributeModel)
 	 */
 	public void setAttributeModel(AbstractTableAM attributeModel) {
-		this.attributeModel = attributeModel;
-		updateColumnModel(attributeModel);
-		fireTableStructureChanged();
+		if (this.attributeModel == null || !this.attributeModel.equals(attributeModel)) {
+			this.attributeModel = attributeModel;
+			updateColumnModel(attributeModel);
+			fireTableStructureChanged();
+		}
 	}
 
 	/**
@@ -283,11 +286,13 @@ public class JTableViewAdapter extends AbstractViewAdapter implements TableModel
 
 	@Override
 	public void updateFromBinding(IFBinding binding) {
-		if (binding instanceof AbstractTableAM) {
+		if (binding instanceof AbstractTableAM) {			
 			setAttributeModel((AbstractTableAM) binding);
 		}
-		if (!isInNotification()) {
+		if (!isInNotification()) {			
+			int index = table.getSelectedRow();
 			fireTableChanged(new TableModelEvent(this));
+			table.getSelectionModel().setLeadSelectionIndex(index);
 		}
 		if (getTooltipHandler() != null) {
 			getTooltipHandler().updateTooltip(binding, table);
