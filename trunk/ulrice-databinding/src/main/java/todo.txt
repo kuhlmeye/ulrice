@@ -1,7 +1,5 @@
 todo
 ----
-* Table: Autoresize-Mechanismus
-* Farben des DefaultRenderers in UI-Klasse
 
 
 * Formatierung - Tausendertrenner etc.?!
@@ -11,12 +9,8 @@ todo
 * Label  
 * Combobox
 
-
-* Add Converter to ViewAdapter
-
 done
 ----
-* Vereinheitlichung der Validierung...
 
 * enabling / disabling per Binding ans Model
 * abgeleitete Attribute
