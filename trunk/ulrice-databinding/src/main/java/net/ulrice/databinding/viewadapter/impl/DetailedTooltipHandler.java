@@ -5,7 +5,7 @@ import java.util.List;
 import javax.swing.JComponent;
 
 import net.ulrice.databinding.IFBinding;
-import net.ulrice.databinding.bufferedbinding.IFBufferedBinding;
+import net.ulrice.databinding.bufferedbinding.IFAttributeModel;
 import net.ulrice.databinding.viewadapter.IFTooltipHandler;
 
 /**
@@ -24,8 +24,8 @@ public class DetailedTooltipHandler implements IFTooltipHandler {
 	public void updateTooltip(IFBinding binding, JComponent component) {
 
 		boolean initialized = true;
-		if (binding instanceof IFBufferedBinding) {
-			initialized = ((IFBufferedBinding) binding).isInitialized();
+		if (binding instanceof IFAttributeModel) {
+			initialized = ((IFAttributeModel) binding).isInitialized();
 		}
 		if (!initialized) {
 			component.setToolTipText("State: Not initalized");

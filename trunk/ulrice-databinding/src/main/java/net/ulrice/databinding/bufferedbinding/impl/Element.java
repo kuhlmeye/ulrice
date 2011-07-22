@@ -7,7 +7,7 @@ import java.util.Map;
 
 import javax.swing.event.EventListenerList;
 
-import net.ulrice.databinding.bufferedbinding.IFBufferedBinding;
+import net.ulrice.databinding.bufferedbinding.IFAttributeModel;
 import net.ulrice.databinding.modelaccess.IFDynamicModelValueAccessor;
 import net.ulrice.databinding.validation.ValidationError;
 
@@ -170,7 +170,7 @@ public class Element {
     	if(modelList != null) {
     		dirty = false;
     		valid = true;
-    		for(IFBufferedBinding<?> model : modelList) {
+    		for(IFAttributeModel<?> model : modelList) {
     			dirty |= model.isDirty();
     			valid &= model.isValid();
     		}

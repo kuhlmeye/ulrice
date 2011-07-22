@@ -1,14 +1,14 @@
 package net.ulrice.sample.module.moviedb;
 
-import net.ulrice.databinding.bufferedbinding.impl.DataGroup;
+import net.ulrice.databinding.bufferedbinding.impl.BindingGroup;
 import net.ulrice.module.impl.AbstractController;
 
 public class CMovieDB extends AbstractController<MMovieDB, VMovieDB> {
 
-	private DataGroup dataGroup;
+	private BindingGroup dataGroup;
 
 	public CMovieDB() {
-		this.dataGroup = new DataGroup();
+		this.dataGroup = new BindingGroup();
 	}
 	
 	@Override
@@ -32,7 +32,7 @@ public class CMovieDB extends AbstractController<MMovieDB, VMovieDB> {
 		return new VMovieDB();
 	}
 	
-	public DataGroup getDataGroup() {
+	public BindingGroup getDataGroup() {
 		return dataGroup;
 	}
 

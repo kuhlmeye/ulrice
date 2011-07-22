@@ -31,7 +31,7 @@ public class MMovieDB implements IFModel<CMovieDB> {
 		actorColumn.setReadOnly(true);
 		movieListAM.addColumn(actorColumn);
 		
-		controller.getDataGroup().addAM(movieListAM);
+		controller.getDataGroup().addAttributeModel(movieListAM);
 	}
 
 	public List<Movie> getMovieList() {

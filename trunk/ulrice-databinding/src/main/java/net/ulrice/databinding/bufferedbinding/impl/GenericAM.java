@@ -5,8 +5,8 @@ import java.util.List;
 
 import javax.swing.event.EventListenerList;
 
-import net.ulrice.databinding.bufferedbinding.IFBufferedBinding;
-import net.ulrice.databinding.bufferedbinding.IFBufferedBindingEventListener;
+import net.ulrice.databinding.bufferedbinding.IFAttributeModel;
+import net.ulrice.databinding.bufferedbinding.IFAttributeModelEventListener;
 import net.ulrice.databinding.converter.IFValueConverter;
 import net.ulrice.databinding.modelaccess.IFModelValueAccessor;
 import net.ulrice.databinding.validation.IFValidator;
@@ -19,7 +19,7 @@ import net.ulrice.databinding.viewadapter.IFViewChangeListener;
  * 
  * @author christof
  */
-public class GenericAM<T> implements IFBufferedBinding<T>, IFViewChangeListener {
+public class GenericAM<T> implements IFAttributeModel<T>, IFViewChangeListener {
 
     /** The event listener. */
     private EventListenerList listenerList = new EventListenerList();
@@ -237,26 +237,26 @@ public class GenericAM<T> implements IFBufferedBinding<T>, IFViewChangeListener 
 
 
     /**
-     * @see net.ulrice.databinding.bufferedbinding.IFAttributeModel#addAttributeModelEventListener(net.ulrice.databinding.bufferedbinding.IFBufferedBindingEventListener)
+     * @see net.ulrice.databinding.bufferedbinding.IFAttributeModel#addAttributeModelEventListener(net.ulrice.databinding.bufferedbinding.IFAttributeModelEventListener)
      */
     @Override
-    public void addAttributeModelEventListener(IFBufferedBindingEventListener<T> listener) {
-        listenerList.add(IFBufferedBindingEventListener.class, listener);
+    public void addAttributeModelEventListener(IFAttributeModelEventListener<T> listener) {
+        listenerList.add(IFAttributeModelEventListener.class, listener);
     }
 
     /**
-     * @see net.ulrice.databinding.bufferedbinding.IFAttributeModel#removeAttributeModelEventListener(net.ulrice.databinding.bufferedbinding.IFBufferedBindingEventListener)
+     * @see net.ulrice.databinding.bufferedbinding.IFAttributeModel#removeAttributeModelEventListener(net.ulrice.databinding.bufferedbinding.IFAttributeModelEventListener)
      */
     @Override
-    public void removeAttributeModelEventListener(IFBufferedBindingEventListener<T> listener) {
-        listenerList.remove(IFBufferedBindingEventListener.class, listener);
+    public void removeAttributeModelEventListener(IFAttributeModelEventListener<T> listener) {
+        listenerList.remove(IFAttributeModelEventListener.class, listener);
     }
 
     @SuppressWarnings("unchecked")
     public void fireDataChanged(IFViewAdapter viewAdapter) {
-        IFBufferedBindingEventListener<T>[] listeners = listenerList.getListeners(IFBufferedBindingEventListener.class);
+        IFAttributeModelEventListener<T>[] listeners = listenerList.getListeners(IFAttributeModelEventListener.class);
         if (listeners != null) {
-            for (IFBufferedBindingEventListener<T> listener : listeners) {
+            for (IFAttributeModelEventListener<T> listener : listeners) {
                 listener.dataChanged(viewAdapter, this);
             }
         }
@@ -265,9 +265,9 @@ public class GenericAM<T> implements IFBufferedBinding<T>, IFViewChangeListener 
 
     @SuppressWarnings("unchecked")
     public void fireStateChanged(IFViewAdapter viewAdapter) {
-        IFBufferedBindingEventListener<T>[] listeners = listenerList.getListeners(IFBufferedBindingEventListener.class);
+        IFAttributeModelEventListener<T>[] listeners = listenerList.getListeners(IFAttributeModelEventListener.class);
         if (listeners != null) {
-            for (IFBufferedBindingEventListener<T> listener : listeners) {
+            for (IFAttributeModelEventListener<T> listener : listeners) {
                 listener.stateChanged(viewAdapter, this);
             }
         }

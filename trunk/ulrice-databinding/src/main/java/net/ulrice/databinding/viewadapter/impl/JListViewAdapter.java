@@ -18,6 +18,10 @@ public class JListViewAdapter extends AbstractViewAdapter implements ListModel {
     private ListAM attributeModel;
     private JList list;
     
+    public JListViewAdapter() {
+    	this(new JList());
+    }
+    
     public JListViewAdapter(JList list) {
     	super(List.class);
     	this.list = list;

@@ -6,10 +6,8 @@ package net.ulrice.databinding.viewadapter.impl;
 import java.awt.Component;
 import java.awt.Insets;
 import java.util.List;
-import java.util.concurrent.ExecutionException;
 
 import javax.swing.JTable;
-import javax.swing.SwingWorker;
 import javax.swing.event.EventListenerList;
 import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
@@ -18,7 +16,6 @@ import javax.swing.table.TableColumn;
 import javax.swing.table.TableColumnModel;
 import javax.swing.table.TableModel;
 
-import net.ulrice.databinding.ErrorHandler;
 import net.ulrice.databinding.IFBinding;
 import net.ulrice.databinding.bufferedbinding.impl.AbstractTableAM;
 import net.ulrice.databinding.bufferedbinding.impl.ColumnDefinition;
@@ -48,6 +45,10 @@ public class JTableViewAdapter extends AbstractViewAdapter implements TableModel
 	private JTableVADefaultRenderer defaultRenderer;
 	private JTableVAHeader tableHeader;
 
+	public JTableViewAdapter() {
+		this(new JTable());
+	}
+		
 	public JTableViewAdapter(JTable table) {
 		super(List.class);
 		this.table = table;
