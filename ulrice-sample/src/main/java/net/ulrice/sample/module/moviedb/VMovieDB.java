@@ -18,18 +18,17 @@ public class VMovieDB implements IFView<CMovieDB> {
 	private JTableViewAdapter movieTableVA;
 
 	@Override
-	public void initialize(CMovieDB controller) {
-		panel = new JPanel();
-		panel.setLayout(new BorderLayout());
-		
-		JTable table = new JTable();
-		movieTableVA = new JTableViewAdapter(table);
+	public void initialize(CMovieDB controller) {		
+		movieTableVA = new JTableViewAdapter();
 		movieTableVA.setStateMarker(new BackgroundStateMarker());
 		movieTableVA.setTooltipHandler(new DetailedTooltipHandler());
-		table.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
-		panel.add(new JScrollPane(movieTableVA.getComponent()), BorderLayout.CENTER);
+		movieTableVA.getComponent().setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
 		
-		controller.getDataGroup().addGA("MMovieDB.movieList", movieTableVA);
+		controller.getDataGroup().addViewAdapter("MMovieDB.movieList", movieTableVA);
+
+		panel = new JPanel();
+		panel.setLayout(new BorderLayout());
+		panel.add(new JScrollPane(movieTableVA.getComponent()), BorderLayout.CENTER);
 	}
 
 	@Override
@@ -40,5 +39,4 @@ public class VMovieDB implements IFView<CMovieDB> {
 	public JTableViewAdapter getTableAdapter() {
 		return movieTableVA;
 	}
-
 }

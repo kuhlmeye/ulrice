@@ -1,7 +1,7 @@
 package net.ulrice.databinding.impl;
 
 import static org.junit.Assert.assertEquals;
-import net.ulrice.databinding.bufferedbinding.impl.DataGroup;
+import net.ulrice.databinding.bufferedbinding.impl.BindingGroup;
 import net.ulrice.databinding.bufferedbinding.impl.GenericAM;
 import net.ulrice.databinding.modelaccess.impl.ReflectionMVA;
 import net.ulrice.databinding.validation.impl.RegExValidator;
@@ -18,7 +18,7 @@ import org.junit.Test;
  */
 public class DataGroupTest {
 
-    private DataGroup dataGroup;
+    private BindingGroup dataGroup;
 
     public String stringA = "StringA";
     public String stringB = "StringB";
@@ -44,11 +44,11 @@ public class DataGroupTest {
         intAAM = new GenericAM<Integer>(new ReflectionMVA(this, "intA"));
         intBAM = new GenericAM<Integer>(new ReflectionMVA(this, "intB"));
 
-        dataGroup = new DataGroup();
-        dataGroup.addAM(stringAAM);
-        dataGroup.addAM(stringBAM);
-        dataGroup.addAM(intAAM);
-        dataGroup.addAM(intBAM);
+        dataGroup = new BindingGroup();
+        dataGroup.addAttributeModel(stringAAM);
+        dataGroup.addAttributeModel(stringBAM);
+        dataGroup.addAttributeModel(intAAM);
+        dataGroup.addAttributeModel(intBAM);
 
         dataGroup.getAttributeModel("stringB").setValidator(
                 new RegExValidator<Object>("StringB", "String is not 'stringB'"));

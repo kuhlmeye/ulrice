@@ -10,29 +10,32 @@ import net.ulrice.databinding.viewadapter.AbstractViewAdapter;
  * Gui accessor for sliders
  * 
  * @author andre
- *
+ * 
  * @param <U>
  */
 public class JSliderViewAdapter extends AbstractViewAdapter implements ChangeListener {
-    
-    private JSlider slider;
 
-    public JSliderViewAdapter(JSlider slider) {
-        super(Integer.class);
-        this.slider = slider;
-        this.slider.addChangeListener(this);
-    }
+	private JSlider slider;
 
+	public JSliderViewAdapter() {
+		this(new JSlider());
+	}
+
+	public JSliderViewAdapter(JSlider slider) {
+		super(Integer.class);
+		this.slider = slider;
+		this.slider.addChangeListener(this);
+	}
 
 	@Override
 	public Object getValue() {
 		return viewToModel(slider.getValue());
 	}
-	
+
 	@Override
 	protected void setValue(Object value) {
-        slider.setValue((Integer)modelToView(value));
-    }
+		slider.setValue((Integer) modelToView(value));
+	}
 
 	@Override
 	public JSlider getComponent() {

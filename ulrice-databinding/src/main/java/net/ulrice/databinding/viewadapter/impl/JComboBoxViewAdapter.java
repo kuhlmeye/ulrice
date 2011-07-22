@@ -12,6 +12,10 @@ import net.ulrice.databinding.viewadapter.AbstractViewAdapter;
 public class JComboBoxViewAdapter extends AbstractViewAdapter implements ItemListener {
     private final JComboBox comboBox;
 
+    public JComboBoxViewAdapter() {
+    	this(new JComboBox());
+    }
+    
     public JComboBoxViewAdapter (JComboBox combo) {
         super (String.class);
         comboBox = combo;        

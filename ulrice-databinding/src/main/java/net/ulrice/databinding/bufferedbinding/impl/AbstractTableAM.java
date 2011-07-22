@@ -9,14 +9,14 @@ import java.util.Set;
 
 import javax.swing.event.EventListenerList;
 
-import net.ulrice.databinding.bufferedbinding.IFBufferedBinding;
-import net.ulrice.databinding.bufferedbinding.IFBufferedBindingEventListener;
+import net.ulrice.databinding.bufferedbinding.IFAttributeModel;
+import net.ulrice.databinding.bufferedbinding.IFAttributeModelEventListener;
 import net.ulrice.databinding.converter.IFValueConverter;
 import net.ulrice.databinding.validation.IFValidator;
 import net.ulrice.databinding.validation.ValidationResult;
 import net.ulrice.databinding.viewadapter.IFViewAdapter;
 
-public abstract class AbstractTableAM implements IFBufferedBinding {
+public abstract class AbstractTableAM implements IFAttributeModel {
 
 	protected List<Element> elements = new ArrayList<Element>();
 	protected Map<String, Element> elementIdMap = new HashMap<String, Element>();
@@ -72,19 +72,19 @@ public abstract class AbstractTableAM implements IFBufferedBinding {
 	}
 
 	/**
-	 * @see net.ulrice.databinding.bufferedbinding.IFAttributeModel#addAttributeModelEventListener(net.ulrice.databinding.bufferedbinding.IFBufferedBindingEventListener)
+	 * @see net.ulrice.databinding.bufferedbinding.IFAttributeModel#addAttributeModelEventListener(net.ulrice.databinding.bufferedbinding.IFAttributeModelEventListener)
 	 */
 	@Override
-	public void addAttributeModelEventListener(IFBufferedBindingEventListener listener) {
-		listenerList.add(IFBufferedBindingEventListener.class, listener);
+	public void addAttributeModelEventListener(IFAttributeModelEventListener listener) {
+		listenerList.add(IFAttributeModelEventListener.class, listener);
 	}
 
 	/**
-	 * @see net.ulrice.databinding.bufferedbinding.IFAttributeModel#removeAttributeModelEventListener(net.ulrice.databinding.bufferedbinding.IFBufferedBindingEventListener)
+	 * @see net.ulrice.databinding.bufferedbinding.IFAttributeModel#removeAttributeModelEventListener(net.ulrice.databinding.bufferedbinding.IFAttributeModelEventListener)
 	 */
 	@Override
-	public void removeAttributeModelEventListener(IFBufferedBindingEventListener listener) {
-		listenerList.remove(IFBufferedBindingEventListener.class, listener);
+	public void removeAttributeModelEventListener(IFAttributeModelEventListener listener) {
+		listenerList.remove(IFAttributeModelEventListener.class, listener);
 	}
 
 	/**

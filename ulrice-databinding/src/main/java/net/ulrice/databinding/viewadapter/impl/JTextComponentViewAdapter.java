@@ -3,6 +3,7 @@
  */
 package net.ulrice.databinding.viewadapter.impl;
 
+import javax.swing.JTextField;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.text.JTextComponent;
@@ -19,6 +20,9 @@ public class JTextComponentViewAdapter extends AbstractViewAdapter implements Do
 	
 	private JTextComponent textComponent;
 
+	public JTextComponentViewAdapter() {
+		this(new JTextField());
+	}
 
 	public JTextComponentViewAdapter(JTextComponent textComponent) {
 		super(String.class);

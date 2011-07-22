@@ -6,7 +6,7 @@ import net.ulrice.databinding.validation.IFValidator;
 import net.ulrice.databinding.validation.ValidationResult;
 import net.ulrice.databinding.viewadapter.IFViewAdapter;
 
-public interface IFBufferedBinding<T> extends IFBinding {
+public interface IFAttributeModel<T> extends IFBinding {
 
 	void addViewAdapter(IFViewAdapter viewAdapter);
 
@@ -66,7 +66,7 @@ public interface IFBufferedBinding<T> extends IFBinding {
 	 * @param listener
 	 *            The listener to be added to the list of listeners.
 	 */
-	void addAttributeModelEventListener(IFBufferedBindingEventListener<T> listener);
+	void addAttributeModelEventListener(IFAttributeModelEventListener<T> listener);
 
 	/**
 	 * Removes an attribute model event listener from the list of event
@@ -75,7 +75,7 @@ public interface IFBufferedBinding<T> extends IFBinding {
 	 * @param listener
 	 *            The listener to be removed from the list of listeners.
 	 */
-	void removeAttributeModelEventListener(IFBufferedBindingEventListener<T> listener);
+	void removeAttributeModelEventListener(IFAttributeModelEventListener<T> listener);
 	
 	void setValueConverter(IFValueConverter valueConverter);		
 	
