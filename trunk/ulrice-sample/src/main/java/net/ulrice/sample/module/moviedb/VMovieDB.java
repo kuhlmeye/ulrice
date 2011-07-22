@@ -35,7 +35,7 @@ public class VMovieDB implements IFView {
 		table.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
 		panel.add(new JScrollPane(movieTableVA.getComponent()), BorderLayout.CENTER);
 		
-		ctrl.getDataGroup().addGA("MovieList", movieTableVA);
+		ctrl.getDataGroup().addGA("MMovieDB.movieList", movieTableVA);
 	}
 
 	@Override

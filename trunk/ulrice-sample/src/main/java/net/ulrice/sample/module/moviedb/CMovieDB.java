@@ -102,7 +102,7 @@ public class CMovieDB extends AbstractController {
 			public void actionPerformed(ActionEvent e) {
 				System.out.println("Resize");
 				
-				((VMovieDB)getView()).getTableAdapter().sizeColumns();
+				((VMovieDB)getView()).getTableAdapter().sizeColumns(false);
 			}
 		});
 		timer.setRepeats(false);
