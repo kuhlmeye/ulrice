@@ -16,16 +16,16 @@ import net.ulrice.module.IFView;
  * 
  * @author ckuhlmeyer
  */
-public abstract class AbstractController implements IFController {
+public abstract class AbstractController<T extends IFModel, U extends IFView> implements IFController {
 
 	/** The module this controller is belonging to. */
 	private IFModule module;
 
 	/** The view of this controller. */
-	private IFView view;
+	private U view;
 
 	/** The model used by this controller. */
-	private IFModel model;
+	private T model;
 	
 	/** The set of all module actions that are handled by this controller. */
 	private Set<ModuleActionState> moduleActionStates;
@@ -46,7 +46,7 @@ public abstract class AbstractController implements IFController {
 	/**
 	 * @see net.ulrice.module.IFController#getModel()
 	 */
-	public IFModel getModel() {
+	public T getModel() {
 		if (this.model == null) {
 			this.model = instanciateModel();
 		}
@@ -59,7 +59,7 @@ public abstract class AbstractController implements IFController {
 	 * 
 	 * @return The instance of the model.
 	 */
-	protected abstract IFModel instanciateModel();
+	protected abstract T instanciateModel();
 
 	/**
 	 * @see net.ulrice.module.IFController#getModule()
@@ -78,7 +78,7 @@ public abstract class AbstractController implements IFController {
 	/**
 	 * @see net.ulrice.module.IFController#getView()
 	 */
-	public IFView getView() {
+	public U getView() {
 		if (this.view == null) {
 			this.view = instanciateView();
 		}
@@ -91,7 +91,7 @@ public abstract class AbstractController implements IFController {
 	 * 
 	 * @return The instance of the view.
 	 */
-	protected abstract IFView instanciateView();
+	protected abstract U instanciateView();
 
 	/**
 	 * Initializes the sub-components.
@@ -104,8 +104,8 @@ public abstract class AbstractController implements IFController {
 	 * @see net.ulrice.module.IFController#postCreation(net.ulrice.module.IFModule)
 	 */	
 	public void preCreationEvent(IFModule module) {
-		getModel().initialize();
-		getView().initialize();
+		getModel().initialize(this);
+		getView().initialize(this);
 		this.module = module;
 
 		ModuleActionState[] moduleActionStateArray = getHandledActions();

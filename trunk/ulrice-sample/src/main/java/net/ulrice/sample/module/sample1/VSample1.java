@@ -14,7 +14,7 @@ import net.ulrice.module.IFView;
  * 
  * @author christof
  */
-public class VSample1 implements IFView {
+public class VSample1 implements IFView<CSample1> {
 
 	/** The view component. */
 	private JPanel view;
@@ -29,7 +29,7 @@ public class VSample1 implements IFView {
 	/**
 	 * @see net.ulrice.module.IFView#initialize()
 	 */
-	public void initialize() {
+	public void initialize(CSample1 controller) {
 		view = new JPanel();
 		view.setLayout(new BorderLayout());
 		view.add(new JLabel("Sample 1 module."), BorderLayout.CENTER);

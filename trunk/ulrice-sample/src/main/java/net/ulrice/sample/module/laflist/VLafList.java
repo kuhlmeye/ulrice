@@ -17,7 +17,7 @@ import net.ulrice.module.IFView;
  * 
  * @author christof
  */
-public class VLafList implements IFView {	
+public class VLafList implements IFView<CLafList> {	
 	
 	/** The jtable displaying the look and feel constants. */
 	private JTable lafTable;
@@ -37,7 +37,7 @@ public class VLafList implements IFView {
 	 * @see net.ulrice.module.IFView#initialize()
 	 */
 	@Override
-	public void initialize() {
+	public void initialize(CLafList controller) {
 		
 		lafTable = new JTable();
 				

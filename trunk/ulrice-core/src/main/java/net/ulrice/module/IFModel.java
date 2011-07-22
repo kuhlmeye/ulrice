@@ -1,6 +1,6 @@
 package net.ulrice.module;
 
-public interface IFModel {
+public interface IFModel<T extends IFController> {
 
-	void initialize();	
+	void initialize(T controller);	
 }

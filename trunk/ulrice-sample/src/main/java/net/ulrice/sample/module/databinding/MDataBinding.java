@@ -18,7 +18,7 @@ import net.ulrice.module.IFModel;
  * @author christof
  *
  */
-public class MDataBinding implements IFModel {
+public class MDataBinding implements IFModel<CDataBinding> {
 
 	public String name;
     public List<Person> personList = new ArrayList<Person>();
@@ -30,7 +30,7 @@ public class MDataBinding implements IFModel {
 	 * @see net.ulrice.module.IFModel#initialize()
 	 */
 	@Override
-	public void initialize() {
+	public void initialize(CDataBinding controller) {
 		nameAM = new GenericAM<String>(new ReflectionMVA(this, "name"));
 		nameAM.setValidator(new RegExValidator<String>("(hallo|hi)", "Validation failed. Only 'hallo' or 'hi' is allowed"));
 		name = "hallo";

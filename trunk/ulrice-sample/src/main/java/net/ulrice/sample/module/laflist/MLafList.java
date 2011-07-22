@@ -12,7 +12,7 @@ import net.ulrice.module.IFModel;
  * 
  * @author christof
  */
-public class MLafList extends DefaultTableModel implements IFModel {
+public class MLafList extends DefaultTableModel implements IFModel<CLafList> {
 
 	/** Default generated serial version uid. */
 	private static final long serialVersionUID = 1731283174024412217L;
@@ -23,7 +23,7 @@ public class MLafList extends DefaultTableModel implements IFModel {
 	 * @see net.ulrice.module.IFModel#initialize()
 	 */
 	@Override
-	public void initialize() {
+	public void initialize(CLafList controller) {
 		addColumn("Key");
 		addColumn("Value");
 	}
