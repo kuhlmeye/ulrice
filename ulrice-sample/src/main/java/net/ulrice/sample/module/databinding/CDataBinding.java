@@ -49,12 +49,16 @@ public class CDataBinding extends AbstractController {
         model.getListAM().addViewAdapter(view.getListGA());
 
         model.personList = new LinkedList<MDataBinding.Person>();
-        for (int i = 0; i < 1000; i++) {
+        System.out.print("Creating persons..");
+        for (int i = 0; i < 100000; i++) {
             model.personList.add(createPerson());
         }
+        System.out.println("finished!");
 
         model.getNameAM().read();
         model.getListAM().read();
+
+        view.getListGA().sizeColumns(false);
     }
 
     public static MDataBinding.Person createPerson() {
