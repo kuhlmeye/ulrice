@@ -21,6 +21,7 @@ public abstract class AbstractViewAdapter implements IFViewAdapter {
 	private IFStateMarker stateMarker;
 	private IFValueConverter valueConverter;
 	private boolean bindWithoutValue;
+	private boolean useAutoValueConverter = true;
 
     public AbstractViewAdapter(Class<?> viewType) {
 		this.viewType = viewType;
@@ -107,6 +108,8 @@ public abstract class AbstractViewAdapter implements IFViewAdapter {
 		this.valueConverter = valueConverter;
 	}
 	
+
+	@Override
 	public IFValueConverter getValueConverter() {
 		return valueConverter;
 	}
@@ -125,4 +128,10 @@ public abstract class AbstractViewAdapter implements IFViewAdapter {
 		}
 		return object;
 	}
+    
+    @Override
+    public boolean isUseAutoValueConverter() {
+    	return useAutoValueConverter;
+    }
+        
 }

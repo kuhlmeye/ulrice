@@ -26,4 +26,6 @@ public interface IFViewAdapter {
 	void setTooltipHandler(IFTooltipHandler tooltipHandler);
 	void setStateMarker(IFStateMarker stateMarker);
 	void setValueConverter(IFValueConverter converter);
+	IFValueConverter getValueConverter();
+	boolean isUseAutoValueConverter();
 }

@@ -6,7 +6,7 @@ public class Movie {
 
 	private String name;
 	private String director;
-	private int year;
+	private Integer year;
 	
 	private List<Actor> actors;
 
@@ -27,11 +27,11 @@ public class Movie {
 		this.director = director;
 	}
 
-	public int getYear() {
+	public Integer getYear() {
 		return year;
 	}
 
-	public void setYear(int year) {
+	public void setYear(Integer year) {
 		this.year = year;
 	}
 
@@ -47,6 +47,10 @@ public class Movie {
 	public static class Actor {
 		private String lastname;
 		private String firstname;
+		
+		public Actor() {
+			
+		}
 		
 		public Actor(String firstname, String lastname) {
 			this.firstname = firstname;

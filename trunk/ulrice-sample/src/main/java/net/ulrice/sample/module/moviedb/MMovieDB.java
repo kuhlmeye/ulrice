@@ -3,35 +3,46 @@ package net.ulrice.sample.module.moviedb;
 import java.util.List;
 
 import net.ulrice.databinding.bufferedbinding.impl.ColumnDefinition;
+import net.ulrice.databinding.bufferedbinding.impl.GenericAM;
 import net.ulrice.databinding.bufferedbinding.impl.ListAM;
 import net.ulrice.databinding.modelaccess.impl.DynamicReflectionMVA;
 import net.ulrice.databinding.modelaccess.impl.ReflectionMVA;
 import net.ulrice.databinding.validation.impl.StringLengthValidator;
 import net.ulrice.module.IFModel;
+import net.ulrice.sample.module.moviedb.Movie.Actor;
 
 public class MMovieDB implements IFModel<CMovieDB> {
-
 	
 	private List<Movie> movieList;
+	private Movie movie;
+
+	private ListAM movieListAM;
+	private GenericAM<?> titleAM;
+	private GenericAM<?> yearAM;
+	private GenericAM<?> directorAM;
+	private ListAM actorListAM;
 
 	@Override
 	public void initialize(CMovieDB controller) {
 
-		ListAM movieListAM = new ListAM(new ReflectionMVA(this, "movieList"));
+		movieListAM = new ListAM(new ReflectionMVA(this, "movieList"));
 		ColumnDefinition<String> nameColumn = new ColumnDefinition<String>(new DynamicReflectionMVA(Movie.class, "name"), String.class);
 		nameColumn.setValidator(new StringLengthValidator(1, 255));
-		movieListAM.addColumn(nameColumn);
-		
-		movieListAM.addColumn(new ColumnDefinition<String>(new DynamicReflectionMVA(Movie.class, "director"), String.class));
-		
-		movieListAM.addColumn(new ColumnDefinition<String>(new DynamicReflectionMVA(Movie.class, "year"), String.class));
-		
+		movieListAM.addColumn(nameColumn);		
+		movieListAM.addColumn(new ColumnDefinition<String>(new DynamicReflectionMVA(Movie.class, "director"), String.class));		
+		movieListAM.addColumn(new ColumnDefinition<String>(new DynamicReflectionMVA(Movie.class, "year"), String.class));		
 		ColumnDefinition<String> actorColumn = new ColumnDefinition<String>(new DynamicReflectionMVA(Movie.class, "actors"), String.class);
 		actorColumn.setValueConverter(new ActorValueConverter());
 		actorColumn.setReadOnly(true);
-		movieListAM.addColumn(actorColumn);
+		movieListAM.addColumn(actorColumn);		
 		
-		controller.getDataGroup().addAttributeModel(movieListAM);
+		titleAM = new GenericAM<String>(new ReflectionMVA(this, "movie.name"));
+		yearAM = new GenericAM<Integer>(new ReflectionMVA(this, "movie.year"));
+		directorAM = new GenericAM<String>(new ReflectionMVA(this, "movie.director"));				
+		
+		actorListAM = new ListAM(new ReflectionMVA(this, "movie.actors"));
+		actorListAM.addColumn(new ColumnDefinition<String>(new DynamicReflectionMVA(Actor.class, "lastname"), String.class));		
+		actorListAM.addColumn(new ColumnDefinition<String>(new DynamicReflectionMVA(Actor.class, "firstname"), String.class));				
 	}
 
 	public List<Movie> getMovieList() {
@@ -40,5 +51,32 @@ public class MMovieDB implements IFModel<CMovieDB> {
 
 	public void setMovieList(List<Movie> movieList) {
 		this.movieList = movieList;
+	}
+	
+	public Movie getMovie() {
+		return movie;
+	}
+	public void setMovie(Movie movie) {
+		this.movie = movie;
+	}
+	
+	public ListAM getMovieListAM() {
+		return movieListAM;
+	}
+	
+	public GenericAM<?> getTitleAM() {
+		return titleAM;
+	}
+	
+	public GenericAM<?> getYearAM() {
+		return yearAM;
+	}
+	
+	public GenericAM<?> getDirectorAM() {
+		return directorAM;
+	}
+	
+	public ListAM getActorListAM() {
+		return actorListAM;
 	}
 }

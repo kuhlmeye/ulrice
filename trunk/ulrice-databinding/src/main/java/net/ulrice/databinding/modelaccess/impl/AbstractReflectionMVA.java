@@ -27,7 +27,6 @@ public class AbstractReflectionMVA implements IFModelValueAccessor, IFIndexedMod
 
 	private String id;
 
-
 	public AbstractReflectionMVA(String id, Object rootObject, String readPath, String writePath, boolean readOnly) {
 		this.rootObject = rootObject;
 		this.readPath = readPath;
@@ -38,17 +37,21 @@ public class AbstractReflectionMVA implements IFModelValueAccessor, IFIndexedMod
 
 	@Override
 	public Object getValue(Object root) {
-		
+
 		if (readPath == null) {
 			return root;
 		}
 
-		String[] path = readPath.split(".");
+		String[] path = readPath.split("\\.");
 
 		Object object = root;
 		try {
 			for (String pathElement : path) {
-				object = object.getClass().getDeclaredField(pathElement).get(object);
+				Field field = object.getClass().getDeclaredField(pathElement);
+				if (!field.isAccessible()) {
+					setAccessible(field);
+				}
+				object = field.get(object);
 			}
 			if (path == null || path.length == 0) {
 				Field field = object.getClass().getDeclaredField(readPath);
@@ -86,17 +89,21 @@ public class AbstractReflectionMVA implements IFModelValueAccessor, IFIndexedMod
 			throw new ReflectionMVAException("Write path must not be null.", null);
 		}
 
-		String[] path = writePath.split(".");
+		String[] path = writePath.split("\\.");
 		String[] readPath = new String[0];
 		if (path != null && path.length > 1) {
-			readPath = Arrays.copyOf(path, path.length - 2);
+			readPath = Arrays.copyOf(path, path.length - 1);
 		}
 
 		Object object = root;
 		try {
 			for (String pathElement : readPath) {
-				object = object.getClass().getDeclaredField(pathElement).get(object);
-			}						
+				Field field = object.getClass().getDeclaredField(pathElement);
+				if (!field.isAccessible()) {
+					setAccessible(field);
+				}
+				object = field.get(object);
+			}
 			Field field = null;
 			if (path != null && path.length > 1) {
 				field = object.getClass().getDeclaredField(path[path.length - 1]);
@@ -106,7 +113,7 @@ public class AbstractReflectionMVA implements IFModelValueAccessor, IFIndexedMod
 			if (!field.isAccessible()) {
 				setAccessible(field);
 			}
-			field.set(object, value);			
+			field.set(object, value);
 		} catch (IllegalArgumentException e) {
 			throw new ReflectionMVAException("Could not write object to path: " + path, e);
 		} catch (SecurityException e) {
@@ -117,7 +124,6 @@ public class AbstractReflectionMVA implements IFModelValueAccessor, IFIndexedMod
 			throw new ReflectionMVAException("Could not write object to path: " + path, e);
 		}
 	}
-
 
 	@Override
 	public Object getValue() {
@@ -138,48 +144,41 @@ public class AbstractReflectionMVA implements IFModelValueAccessor, IFIndexedMod
 	public Class<?> getModelType() {
 		if (readPath != null) {
 
-			Object object = rootObject;
-			String[] path = readPath.split(".");
+			String[] path = readPath.split("\\.");
+
+			Class<?> rootClass = rootObject.getClass();
+
 			try {
-				Field field = null;
-				if(path.length > 1) {
-					for (int i = 0; i < path.length - 1; i++) {
-						object = object.getClass().getField(path[i]).get(object);
-					}					
-					field = object.getClass().getDeclaredField(path[path.length - 1]);
+				for (int i = 0; i < path.length; i++) {
+					rootClass = rootClass.getDeclaredField(path[i]).getType();
 				}
-				else {
-					field = object.getClass().getDeclaredField(readPath);
-				}
-				return field.getType();
+				return rootClass;
 			} catch (IllegalArgumentException e) {
 				throw new ReflectionMVAException("Could not read object from path: " + readPath, e);
 			} catch (SecurityException e) {
 				throw new ReflectionMVAException("Could not read object from path: " + readPath, e);
-			} catch (IllegalAccessException e) {
-				throw new ReflectionMVAException("Could not read object from path: " + readPath, e);
 			} catch (NoSuchFieldException e) {
 				throw new ReflectionMVAException("Could not read object from path: " + readPath, e);
 			}
-		}			
+		}
 		return null;
 	}
 
 	@Override
 	public Object getValue(int index) {
 		Object listValue = getValue(rootObject);
-		if(listValue == null) {
+		if (listValue == null) {
 			throw new NullPointerException();
 		}
-		
-		if(listValue instanceof List<?>) {
-			List<?> list = (List<?>)listValue;
+
+		if (listValue instanceof List<?>) {
+			List<?> list = (List<?>) listValue;
 			return list.get(index);
 		}
-		if(listValue.getClass().isArray()) {
-			return ((Object[])listValue)[index];
+		if (listValue.getClass().isArray()) {
+			return ((Object[]) listValue)[index];
 		}
-		
+
 		throw new ReflectionMVAException("Type: " + listValue.getClass() + " is not allowed for indexed model value access", null);
 	}
 
@@ -187,18 +186,18 @@ public class AbstractReflectionMVA implements IFModelValueAccessor, IFIndexedMod
 	@Override
 	public void setValue(int index, Object value) {
 		Object listValue = getValue(rootObject);
-		if(listValue == null) {
+		if (listValue == null) {
 			throw new NullPointerException();
 		}
-		
-		if(listValue instanceof List) {
-			List list = (List)listValue;
+
+		if (listValue instanceof List) {
+			List list = (List) listValue;
 			list.set(index, value);
 		}
-		if(listValue.getClass().isArray()) {
-			((Object[])listValue)[index] = value;
+		if (listValue.getClass().isArray()) {
+			((Object[]) listValue)[index] = value;
 		}
-		
+
 		throw new ReflectionMVAException("Type: " + listValue.getClass() + " is not allowed for indexed model value access", null);
 	}
 
@@ -206,5 +205,5 @@ public class AbstractReflectionMVA implements IFModelValueAccessor, IFIndexedMod
 	public String getAttributeId() {
 		return id;
 	}
-	
+
 }
