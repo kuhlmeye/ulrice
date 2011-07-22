@@ -21,7 +21,7 @@ import net.ulrice.module.IFView;
  * @author christof
  *
  */
-public class VDataBinding extends JPanel implements IFView {
+public class VDataBinding extends JPanel implements IFView<CDataBinding> {
 
 	private JTextComponentViewAdapter textFieldGA1;
 	private JTextComponentViewAdapter textFieldGA2;
@@ -31,7 +31,7 @@ public class VDataBinding extends JPanel implements IFView {
 	 * @see net.ulrice.module.IFView#initialize()
 	 */
 	@Override
-	public void initialize() {
+	public void initialize(CDataBinding controller) {
 		JTextField tf1 = new JTextField();
 		JTextField tf2 = new JTextField();
 		

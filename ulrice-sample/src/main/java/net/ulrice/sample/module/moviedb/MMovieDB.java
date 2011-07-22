@@ -9,31 +9,29 @@ import net.ulrice.databinding.modelaccess.impl.ReflectionMVA;
 import net.ulrice.databinding.validation.impl.StringLengthValidator;
 import net.ulrice.module.IFModel;
 
-public class MMovieDB implements IFModel {
+public class MMovieDB implements IFModel<CMovieDB> {
 
-	private CMovieDB ctrl;
 	
 	private List<Movie> movieList;
 
-	public MMovieDB(CMovieDB ctrl) {
-		this.ctrl = ctrl;
-	}
-
 	@Override
-	public void initialize() {
+	public void initialize(CMovieDB controller) {
 
 		ListAM movieListAM = new ListAM(new ReflectionMVA(this, "movieList"));
 		ColumnDefinition<String> nameColumn = new ColumnDefinition<String>(new DynamicReflectionMVA(Movie.class, "name"), String.class);
 		nameColumn.setValidator(new StringLengthValidator(1, 255));
 		movieListAM.addColumn(nameColumn);
+		
 		movieListAM.addColumn(new ColumnDefinition<String>(new DynamicReflectionMVA(Movie.class, "director"), String.class));
+		
 		movieListAM.addColumn(new ColumnDefinition<String>(new DynamicReflectionMVA(Movie.class, "year"), String.class));
+		
 		ColumnDefinition<String> actorColumn = new ColumnDefinition<String>(new DynamicReflectionMVA(Movie.class, "actors"), String.class);
 		actorColumn.setValueConverter(new ActorValueConverter());
 		actorColumn.setReadOnly(true);
 		movieListAM.addColumn(actorColumn);
 		
-		ctrl.getDataGroup().addAM(movieListAM);
+		controller.getDataGroup().addAM(movieListAM);
 	}
 
 	public List<Movie> getMovieList() {

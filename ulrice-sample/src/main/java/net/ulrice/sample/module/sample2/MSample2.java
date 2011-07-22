@@ -7,12 +7,12 @@ import net.ulrice.module.IFModel;
  * 
  * @author christof
  */
-public class MSample2 implements IFModel {
+public class MSample2 implements IFModel<CSample2> {
 
 	/**
 	 * @see net.ulrice.module.IFModel#initialize()
 	 */
-	public void initialize() {
+	public void initialize(CSample2 controller) {
 		// Nothing to initialize.
 	}
 }

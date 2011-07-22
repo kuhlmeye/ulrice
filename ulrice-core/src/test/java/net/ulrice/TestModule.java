@@ -2,6 +2,7 @@ package net.ulrice;
 
 import javax.swing.JComponent;
 
+import net.ulrice.module.IFController;
 import net.ulrice.module.IFModel;
 import net.ulrice.module.IFView;
 import net.ulrice.module.impl.AbstractController;
@@ -13,7 +14,7 @@ public class TestModule extends AbstractController {
 		return new IFModel() {
 			
 			@Override
-			public void initialize() {
+			public void initialize(IFController controller) {
 			}
 		};
 	}
@@ -23,7 +24,7 @@ public class TestModule extends AbstractController {
 		return new IFView() {
 			
 			@Override
-			public void initialize() {
+			public void initialize(IFController controller) {
 			}
 			
 			@Override

@@ -8,23 +8,17 @@ import javax.swing.JScrollPane;
 import javax.swing.JTable;
 
 import net.ulrice.databinding.viewadapter.impl.BackgroundStateMarker;
-import net.ulrice.databinding.viewadapter.impl.BorderStateMarker;
 import net.ulrice.databinding.viewadapter.impl.DetailedTooltipHandler;
 import net.ulrice.databinding.viewadapter.impl.JTableViewAdapter;
 import net.ulrice.module.IFView;
 
-public class VMovieDB implements IFView {
+public class VMovieDB implements IFView<CMovieDB> {
 
-	private CMovieDB ctrl;
 	private JPanel panel;
 	private JTableViewAdapter movieTableVA;
 
-	public VMovieDB(CMovieDB ctrl) {
-		this.ctrl = ctrl;
-	}
-
 	@Override
-	public void initialize() {
+	public void initialize(CMovieDB controller) {
 		panel = new JPanel();
 		panel.setLayout(new BorderLayout());
 		
@@ -35,7 +29,7 @@ public class VMovieDB implements IFView {
 		table.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
 		panel.add(new JScrollPane(movieTableVA.getComponent()), BorderLayout.CENTER);
 		
-		ctrl.getDataGroup().addGA("MMovieDB.movieList", movieTableVA);
+		controller.getDataGroup().addGA("MMovieDB.movieList", movieTableVA);
 	}
 
 	@Override

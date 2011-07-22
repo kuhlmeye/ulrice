@@ -37,7 +37,7 @@ import net.ulrice.module.IFView;
  * 
  * @author christof
  */
-public class VDashboard implements IFView, Dashboard, MouseMotionListener {
+public class VDashboard implements IFView<CDashboard>, Dashboard, MouseMotionListener {
 
     /**
      * This enum contains information of different modification of components on the dashboard.
@@ -115,14 +115,6 @@ public class VDashboard implements IFView, Dashboard, MouseMotionListener {
         currentMode = Mode.NON;
     }
 
-    /**
-     * Constructor of this class
-     * 
-     * @param controller The controller
-     */
-    public VDashboard(CDashboard controller) {
-        this.controller = controller;
-    }
 
     /**
      * @see net.ulrice.module.IFView#getView()
@@ -136,7 +128,8 @@ public class VDashboard implements IFView, Dashboard, MouseMotionListener {
      * @see net.ulrice.module.IFView#initialize()
      */
     @Override
-    public void initialize() {
+    public void initialize(CDashboard controller) {
+    	this.controller = controller;
 
         // dash pattern 1 visible, 2 invisible . . . .
         float dashPattern[] = { 1, 2 };
