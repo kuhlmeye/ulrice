@@ -1,4 +1,4 @@
-package net.ulrice.databinding.impl;
+package net.ulrice.databinding.bufferedbinding.impl;
 
 import static org.junit.Assert.assertEquals;
 import net.ulrice.databinding.bufferedbinding.impl.BindingGroup;
