@@ -4,7 +4,7 @@ import java.lang.reflect.Field;
 
 import net.ulrice.databinding.modelaccess.IFModelValueAccessor;
 
-public class ReflectionMVA extends AbstractReflectionMVA implements IFModelValueAccessor {
+public class ReflectionMVA implements IFModelValueAccessor {
 
 	private Object rootObject;
 	private String path;
@@ -35,18 +35,18 @@ public class ReflectionMVA extends AbstractReflectionMVA implements IFModelValue
 
 	@Override
 	public Object getValue() {
-		return getValueByReflection(rootObject, path);
+		return ReflectionUtils.getValueByReflection(rootObject, path);
 	}
 
 	@Override
 	public void setValue(Object value) {
-		setValueByReflection(rootObject, value, path);
+		ReflectionUtils.setValueByReflection(rootObject, value, path);
 	}
 	
 	@Override
 	public Class<?> getModelType() {
 		if (path != null) {
-			Field field = getFieldByReflection(rootObject.getClass(), path);
+			Field field = ReflectionUtils.getFieldByReflection(rootObject.getClass(), path);
 			return field.getType();
 		} else {
 			return rootObject.getClass();

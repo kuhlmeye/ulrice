@@ -48,7 +48,7 @@ public class CDataBinding extends AbstractController {
         
         model.getTableAM().addViewAdapter(view.getListGA());
 
-        model.personList = new LinkedList<MDataBinding.Person>();
+        model.personList = new LinkedList<Person>();
         System.out.print("Creating persons..");
         for (int i = 0; i < 100000; i++) {
             model.personList.add(createPerson());
@@ -61,8 +61,8 @@ public class CDataBinding extends AbstractController {
         view.getListGA().sizeColumns(false);
     }
 
-    public static MDataBinding.Person createPerson() {
-        MDataBinding.Person result = new MDataBinding.Person(UUID.randomUUID().toString(),
+    public static Person createPerson() {
+        Person result = new Person(UUID.randomUUID().toString(),
                 UUID.randomUUID().toString(), (int) ((Math.random() * 100.0) / 1));
         return result;
     }

@@ -75,7 +75,7 @@ public class Element {
 		this.uniqueId = uniqueId;
 		this.modelList = new ArrayList<GenericAM<? extends Object>>();
 		this.idModelMap = new HashMap<String, GenericAM<? extends Object>>();
-		this.originalValue = cloneObject(valueObject);
+		this.originalValue = tableAM.cloneObject(valueObject);
 		this.columns = columns;
 		this.readOnly = readOnly;
 
@@ -268,6 +268,7 @@ public class Element {
 	}
 
 	public Object getCurrentValue() {
+		Object result = tableAM.cloneObject(getOriginalValue());
 		if (modelList != null) {
 			for (int i = 0; i < modelList.size(); i++) {
 				GenericAM attributeModel = modelList.get(i);
@@ -277,11 +278,11 @@ public class Element {
 					Object value = attributeModel.getCurrentValue();
 					Object converted = (attributeModel.getValueConverter() != null ? attributeModel.getValueConverter().viewToModel(value)
 							: value);
-					dataAccessor.setValue(getOriginalValue(), converted);
+					dataAccessor.setValue(result, converted);
 				}
 			}
 		}
-		return cloneObject(getOriginalValue());
+		return result;
 	}
 
 	/**
@@ -361,74 +362,5 @@ public class Element {
 		return errors;
 	}
 
-	private Object cloneObject(Object obj) {
-		if (obj == null) {
-			return null;
-		}
 
-		if (obj instanceof Cloneable) {
-			Class<?> clazz = obj.getClass();
-			Method m;
-			try {
-				m = clazz.getMethod("clone", (Class[]) null);
-			} catch (NoSuchMethodException ex) {
-				throw new NoSuchMethodError(ex.getMessage());
-			}
-			try {
-				return m.invoke(obj, (Object[]) null);
-			} catch (InvocationTargetException ex) {
-				ErrorHandler.handle(ex);
-			} catch (IllegalAccessException ex) {
-				ErrorHandler.handle(ex);
-			}
-		} else if (obj instanceof Serializable) {
-
-			ByteArrayOutputStream bytes = new ByteArrayOutputStream() {
-
-				public synchronized byte[] toByteArray() {
-					return buf;
-				}
-			};
-
-			try {
-				ObjectOutputStream out = new ObjectOutputStream(bytes);
-				out.writeObject(obj);
-				out.close();
-
-				ObjectInputStream in = new ObjectInputStream(new ByteArrayInputStream(bytes.toByteArray()));
-				Object objCopy = in.readObject();
-				return objCopy;
-			} catch (IOException e) {
-				ErrorHandler.handle(e);
-			} catch (ClassNotFoundException e) {
-				ErrorHandler.handle(e);
-			}
-
-		} else {
-			Object clone = null;
-			try {
-				clone = obj.getClass().newInstance();
-			} catch (InstantiationException e) {
-				ErrorHandler.handle(e);
-			} catch (IllegalAccessException e) {
-				ErrorHandler.handle(e);
-			}
-
-			for (Class objClass = obj.getClass(); !objClass.equals(Object.class); objClass = objClass.getSuperclass()) {
-				Field[] fields = objClass.getDeclaredFields();
-				for (int i = 0; i < fields.length; i++) {
-					fields[i].setAccessible(true);
-					try {
-						fields[i].set(clone, fields[i].get(obj));
-					} catch (IllegalArgumentException e) {
-						ErrorHandler.handle(e);
-					} catch (IllegalAccessException e) {
-						ErrorHandler.handle(e);
-					}
-				}
-			}
-			return clone;
-		}
-		return null;
-	}
 }

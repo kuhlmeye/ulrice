@@ -4,7 +4,7 @@ import java.lang.reflect.Field;
 
 import net.ulrice.databinding.modelaccess.IFDynamicModelValueAccessor;
 
-public class DynamicReflectionMVA extends AbstractReflectionMVA implements IFDynamicModelValueAccessor {
+public class DynamicReflectionMVA implements IFDynamicModelValueAccessor {
 
 	private String id;
 	private String path;
@@ -20,12 +20,12 @@ public class DynamicReflectionMVA extends AbstractReflectionMVA implements IFDyn
 	
 	@Override
 	public Object getValue(Object root) {
-		return getValueByReflection(root, path);
+		return ReflectionUtils.getValueByReflection(root, path);
 	}
 
 	@Override
 	public void setValue(Object root, Object value) {
-		setValueByReflection(root, value, path);
+		ReflectionUtils.setValueByReflection(root, value, path);
 	}
 
 	@Override
@@ -35,7 +35,7 @@ public class DynamicReflectionMVA extends AbstractReflectionMVA implements IFDyn
 
 	@Override
 	public Class<?> getModelType(Class<?> rootType) {
-		Field field = getFieldByReflection(rootType, path);
+		Field field = ReflectionUtils.getFieldByReflection(rootType, path);
 		return field.getType();
 	}
 }
