@@ -35,7 +35,8 @@ public class DialogManager {
 	}
 
 	public DialogManager() {
-		Ulrice.getModuleManager().addModuleEventListener(new ModuleEventListener());
+		Ulrice.getModuleManager().addModuleEventListener(
+				new ModuleEventListener());
 
 		ctrlDialogMap = new HashMap<IFController, List<DialogInformation>>();
 		dlgInfoDialogMap = new HashMap<JDialog, DialogManager.DialogInformation>();
@@ -51,7 +52,8 @@ public class DialogManager {
 	 * @param mode
 	 *            The mode in which the dialog should be shown.
 	 */
-	public void showDialog(IFController controller, JDialog dialog, DialogMode mode) {
+	public void showDialog(IFController controller, JDialog dialog,
+			DialogMode mode) {
 		DialogInformation dlgInfo = new DialogInformation();
 		dlgInfo.dialog = dialog;
 		dlgInfo.mode = mode;
@@ -93,9 +95,11 @@ public class DialogManager {
 		@Override
 		public void closeModule(IFController controller) {
 			List<DialogInformation> dialogs = ctrlDialogMap.get(controller);
-			for (DialogInformation dialogInfo : dialogs) {
-				dialogInfo.dialog.dispose();
-				dlgInfoDialogMap.remove(dialogInfo.dialog);
+			if (dialogs != null) {
+				for (DialogInformation dialogInfo : dialogs) {
+					dialogInfo.dialog.dispose();
+					dlgInfoDialogMap.remove(dialogInfo.dialog);
+				}
 			}
 			ctrlDialogMap.remove(controller);
 		}

@@ -50,7 +50,7 @@ public class DataGroupTest {
         dataGroup.addAttributeModel(intAAM);
         dataGroup.addAttributeModel(intBAM);
 
-        dataGroup.getAttributeModel("stringB").setValidator(
+        dataGroup.getAttributeModel("DataGroupTest.stringB").setValidator(
                 new RegExValidator<Object>("StringB", "String is not 'stringB'"));
     }
 
@@ -69,10 +69,10 @@ public class DataGroupTest {
     public void read() {
         dataGroup.read();
 
-        assertEquals("StringA", ((GenericAM<String>)dataGroup.getAttributeModel("stringA")).getCurrentValue());
-        assertEquals("StringB", ((GenericAM<String>)dataGroup.getAttributeModel("stringB")).getCurrentValue());
-        assertEquals((Integer)1, ((GenericAM<Integer>)dataGroup.getAttributeModel("intA")).getCurrentValue());
-        assertEquals((Integer)2, ((GenericAM<Integer>)dataGroup.getAttributeModel("intB")).getCurrentValue());
+        assertEquals("StringA", ((GenericAM<String>)dataGroup.getAttributeModel("DataGroupTest.stringA")).getCurrentValue());
+        assertEquals("StringB", ((GenericAM<String>)dataGroup.getAttributeModel("DataGroupTest.stringB")).getCurrentValue());
+        assertEquals((Integer)1, ((GenericAM<Integer>)dataGroup.getAttributeModel("DataGroupTest.intA")).getCurrentValue());
+        assertEquals((Integer)2, ((GenericAM<Integer>)dataGroup.getAttributeModel("DataGroupTest.intB")).getCurrentValue());
     }
 
     /**
@@ -81,10 +81,10 @@ public class DataGroupTest {
     @Test
     public void getter() {
         assertEquals(4, dataGroup.getAttributeModels().size());
-        assertEquals(stringAAM, dataGroup.getAttributeModel("stringA"));
-        assertEquals(stringBAM, dataGroup.getAttributeModel("stringB"));
-        assertEquals(intAAM, dataGroup.getAttributeModel("intA"));
-        assertEquals(intBAM, dataGroup.getAttributeModel("intB"));
+        assertEquals(stringAAM, dataGroup.getAttributeModel("DataGroupTest.stringA"));
+        assertEquals(stringBAM, dataGroup.getAttributeModel("DataGroupTest.stringB"));
+        assertEquals(intAAM, dataGroup.getAttributeModel("DataGroupTest.intA"));
+        assertEquals(intBAM, dataGroup.getAttributeModel("DataGroupTest.intB"));
     }
 
     /**
@@ -102,22 +102,22 @@ public class DataGroupTest {
     	Assert.assertEquals(false, dataGroup.isDirty());
     	Assert.assertEquals(true, dataGroup.isValid());
     	
-        ((GenericAM<String>)dataGroup.getAttributeModel("stringA")).setCurrentValue("Changed");
+        ((GenericAM<String>)dataGroup.getAttributeModel("DataGroupTest.stringA")).setCurrentValue("Changed");
     	Assert.assertEquals(true, dataGroup.isInitialized());
     	Assert.assertEquals(true, dataGroup.isDirty());
     	Assert.assertEquals(true, dataGroup.isValid());
 
-        ((GenericAM<String>)dataGroup.getAttributeModel("stringA")).setCurrentValue("StringA");
+        ((GenericAM<String>)dataGroup.getAttributeModel("DataGroupTest.stringA")).setCurrentValue("StringA");
     	Assert.assertEquals(true, dataGroup.isInitialized());
     	Assert.assertEquals(false, dataGroup.isDirty());
     	Assert.assertEquals(true, dataGroup.isValid());
 
-    	((GenericAM<String>)dataGroup.getAttributeModel("stringB")).setCurrentValue("Changed");
+    	((GenericAM<String>)dataGroup.getAttributeModel("DataGroupTest.stringB")).setCurrentValue("Changed");
     	Assert.assertEquals(true, dataGroup.isInitialized());
     	Assert.assertEquals(true, dataGroup.isDirty());
     	Assert.assertEquals(false, dataGroup.isValid());
 
-    	((GenericAM<String>)dataGroup.getAttributeModel("stringB")).setCurrentValue("StringB");
+    	((GenericAM<String>)dataGroup.getAttributeModel("DataGroupTest.stringB")).setCurrentValue("StringB");
     	Assert.assertEquals(true, dataGroup.isInitialized());
     	Assert.assertEquals(false, dataGroup.isDirty());
     	Assert.assertEquals(true, dataGroup.isValid());
