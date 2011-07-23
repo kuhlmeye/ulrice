@@ -19,6 +19,7 @@ public class JTextComponentViewAdapter extends AbstractViewAdapter implements Do
 
 	
 	private JTextComponent textComponent;
+	private boolean convertEmptyToNull = true;
 
 	public JTextComponentViewAdapter() {
 		this(new JTextField());
@@ -32,7 +33,11 @@ public class JTextComponentViewAdapter extends AbstractViewAdapter implements Do
 	
 	@Override
 	public Object getValue() {
-		return viewToModel(textComponent.getText());
+		String text = textComponent.getText();
+		// Convert empty to null, if flagged.
+		text = text != null && "".equals(text) && isConvertEmptyToNull() ? null : text;
+
+		return viewToModel(text);
 	}
 
 	@Override
@@ -81,4 +86,11 @@ public class JTextComponentViewAdapter extends AbstractViewAdapter implements Do
 		textComponent.getDocument().addDocumentListener(this);	
 	}
 
+	public void setConvertEmptyToNull(boolean convertEmptyToNull) {
+		this.convertEmptyToNull = convertEmptyToNull;
+	}
+	
+	public boolean isConvertEmptyToNull() {
+		return convertEmptyToNull;
+	}
 }

@@ -17,4 +17,7 @@ public interface IFDynamicModelValueAccessor {
 	
 
     String getAttributeId();
+
+
+	Class<?> getModelType(Class<?> rootType);
 }

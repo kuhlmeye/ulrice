@@ -85,7 +85,7 @@ public class IndexedReflectionMVA extends AbstractReflectionMVA implements IFInd
 	@Override
 	public Class<?> getModelType() {
 		if (path != null) {
-			Field field = getFieldByReflection(rootObject, path);
+			Field field = getFieldByReflection(rootObject.getClass(), path);
 			Type genericFieldType = field.getGenericType();
 		    
 			if(genericFieldType instanceof ParameterizedType){

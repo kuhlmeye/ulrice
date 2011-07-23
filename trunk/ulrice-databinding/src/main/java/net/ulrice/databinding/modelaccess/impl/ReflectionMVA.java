@@ -46,7 +46,7 @@ public class ReflectionMVA extends AbstractReflectionMVA implements IFModelValue
 	@Override
 	public Class<?> getModelType() {
 		if (path != null) {
-			Field field = getFieldByReflection(rootObject, path);
+			Field field = getFieldByReflection(rootObject.getClass(), path);
 			return field.getType();
 		} else {
 			return rootObject.getClass();

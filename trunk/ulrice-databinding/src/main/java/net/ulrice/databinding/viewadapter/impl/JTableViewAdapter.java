@@ -299,7 +299,7 @@ public class JTableViewAdapter extends AbstractViewAdapter implements TableModel
 			if(selColumn >= 0) {
 				table.setColumnSelectionInterval(selColumn, selColumn);
 			}
-			if(selRow >= 0) {
+			if(selRow >= 0 && selRow < getRowCount()) {
 				table.setRowSelectionInterval(selRow, selRow);
 			}
 			

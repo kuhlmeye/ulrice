@@ -25,10 +25,10 @@ public abstract class AbstractReflectionMVA {
 
 	}
 	
-	public Field getFieldByReflection(Object root, String path) {
+	public Field getFieldByReflection(Class<?> rootClass, String path) {
 		
 		String[] pathArr = path.split("\\.");
-		Class rootObject = root.getClass();
+		Class<?> rootObject = rootClass;
 		Field field = null;
 		try {
 			if (pathArr == null || pathArr.length == 0) {
@@ -67,6 +67,9 @@ public abstract class AbstractReflectionMVA {
 		Object object = root;
 		try {
 			for (String pathElement : pathArr) {
+				if(object == null) {
+					return null;
+				}
 				Field field = object.getClass().getDeclaredField(pathElement);
 				if (!field.isAccessible()) {
 					setAccessible(field);

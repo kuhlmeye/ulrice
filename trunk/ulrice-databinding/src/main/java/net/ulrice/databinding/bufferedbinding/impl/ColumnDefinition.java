@@ -17,6 +17,7 @@ public class ColumnDefinition<T extends Object> {
     private IFValueConverter valueConverter;
     private IFValidator validator;
     private boolean readOnly = false;
+	private boolean useAutoValueConverter = true;
 
     public ColumnDefinition(IFDynamicModelValueAccessor dataAccessor, Class<T> columnClass) {
         this.id = dataAccessor.getAttributeId();
@@ -135,5 +136,13 @@ public class ColumnDefinition<T extends Object> {
 	
 	public void setValidator(IFValidator validator) {
 		this.validator = validator;
+	}
+	
+    public boolean isUseAutoValueConverter() {
+    	return useAutoValueConverter;
+    }
+        
+    public void setUseAutoValueConverter(boolean useAutoValueConverter) {
+		this.useAutoValueConverter = useAutoValueConverter;
 	}
 }

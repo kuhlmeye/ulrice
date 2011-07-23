@@ -101,7 +101,6 @@ public class GenericAM<T> implements IFAttributeModel<T>, IFViewChangeListener {
 	 * @see net.ulrice.databinding.bufferedbinding.IFAttributeModel#setCurrentValue(java.lang.Object)
 	 */
 	public void setCurrentValue(T value) {
-		T oldValue = this.currentValue;
 		this.initialized = true;
 		this.currentValue = value;
 		calculateState(null);
@@ -109,7 +108,6 @@ public class GenericAM<T> implements IFAttributeModel<T>, IFViewChangeListener {
 	}
 
 	public void gaChanged(IFViewAdapter viewAdapter, T value) {
-		T oldValue = this.currentValue;
 		this.currentValue = value;
 		calculateState(viewAdapter);
 		fireDataChanged(viewAdapter);
