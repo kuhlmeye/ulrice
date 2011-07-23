@@ -1,5 +1,7 @@
 package net.ulrice.databinding.modelaccess.impl;
 
+import java.lang.reflect.Field;
+
 import net.ulrice.databinding.modelaccess.IFDynamicModelValueAccessor;
 
 public class DynamicReflectionMVA extends AbstractReflectionMVA implements IFDynamicModelValueAccessor {
@@ -29,5 +31,11 @@ public class DynamicReflectionMVA extends AbstractReflectionMVA implements IFDyn
 	@Override
 	public String getAttributeId() {
 		return id;
+	}
+
+	@Override
+	public Class<?> getModelType(Class<?> rootType) {
+		Field field = getFieldByReflection(rootType, path);
+		return field.getType();
 	}
 }

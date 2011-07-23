@@ -12,12 +12,14 @@ public class HeuristicConverterFactory {
             return new DoNothingConverter ();
         }
 
-        if (String.class.equals (presentationType) && (Integer.class.equals (modelType) || Integer.TYPE.equals (modelType))) {
-            return new Reverser(new StringToIntegerConverter());
+        // Model: String => View: Int
+        if (String.class.equals (modelType) && (Integer.class.equals (presentationType) || Integer.TYPE.equals (presentationType))) {
+            return new StringToIntegerConverter();
         }
         
+        // Model: Int => View: String
         if ((Integer.class.equals (modelType) || Integer.TYPE.equals (modelType)) && String.class.equals (presentationType)) {
-            return new StringToIntegerConverter();
+            return new Reverser(new StringToIntegerConverter());
         }
         
         throw new IllegalArgumentException ("keine Implizite Konvertierung von " + presentationType.getName () + " in " + modelType.getName () + ".");

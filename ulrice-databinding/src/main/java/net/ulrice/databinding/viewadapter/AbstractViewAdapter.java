@@ -134,4 +134,7 @@ public abstract class AbstractViewAdapter implements IFViewAdapter {
     	return useAutoValueConverter;
     }
         
+    public void setUseAutoValueConverter(boolean useAutoValueConverter) {
+		this.useAutoValueConverter = useAutoValueConverter;
+	}
 }

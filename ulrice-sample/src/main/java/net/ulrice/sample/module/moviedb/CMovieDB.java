@@ -7,6 +7,7 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
 import net.ulrice.databinding.bufferedbinding.impl.BindingGroup;
+import net.ulrice.databinding.bufferedbinding.impl.Element;
 import net.ulrice.module.impl.AbstractController;
 import net.ulrice.module.impl.ModuleActionState;
 import net.ulrice.module.impl.action.Action;
@@ -16,7 +17,7 @@ public class CMovieDB extends AbstractController<MMovieDB, VMovieDB> implements 
 
 	private BindingGroup overviewGroup = new BindingGroup();
 	private BindingGroup detailGroup = new BindingGroup();
-	private int lastSelectedRow = -1;
+	private String detailMovieId;
 
 	@Override
 	protected void postEventInitialization() {
@@ -44,7 +45,10 @@ public class CMovieDB extends AbstractController<MMovieDB, VMovieDB> implements 
 		Action addMovieAction = new Action("_ADD_MOVIE", "Add Movie", true, ActionType.ModuleAction, null) {
 			@Override
 			public void actionPerformed(ActionEvent e) {
+				JTable movieTable = getView().getMovieTableAdapter().getComponent();
+				movieTable.getSelectionModel().removeListSelectionListener(CMovieDB.this);
 				getView().getMovieTableAdapter().addRow();
+				movieTable.getSelectionModel().addListSelectionListener(CMovieDB.this);
 			}
 		};
 
@@ -53,7 +57,10 @@ public class CMovieDB extends AbstractController<MMovieDB, VMovieDB> implements 
 			public void actionPerformed(ActionEvent e) {
 				int selectedRow = getView().getMovieTableAdapter().getComponent().getSelectedRow();
 				if(selectedRow >= 0) {
+					JTable movieTable = getView().getMovieTableAdapter().getComponent();
+					movieTable.getSelectionModel().removeListSelectionListener(CMovieDB.this);
 					getView().getMovieTableAdapter().delRow(selectedRow);
+					movieTable.getSelectionModel().addListSelectionListener(CMovieDB.this);
 				}
 			}
 		};
@@ -61,7 +68,10 @@ public class CMovieDB extends AbstractController<MMovieDB, VMovieDB> implements 
 		Action addActorAction = new Action("_ADD_ACTOR", "Add Actor", true, ActionType.ModuleAction, null) {
 			@Override
 			public void actionPerformed(ActionEvent e) {
+				JTable actorTable = getView().getActorTableVA().getComponent();
+				actorTable.getSelectionModel().removeListSelectionListener(CMovieDB.this);
 				getView().getActorTableVA().addRow();
+				actorTable.getSelectionModel().addListSelectionListener(CMovieDB.this);
 			}
 		};
 
@@ -70,7 +80,10 @@ public class CMovieDB extends AbstractController<MMovieDB, VMovieDB> implements 
 			public void actionPerformed(ActionEvent e) {
 				int selectedRow = getView().getActorTableVA().getComponent().getSelectedRow();
 				if(selectedRow >= 0) {
+					JTable actorTable = getView().getActorTableVA().getComponent();
+					actorTable.getSelectionModel().removeListSelectionListener(CMovieDB.this);
 					getView().getActorTableVA().delRow(selectedRow);
+					actorTable.getSelectionModel().addListSelectionListener(CMovieDB.this);
 				}
 			}
 		};
@@ -87,20 +100,26 @@ public class CMovieDB extends AbstractController<MMovieDB, VMovieDB> implements 
 			movieTable.getSelectionModel().removeListSelectionListener(this);
 			int selectedRow = movieTable.getSelectedRow();
 
-			if (lastSelectedRow > -1) {
+			System.out.println("Dirty: " + detailGroup.isDirty() + ", Valid: " + detailGroup.isValid());
+			if (detailMovieId != null && detailGroup.isDirty()) {
 				detailGroup.write();
 				Movie movie = getModel().getMovie();
-				getModel().getMovieListAM().getElementAt(lastSelectedRow).setCurrentValue(movie);
+				getModel().getMovieListAM().getElementById(detailMovieId).setCurrentValue(movie);
 			}
 
 			if (selectedRow > -1) {
-				Movie movie = (Movie) getModel().getMovieListAM().getElementAt(selectedRow).getCurrentValue();
+				Element selElement = getModel().getMovieListAM().getElementAt(selectedRow);
+				detailMovieId = selElement.getUniqueId();
+				Movie movie = (Movie) selElement.getCurrentValue();
 				getModel().setMovie(movie);
 				detailGroup.read();
 				getView().getActorTableVA().sizeColumns(true);
+			} else {
+				detailMovieId = null;
+				getModel().setMovie(null);
+				detailGroup.read();
 			}
 
-			lastSelectedRow = selectedRow;
 			movieTable.getSelectionModel().addListSelectionListener(this);
 		}
 	}

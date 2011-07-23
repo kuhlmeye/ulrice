@@ -101,6 +101,10 @@ public class TableAMTest {
     	Assert.assertEquals(true, tableAM.isInitialized());
     	Assert.assertEquals(true, tableAM.isDirty());
     	Assert.assertEquals(true, tableAM.isValid());
+    	
+		Assert.assertEquals(0, tableAM.getCreatedObjects().size());
+		Assert.assertEquals(1, tableAM.getModifiedObjects().size());
+		Assert.assertEquals(0, tableAM.getDeletedObjects().size());	
 
         // Change back.
         tableAM.getElementAt(0).setValueAt(0, "Max Mustermann");
@@ -139,6 +143,50 @@ public class TableAMTest {
 	    tableAM.write();
 	    assertEquals("Otto Normal", list.get(0).name);
 	}
+	
+	@Test
+	public void getElementById() {
+		tableAM.read();
+		String uniqueId = tableAM.getElementAt(0).getUniqueId();
+		Assert.assertEquals(tableAM.getElementAt(0), tableAM.getElementById(uniqueId));
+	}
+
+	@Test
+	public void addRow() {
+		tableAM.read();
+		Assert.assertEquals(2, tableAM.getRowCount());
+		
+		tableAM.addElement(null);
+		Assert.assertEquals(3, tableAM.getRowCount());
+		Assert.assertTrue(tableAM.isDirty());
+		Assert.assertTrue(tableAM.isValid());
+		Assert.assertEquals(null, tableAM.getElementAt(2).getValueAt(0));
+		Assert.assertFalse(tableAM.getElementAt(2).isDirty());
+		Assert.assertEquals(0, tableAM.getElementAt(2).getValueAt(1));
+		
+		Assert.assertEquals(1, tableAM.getCreatedObjects().size());
+		Assert.assertEquals(0, tableAM.getModifiedObjects().size());
+		Assert.assertEquals(0, tableAM.getDeletedObjects().size());				
+	}
+	
+	@Test
+	public void deleteRow() {
+		tableAM.read();
+		Assert.assertEquals(2, tableAM.getRowCount());
+		
+		tableAM.delElement(0);
+		Assert.assertEquals(1, tableAM.getRowCount());
+		Assert.assertTrue(tableAM.isDirty());
+		Assert.assertTrue(tableAM.isValid());
+		Assert.assertEquals("Petra Musterfrau", tableAM.getElementAt(0).getValueAt(0));
+		Assert.assertFalse(tableAM.getElementAt(0).isDirty());
+		Assert.assertEquals(20, tableAM.getElementAt(0).getValueAt(1));
+		
+		Assert.assertEquals(0, tableAM.getCreatedObjects().size());
+		Assert.assertEquals(0, tableAM.getModifiedObjects().size());
+		Assert.assertEquals(1, tableAM.getDeletedObjects().size());				
+		Assert.assertEquals("Max Mustermann", ((Person)tableAM.getDeletedObjects().get(0)).name);				
+	}		
 	
 	public static class Person {
 		public String name;

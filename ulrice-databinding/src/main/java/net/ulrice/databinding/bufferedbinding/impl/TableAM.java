@@ -12,6 +12,7 @@ import javax.swing.event.EventListenerList;
 import net.ulrice.databinding.ErrorHandler;
 import net.ulrice.databinding.bufferedbinding.IFAttributeModel;
 import net.ulrice.databinding.bufferedbinding.IFAttributeModelEventListener;
+import net.ulrice.databinding.converter.HeuristicConverterFactory;
 import net.ulrice.databinding.converter.IFValueConverter;
 import net.ulrice.databinding.modelaccess.IFIndexedModelValueAccessor;
 import net.ulrice.databinding.modelaccess.IFModelValueAccessor;
@@ -212,6 +213,13 @@ public class TableAM implements IFAttributeModel  {
 	 * @param columnDefinition
 	 */
 	public void addColumn(ColumnDefinition<?> columnDefinition) {
+		if (columnDefinition.isUseAutoValueConverter() && columnDefinition.getValueConverter() == null) {
+			// TODO Cells are always strings...implement checkbox, spinner,... support
+			Class<?> rootType = tableMVA.getModelType();
+			Class<?> columnClass = columnDefinition.getDataAccessor().getModelType(rootType);
+			
+			columnDefinition.setValueConverter(HeuristicConverterFactory.createConverter(String.class, columnClass));
+		}
 		columns.add(columnDefinition);
 	}
 
@@ -398,6 +406,9 @@ public class TableAM implements IFAttributeModel  {
 		
 		Element element = createElement(value);
 		elements.add(element);
+		elementIdMap.put(element.getUniqueId(), element);
+		newElements.add(element);
+		stateChanged(element);
 		fireUpdateViews();
 		return element;
 	}
@@ -409,14 +420,54 @@ public class TableAM implements IFAttributeModel  {
 		
 		Element element = createElement(value);
 		elements.add(index, element);
+		elementIdMap.put(element.getUniqueId(), element);
+		newElements.add(element);		
+		stateChanged(element);
 		fireUpdateViews();
 		return element;
 	}
 	
 	public void delElement(int index) {
 		Element delElement = elements.remove(index);
-		delElements.add(delElement);
+		delElements.add(delElement);	
+		stateChanged(delElement);
 		fireUpdateViews();
+	}
+	
+	public List getDeletedObjects() {
+		List result = new ArrayList();
+		for(Element element : delElements) {
+			result.add(element.getCurrentValue());
+		}
+		return result;
+	}
+	
+	public List getCreatedObjects() {
+		List result = new ArrayList();
+		for(Element element : newElements) {
+			result.add(element.getCurrentValue());
+		}
+		return result;
+	}
+	
+	public List getModifiedObjects() {
+		List result = new ArrayList();
+		for(Element element : modElements) {
+			result.add(element.getCurrentValue());
+		}
+		return result;
+	}
+	
+	public List getInvalidObjects() {
+		List result = new ArrayList();
+		for(Element element : invElements) {
+			result.add(element.getCurrentValue());
+		}
+		return result;
+	}
+
+	public Element getElementById(String uniqueId) {
+		return elementIdMap.get(uniqueId);
 	}
 }
 
