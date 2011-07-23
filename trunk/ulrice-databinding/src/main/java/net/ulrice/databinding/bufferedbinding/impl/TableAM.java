@@ -360,12 +360,34 @@ public class TableAM implements IFAttributeModel  {
 		modElements.clear();
 		invElements.clear();
 		
+		long avgRflcTime = 0;
+		long avgCreateElemTime = 0;
+		long avgReadObjTime = 0;
+		long start = 0;
+		long end = 0;
 		for(int i = 0; i < numRows; i++) {
+			
+			start = System.nanoTime();
 			Object value = tableMVA.getValue(i);
+			end = System.nanoTime();			
+			avgRflcTime += (end - start);
+			
+			start = System.nanoTime();
 			Element elem = createElement(value);
+			end = System.nanoTime();
+			avgCreateElemTime += (end - start);
+
+			start = System.nanoTime();
 			elem.readObject();
+			end = System.nanoTime();
+			avgReadObjTime += (end - start);
+
 			elementIdMap.put(elem.getUniqueId(), elem);				
 			elements.add(elem);
+			
+			if(i % 1000 == 0) {
+				System.out.println(i);
+			}
 		}
 		fireUpdateViews();
 	}
