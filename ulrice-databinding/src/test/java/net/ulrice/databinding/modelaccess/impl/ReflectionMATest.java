@@ -7,8 +7,8 @@ public class ReflectionMATest extends TestCase {
 	protected String stringA = "Test";
 	protected int intA = 5;
 	
-	private AbstractReflectionMVA stringAModelAccess;
-	private AbstractReflectionMVA intAModelAccess;
+	private ReflectionMVA stringAModelAccess;
+	private ReflectionMVA intAModelAccess;
 
 	@Override
 	protected void setUp() throws Exception {

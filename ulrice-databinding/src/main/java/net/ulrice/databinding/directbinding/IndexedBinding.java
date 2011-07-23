@@ -8,8 +8,7 @@ import net.ulrice.databinding.modelaccess.IndexedPredicate;
 
 
 class IndexedBinding {
-    private final IFModelValueAccessor _numEntriesAccessor;
-    
+
     private final ColumnAdapter _viewAdapter;
     private final IFValueConverter _converter;
     private final IndexedPredicate _enabledPredicate;
@@ -18,8 +17,8 @@ class IndexedBinding {
     
     private final boolean _isReadOnly;
 
-    public IndexedBinding (IFModelValueAccessor numEntriesAccessor, ColumnAdapter viewAdapter, IFValueConverter converter, IndexedPredicate enabledPredicate, IFIndexedModelValueAccessor modelValueAccessor, boolean isReadOnly) {
-        _numEntriesAccessor = numEntriesAccessor;
+    public IndexedBinding (ColumnAdapter viewAdapter, IFValueConverter converter, IndexedPredicate enabledPredicate, IFIndexedModelValueAccessor modelValueAccessor, boolean isReadOnly) {
+
         _viewAdapter = viewAdapter;
         _converter = converter;
         _enabledPredicate = enabledPredicate;
@@ -27,9 +26,6 @@ class IndexedBinding {
         _isReadOnly = isReadOnly;
     }
 
-    public IFModelValueAccessor getNumEntriesAccessor () {
-        return _numEntriesAccessor;
-    }
     
     public ColumnAdapter getViewAdapter () {
         return _viewAdapter;

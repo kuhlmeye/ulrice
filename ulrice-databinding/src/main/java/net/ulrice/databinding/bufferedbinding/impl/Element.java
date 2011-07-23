@@ -53,7 +53,7 @@ public class Element {
 	private boolean dirty;
 	private boolean valid;
 
-	private AbstractTableAM tableAM;
+	private TableAM tableAM;
 
 	/**
 	 * Creates a new element.
@@ -69,7 +69,7 @@ public class Element {
 	 * @param editable
 	 *            True, if this element should be readonly.
 	 */
-	public Element(AbstractTableAM tableAM, String uniqueId, List<ColumnDefinition<? extends Object>> columns, Object valueObject,
+	public Element(TableAM tableAM, String uniqueId, List<ColumnDefinition<? extends Object>> columns, Object valueObject,
 			boolean readOnly) {
 		this.tableAM = tableAM;
 		this.uniqueId = uniqueId;
@@ -178,10 +178,9 @@ public class Element {
 		if (model == null) {
 			return;
 		}
-		Object oldValue = model.getCurrentValue();
 
 		model.setValue(aValue);
-		fireValueChanged(columnId, aValue, oldValue);
+		fireValueChanged();
 		updateState();
 	}
 
@@ -224,8 +223,8 @@ public class Element {
 	 * @param newValue
 	 * @param oldValue
 	 */
-	private void fireValueChanged(String columnId, Object newValue, Object oldValue) {
-		tableAM.dataChanged(this, columnId, newValue, oldValue);
+	private void fireValueChanged() {
+		tableAM.dataChanged();
 	}
 
 	/**
@@ -255,14 +254,16 @@ public class Element {
 	public void setCurrentValue(Object currentValue) {
 		if (modelList != null) {
 			for (int i = 0; i < modelList.size(); i++) {
-				GenericAM attributeModel = modelList.get(i);
+				GenericAM model = modelList.get(i);
 				IFDynamicModelValueAccessor dataAccessor = columns.get(i).getDataAccessor();
 
 				Object value = dataAccessor.getValue(currentValue);
-				Object converted = (attributeModel.getValueConverter() != null ? attributeModel.getValueConverter().modelToView(value)
+				Object converted = (model.getValueConverter() != null ? model.getValueConverter().modelToView(value)
 						: value);
-				setValueAt(columns.get(i).getId(), converted);
+				model.setValue(converted);
 			}
+			fireValueChanged();
+			updateState();
 		}
 	}
 
@@ -297,9 +298,11 @@ public class Element {
 				modelList.add(attributeModel);
 				idModelMap.put(attributeModel.getId(), attributeModel);
 
-				Object value = column.getDataAccessor().getValue(getOriginalValue());
-				Object converted = (column.getValueConverter() != null ? column.getValueConverter().modelToView(value) : value);
-				attributeModel.directRead(converted);
+				if(getOriginalValue() != null) {
+					Object value = column.getDataAccessor().getValue(getOriginalValue());
+					Object converted = (column.getValueConverter() != null ? column.getValueConverter().modelToView(value) : value);
+					attributeModel.directRead(converted);
+				}
 			}
 		}
 	}

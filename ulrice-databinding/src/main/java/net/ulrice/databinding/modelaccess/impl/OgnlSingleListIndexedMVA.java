@@ -4,6 +4,7 @@ import java.util.List;
 
 import net.ulrice.databinding.ErrorHandler;
 import net.ulrice.databinding.modelaccess.IFIndexedModelValueAccessor;
+import net.ulrice.databinding.modelaccess.IFModelValueAccessor;
 import ognl.Ognl;
 import ognl.OgnlException;
 
@@ -16,11 +17,13 @@ public class OgnlSingleListIndexedMVA implements IFIndexedModelValueAccessor {
 
     private final Object _ognlBaseTree;
     private final Object _ognlElementTree;
+    private final IFModelValueAccessor _sizeMVA;
     private String id;
 
-    public OgnlSingleListIndexedMVA (Class<?> type, Boolean isReadOnly, Object model, String baseExpression, String elementExpression) {
+    public OgnlSingleListIndexedMVA (Class<?> type, Boolean isReadOnly, Object model, String baseExpression, String elementExpression, IFModelValueAccessor sizeMVA) {
         _type = type;
         _model = model;
+        _sizeMVA = sizeMVA;
         try {
             _ognlBaseTree = Ognl.parseExpression (baseExpression);
             _ognlElementTree = Ognl.parseExpression (elementExpression);
@@ -86,5 +89,10 @@ public class OgnlSingleListIndexedMVA implements IFIndexedModelValueAccessor {
     @Override
     public String getAttributeId() {
     	return id;
+    }
+    
+    @Override
+    public int getSize() {
+    	return (Integer)_sizeMVA.getValue();
     }
 }
