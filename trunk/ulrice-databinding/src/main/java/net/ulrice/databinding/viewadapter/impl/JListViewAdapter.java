@@ -9,13 +9,13 @@ import javax.swing.event.ListDataEvent;
 import javax.swing.event.ListDataListener;
 
 import net.ulrice.databinding.IFBinding;
-import net.ulrice.databinding.bufferedbinding.impl.ListAM;
+import net.ulrice.databinding.bufferedbinding.impl.TableAM;
 import net.ulrice.databinding.viewadapter.AbstractViewAdapter;
 
 public class JListViewAdapter extends AbstractViewAdapter implements ListModel {
 
     private EventListenerList listenerList = new EventListenerList();
-    private ListAM attributeModel;
+    private TableAM attributeModel;
     private JList list;
     
     public JListViewAdapter() {
@@ -29,8 +29,8 @@ public class JListViewAdapter extends AbstractViewAdapter implements ListModel {
     
 	@Override
 	public void updateFromBinding(IFBinding binding) {
-		if(binding instanceof ListAM) {
-			attributeModel = (ListAM)binding;									
+		if(binding instanceof TableAM) {
+			attributeModel = (TableAM)binding;									
 		}
 		if(!isInNotification()) {
 			fireListChanged(new ListDataEvent(this, ListDataEvent.CONTENTS_CHANGED, 0, attributeModel.getRowCount()));

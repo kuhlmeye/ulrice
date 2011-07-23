@@ -50,11 +50,11 @@ public class ValidationResult {
  
     
     public boolean isValid () {
-        return validationErrors.isEmpty ();
+        return validationErrors == null || validationErrors.isEmpty ();
     }
     
     public List<String> getMessagesByBinding (IFBinding b) {
-        return messagesByBindingMap.get (b);
+        return messagesByBindingMap.containsKey(b) ? messagesByBindingMap.get (b) : new ArrayList<String>();
     }
        
     public void addValidationError(ValidationError validationError) {

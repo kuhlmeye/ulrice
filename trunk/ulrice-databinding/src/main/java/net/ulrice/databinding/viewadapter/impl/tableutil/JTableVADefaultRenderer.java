@@ -10,9 +10,9 @@ import javax.swing.JComponent;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableCellRenderer;
 
-import net.ulrice.databinding.bufferedbinding.impl.AbstractTableAM;
 import net.ulrice.databinding.bufferedbinding.impl.ColumnDefinition;
 import net.ulrice.databinding.bufferedbinding.impl.GenericAM;
+import net.ulrice.databinding.bufferedbinding.impl.TableAM;
 import net.ulrice.databinding.ui.BindingUI;
 import net.ulrice.databinding.viewadapter.IFStateMarker;
 import net.ulrice.databinding.viewadapter.IFTooltipHandler;
@@ -33,6 +33,7 @@ public class JTableVADefaultRenderer extends DefaultTableCellRenderer {
 	private Color oddNormalBackground = BindingUI.getColor(BindingUI.BACKGROUND_NORMAL_ODD_TABLE_ROW, new Color(200, 200, 200));
 	private Color evenReadOnlyBackground = BindingUI.getColor(BindingUI.BACKGROUND_READONLY_EVEN_TABLE_ROW, new Color(200, 230, 200));
 	private Color oddReadOnlyBackground = BindingUI.getColor(BindingUI.BACKGROUND_READONLY_ODD_TABLE_ROW, new Color(170, 200, 170));
+	private Color selectedBackground = BindingUI.getColor(BindingUI.BACKGROUND_SELECTED_TABLE_ROW, new Color(200, 200, 255));
 
 	public JTableVADefaultRenderer(JTableViewAdapter tableVA) {
 		this.tableVA = tableVA;
@@ -47,7 +48,7 @@ public class JTableVADefaultRenderer extends DefaultTableCellRenderer {
 
 		JComponent component = (JComponent) super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
 
-		AbstractTableAM tableAM = tableVA.getAttributeModel();
+		TableAM tableAM = tableVA.getAttributeModel();
 		boolean readOnly = false;
 
 		if (tableAM != null) {
@@ -56,11 +57,16 @@ public class JTableVADefaultRenderer extends DefaultTableCellRenderer {
 
 		}		
 
-		if (readOnly) {
+		if(isSelected) {
+			component.setBackground(selectedBackground);
+		} else if (readOnly) {
 			component.setBackground(row % 2 == 0 ? evenReadOnlyBackground : oddReadOnlyBackground);
 		} else {
 			component.setBackground(row % 2 == 0 ? evenNormalBackground : oddNormalBackground);
 		}
+		
+		
+		//TODO SELECTION BACKGROUND
 
 		if (tableAM != null) {
 			if (stateMarker != null) {

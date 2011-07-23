@@ -13,6 +13,7 @@ public class BindingUI {
 	public static final String BACKGROUND_NORMAL_EVEN_TABLE_ROW = "Ulrice.Binding.JTableVARenderer.NormalOddBackground";
 	public static final String BACKGROUND_READONLY_ODD_TABLE_ROW = "Ulrice.Binding.JTableVARenderer.ReadonlyOddBackground";
 	public static final String BACKGROUND_READONLY_EVEN_TABLE_ROW = "Ulrice.Binding.JTableVARenderer.ReadonlyOddBackground";
+	public static final String BACKGROUND_SELECTED_TABLE_ROW = "Ulrice.Binding.JTableVARenderer.SelectedBackground";
 	
 	public static Color getColor(String key, Color defaultColor) {
 		Color color = UIManager.getColor(key);

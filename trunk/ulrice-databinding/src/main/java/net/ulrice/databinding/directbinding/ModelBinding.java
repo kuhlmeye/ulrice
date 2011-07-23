@@ -104,7 +104,7 @@ public class ModelBinding {
     private int getNumRows (TableBinding b) {
         int result = 0;
         for (IndexedBinding colBinding: b.getColumnBindings ()) {
-            final int colSize = (Integer) colBinding.getNumEntriesAccessor ().getValue ();
+            final int colSize = (Integer) colBinding.getModelValueAccessor().getSize();
             if (colSize > result)
                 result = colSize;
         }
@@ -313,8 +313,8 @@ public class ModelBinding {
             final IFValueConverter converter = HeuristicConverterFactory.createConverter (columnType, columnType);
 
             final ColumnAdapter viewAdapter = new DefaultTableModelColumnAdapter (tableModel, columnType, col, ! canBeEditable); //TODO readOnly noch über Typen filtern?
-            final IFIndexedModelValueAccessor modelValueAccessor = new OgnlSingleListIndexedMVA (columnType, null, _model, baseExpression, expr);
-            columnBindings.add (new IndexedBinding (numRowsAccessor, viewAdapter, converter, IndexedPredicate.TRUE, modelValueAccessor, viewAdapter.isReadOnly () || modelValueAccessor.isReadOnly ())); //TODO: enabled
+            final IFIndexedModelValueAccessor modelValueAccessor = new OgnlSingleListIndexedMVA (columnType, null, _model, baseExpression, expr, numRowsAccessor);
+            columnBindings.add (new IndexedBinding (viewAdapter, converter, IndexedPredicate.TRUE, modelValueAccessor, viewAdapter.isReadOnly () || modelValueAccessor.isReadOnly ())); //TODO: enabled
         }
 
         final TableModelAdapter tableViewAdapter = new DefaultTableModelAdapter (tableModel);

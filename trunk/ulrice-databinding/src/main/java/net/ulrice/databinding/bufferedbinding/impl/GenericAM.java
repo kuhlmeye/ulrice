@@ -124,7 +124,7 @@ public class GenericAM<T> implements IFAttributeModel<T>, IFViewChangeListener {
 		try {
 			if (getValidator() != null) {
 				ValidationResult errors = getValidator().isValid(this, getCurrentValue());
-				if (errors != null) {
+				if (errors != null && !errors.isValid()) {
 					stateChanged |= (valid != false);
 					valid = false;
 				} else {

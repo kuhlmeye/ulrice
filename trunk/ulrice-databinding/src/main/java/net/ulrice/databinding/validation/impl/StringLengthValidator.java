@@ -17,17 +17,17 @@ public class StringLengthValidator extends AbstractValidator<String> {
 
 	@Override
 	protected ValidationResult validate(IFBinding bindingId, String attribute) {
-        if (attribute.length () < _minLength) {
+		ValidationResult result = new ValidationResult();
+		
+        if (attribute == null || attribute.length () < _minLength) {
         	// TODO Christof Internationalize
-            ValidationResult errors = new ValidationResult(new ValidationError(bindingId, "min. Länge: " + _minLength, null));
-            return errors;
+            result.addValidationError(new ValidationError(bindingId, "min. Länge: " + _minLength, null));
         }
-        if (attribute.length () > _maxLength) {
+        if (attribute == null || attribute.length () > _maxLength) {
         	// TODO Christof Internationalize
-            ValidationResult errors = new ValidationResult(new ValidationError(bindingId, "max. Länge: " + _minLength, null));
-            return errors;
+            result.addValidationError(new ValidationError(bindingId, "max. Länge: " + _minLength, null));
         }
         
-        return null;
+        return result;
     }
 }
