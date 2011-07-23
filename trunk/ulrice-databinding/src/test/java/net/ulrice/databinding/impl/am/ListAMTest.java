@@ -110,8 +110,8 @@ public class ListAMTest {
     	Assert.assertEquals(false, listAM.isDirty());
     	Assert.assertEquals(true, listAM.isValid());
         
-        listAM.getElementAt(0).setValueAt("name", "Otto Normal");
-        assertEquals("Otto Normal", listAM.getElementAt(0).getValueAt("name"));
+        listAM.getElementAt(0).setValueAt("Person.name", "Otto Normal");
+        assertEquals("Otto Normal", listAM.getElementAt(0).getValueAt("Person.name"));
     	Assert.assertEquals(true, listAM.getElementAt(0).isDirty());
     	Assert.assertEquals(true, listAM.getElementAt(0).isValid());
     	Assert.assertEquals(true, listAM.isInitialized());
@@ -119,8 +119,8 @@ public class ListAMTest {
     	Assert.assertEquals(true, listAM.isValid());
         
         // Change back.
-        listAM.getElementAt(0).setValueAt("name", "Max Mustermann");
-        assertEquals("Max Mustermann", listAM.getElementAt(0).getValueAt("name"));
+        listAM.getElementAt(0).setValueAt("Person.name", "Max Mustermann");
+        assertEquals("Max Mustermann", listAM.getElementAt(0).getValueAt("Person.name"));
     	Assert.assertEquals(false, listAM.getElementAt(0).isDirty());
     	Assert.assertEquals(true, listAM.getElementAt(0).isValid());
     	Assert.assertEquals(true, listAM.isInitialized());
