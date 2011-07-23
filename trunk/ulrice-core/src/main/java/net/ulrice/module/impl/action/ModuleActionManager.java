@@ -7,7 +7,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.logging.Logger;
 
 import javax.swing.event.EventListenerList;
@@ -32,6 +31,8 @@ public class ModuleActionManager implements IFModuleEventListener, PropertyChang
 	/** The controller that is currently active. */
 	private IFController activeController;
 
+	private Map<IFController, List<Action>> controllerActionOrderMap = new HashMap<IFController, List<Action>>();
+	
 	/** The map of the action-states of the modules. */
 	private Map<IFController, Map<Action, ModuleActionState>> controllerActionStateMap = new HashMap<IFController, Map<Action, ModuleActionState>>();
 
@@ -116,15 +117,15 @@ public class ModuleActionManager implements IFModuleEventListener, PropertyChang
 	 * @param moduleAction
 	 *            The action.
 	 */
-	public void addApplicationAction(Action moduleAction) {
+	public void addApplicationAction(Action moduleAction) {		
 
 		if (!Ulrice.getSecurityManager().allowRegisterAction(activeController, moduleAction)) {
 			LOG.info("Application-Action [Id: " + moduleAction.getUniqueId() + "] will not be added. Not authorized by ulrice security manager.");
 			return;
 		}
+				
 
 		moduleAction.addPropertyChangeListener(this);
-
 		applicationActions.put(moduleAction.getUniqueId(), moduleAction);
 		fireApplicationActionsChanged();
 	}
@@ -137,7 +138,6 @@ public class ModuleActionManager implements IFModuleEventListener, PropertyChang
 	 */
 	public void removeApplicationAction(Action moduleAction) {
 		moduleAction.removePropertyChangeListener(this);
-
 		applicationActions.remove(moduleAction.getUniqueId());
 		fireApplicationActionsChanged();
 	}
@@ -186,10 +186,12 @@ public class ModuleActionManager implements IFModuleEventListener, PropertyChang
 	 */
 	public List<Action> getModuleActions() {
 		if (activeController != null) {
+			List<Action> actionList = controllerActionOrderMap.get(activeController);
 			Map<Action, ModuleActionState> actionStateMap = controllerActionStateMap.get(activeController);
-			if (actionStateMap != null) {
-				List<Action> moduleActionList = new ArrayList<Action>(actionStateMap.size());
-				for (ModuleActionState moduleActionState : actionStateMap.values()) {
+			if (actionList != null && actionStateMap != null) {
+				List<Action> moduleActionList = new ArrayList<Action>(actionList.size());
+				for (Action action : actionList) {
+					ModuleActionState moduleActionState = actionStateMap.get(action);
 					String uniqueId = moduleActionState.getAction().getUniqueId();
 					if (!applicationActions.containsKey(uniqueId)) {
 						moduleActionList.add(moduleActionState.getAction());
@@ -207,8 +209,9 @@ public class ModuleActionManager implements IFModuleEventListener, PropertyChang
 	@Override
 	public void openModule(IFController activeController) {
 		this.activeController = activeController;
-		Set<ModuleActionState> moduleActionStates = activeController.getModuleActionStates();
+		List<ModuleActionState> moduleActionStates = activeController.getModuleActionStates();
 
+		List<Action> actionOrder = new ArrayList<Action>(moduleActionStates.size());
 		Map<Action, ModuleActionState> actionStateMap = new HashMap<Action, ModuleActionState>();
 		if (moduleActionStates != null) {
 			for (ModuleActionState moduleActionState : moduleActionStates) {
@@ -220,9 +223,11 @@ public class ModuleActionManager implements IFModuleEventListener, PropertyChang
 					return;
 				}
 
+				actionOrder.add(moduleAction);
 				actionStateMap.put(moduleActionState.getAction(), moduleActionState);
 			}
 		}
+		controllerActionOrderMap.put(activeController, actionOrder);
 		controllerActionStateMap.put(activeController, actionStateMap);
 
 		adaptActionStates();

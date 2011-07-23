@@ -25,6 +25,7 @@ public abstract class Action extends AbstractAction {
 
 	
 
+
 	/**
 	 * Creates a new action handled by the module.
 	 * 
@@ -70,4 +71,5 @@ public abstract class Action extends AbstractAction {
 	public ActionType getType() {
 		return type;
 	}
+
 }
