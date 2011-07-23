@@ -1,6 +1,6 @@
 package net.ulrice.module;
 
-import java.util.Set;
+import java.util.List;
 
 import net.ulrice.module.impl.ModuleActionState;
 
@@ -66,7 +66,7 @@ public interface IFController {
 	 * 
 	 * @return An array of module action state objects.
 	 */
-	Set<ModuleActionState> getModuleActionStates(); 
+	List<ModuleActionState> getModuleActionStates(); 
 		
 	/**
 	 * Block the controller.

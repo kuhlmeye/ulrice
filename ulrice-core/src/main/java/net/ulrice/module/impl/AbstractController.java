@@ -1,6 +1,8 @@
 package net.ulrice.module.impl;
 
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import net.ulrice.Ulrice;
@@ -28,7 +30,7 @@ public abstract class AbstractController<T extends IFModel, U extends IFView> im
 	private T model;
 	
 	/** The set of all module actions that are handled by this controller. */
-	private Set<ModuleActionState> moduleActionStates;
+	private List<ModuleActionState> moduleActionStates;
 	
 	private Set<Object> blockSet = new HashSet<Object>();
 	
@@ -110,7 +112,7 @@ public abstract class AbstractController<T extends IFModel, U extends IFView> im
 
 		ModuleActionState[] moduleActionStateArray = getHandledActions();
 		if(moduleActionStateArray != null) {
-			moduleActionStates = new HashSet<ModuleActionState>();
+			moduleActionStates = new ArrayList<ModuleActionState>(moduleActionStateArray.length);
 			for(ModuleActionState moduleActionState : moduleActionStateArray) {
 				moduleActionStates.add(moduleActionState);
 			}
@@ -194,7 +196,7 @@ public abstract class AbstractController<T extends IFModel, U extends IFView> im
 	 * @see net.ulrice.module.IFController#getModuleActionStates()
 	 */
 	@Override
-	public Set<ModuleActionState> getModuleActionStates() {
+	public List<ModuleActionState> getModuleActionStates() {
 		return moduleActionStates;
 	}
 
