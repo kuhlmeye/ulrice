@@ -386,17 +386,7 @@ public class TableAM implements IFAttributeModel  {
 	}
 
 	protected Object createEmptyElementObject() {
-		Class<?> modelType = tableMVA.getModelType();
-		try {
-			Object newInstance = modelType.newInstance();
-			return newInstance;
-		} catch (InstantiationException e) {
-			ErrorHandler.handle(e);			
-		} catch (IllegalAccessException e) {
-			ErrorHandler.handle(e);			
-		}
-		
-		return null;
+		return tableMVA.newObjectInstance();
 	}
 
 	public Element addElement(Object value) {
@@ -468,6 +458,10 @@ public class TableAM implements IFAttributeModel  {
 
 	public Element getElementById(String uniqueId) {
 		return elementIdMap.get(uniqueId);
+	}
+
+	protected Object cloneObject(Object value) {
+		return tableMVA.cloneObject(value);
 	}
 }
 

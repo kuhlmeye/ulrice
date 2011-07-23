@@ -1,21 +1,31 @@
 package net.ulrice.databinding.modelaccess.impl;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.io.Serializable;
 import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.security.AccessController;
 import java.security.PrivilegedAction;
 import java.util.Arrays;
+
+import net.ulrice.databinding.ErrorHandler;
 
 /**
  * The reflection data accessor.
  * 
  * @author christof
  */
-public abstract class AbstractReflectionMVA {
+public class ReflectionUtils {
 
 
 
 
-	public void setAccessible(final Field field) {
+	public static void setAccessible(final Field field) {
 		AccessController.doPrivileged(new PrivilegedAction<Object>() {
 			public Object run() {
 				field.setAccessible(true);
@@ -25,7 +35,7 @@ public abstract class AbstractReflectionMVA {
 
 	}
 	
-	public Field getFieldByReflection(Class<?> rootClass, String path) {
+	public static Field getFieldByReflection(Class<?> rootClass, String path) {
 		
 		String[] pathArr = path.split("\\.");
 		Class<?> rootObject = rootClass;
@@ -56,7 +66,7 @@ public abstract class AbstractReflectionMVA {
 	}
 	
 		
-	public Object getValueByReflection(Object root, String path) {
+	public static Object getValueByReflection(Object root, String path) {
 
 		if (path == null) {
 			return root;
@@ -96,7 +106,7 @@ public abstract class AbstractReflectionMVA {
 		return object;
 	}
 
-	public void setValueByReflection(Object root, Object value, String path) {
+	public static void setValueByReflection(Object root, Object value, String path) {
 		if (path == null) {
 			throw new ReflectionMVAException("Write path must not be null.", null);
 		}
@@ -135,5 +145,76 @@ public abstract class AbstractReflectionMVA {
 		} catch (NoSuchFieldException e) {
 			throw new ReflectionMVAException("Could not write object to path: " + path, e);
 		}
+	}
+	
+	public static Object cloneObject(Object obj) {
+		if (obj == null) {
+			return null;
+		}
+
+		if (obj instanceof Cloneable) {
+			Class<?> clazz = obj.getClass();
+			Method m;
+			try {
+				m = clazz.getMethod("clone", (Class[]) null);
+			} catch (NoSuchMethodException ex) {
+				throw new NoSuchMethodError(ex.getMessage());
+			}
+			try {
+				return m.invoke(obj, (Object[]) null);
+			} catch (InvocationTargetException ex) {
+				ErrorHandler.handle(ex);
+			} catch (IllegalAccessException ex) {
+				ErrorHandler.handle(ex);
+			}
+		} else if (obj instanceof Serializable) {
+
+			ByteArrayOutputStream bytes = new ByteArrayOutputStream() {
+
+				public synchronized byte[] toByteArray() {
+					return buf;
+				}
+			};
+
+			try {
+				ObjectOutputStream out = new ObjectOutputStream(bytes);
+				out.writeObject(obj);
+				out.close();
+
+				ObjectInputStream in = new ObjectInputStream(new ByteArrayInputStream(bytes.toByteArray()));
+				Object objCopy = in.readObject();
+				return objCopy;
+			} catch (IOException e) {
+				ErrorHandler.handle(e);
+			} catch (ClassNotFoundException e) {
+				ErrorHandler.handle(e);
+			}
+
+		} else {
+			Object clone = null;
+			try {
+				clone = obj.getClass().newInstance();
+			} catch (InstantiationException e) {
+				ErrorHandler.handle(e);
+			} catch (IllegalAccessException e) {
+				ErrorHandler.handle(e);
+			}
+
+			for (Class objClass = obj.getClass(); !objClass.equals(Object.class); objClass = objClass.getSuperclass()) {
+				Field[] fields = objClass.getDeclaredFields();
+				for (int i = 0; i < fields.length; i++) {
+					fields[i].setAccessible(true);
+					try {
+						fields[i].set(clone, fields[i].get(obj));
+					} catch (IllegalArgumentException e) {
+						ErrorHandler.handle(e);
+					} catch (IllegalAccessException e) {
+						ErrorHandler.handle(e);
+					}
+				}
+			}
+			return clone;
+		}
+		return null;
 	}
 }

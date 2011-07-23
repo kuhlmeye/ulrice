@@ -95,4 +95,21 @@ public class OgnlSingleListIndexedMVA implements IFIndexedModelValueAccessor {
     public int getSize() {
     	return (Integer)_sizeMVA.getValue();
     }
+
+	@Override
+	public Object cloneObject(Object obj) {
+		return ReflectionUtils.cloneObject(obj);
+	}
+
+	@Override
+	public Object newObjectInstance() {
+		try {
+			return getModelType().newInstance();
+		} catch (InstantiationException e) {
+			ErrorHandler.handle(e);
+		} catch (IllegalAccessException e) {
+			ErrorHandler.handle(e);
+		}
+		return null;
+	}
 }

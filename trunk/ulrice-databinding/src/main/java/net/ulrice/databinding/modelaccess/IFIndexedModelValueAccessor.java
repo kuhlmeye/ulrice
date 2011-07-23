@@ -11,4 +11,8 @@ public interface IFIndexedModelValueAccessor {
     Class<?> getModelType ();
     
     String getAttributeId();
+    
+    Object newObjectInstance();
+    
+    Object cloneObject(Object obj);
 }

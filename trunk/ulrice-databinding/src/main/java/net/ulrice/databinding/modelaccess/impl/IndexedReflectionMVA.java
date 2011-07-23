@@ -1,14 +1,23 @@
 package net.ulrice.databinding.modelaccess.impl;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.io.Serializable;
 import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.List;
 
+import net.ulrice.databinding.ErrorHandler;
 import net.ulrice.databinding.modelaccess.IFIndexedModelValueAccessor;
 import net.ulrice.databinding.modelaccess.IFModelValueAccessor;
 
-public class IndexedReflectionMVA extends AbstractReflectionMVA implements IFIndexedModelValueAccessor {
+public class IndexedReflectionMVA implements IFIndexedModelValueAccessor {
 
 	private String id;
 	private String path;
@@ -44,7 +53,7 @@ public class IndexedReflectionMVA extends AbstractReflectionMVA implements IFInd
 
 	@Override
 	public Object getValue(int index) {
-		Object listValue = getValueByReflection(rootObject, path);
+		Object listValue = ReflectionUtils.getValueByReflection(rootObject, path);
 		if (listValue == null) {
 			throw new NullPointerException();
 		}
@@ -63,7 +72,7 @@ public class IndexedReflectionMVA extends AbstractReflectionMVA implements IFInd
 	@SuppressWarnings("unchecked")
 	@Override
 	public void setValue(int index, Object value) {
-		Object listValue = getValueByReflection(rootObject, path);
+		Object listValue = ReflectionUtils.getValueByReflection(rootObject, path);
 		if (listValue == null) {
 			throw new NullPointerException();
 		}
@@ -85,7 +94,7 @@ public class IndexedReflectionMVA extends AbstractReflectionMVA implements IFInd
 	@Override
 	public Class<?> getModelType() {
 		if (path != null) {
-			Field field = getFieldByReflection(rootObject.getClass(), path);
+			Field field = ReflectionUtils.getFieldByReflection(rootObject.getClass(), path);
 			Type genericFieldType = field.getGenericType();
 		    
 			if(genericFieldType instanceof ParameterizedType){
@@ -116,19 +125,36 @@ public class IndexedReflectionMVA extends AbstractReflectionMVA implements IFInd
 		if(sizeMVA != null) {
 			return (Integer)sizeMVA.getValue();
 		} else {
-			Object listValue = getValueByReflection(rootObject, path);
+			Object listValue = ReflectionUtils.getValueByReflection(rootObject, path);
 			if (listValue == null) {
 				return 0;
 			}
 
 			if (listValue instanceof List<?>) {
-				return (Integer)getValueByReflection(rootObject, path + ".size");			
+				return (Integer)ReflectionUtils.getValueByReflection(rootObject, path + ".size");			
 			}
 			if (listValue.getClass().isArray()) {
-				return (Integer)getValueByReflection(rootObject, path + ".length");			
+				return (Integer)ReflectionUtils.getValueByReflection(rootObject, path + ".length");			
 			}
 		}
 		
 		throw new ReflectionMVAException("Could not get size for type: " + rootObject.getClass() + ". Set sizeMVA.", null);
+	}
+
+	@Override
+	public Object newObjectInstance() {
+		Class<?> modelType = getModelType();
+		try {
+			return modelType.newInstance();
+		} catch (InstantiationException e) {
+			throw new ReflectionMVAException("Could not create new instance of type: " + modelType, e);
+		} catch (IllegalAccessException e) {
+			throw new ReflectionMVAException("Could not create new instance of type: " + modelType, e);
+		}
+	}
+
+	@Override
+	public Object cloneObject(Object obj) {
+		return ReflectionUtils.cloneObject(obj);
 	}
 }
