@@ -4,8 +4,9 @@ import java.util.List;
 
 import net.ulrice.databinding.bufferedbinding.impl.ColumnDefinition;
 import net.ulrice.databinding.bufferedbinding.impl.GenericAM;
-import net.ulrice.databinding.bufferedbinding.impl.ListAM;
+import net.ulrice.databinding.bufferedbinding.impl.TableAM;
 import net.ulrice.databinding.modelaccess.impl.DynamicReflectionMVA;
+import net.ulrice.databinding.modelaccess.impl.IndexedReflectionMVA;
 import net.ulrice.databinding.modelaccess.impl.ReflectionMVA;
 import net.ulrice.databinding.validation.impl.StringLengthValidator;
 import net.ulrice.module.IFModel;
@@ -16,16 +17,16 @@ public class MMovieDB implements IFModel<CMovieDB> {
 	private List<Movie> movieList;
 	private Movie movie;
 
-	private ListAM movieListAM;
+	private TableAM movieListAM;
 	private GenericAM<?> titleAM;
 	private GenericAM<?> yearAM;
 	private GenericAM<?> directorAM;
-	private ListAM actorListAM;
+	private TableAM actorListAM;
 
 	@Override
 	public void initialize(CMovieDB controller) {
 
-		movieListAM = new ListAM(new ReflectionMVA(this, "movieList"));
+		movieListAM = new TableAM(new IndexedReflectionMVA(this, "movieList"));
 		ColumnDefinition<String> nameColumn = new ColumnDefinition<String>(new DynamicReflectionMVA(Movie.class, "name"), String.class);
 		nameColumn.setValidator(new StringLengthValidator(1, 255));
 		movieListAM.addColumn(nameColumn);		
@@ -40,7 +41,7 @@ public class MMovieDB implements IFModel<CMovieDB> {
 		yearAM = new GenericAM<Integer>(new ReflectionMVA(this, "movie.year"));
 		directorAM = new GenericAM<String>(new ReflectionMVA(this, "movie.director"));				
 		
-		actorListAM = new ListAM(new ReflectionMVA(this, "movie.actors"));
+		actorListAM = new TableAM(new IndexedReflectionMVA(this, "movie.actors"));
 		actorListAM.addColumn(new ColumnDefinition<String>(new DynamicReflectionMVA(Actor.class, "lastname"), String.class));		
 		actorListAM.addColumn(new ColumnDefinition<String>(new DynamicReflectionMVA(Actor.class, "firstname"), String.class));				
 	}
@@ -60,7 +61,7 @@ public class MMovieDB implements IFModel<CMovieDB> {
 		this.movie = movie;
 	}
 	
-	public ListAM getMovieListAM() {
+	public TableAM getMovieListAM() {
 		return movieListAM;
 	}
 	
@@ -76,7 +77,7 @@ public class MMovieDB implements IFModel<CMovieDB> {
 		return directorAM;
 	}
 	
-	public ListAM getActorListAM() {
+	public TableAM getActorListAM() {
 		return actorListAM;
 	}
 }

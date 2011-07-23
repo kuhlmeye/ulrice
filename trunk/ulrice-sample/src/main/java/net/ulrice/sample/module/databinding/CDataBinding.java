@@ -46,7 +46,7 @@ public class CDataBinding extends AbstractController {
         model.getNameAM().addViewAdapter(view.getTextFieldGA1());
         model.getNameAM().addViewAdapter(view.getTextFieldGA2());
         
-        model.getListAM().addViewAdapter(view.getListGA());
+        model.getTableAM().addViewAdapter(view.getListGA());
 
         model.personList = new LinkedList<MDataBinding.Person>();
         System.out.print("Creating persons..");
@@ -56,7 +56,7 @@ public class CDataBinding extends AbstractController {
         System.out.println("finished!");
 
         model.getNameAM().read();
-        model.getListAM().read();
+        model.getTableAM().read();
 
         view.getListGA().sizeColumns(false);
     }
