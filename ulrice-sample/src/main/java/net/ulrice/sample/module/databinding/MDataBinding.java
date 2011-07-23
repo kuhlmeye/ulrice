@@ -8,8 +8,9 @@ import java.util.List;
 
 import net.ulrice.databinding.bufferedbinding.impl.ColumnDefinition;
 import net.ulrice.databinding.bufferedbinding.impl.GenericAM;
-import net.ulrice.databinding.bufferedbinding.impl.ListAM;
+import net.ulrice.databinding.bufferedbinding.impl.TableAM;
 import net.ulrice.databinding.modelaccess.impl.DynamicReflectionMVA;
+import net.ulrice.databinding.modelaccess.impl.IndexedReflectionMVA;
 import net.ulrice.databinding.modelaccess.impl.ReflectionMVA;
 import net.ulrice.databinding.validation.impl.RegExValidator;
 import net.ulrice.module.IFModel;
@@ -24,7 +25,7 @@ public class MDataBinding implements IFModel<CDataBinding> {
     public List<Person> personList = new ArrayList<Person>();
 
     private GenericAM<String> nameAM;
-    private ListAM listAM;
+    private TableAM tableAM;
 	
 	/**
 	 * @see net.ulrice.module.IFModel#initialize()
@@ -39,10 +40,10 @@ public class MDataBinding implements IFModel<CDataBinding> {
         personList.add(new Person("Petra", "Musterfrau", 20));
         personList.add(new Person("Otto", "Normal", 20));
         
-        listAM = new ListAM(new ReflectionMVA(this, "personList"));
-        listAM.addColumn(new ColumnDefinition<String>(new DynamicReflectionMVA(Person.class, "lastName"), String.class));
-        listAM.addColumn(new ColumnDefinition<String>(new DynamicReflectionMVA(Person.class, "firstName"), String.class));
-        listAM.addColumn(new ColumnDefinition<Integer>(new DynamicReflectionMVA(Person.class, "age"), Integer.class));
+        tableAM = new TableAM(new IndexedReflectionMVA(this, "personList"));
+        tableAM.addColumn(new ColumnDefinition<String>(new DynamicReflectionMVA(Person.class, "lastName"), String.class));
+        tableAM.addColumn(new ColumnDefinition<String>(new DynamicReflectionMVA(Person.class, "firstName"), String.class));
+        tableAM.addColumn(new ColumnDefinition<Integer>(new DynamicReflectionMVA(Person.class, "age"), Integer.class));
 	}
 
 	/**
@@ -66,10 +67,7 @@ public class MDataBinding implements IFModel<CDataBinding> {
         }
 	}
 
-    /**
-     * @return the listAM
-     */
-    public ListAM getListAM() {
-        return listAM;
+    public TableAM getTableAM() {
+        return tableAM;
     }
 }
