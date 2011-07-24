@@ -8,7 +8,6 @@ import java.awt.Insets;
 import java.util.List;
 
 import javax.swing.JTable;
-import javax.swing.ListSelectionModel;
 import javax.swing.event.EventListenerList;
 import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
@@ -24,10 +23,10 @@ import net.ulrice.databinding.bufferedbinding.impl.TableAM;
 import net.ulrice.databinding.viewadapter.AbstractViewAdapter;
 import net.ulrice.databinding.viewadapter.IFStateMarker;
 import net.ulrice.databinding.viewadapter.IFTooltipHandler;
-import net.ulrice.databinding.viewadapter.impl.tableutil.JTableVADefaultRenderer;
-import net.ulrice.databinding.viewadapter.impl.tableutil.JTableVAFilter;
-import net.ulrice.databinding.viewadapter.impl.tableutil.JTableVAHeader;
-import net.ulrice.databinding.viewadapter.impl.tableutil.JTableVARowSorter;
+import net.ulrice.databinding.viewadapter.utable.UTableVADefaultRenderer;
+import net.ulrice.databinding.viewadapter.utable.UTableVAFilter;
+import net.ulrice.databinding.viewadapter.utable.UTableVAHeader;
+import net.ulrice.databinding.viewadapter.utable.UTableVARowSorter;
 
 /**
  * @author christof
@@ -37,14 +36,11 @@ public class JTableViewAdapter extends AbstractViewAdapter implements TableModel
 
 	private static final int RESIZE_MARGIN = 2;
 	private TableAM attributeModel;
-	private JTableVARowSorter rowSorter;
 	private EventListenerList listenerList = new EventListenerList();
 
-	private JTableVAFilter filter;
-
 	private JTable table;
-	private JTableVADefaultRenderer defaultRenderer;
-	private JTableVAHeader tableHeader;
+	private IFTooltipHandler tooltipHandler;
+	private IFStateMarker stateMarker;
 
 	public JTableViewAdapter() {
 		this(new JTable());
@@ -56,21 +52,6 @@ public class JTableViewAdapter extends AbstractViewAdapter implements TableModel
 
 		table.setModel(this);
 		table.setAutoCreateColumnsFromModel(false);
-		table.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
-
-		rowSorter = new JTableVARowSorter(this);
-		table.setRowSorter(rowSorter);
-
-		defaultRenderer = new JTableVADefaultRenderer(this);
-		table.setDefaultRenderer(Object.class, defaultRenderer);
-		
-		table.setColumnSelectionAllowed(false);
-		table.setRowSelectionAllowed(true);
-
-		tableHeader = new JTableVAHeader(table.getColumnModel(), new Insets(1, 1, 3, 1));
-		table.setTableHeader(tableHeader);
-		filter = new JTableVAFilter(rowSorter, tableHeader, table.getColumnModel());
-		rowSorter.setRowFilter(filter);
 
 	}
 
@@ -249,43 +230,30 @@ public class JTableViewAdapter extends AbstractViewAdapter implements TableModel
 	 * @see net.ulrice.databinding.IFGuiAccessor#getStateMarker()
 	 */
 	public IFStateMarker getStateMarker() {
-		return defaultRenderer.getStateMarker();
+		return stateMarker;
 	}
 
 	/**
 	 * @see net.ulrice.databinding.IFGuiAccessor#setStateMarker(net.ulrice.databinding.viewadapter.IFStateMarker)
 	 */
 	public void setStateMarker(IFStateMarker stateMarker) {
-		defaultRenderer.setStateMarker(stateMarker);
+		this.stateMarker = stateMarker;
 	}
 
 	/**
 	 * @see net.ulrice.databinding.IFGuiAccessor#getTooltipHandler()
 	 */
 	public IFTooltipHandler getTooltipHandler() {
-		return defaultRenderer.getTooltipHandler();
+		return tooltipHandler;
 	}
 
 	/**
 	 * @see net.ulrice.databinding.IFGuiAccessor#setTooltipHandler(net.ulrice.databinding.viewadapter.IFTooltipHandler)
 	 */
 	public void setTooltipHandler(IFTooltipHandler tooltipHandler) {
-		defaultRenderer.setTooltipHandler(tooltipHandler);
+		this.tooltipHandler = tooltipHandler;
 	}
 
-	/**
-	 * @return the rowSorter
-	 */
-	public JTableVARowSorter getRowSorter() {
-		return rowSorter;
-	}
-
-	/**
-	 * @return the filter
-	 */
-	public JTableVAFilter getFilter() {
-		return filter;
-	}
 
 	@Override
 	public void updateFromBinding(IFBinding binding) {
