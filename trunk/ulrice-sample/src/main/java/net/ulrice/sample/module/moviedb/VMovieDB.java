@@ -8,9 +8,9 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 
-import net.ulrice.databinding.viewadapter.impl.JTableViewAdapter;
 import net.ulrice.databinding.viewadapter.impl.JTextComponentViewAdapter;
 import net.ulrice.databinding.viewadapter.impl.factory.ViewAdapterFactory;
+import net.ulrice.databinding.viewadapter.utable.UTableViewAdapter;
 import net.ulrice.module.IFView;
 
 public class VMovieDB implements IFView<CMovieDB> {
@@ -19,17 +19,17 @@ public class VMovieDB implements IFView<CMovieDB> {
 	private JPanel detailPanel;
 	private JPanel overviewPanel;
 
-	private JTableViewAdapter movieTableVA = ViewAdapterFactory.createTableViewAdapter();
+	private UTableViewAdapter movieTableVA = ViewAdapterFactory.createUTableViewAdapter(1);
 	private JTextComponentViewAdapter titleVA = ViewAdapterFactory.createTextFieldAdapter();
 	private JTextComponentViewAdapter yearVA = ViewAdapterFactory.createTextFieldAdapter();
 	private JTextComponentViewAdapter directorVA = ViewAdapterFactory.createTextFieldAdapter();
-	private JTableViewAdapter actorTableVA = ViewAdapterFactory.createTableViewAdapter();
+	private UTableViewAdapter actorTableVA = ViewAdapterFactory.createUTableViewAdapter(0);
 
 	@Override
 	public void initialize(CMovieDB controller) {					
 		overviewPanel = new JPanel();
 		overviewPanel.setLayout(new BorderLayout());
-		overviewPanel.add(new JScrollPane(movieTableVA.getComponent()), BorderLayout.CENTER);
+		overviewPanel.add(movieTableVA.getComponent(), BorderLayout.CENTER);
 		
 		JPanel movieAttributePanel = new JPanel();
 		movieAttributePanel.setLayout(new GridLayout(3, 2));
@@ -43,7 +43,7 @@ public class VMovieDB implements IFView<CMovieDB> {
 		detailPanel = new JPanel();
 		detailPanel.setLayout(new BorderLayout());
 		detailPanel.add(movieAttributePanel, BorderLayout.NORTH);
-		detailPanel.add(new JScrollPane(actorTableVA.getComponent()), BorderLayout.CENTER);
+		detailPanel.add(actorTableVA.getComponent(), BorderLayout.CENTER);
 		
 		mainPanel = new JPanel();
 		mainPanel.setLayout(new GridLayout(2, 1));
@@ -56,7 +56,7 @@ public class VMovieDB implements IFView<CMovieDB> {
 		return mainPanel;
 	}
 
-	public JTableViewAdapter getMovieTableAdapter() {
+	public UTableViewAdapter getMovieTableAdapter() {
 		return movieTableVA;
 	}
 	
@@ -72,7 +72,7 @@ public class VMovieDB implements IFView<CMovieDB> {
 		return directorVA;
 	}
 	
-	public JTableViewAdapter getActorTableVA() {
+	public UTableViewAdapter getActorTableVA() {
 		return actorTableVA;
 	}
 }
