@@ -34,7 +34,8 @@ public class CMovieDB extends AbstractController<MMovieDB, VMovieDB> implements 
 
 		overviewGroup.read();
 
-		getView().getMovieTableAdapter().getComponent().getSelectionModel().addListSelectionListener(this);
+		// FIXME Static column support
+		getView().getMovieTableAdapter().getComponent().getScrollTable().getSelectionModel().addListSelectionListener(this);
 		getView().getMovieTableAdapter().sizeColumns(false);
 
 	}
@@ -44,8 +45,9 @@ public class CMovieDB extends AbstractController<MMovieDB, VMovieDB> implements 
 
 		Action addMovieAction = new Action("_ADD_MOVIE", "Add Movie", true, ActionType.ModuleAction, null) {
 			@Override
-			public void actionPerformed(ActionEvent e) {
-				JTable movieTable = getView().getMovieTableAdapter().getComponent();
+			public void actionPerformed(ActionEvent e) {		
+				// FIXME Static column support
+				JTable movieTable = getView().getMovieTableAdapter().getComponent().getScrollTable();
 				movieTable.getSelectionModel().removeListSelectionListener(CMovieDB.this);
 				getView().getMovieTableAdapter().addRow();
 				movieTable.getSelectionModel().addListSelectionListener(CMovieDB.this);
@@ -54,10 +56,11 @@ public class CMovieDB extends AbstractController<MMovieDB, VMovieDB> implements 
 
 		Action removeMovieAction = new Action("_DEL_MOVIE", "Del Movie", true, ActionType.ModuleAction, null) {
 			@Override
-			public void actionPerformed(ActionEvent e) {
-				int selectedRow = getView().getMovieTableAdapter().getComponent().getSelectedRow();
+			public void actionPerformed(ActionEvent e) {		
+				// FIXME Static column support
+				int selectedRow = getView().getMovieTableAdapter().getComponent().getScrollTable().getSelectedRow();
 				if(selectedRow >= 0) {
-					JTable movieTable = getView().getMovieTableAdapter().getComponent();
+					JTable movieTable = getView().getMovieTableAdapter().getComponent().getScrollTable();
 					movieTable.getSelectionModel().removeListSelectionListener(CMovieDB.this);
 					getView().getMovieTableAdapter().delRow(selectedRow);
 					movieTable.getSelectionModel().addListSelectionListener(CMovieDB.this);
@@ -67,8 +70,9 @@ public class CMovieDB extends AbstractController<MMovieDB, VMovieDB> implements 
 
 		Action addActorAction = new Action("_ADD_ACTOR", "Add Actor", true, ActionType.ModuleAction, null) {
 			@Override
-			public void actionPerformed(ActionEvent e) {
-				JTable actorTable = getView().getActorTableVA().getComponent();
+			public void actionPerformed(ActionEvent e) {		
+				// FIXME Static column support
+				JTable actorTable = getView().getActorTableVA().getComponent().getScrollTable();
 				actorTable.getSelectionModel().removeListSelectionListener(CMovieDB.this);
 				getView().getActorTableVA().addRow();
 				actorTable.getSelectionModel().addListSelectionListener(CMovieDB.this);
@@ -78,9 +82,10 @@ public class CMovieDB extends AbstractController<MMovieDB, VMovieDB> implements 
 		Action removeActorAction = new Action("_DEL_ACTOR", "Del Actor", true, ActionType.ModuleAction, null) {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				int selectedRow = getView().getActorTableVA().getComponent().getSelectedRow();
-				if(selectedRow >= 0) {
-					JTable actorTable = getView().getActorTableVA().getComponent();
+				int selectedRow = getView().getActorTableVA().getComponent().getScrollTable().getSelectedRow();
+				if(selectedRow >= 0) {		
+					// FIXME Static column support
+					JTable actorTable = getView().getActorTableVA().getComponent().getScrollTable();
 					actorTable.getSelectionModel().removeListSelectionListener(CMovieDB.this);
 					getView().getActorTableVA().delRow(selectedRow);
 					actorTable.getSelectionModel().addListSelectionListener(CMovieDB.this);
@@ -95,12 +100,12 @@ public class CMovieDB extends AbstractController<MMovieDB, VMovieDB> implements 
 
 	@Override
 	public void valueChanged(ListSelectionEvent e) {
-		if (!e.getValueIsAdjusting()) {
-			JTable movieTable = getView().getMovieTableAdapter().getComponent();
+		if (!e.getValueIsAdjusting()) {		
+			// FIXME Static column support
+			JTable movieTable = getView().getMovieTableAdapter().getComponent().getScrollTable();
 			movieTable.getSelectionModel().removeListSelectionListener(this);
 			int selectedRow = movieTable.getSelectedRow();
 
-			System.out.println("Dirty: " + detailGroup.isDirty() + ", Valid: " + detailGroup.isValid());
 			if (detailMovieId != null && detailGroup.isDirty()) {
 				detailGroup.write();
 				Movie movie = getModel().getMovie();
