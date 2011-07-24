@@ -8,11 +8,12 @@ import net.ulrice.databinding.viewadapter.impl.BorderStateMarker;
 import net.ulrice.databinding.viewadapter.impl.DetailedTooltipHandler;
 import net.ulrice.databinding.viewadapter.impl.JTableViewAdapter;
 import net.ulrice.databinding.viewadapter.impl.JTextComponentViewAdapter;
+import net.ulrice.databinding.viewadapter.utable.UTableViewAdapter;
 
 public class ViewAdapterFactory {
 
 	public static void setDefaultStateMarker(IFViewAdapter viewAdapter) {
-		if(!(viewAdapter instanceof JTableViewAdapter)) {
+		if(!(viewAdapter instanceof JTableViewAdapter || viewAdapter instanceof UTableViewAdapter)) {
 			BorderStateMarker stateMarker = new BorderStateMarker();
 			viewAdapter.setStateMarker(stateMarker);
 			viewAdapter.getComponent().setBorder(stateMarker);
@@ -37,7 +38,13 @@ public class ViewAdapterFactory {
 		viewAdapter.getComponent().setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
 		setDefaultStateMarker(viewAdapter);
 		setDefaultTooltipHandler(viewAdapter);
+		return viewAdapter;
+	}
 
+	public static UTableViewAdapter createUTableViewAdapter(int staticColumns) {
+		UTableViewAdapter viewAdapter = new UTableViewAdapter(staticColumns);
+		setDefaultStateMarker(viewAdapter);
+		setDefaultTooltipHandler(viewAdapter);
 		return viewAdapter;
 	}
 
