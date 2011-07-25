@@ -33,6 +33,15 @@ public class IndexedReflectionMVA implements IFIndexedModelValueAccessor {
 		this.id = id;
 		this.sizeMVA = sizeMVA;
 	}
+	
+
+	public IndexedReflectionMVA(String id, Object rootObject, String path) {		
+		this(id, rootObject, path, false, null);
+	}
+	
+	public IndexedReflectionMVA(String id, Object rootObject, String path, boolean readOnly) {		
+		this(id, rootObject, path, readOnly, null);
+	}
 
 	public IndexedReflectionMVA(Object rootObject, String path) {		
 		this(rootObject.getClass().getSimpleName() + "." + path, rootObject, path, false, null);
