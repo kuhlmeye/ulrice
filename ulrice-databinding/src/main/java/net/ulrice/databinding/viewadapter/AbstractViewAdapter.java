@@ -85,7 +85,9 @@ public abstract class AbstractViewAdapter implements IFViewAdapter {
 	@Override
 	public void setStateMarker(IFStateMarker stateMarker) {
 		this.stateMarker = stateMarker;
-		this.stateMarker.initialize(getComponent());
+		if(this.stateMarker != null) {
+			this.stateMarker.initialize(getComponent());
+		}
 	}
 
 	protected IFTooltipHandler getTooltipHandler() {
