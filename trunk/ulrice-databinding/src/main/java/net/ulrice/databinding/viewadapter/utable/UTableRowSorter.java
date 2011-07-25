@@ -5,11 +5,8 @@ import java.util.Collections;
 import java.util.List;
 
 import javax.swing.DefaultRowSorter;
-import javax.swing.RowFilter;
 import javax.swing.RowSorter;
 import javax.swing.SortOrder;
-
-import com.sun.media.sound.ModelWavetable;
 
 public class UTableRowSorter extends DefaultRowSorter<UTableViewAdapter, String> {
 

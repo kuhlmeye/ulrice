@@ -199,7 +199,7 @@ public class UTableViewAdapter extends AbstractViewAdapter implements TableModel
 	public IFStateMarker getStateMarker() {
 		return table.getStateMarker();
 	}
-	
+
 	/**
 	 * @see net.ulrice.databinding.IFGuiAccessor#getTooltipHandler()
 	 */
@@ -213,7 +213,6 @@ public class UTableViewAdapter extends AbstractViewAdapter implements TableModel
 	public void setStateMarker(IFStateMarker stateMarker) {
 		table.setStateMarker(stateMarker);
 	}
-
 
 	/**
 	 * @see net.ulrice.databinding.IFGuiAccessor#setTooltipHandler(net.ulrice.databinding.viewadapter.IFTooltipHandler)
@@ -318,15 +317,13 @@ public class UTableViewAdapter extends AbstractViewAdapter implements TableModel
 			if (renderer == null) {
 				renderer = table.getTableHeader().getDefaultRenderer();
 			}
-			Component comp = renderer.getTableCellRendererComponent(table, col.getHeaderValue(),
-					false, false, 0, 0);
+			Component comp = renderer.getTableCellRendererComponent(table, col.getHeaderValue(), false, false, 0, 0);
 			maxWidth = comp.getPreferredSize().width;
 		}
 
 		for (int r = 0; r < table.getRowCount(); r++) {
 			TableCellRenderer renderer = table.getCellRenderer(r, vColIndex);
-			Component comp = renderer.getTableCellRendererComponent(table, table.getValueAt(r, vColIndex),
-					false, false, r, vColIndex);
+			Component comp = renderer.getTableCellRendererComponent(table, table.getValueAt(r, vColIndex), false, false, r, vColIndex);
 			maxWidth = Math.max(maxWidth, comp.getPreferredSize().width);
 		}
 		return maxWidth;
@@ -340,4 +337,15 @@ public class UTableViewAdapter extends AbstractViewAdapter implements TableModel
 		getAttributeModel().delElement(index);
 	}
 
+	public int getSelectedRowViewIndex() {
+		return table.getSelectionModel().getMinSelectionIndex();
+	}
+
+	public int getSelectedRowModelIndex() {
+		int viewIndex = getSelectedRowViewIndex();
+		if (viewIndex >= 0) {
+			return getRowSorter().convertRowIndexToModel(viewIndex);
+		}
+		return -1;
+	}
 }
