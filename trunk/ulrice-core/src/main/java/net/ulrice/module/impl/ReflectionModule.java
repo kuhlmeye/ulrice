@@ -1,6 +1,8 @@
 package net.ulrice.module.impl;
 
 import java.net.URL;
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.swing.ImageIcon;
 
@@ -35,6 +37,8 @@ public class ReflectionModule implements IFModule, IFModuleTitleRenderer {
 
 	/** A medium icon for this module. */
 	private ImageIcon mediumIcon;
+	
+	private Map<String, Object> parameterMap;
 
 	/**
 	 * Creates a new reflection module. It takes the unique id as the module title.
@@ -63,6 +67,7 @@ public class ReflectionModule implements IFModule, IFModuleTitleRenderer {
 		this.titleRenderer = titleRenderer;
 		this.smallIcon = findIcon(iconName, ModuleIconSize.Size_16x16);
 		this.mediumIcon = findIcon(iconName, ModuleIconSize.Size_32x32);
+		this.parameterMap = new HashMap<String, Object>();
 	}
 
 	/**
@@ -215,6 +220,14 @@ public class ReflectionModule implements IFModule, IFModuleTitleRenderer {
 	 */
 	public void setTitleRenderer(IFModuleTitleRenderer titleRenderer) {
 		this.titleRenderer = titleRenderer;
+	}
+	
+	public void putParameter(String key, Object value) {
+		parameterMap.put(key, value);
+	}
+	
+	public Object getParameter(String key) {
+		return parameterMap.get(key);
 	}
 
 	/**

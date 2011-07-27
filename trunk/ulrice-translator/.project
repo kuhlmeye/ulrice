@@ -1,0 +1,16 @@
+<projectDescription>
+  <name>ulrice-translator</name>
+  <comment>Ulrice translator is a tool for generating java property files used for translations of applications. NO_M2ECLIPSE_SUPPORT: Project files created with the maven-eclipse-plugin are not supported in M2Eclipse.</comment>
+  <projects>
+    <project>ulrice-core</project>
+    <project>ulrice-databinding</project>
+  </projects>
+  <buildSpec>
+    <buildCommand>
+      <name>org.eclipse.jdt.core.javabuilder</name>
+    </buildCommand>
+  </buildSpec>
+  <natures>
+    <nature>org.eclipse.jdt.core.javanature</nature>
+  </natures>
+</projectDescription>

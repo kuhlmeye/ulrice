@@ -21,6 +21,8 @@ import net.ulrice.module.impl.action.ExitApplicationAction;
 import net.ulrice.module.impl.action.ModuleAction;
 import net.ulrice.module.impl.action.ModuleActionManager;
 import net.ulrice.security.Authorization;
+import net.ulrice.translator.CTranslator;
+import net.ulrice.translator.servicexml.XMLInMemoryTranslationService;
 
 public class UlriceSampleApplication {
 
@@ -72,6 +74,12 @@ public class UlriceSampleApplication {
 				"net.ulrice.sample.module.databinding.CDataBinding", "net/ulrice/sample/module/databinding/moduleicon.png",
 				new SimpleModuleTitleRenderer("Data Binding Sample"));
 		dataBindingSample.setAuthorization(new Authorization(SampleSecurityCallback.TYPE_MODULE_REGISTER, "DATABINDING"));
+		
+		AuthReflectionModule translator = new AuthReflectionModule("translator", ModuleType.NormalModule,
+				"net.ulrice.translator.CTranslator", "net/ulrice/translator/translator/moduleicon.png",
+				new SimpleModuleTitleRenderer("Translator"));
+		dataBindingSample.setAuthorization(new Authorization(SampleSecurityCallback.TYPE_MODULE_REGISTER, "DATABINDING"));
+		translator.putParameter(CTranslator.SERVICE_IMPLEMENTATION, new XMLInMemoryTranslationService());
 
 		// Add the modules.
 		IFModuleManager moduleManager = Ulrice.getModuleManager();
@@ -80,6 +88,7 @@ public class UlriceSampleApplication {
 		moduleManager.registerModule(sampleModule2);
 		moduleManager.registerModule(lafListModule);
 		moduleManager.registerModule(dataBindingSample);
+		moduleManager.registerModule(translator);
 
 		// Add the modules to the structure.
 		IFModuleStructureManager moduleStructureManager = Ulrice.getModuleStructureManager();
@@ -88,6 +97,7 @@ public class UlriceSampleApplication {
 		moduleStructureManager.addModule(sampleModule2);
 		moduleStructureManager.addModule(lafListModule);
 		moduleStructureManager.addModule(dataBindingSample);
+		moduleStructureManager.addModule(translator);
 
 		
 
