@@ -12,6 +12,14 @@ import net.ulrice.module.exception.ModuleInstanciationException;
 public interface IFModule extends IFModuleTitleRenderer, Comparable<IFModule> {
 
 	/**
+	 * Returns a parameter by key
+	 * 
+	 * @param key The key
+	 * @return The parameter value as object
+	 */
+	Object getParameter(String key);
+	
+	/**
 	 * Returns the unique id of the controller.
 	 * 
 	 * @return The unique id as a string.

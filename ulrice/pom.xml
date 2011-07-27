@@ -1,4 +1,5 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>net.ulrice</groupId>
 	<artifactId>ulrice</artifactId>
@@ -31,14 +32,54 @@
 			<email>apunahassaphemapetilon@hotmail.com</email>
 		</developer>
 	</developers>
-	
+
+	<properties>
+		<version.ulrice>0.2.2-SNAPSHOT</version.ulrice>
+	</properties>
+
 	<dependencyManagement>
 		<dependencies>
-	    <dependency>
-	        <groupId>ognl</groupId>
-	        <artifactId>ognl</artifactId>
-	        <version>3.0.1</version>
-	    </dependency>
+			<dependency>
+				<groupId>ognl</groupId>
+				<artifactId>ognl</artifactId>
+				<version>3.0.1</version>
+			</dependency>
+			<dependency>
+				<groupId>net.ulrice</groupId>
+				<artifactId>ulrice-core</artifactId>
+				<version>${version.ulrice}</version>
+			</dependency>
+			<dependency>
+				<groupId>net.ulrice</groupId>
+				<artifactId>ulrice-databinding</artifactId>
+				<version>${version.ulrice}</version>
+			</dependency>
+			<dependency>
+				<groupId>net.ulrice</groupId>
+				<artifactId>ulrice-dashboard</artifactId>
+				<version>${version.ulrice}</version>
+			</dependency>
+			<dependency>
+				<groupId>net.ulrice</groupId>
+				<artifactId>ulrice-sample</artifactId>
+				<version>${version.ulrice}</version>
+			</dependency>
+			<dependency>
+				<groupId>net.ulrice</groupId>
+				<artifactId>ulrice-translator</artifactId>
+				<version>${version.ulrice}</version>
+			</dependency>
+			<dependency>
+				<groupId>net.ulrice</groupId>
+				<artifactId>ulrice-webstarter</artifactId>
+				<version>${version.ulrice}</version>
+			</dependency>
+			<dependency>
+				<groupId>net.ulrice</groupId>
+				<artifactId>ulrice-webstarter-maven-plugin</artifactId>
+				<version>${version.ulrice}</version>
+			</dependency>
+			
 		</dependencies>
 	</dependencyManagement>
 
@@ -66,6 +107,7 @@
 		<module>../ulrice-databinding</module>
 		<module>../ulrice-sample</module>
 		<module>../ulrice-dashboard</module>
+		<module>../ulrice-translator</module>
 		<module>../ulrice-webstarter</module>
 		<module>../ulrice-webstarter-maven-plugin</module>
 	</modules>

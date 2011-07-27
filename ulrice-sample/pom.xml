@@ -41,17 +41,18 @@
 		<dependency>
 			<groupId>net.ulrice</groupId>
 			<artifactId>ulrice-core</artifactId>
-			<version>0.2.2-SNAPSHOT</version>
 		</dependency>
 		<dependency>
 			<groupId>net.ulrice</groupId>
 			<artifactId>ulrice-databinding</artifactId>
-			<version>0.2.2-SNAPSHOT</version>
+		</dependency>
+		<dependency>
+			<groupId>net.ulrice</groupId>
+			<artifactId>ulrice-translator</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>net.ulrice</groupId>
 			<artifactId>ulrice-webstarter-maven-plugin</artifactId>
-			<version>0.2.2-SNAPSHOT</version>
 		</dependency>
 	</dependencies>
 

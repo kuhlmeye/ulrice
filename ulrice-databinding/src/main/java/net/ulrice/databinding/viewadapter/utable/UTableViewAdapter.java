@@ -47,6 +47,10 @@ public class UTableViewAdapter extends AbstractViewAdapter implements TableModel
 		table = new UTableComponent(this, fixedColumns);
 	}
 
+	public UTableViewAdapter() {
+		this(0);
+	}
+
 	/**
 	 * @see net.ulrice.databinding.IFGuiAccessor#getComponent()
 	 */
