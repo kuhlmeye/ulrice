@@ -72,6 +72,7 @@ public class DictionaryEntryDTO implements Serializable {
 	public void setTranslation(String translation) {
 		this.translation = translation;
 	}
+
 	
 	
 }

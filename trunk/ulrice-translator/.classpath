@@ -4,12 +4,12 @@
   <classpathentry kind="var" path="M2_REPO/javassist/javassist/3.11.0.GA/javassist-3.11.0.GA.jar" sourcepath="M2_REPO/javassist/javassist/3.11.0.GA/javassist-3.11.0.GA-sources.jar"/>
   <classpathentry kind="var" path="M2_REPO/junit/junit/4.8.2/junit-4.8.2.jar" sourcepath="M2_REPO/junit/junit/4.8.2/junit-4.8.2-sources.jar">
     <attributes>
-      <attribute value="jar:file:/home/christof/.m2/repository/junit/junit/4.8.2/junit-4.8.2-javadoc.jar!/" name="javadoc_location"/>
+      <attribute value="jar:file:/C:/Users/dl10kuh/.m2/repository/junit/junit/4.8.2/junit-4.8.2-javadoc.jar!/" name="javadoc_location"/>
     </attributes>
   </classpathentry>
   <classpathentry kind="var" path="M2_REPO/ognl/ognl/3.0.1/ognl-3.0.1.jar" sourcepath="M2_REPO/ognl/ognl/3.0.1/ognl-3.0.1-sources.jar">
     <attributes>
-      <attribute value="jar:file:/home/christof/.m2/repository/ognl/ognl/3.0.1/ognl-3.0.1-javadoc.jar!/" name="javadoc_location"/>
+      <attribute value="jar:file:/C:/Users/dl10kuh/.m2/repository/ognl/ognl/3.0.1/ognl-3.0.1-javadoc.jar!/" name="javadoc_location"/>
     </attributes>
   </classpathentry>
   <classpathentry kind="src" path="/ulrice-core"/>

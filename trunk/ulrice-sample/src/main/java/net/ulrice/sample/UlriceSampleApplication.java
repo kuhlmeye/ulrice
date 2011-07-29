@@ -22,7 +22,7 @@ import net.ulrice.module.impl.action.ModuleAction;
 import net.ulrice.module.impl.action.ModuleActionManager;
 import net.ulrice.security.Authorization;
 import net.ulrice.translator.CTranslator;
-import net.ulrice.translator.servicexml.XMLInMemoryTranslationService;
+import net.ulrice.translator.service.xml.XMLInMemoryTranslationService;
 
 public class UlriceSampleApplication {
 

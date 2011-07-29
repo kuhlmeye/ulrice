@@ -8,6 +8,10 @@ public class LocaleToStringConverter implements IFValueConverter {
 
 	@Override
 	public Object viewToModel(Object o) {
+		if(o == null) {
+			return null;
+		}
+		
 		String string = (String)o;
 		Locale locale = new Locale(string);
 		return locale;
@@ -15,6 +19,9 @@ public class LocaleToStringConverter implements IFValueConverter {
 
 	@Override
 	public Object modelToView(Object o) {
+		if(o == null) {
+			return null;
+		}
 		Locale locale = (Locale)o;
 		return locale.toString();
 	}
