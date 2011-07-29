@@ -276,9 +276,7 @@ public class Element {
 					IFDynamicModelValueAccessor dataAccessor = columns.get(i).getDataAccessor();
 
 					Object value = attributeModel.getCurrentValue();
-					Object converted = (attributeModel.getValueConverter() != null ? attributeModel.getValueConverter().viewToModel(value)
-							: value);
-					dataAccessor.setValue(result, converted);
+					dataAccessor.setValue(result, value);
 				}
 			}
 		}
