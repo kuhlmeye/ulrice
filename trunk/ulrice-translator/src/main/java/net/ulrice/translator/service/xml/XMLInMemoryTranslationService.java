@@ -23,7 +23,7 @@ import org.xml.sax.helpers.XMLReaderFactory;
 public class XMLInMemoryTranslationService implements IFTranslationService {
 
 	private Map<String, DictionaryEntryDTO> dictionary = new HashMap<String, DictionaryEntryDTO>();
-	private List<UsageDTO> usages = new ArrayList<UsageDTO>();
+	private Map<String, UsageDTO> usages = new HashMap<String, UsageDTO>();
 	private List<TranslationDTO> translations = new ArrayList<TranslationDTO>();
 	
 
@@ -60,25 +60,32 @@ public class XMLInMemoryTranslationService implements IFTranslationService {
 	
 	@Override
 	public void createUsage(UsageDTO usage) {
-		// TODO Auto-generated method stub
-		
+		usages.put(buildUsageKey(usage), usage);
 	}
 
 	@Override
 	public void saveUsage(UsageDTO usage) {
-		// TODO Auto-generated method stub
-		
+		usages.put(buildUsageKey(usage), usage);
 	}
 
 	@Override
 	public void deleteUsage(UsageDTO usage) {
-		// TODO Auto-generated method stub
-		
+		usages.remove(buildUsageKey(usage));
 	}
 
+
+	private String buildUsageKey(UsageDTO entry) {
+		StringBuffer key = new StringBuffer();
+		key.append(entry.getApplication()).append('.');
+		key.append(entry.getModule()).append('.');
+		key.append(entry.getUsage()).append('.');
+		key.append(entry.getAttribute()).append('.');
+		return key.toString();
+	}
+	
 	@Override
 	public List<UsageDTO> findAllUsages() {
-		return usages;
+		return new ArrayList<UsageDTO>(usages.values());
 	}
 
 	@Override
@@ -135,9 +142,15 @@ public class XMLInMemoryTranslationService implements IFTranslationService {
 				pw.println("<dictionary>");
 				for(DictionaryEntryDTO entry : dictionary.values()) {
 					pw.println("\t<dictEntry>");
-					pw.println("\t\t<application>" + entry.getApplication() + "</application>");
-					pw.println("\t\t<module>" + entry.getModule() + "</module>");
-					pw.println("\t\t<usage>" + entry.getUsage() + "</usage>");
+					if(entry.getApplication() != null) {
+						pw.println("\t\t<application>" + entry.getApplication() + "</application>");
+					}
+					if(entry.getModule() != null) {
+						pw.println("\t\t<module>" + entry.getModule() + "</module>");
+					}
+					if(entry.getUsage() != null) {
+						pw.println("\t\t<usage>" + entry.getUsage() + "</usage>");
+					}
 					pw.println("\t\t<attribute>" + entry.getAttribute() + "</attribute>");
 					pw.println("\t\t<language>" + entry.getLanguage().getLanguage() + "</language>");
 					pw.println("\t\t<translation>" + entry.getTranslation() + "</translation>");
@@ -149,7 +162,7 @@ public class XMLInMemoryTranslationService implements IFTranslationService {
 				
 				pw = new PrintWriter(new File("usages.xml"));
 				pw.println("<usages>");
-				for(UsageDTO entry : usages) {
+				for(UsageDTO entry : usages.values()) {
 					pw.println("\t<usage>");
 					pw.println("\t\t<application>" + entry.getApplication() + "</application>");
 					pw.println("\t\t<module>" + entry.getModule() + "</module>");
