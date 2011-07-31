@@ -34,6 +34,7 @@ public class CTranslator extends AbstractController<MTranslator, VTranslator> {
 		}
 		
 		translationService = (IFTranslationService) value;
+		translationService.openTranslationService();
 			
 		getModel().getDictionaryAM().addViewAdapter(getView().getDictionaryVA());
 		getModel().getUsagesAM().addViewAdapter(getView().getUsagesVA());

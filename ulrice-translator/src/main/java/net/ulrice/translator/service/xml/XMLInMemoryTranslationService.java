@@ -3,8 +3,11 @@ package net.ulrice.translator.service.xml;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.PrintStream;
 import java.io.PrintWriter;
+import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -114,13 +117,13 @@ public class XMLInMemoryTranslationService implements IFTranslationService {
 	@Override
 	public void openTranslationService() {
 		
-		try {
+		try {			
 			XMLReader xmlReader = XMLReaderFactory.createXMLReader();
 			xmlReader.setContentHandler(new DictionaryXMLHandler(this));
 			xmlReader.parse(new InputSource(new FileInputStream("dictionary.xml")));
 			
 			xmlReader.setContentHandler(new UsagesXMLHandler(this));
-			xmlReader.parse(new InputSource(new FileInputStream("usage.xml")));
+			xmlReader.parse(new InputSource(new FileInputStream("usages.xml")));
 			
 			xmlReader.setContentHandler(new TranslationsXMLHandler(this));
 			xmlReader.parse(new InputSource(new FileInputStream("translations.xml")));
@@ -138,61 +141,109 @@ public class XMLInMemoryTranslationService implements IFTranslationService {
 	public void closeTranslationService() {
 		if(dictionary != null) {
 			try {
-				PrintWriter pw = new PrintWriter(new File("dictionary.xml"));
-				pw.println("<dictionary>");
+				FileOutputStream fos = new FileOutputStream("dictionary.xml");
+				PrintStream ps = new PrintStream(fos, true, "UTF-8");
+				ps.println("<dictionary>");
 				for(DictionaryEntryDTO entry : dictionary.values()) {
-					pw.println("\t<dictEntry>");
+					ps.println("\t<dictEntry>");
 					if(entry.getApplication() != null) {
-						pw.println("\t\t<application>" + entry.getApplication() + "</application>");
+						ps.println("\t\t<application>" + fix(entry.getApplication()) + "</application>");
 					}
 					if(entry.getModule() != null) {
-						pw.println("\t\t<module>" + entry.getModule() + "</module>");
+						ps.println("\t\t<module>" + fix(entry.getModule()) + "</module>");
 					}
 					if(entry.getUsage() != null) {
-						pw.println("\t\t<usage>" + entry.getUsage() + "</usage>");
+						ps.println("\t\t<usage>" + fix(entry.getUsage()) + "</usage>");
 					}
-					pw.println("\t\t<attribute>" + entry.getAttribute() + "</attribute>");
-					pw.println("\t\t<language>" + entry.getLanguage().getLanguage() + "</language>");
-					pw.println("\t\t<translation>" + entry.getTranslation() + "</translation>");
-					pw.println("\t</dictEntry>");
+					ps.println("\t\t<attribute>" + fix(entry.getAttribute()) + "</attribute>");
+					ps.println("\t\t<language>" + fix(entry.getLanguage().getLanguage()) + "</language>");
+					ps.println("\t\t<translation>" + fix(entry.getTranslation()) + "</translation>");
+					ps.println("\t</dictEntry>");
 				}
-				pw.println("</dictionary>");
-				pw.flush();
-				pw.close();
+				ps.println("</dictionary>");
+				ps.flush();
+				ps.close();
 				
-				pw = new PrintWriter(new File("usages.xml"));
-				pw.println("<usages>");
+				fos = new FileOutputStream("usages.xml");
+				ps = new PrintStream(fos, true, "UTF-8");
+				ps.println("<usages>");
 				for(UsageDTO entry : usages.values()) {
-					pw.println("\t<usage>");
-					pw.println("\t\t<application>" + entry.getApplication() + "</application>");
-					pw.println("\t\t<module>" + entry.getModule() + "</module>");
-					pw.println("\t\t<usage>" + entry.getUsage() + "</usage>");
-					pw.println("\t\t<attribute>" + entry.getAttribute() + "</attribute>");
-					pw.println("\t</usage>");
+					ps.println("\t<UsageEntry>");
+					ps.println("\t\t<application>" + fix(entry.getApplication()) + "</application>");
+					ps.println("\t\t<module>" + fix(entry.getModule()) + "</module>");
+					ps.println("\t\t<usage>" + fix(entry.getUsage()) + "</usage>");
+					ps.println("\t\t<attribute>" + fix(entry.getAttribute()) + "</attribute>");
+					ps.println("\t</UsageEntry>");
 				}
-				pw.println("</usages>");
-				pw.flush();
-				pw.close();
+				ps.println("</usages>");
+				ps.flush();
+				ps.close();
 				
-				pw = new PrintWriter(new File("translations.xml"));
-				pw.println("<translations>");
+				fos = new FileOutputStream("translations.xml");
+				ps = new PrintStream(fos, true, "UTF-8");
+				ps.println("<translations>");
 				if(translations != null) {
 					for(TranslationDTO entry : translations) {
-						pw.println("\t<translation>");
-						pw.println("\t\t<application>" + entry.getApplication() + "</application>");
-						pw.println("\t\t<module>" + entry.getModule() + "</module>");
-						pw.println("\t\t<usage>" + entry.getUsage() + "</usage>");
-						pw.println("\t\t<attribute>" + entry.getAttribute() + "</attribute>");
-						pw.println("\t\t<language>" + entry.getLanguage().getLanguage() + "</language>");
-						pw.println("\t\t<translation>" + entry.getTranslation() + "</translation>");
-						pw.println("\t</translation>");
+						ps.println("\t<translation>");
+						ps.println("\t\t<application>" + fix(entry.getApplication()) + "</application>");
+						ps.println("\t\t<module>" + fix(entry.getModule()) + "</module>");
+						ps.println("\t\t<usage>" + fix(entry.getUsage()) + "</usage>");
+						ps.println("\t\t<attribute>" + fix(entry.getAttribute()) + "</attribute>");
+						ps.println("\t\t<language>" + fix(entry.getLanguage().getLanguage()) + "</language>");
+						ps.println("\t\t<translation>" + fix(entry.getTranslation()) + "</translation>");
+						ps.println("\t</translation>");
 					}
 				}
-				pw.println("</translations>");
+				ps.println("</translations>");
+				ps.flush();
+				ps.close();
 			} catch (FileNotFoundException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (UnsupportedEncodingException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		}
+	}
+
+
+	private String fix(String value) {
+		String result = value;;
+
+	    result = result.replace("&", "&amp;");
+	    result = result.replace("#", "&#035;");
+	    result = result.replace("<", "&lt;");
+	    result = result.replace(">", "&gt;");
+	    result = result.replace("\"", "&quot;");
+	    result = result.replace("\t", "&#009;");
+	    result = result.replace("!", "&#033;");
+	    result = result.replace("$", "&#036;");
+	    result = result.replace("%", "&#037;");
+	    result = result.replace("'", "&#039;");
+	    result = result.replace("(", "&#040;"); 
+	    result = result.replace(")", "&#041;");
+	    result = result.replace("*", "&#042;");
+	    result = result.replace("+", "&#043;");
+	    result = result.replace(",", "&#044;");
+	    result = result.replace("-", "&#045;");
+	    result = result.replace(".", "&#046;");
+	    result = result.replace("/", "&#047;");
+	    result = result.replace(":", "&#058;");
+	    result = result.replace("=", "&#061;");
+	    result = result.replace("?", "&#063;");
+	    result = result.replace("@", "&#064;");
+	    result = result.replace("[", "&#091;");
+	    result = result.replace("\\", "&#092;");
+	    result = result.replace("]", "&#093;");
+	    result = result.replace("^", "&#094;");
+	    result = result.replace("_", "&#095;");
+	    result = result.replace("`", "&#096;");
+	    result = result.replace("{", "&#123;");
+	    result = result.replace("|", "&#124;");
+	    result = result.replace("}", "&#125;");
+	    result = result.replace("~", "&#126;");
+		
+		return result;
 	}
 }

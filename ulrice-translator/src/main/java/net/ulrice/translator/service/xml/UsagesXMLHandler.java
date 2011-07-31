@@ -25,14 +25,14 @@ public class UsagesXMLHandler implements ContentHandler {
 	
 	@Override
 	public void startElement(String uri, String localName, String qName, Attributes atts) throws SAXException {
-		if("Usage".equalsIgnoreCase(localName)) {
+		if("UsageEntry".equalsIgnoreCase(localName)) {
 			currentEntry = new UsageDTO();
 		} 
 	}
 
 	@Override
 	public void endElement(String uri, String localName, String qName) throws SAXException {
-		if("Usage".equalsIgnoreCase(localName)) {
+		if("UsageEntry".equalsIgnoreCase(localName)) {
 			service.createUsage(currentEntry);
 			currentEntry = null;
 		} else if("Application".equalsIgnoreCase(localName)){
