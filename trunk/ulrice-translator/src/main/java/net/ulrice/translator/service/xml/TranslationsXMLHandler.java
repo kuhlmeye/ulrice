@@ -17,7 +17,7 @@ public class TranslationsXMLHandler implements ContentHandler {
 	
 	private TranslationDTO currentEntry;	
 	
-	private String currentText;
+	private String currentText = "";
 
 	public TranslationsXMLHandler(IFTranslationService service) {
 		this.service = service;
@@ -48,11 +48,12 @@ public class TranslationsXMLHandler implements ContentHandler {
 		} else if("Translation".equalsIgnoreCase(localName)) {
 			currentEntry.setTranslation(currentText);
 		}
+		currentText = "";
 	}	
 
 	@Override
 	public void characters(char[] ch, int start, int length) throws SAXException {
-		currentText = new String(ch, start, length);
+		currentText += new String(ch, start, length);
 	}
 
 	@Override
