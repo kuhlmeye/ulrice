@@ -4,6 +4,8 @@ package net.ulrice.translator;
 import java.awt.event.ActionEvent;
 import java.util.Locale;
 
+import javax.swing.ImageIcon;
+
 import net.ulrice.databinding.viewadapter.utable.UTableViewAdapter;
 import net.ulrice.module.IFModule;
 import net.ulrice.module.impl.AbstractController;
@@ -46,7 +48,7 @@ public class CTranslator extends AbstractController<MTranslator, VTranslator> {
 	@Override
 	protected ModuleActionState[] getHandledActions() {
 		
-		Action addDictionaryEntryAction = new Action("ADD_DICT_ENTRY", "Add Dict", true, ActionType.ModuleAction, null) {
+		Action addDictionaryEntryAction = new Action("ADD_DICT_ENTRY", "Add Dict", true, ActionType.ModuleAction, new ImageIcon(getClass().getResource("dict_add.png"))) {
 			
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -54,7 +56,8 @@ public class CTranslator extends AbstractController<MTranslator, VTranslator> {
 			}
 		};
 		
-		Action delDictionaryEntryAction = new Action("DEL_DICT_ENTRY", "Add Dict", true, ActionType.ModuleAction, null) {
+		
+		Action delDictionaryEntryAction = new Action("DEL_DICT_ENTRY", "Add Dict", true, ActionType.ModuleAction, new ImageIcon(getClass().getResource("dict_del.png"))) {
 			
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -65,7 +68,7 @@ public class CTranslator extends AbstractController<MTranslator, VTranslator> {
 			}
 		};
 		
-		Action addUsageAction = new Action("ADD_USAGE_ENTRY", "Add Usage", true, ActionType.ModuleAction, null) {
+		Action addUsageAction = new Action("ADD_USAGE_ENTRY", "Add Usage", true, ActionType.ModuleAction, new ImageIcon(getClass().getResource("loc_add.png"))) {
 			
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -73,7 +76,7 @@ public class CTranslator extends AbstractController<MTranslator, VTranslator> {
 			}
 		};
 		
-		Action delUsageAction = new Action("DEL_USAGE_ENTRY", "Del Usage", true, ActionType.ModuleAction, null) {
+		Action delUsageAction = new Action("DEL_USAGE_ENTRY", "Del Usage", true, ActionType.ModuleAction, new ImageIcon(getClass().getResource("loc_del.png"))) {
 			
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -84,7 +87,7 @@ public class CTranslator extends AbstractController<MTranslator, VTranslator> {
 			}
 		};
 
-		Action saveAction = new Action("SAVE", "Save", true, ActionType.ModuleAction, null) {
+		Action saveAction = new Action("SAVE", "Save", true, ActionType.ModuleAction, new ImageIcon(getClass().getResource("save.png"))) {
 			
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -96,7 +99,7 @@ public class CTranslator extends AbstractController<MTranslator, VTranslator> {
 			}
 		};
 		
-		Action generateTranslationTableAction = new Action("GENERATE_TRANSLATION", "Generate", true, ActionType.ModuleAction, null) {
+		Action generateTranslationTableAction = new Action("GENERATE_TRANSLATION", "Generate", true, ActionType.ModuleAction, new ImageIcon(getClass().getResource("generate.png"))) {
 			
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -105,7 +108,7 @@ public class CTranslator extends AbstractController<MTranslator, VTranslator> {
 			}
 		};
 		
-		Action generatePropertyFilesAction = new Action("GENERATE_PROPERTIES", "Generate Properties", true, ActionType.ModuleAction, null) {
+		Action generatePropertyFilesAction = new Action("GENERATE_PROPERTIES", "Generate Properties", true, ActionType.ModuleAction, new ImageIcon(getClass().getResource("save_properties.png"))) {
 			
 			@Override
 			public void actionPerformed(ActionEvent e) {
