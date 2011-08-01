@@ -90,7 +90,7 @@ public class CTranslator extends AbstractController<MTranslator, VTranslator> {
 			public void actionPerformed(ActionEvent e) {
 				// TODO Let user select locales in Dialog..
 				PSaveData saveDataProcess = new PSaveData(CTranslator.this, "Save Data", getModel(), translationService);
-				PLoadData loadDataProcess = new PLoadData(CTranslator.this, "Load Data", getModel(), translationService);
+				PLoadData loadDataProcess = new PLoadData(CTranslator.this, "Load Data", getModel(), translationService);				
 				processExecutor.executeProcess(saveDataProcess);
 				processExecutor.executeProcess(loadDataProcess, saveDataProcess);
 			}

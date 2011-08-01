@@ -20,43 +20,44 @@ public class PGenerateTranslations extends AbstractProcess<List<TranslationDTO>,
 
 	public PGenerateTranslations(IFController owner, String name, MTranslator model, Locale... locales) {
 		super(owner, name);
-		
+
 		this.model = model;
 		this.locales = locales;
 		model.getDictionaryAM().write();
-		model.getTranslationsAM().write();		
+		model.getTranslationsAM().write();
 	}
 
-    @Override
-    protected List<TranslationDTO> work() {
-    	List<TranslationDTO> result = new ArrayList<TranslationDTO>();
+	@Override
+	protected List<TranslationDTO> work() {
+		List<TranslationDTO> result = new ArrayList<TranslationDTO>();
 		List<DictionaryEntryDTO> dictionary = model.getDictionary();
 		List<UsageDTO> usages = model.getUsages();
-		
+
 		int numRows = dictionary.size() + (usages.size() * locales.length);
 		int cRows = 0;
-		
+
 		// Fill maps
-		for(DictionaryEntryDTO entry: dictionary) {
-			String key = concatString(entry.getLanguage(), entry.getApplication(), entry.getModule(), entry.getUsage(), entry.getAttribute());
+		for (DictionaryEntryDTO entry : dictionary) {
+			String key = concatString(entry.getLanguage(), entry.getApplication(), entry.getModule(), entry.getUsage(),
+					entry.getAttribute());
 			dictionaryMap.put(key, entry);
-			setProgress((int)(100.0f / (float)numRows * (float)(++cRows)));
+			updateProgress((int) (100.0f / (float) numRows * (float) (++cRows)));
 		}
 
-		for(UsageDTO usage : usages) {
-			for(Locale locale : locales) {
+		for (UsageDTO usage : usages) {
+			for (Locale locale : locales) {
 				DictionaryEntryDTO entry = getEntry(usage, locale);
-				setProgress((int)(100.0f / (float)numRows * (float)(++cRows)));
+				updateProgress((int) (100.0f / (float) numRows * (float) (++cRows)));
 
-				if(entry == null) {
+				if (entry == null) {
 					entry = getEntry(usage, Locale.ENGLISH);
 				}
-				
-				if(entry != null) {
+
+				if (entry != null) {
 					TranslationDTO translation = new TranslationDTO();
 					translation.setApplication(usage.getApplication());
 					translation.setModule(usage.getModule());
-					translation.setUsage(usage.getUsage()); 
+					translation.setUsage(usage.getUsage());
 					translation.setAttribute(usage.getAttribute());
 					translation.setLanguage(entry.getLanguage());
 					translation.setTranslation(entry.getTranslation());
@@ -64,46 +65,44 @@ public class PGenerateTranslations extends AbstractProcess<List<TranslationDTO>,
 				}
 			}
 		}
-		
+
 		return result;
 	}
 
 	private DictionaryEntryDTO getEntry(UsageDTO usage, Locale locale) {
 		String key = concatString(locale, usage.getApplication(), usage.getModule(), usage.getUsage(), usage.getAttribute());
-		if(dictionaryMap.containsKey(key)) {
+		if (dictionaryMap.containsKey(key)) {
 			return dictionaryMap.get(key);
 		}
 
 		key = concatString(locale, usage.getApplication(), usage.getUsage(), usage.getAttribute());
-		if(dictionaryMap.containsKey(key)) {
+		if (dictionaryMap.containsKey(key)) {
 			return dictionaryMap.get(key);
 		}
 
 		key = concatString(locale, usage.getApplication(), usage.getAttribute());
-		if(dictionaryMap.containsKey(key)) {
+		if (dictionaryMap.containsKey(key)) {
 			return dictionaryMap.get(key);
 		}
-		
-		key = concatString(locale, usage.getAttribute());
-		if(dictionaryMap.containsKey(key)) {
-			return dictionaryMap.get(key);
-		}
-		
-		
 
-		
+		key = concatString(locale, usage.getAttribute());
+		if (dictionaryMap.containsKey(key)) {
+			return dictionaryMap.get(key);
+		}
+
 		return null;
 	}
 
 	private String concatString(Locale locale, String... keys) {
 		StringBuffer result = new StringBuffer();
-		for(String key : keys) {
-			result.append(key).append('.');
+		for (String key : keys) {
+			if (key != null) {
+				result.append(key.trim()).append('.');
+			}
 		}
-		result.append(locale.toString());
+		result.append(locale.toString().trim());
 		return result.toString();
 	}
-
 
 	@Override
 	protected void finished(List<TranslationDTO> result) {

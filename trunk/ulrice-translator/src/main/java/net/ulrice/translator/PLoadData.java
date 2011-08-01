@@ -18,9 +18,11 @@ public class PLoadData extends AbstractProcess<Void, Void> {
 	@Override
 	protected Void work() {
 		model.setDictionary(service.findAllDictionaryEntries());
+		updateProgress(33);
 		model.setUsages(service.findAllUsages());
+		updateProgress(66);
 		model.setTranslations(service.findAllTranslations());
-
+		updateProgress(100);
 		return null;
 	}
 
