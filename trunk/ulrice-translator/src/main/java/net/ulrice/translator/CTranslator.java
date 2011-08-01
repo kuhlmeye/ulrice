@@ -101,7 +101,7 @@ public class CTranslator extends AbstractController<MTranslator, VTranslator> {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				// TODO Let user select locales in Dialog..
-				processExecutor.executeProcess(new PGenerateTranslations(CTranslator.this, "Generate Translations", getModel(), Locale.ENGLISH, Locale.GERMAN));
+				processExecutor.executeProcess(new PGenerateTranslations(CTranslator.this, "Generate Translations", getModel(), new Locale("en", "US"), new Locale("de", "DE")));
 			}
 		};
 		
@@ -110,7 +110,7 @@ public class CTranslator extends AbstractController<MTranslator, VTranslator> {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				// TODO Let user select locales in Dialog..
-				processExecutor.executeProcess(new PGenerateProperties(CTranslator.this, "Generate Properties", getModel(), Locale.ENGLISH, Locale.GERMAN));
+				processExecutor.executeProcess(new PGenerateProperties(CTranslator.this, "Generate Properties", getModel(), new Locale("en", "US"), new Locale("de", "DE")));
 			}
 		};
 				

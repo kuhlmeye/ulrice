@@ -32,7 +32,7 @@ public class MTranslator implements IFModel<CTranslator> {
 		translationsAM.addColumn(new ColumnDefinition<String>(new DynamicReflectionMVA(String.class, "module"), String.class));
 		translationsAM.addColumn(new ColumnDefinition<String>(new DynamicReflectionMVA(String.class, "usage"), String.class));
 		translationsAM.addColumn(new ColumnDefinition<String>(new DynamicReflectionMVA(String.class, "attribute"), String.class));
-		ColumnDefinition<Locale> localeColumn = new ColumnDefinition<Locale>(new DynamicReflectionMVA(Locale.class, "language"), Locale.class);
+		ColumnDefinition<String> localeColumn = new ColumnDefinition<String>(new DynamicReflectionMVA(Locale.class, "language"), String.class);
 		localeColumn.setValueConverter(localeConverter);
 		translationsAM.addColumn(localeColumn);
 		translationsAM.addColumn(new ColumnDefinition<String>(new DynamicReflectionMVA(String.class, "translation"), String.class));
@@ -42,7 +42,7 @@ public class MTranslator implements IFModel<CTranslator> {
 		dictionaryAM.addColumn(new ColumnDefinition<String>(new DynamicReflectionMVA(String.class, "module"), String.class));
 		dictionaryAM.addColumn(new ColumnDefinition<String>(new DynamicReflectionMVA(String.class, "usage"), String.class));
 		dictionaryAM.addColumn(new ColumnDefinition<String>(new DynamicReflectionMVA(String.class, "attribute"), String.class));
-		localeColumn = new ColumnDefinition<Locale>(new DynamicReflectionMVA(Locale.class, "language"), Locale.class);
+		localeColumn = new ColumnDefinition<String>(new DynamicReflectionMVA(Locale.class, "language"), String.class);
 		localeColumn.setValueConverter(localeConverter);
 		dictionaryAM.addColumn(localeColumn);
 		

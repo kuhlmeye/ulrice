@@ -156,7 +156,7 @@ public class XMLInMemoryTranslationService implements IFTranslationService {
 						ps.println("\t\t<usage>" + fix(entry.getUsage()) + "</usage>");
 					}
 					ps.println("\t\t<attribute>" + fix(entry.getAttribute()) + "</attribute>");
-					ps.println("\t\t<language>" + fix(entry.getLanguage().getLanguage()) + "</language>");
+					ps.println("\t\t<language>" + fix(entry.getLanguage().toString()) + "</language>");
 					ps.println("\t\t<translation>" + fix(entry.getTranslation()) + "</translation>");
 					ps.println("\t</dictEntry>");
 				}
@@ -189,7 +189,7 @@ public class XMLInMemoryTranslationService implements IFTranslationService {
 						ps.println("\t\t<module>" + fix(entry.getModule()) + "</module>");
 						ps.println("\t\t<usage>" + fix(entry.getUsage()) + "</usage>");
 						ps.println("\t\t<attribute>" + fix(entry.getAttribute()) + "</attribute>");
-						ps.println("\t\t<language>" + fix(entry.getLanguage().getLanguage()) + "</language>");
+						ps.println("\t\t<language>" + fix(entry.getLanguage().toString()) + "</language>");
 						ps.println("\t\t<translation>" + fix(entry.getTranslation()) + "</translation>");
 						ps.println("\t</translation>");
 					}
