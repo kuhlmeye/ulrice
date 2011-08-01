@@ -16,7 +16,7 @@ public class DictionaryXMLHandler implements ContentHandler {
 	
 	private DictionaryEntryDTO currentEntry;	
 	
-	private String currentText;
+	private String currentText = "";
 
 	public DictionaryXMLHandler(IFTranslationService service) {
 		this.service = service;
@@ -47,11 +47,12 @@ public class DictionaryXMLHandler implements ContentHandler {
 		} else if("Translation".equalsIgnoreCase(localName)) {
 			currentEntry.setTranslation(currentText);
 		}
+		currentText = "";
 	}	
 
 	@Override
 	public void characters(char[] ch, int start, int length) throws SAXException {
-		currentText = new String(ch, start, length);
+		currentText += new String(ch, start, length);
 	}
 
 	@Override
