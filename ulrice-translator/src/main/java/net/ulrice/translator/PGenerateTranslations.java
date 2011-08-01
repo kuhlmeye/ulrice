@@ -50,7 +50,7 @@ public class PGenerateTranslations extends AbstractProcess<List<TranslationDTO>,
 				updateProgress((int) (100.0f / (float) numRows * (float) (++cRows)));
 
 				if (entry == null) {
-					entry = getEntry(usage, Locale.ENGLISH);
+					entry = getEntry(usage, new Locale("us"));
 				}
 
 				if (entry != null) {
@@ -59,7 +59,7 @@ public class PGenerateTranslations extends AbstractProcess<List<TranslationDTO>,
 					translation.setModule(usage.getModule());
 					translation.setUsage(usage.getUsage());
 					translation.setAttribute(usage.getAttribute());
-					translation.setLanguage(entry.getLanguage());
+					translation.setLanguage(locale);
 					translation.setTranslation(entry.getTranslation());
 					result.add(translation);
 				}

@@ -37,7 +37,9 @@ public class PGenerateProperties extends AbstractProcess<Void, Void> {
 		for(TranslationDTO translation : translations) {
 			if(propertiesMap.containsKey(translation.getLanguage())) {
 				Properties properties = propertiesMap.get(translation);
-				properties.setProperty(buildKey(translation), translation.getTranslation());
+				if(properties != null) {
+					properties.setProperty(buildKey(translation), translation.getTranslation());
+				}
 			}
 		}
 		
