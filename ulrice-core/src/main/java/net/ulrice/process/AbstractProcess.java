@@ -36,7 +36,11 @@ public abstract class AbstractProcess<T,V> extends SwingWorker<T, V> implements 
 		this.listenerList = new EventListenerList();
 	}
 	
-	
+
+	protected void updateProgress(int progress) {
+		setProgress(progress);
+		fireProgressChanged();
+	}
 	
 	@Override
 	public ProcessState getProcessState() {
