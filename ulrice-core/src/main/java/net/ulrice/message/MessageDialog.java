@@ -39,7 +39,7 @@ public class MessageDialog extends JDialog {
     }
 
     public void setMessage(String message) {
-        setPreferredSize(new Dimension(600, 600));
+        setPreferredSize(new Dimension(600, 400));
         String m = "<html><body><table border='0'>" + message + "</table></body></html>";
         label.setText(m);
     }
