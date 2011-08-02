@@ -28,6 +28,7 @@ public class MTranslator implements IFModel<CTranslator> {
 		LocaleToStringConverter localeConverter = new LocaleToStringConverter();
 		
 		translationsAM = new TableAM(new IndexedReflectionMVA(this, "translations"));
+		translationsAM.setReadOnly(true);
 		translationsAM.addColumn(new ColumnDefinition<String>(new DynamicReflectionMVA(String.class, "application"), String.class));
 		translationsAM.addColumn(new ColumnDefinition<String>(new DynamicReflectionMVA(String.class, "module"), String.class));
 		translationsAM.addColumn(new ColumnDefinition<String>(new DynamicReflectionMVA(String.class, "usage"), String.class));

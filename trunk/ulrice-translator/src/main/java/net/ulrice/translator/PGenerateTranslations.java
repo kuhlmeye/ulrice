@@ -97,10 +97,10 @@ public class PGenerateTranslations extends AbstractProcess<List<TranslationDTO>,
 		StringBuffer result = new StringBuffer();
 		for (String key : keys) {
 			if (key != null) {
-				result.append(key.trim()).append('.');
+				result.append(key.toLowerCase().trim()).append('.');
 			}
 		}
-		result.append(locale.toString().trim());
+		result.append(locale.toString().toLowerCase().trim());
 		return result.toString();
 	}
 
