@@ -156,7 +156,7 @@ public class TableAM implements IFAttributeModel  {
 	 * @see javax.swing.table.TableModel#isCellEditable(int, int)
 	 */
 	public boolean isCellEditable(int rowIndex, int columnIndex) {
-		return !getElementAt(rowIndex).isReadOnly(columnIndex);
+		return !isReadOnly() && !getElementAt(rowIndex).isReadOnly(columnIndex);
 	}
 
 	/**
@@ -464,6 +464,10 @@ public class TableAM implements IFAttributeModel  {
 
 	protected Object cloneObject(Object value) {
 		return tableMVA.cloneObject(value);
+	}
+	
+	public void setReadOnly(boolean readOnly) {
+		this.readOnly = readOnly;
 	}
 }
 
