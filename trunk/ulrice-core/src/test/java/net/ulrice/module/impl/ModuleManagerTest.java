@@ -19,13 +19,13 @@ public class ModuleManagerTest extends AbstractUlriceTest {
 		firstSingleModule = moduleManager.openModule(SINGLE_MODULE_ID);
 		Assert.assertSame(secondSingleModule, firstSingleModule);			
 		
-		moduleManager.closeModule(firstSingleModule);
+		moduleManager.closeController(firstSingleModule);
 		
 		firstSingleModule = moduleManager.openModule(SINGLE_MODULE_ID);
 		Assert.assertNotSame(secondSingleModule, firstSingleModule);		
 
-		moduleManager.closeModule(firstSingleModule);
-		moduleManager.closeModule(secondSingleModule);
+		moduleManager.closeController(firstSingleModule);
+		moduleManager.closeController(secondSingleModule);
 	}
 	
 	public void testOpenCloseNormalModules() throws ModuleInstanciationException {
@@ -35,8 +35,8 @@ public class ModuleManagerTest extends AbstractUlriceTest {
 		firstNormalModule = moduleManager.openModule(NORMAL_MODULE_ID);
 		Assert.assertNotSame(secondNormalModule, firstNormalModule);
 
-		moduleManager.closeModule(firstNormalModule);
-		moduleManager.closeModule(secondNormalModule);
+		moduleManager.closeController(firstNormalModule);
+		moduleManager.closeController(secondNormalModule);
 	}
 	
 }

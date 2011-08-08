@@ -25,8 +25,8 @@ import javax.swing.UIManager;
 import net.ulrice.Ulrice;
 import net.ulrice.frame.IFWorkarea;
 import net.ulrice.module.IFController;
-import net.ulrice.module.IFModuleTitleRenderer;
-import net.ulrice.module.IFModuleTitleRenderer.Usage;
+import net.ulrice.module.IFModuleTitleProvider;
+import net.ulrice.module.IFModuleTitleProvider.Usage;
 import net.ulrice.module.ModuleIconSize;
 import net.ulrice.ui.UIConstants;
 
@@ -92,17 +92,14 @@ public class TabbedWorkarea extends JTabbedPane implements IFWorkarea, MouseList
 			setSelectedIndex(idx);
 		} else {
 			// Print out log because module could not be found in the tab.
-			String moduleId = "<unknown>";
-			if (activeController.getModule() != null) {
-				moduleId = activeController.getModule().getUniqueId();
-			}
+			final String moduleId = Ulrice.getModuleManager().getModule(activeController).getUniqueId();
 			LOG.warning("Activated module [id:" + moduleId + "] could not be found in the tab.");
 
 			openModule(activeController);
 		}
 		
 
-		if(activeController.isBlocked()) {
+		if(Ulrice.getModuleManager().isBlocked(activeController)) {
 			moduleBlocked(activeController);			
 		} else {
 			moduleUnblocked(activeController);	
@@ -118,9 +115,9 @@ public class TabbedWorkarea extends JTabbedPane implements IFWorkarea, MouseList
 	}
 
 	/**
-	 * @see net.ulrice.module.event.IFModuleEventListener#closeModule(net.ulrice.module.IFController)
+	 * @see net.ulrice.module.event.IFModuleEventListener#closeController(net.ulrice.module.IFController)
 	 */
-	public void closeModule(IFController activeController) {
+	public void closeController(IFController activeController) {
 		if (activeController == null) {
 			return;
 		}
@@ -131,10 +128,7 @@ public class TabbedWorkarea extends JTabbedPane implements IFWorkarea, MouseList
 			remove(idx);
 		} else {
 			// Print out log because module could not be found in the tab.
-			String moduleId = "<unknown>";
-			if (activeController.getModule() != null) {
-				moduleId = activeController.getModule().getUniqueId();
-			}
+			final String moduleId = Ulrice.getModuleManager().getModule(activeController).getUniqueId();
 			LOG.warning("Closed module [id:" + moduleId + "] could not be found in the tab.");
 		}
 
@@ -182,7 +176,7 @@ public class TabbedWorkarea extends JTabbedPane implements IFWorkarea, MouseList
 		selectedIdx = getSelectedIndex();
 		setTabComponentAt(selectedIdx, new TabControllerPanel(activeController));
 		
-		if(activeController.isBlocked()) {
+		if(Ulrice.getModuleManager().isBlocked(activeController)) {
 			moduleBlocked(activeController);			
 		} else {
 			moduleUnblocked(activeController);	
@@ -203,7 +197,7 @@ public class TabbedWorkarea extends JTabbedPane implements IFWorkarea, MouseList
 
 		JComponent controllerComponent = null;
 		if (controller.getView() != null) {
-			controllerComponent = controller.getView().getView();
+			controllerComponent = controller.getView();
 		}
 		return controllerComponent;
 	}
@@ -227,18 +221,10 @@ public class TabbedWorkarea extends JTabbedPane implements IFWorkarea, MouseList
 			setOpaque(false);
 			setBorder(BorderFactory.createEmptyBorder());
 
-			// Get the renderered title.
-			String controllerTitle = null;
-			if (controller.getModuleTitleRenderer() != null) {
-				IFModuleTitleRenderer moduleTitleRenderer = controller.getModuleTitleRenderer();
-				controllerTitle = moduleTitleRenderer.getModuleTitle(Usage.TabbedWorkarea);
-			}
+			final String controllerTitle = Ulrice.getModuleManager().getTitleProvider(controller).getModuleTitle(Usage.TabbedWorkarea);
 
 			// Get the icon.
-			ImageIcon icon = null;
-			if (controller.getModule() != null) {
-				icon = controller.getModule().getIcon(ModuleIconSize.Size_16x16);
-			}
+			final ImageIcon icon = Ulrice.getModuleManager().getModule(controller).getIcon(ModuleIconSize.Size_16x16);
 
 			AbstractAction closeAction = new AbstractAction("X", closeIcon) {
 
@@ -250,7 +236,7 @@ public class TabbedWorkarea extends JTabbedPane implements IFWorkarea, MouseList
 				 */
 				@Override
 				public void actionPerformed(ActionEvent e) {
-					Ulrice.getModuleManager().closeModule(controller);
+					Ulrice.getModuleManager().closeController(controller);
 				}
 			};
 
@@ -319,7 +305,7 @@ public class TabbedWorkarea extends JTabbedPane implements IFWorkarea, MouseList
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				Ulrice.getModuleManager().closeModule(tabCtrlPanel.getController());
+				Ulrice.getModuleManager().closeController(tabCtrlPanel.getController());
 			}
 		});
 
@@ -330,7 +316,7 @@ public class TabbedWorkarea extends JTabbedPane implements IFWorkarea, MouseList
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				Ulrice.getModuleManager().closeOtherModules(tabCtrlPanel.getController());
+				Ulrice.getModuleManager().closeOtherControllers(tabCtrlPanel.getController());
 			}
 		});
 
@@ -341,7 +327,7 @@ public class TabbedWorkarea extends JTabbedPane implements IFWorkarea, MouseList
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				Ulrice.getModuleManager().closeAllModules();
+				Ulrice.getModuleManager().closeAllControllers();
 			}
 		});
 		popup.show(tabCtrlPanel, point.x, point.y);

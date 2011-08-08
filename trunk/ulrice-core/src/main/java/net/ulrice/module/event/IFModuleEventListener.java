@@ -37,7 +37,7 @@ public interface IFModuleEventListener extends EventListener {
 	 * 
 	 * @param activeController The module which is about to be closed.
 	 */
-	void closeModule(IFController activeController);
+	void closeController(IFController activeController);
 	
 	void moduleBlocked(IFController controller);
 	

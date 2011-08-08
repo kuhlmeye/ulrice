@@ -10,7 +10,7 @@ import javax.swing.event.EventListenerList;
 
 import net.ulrice.Ulrice;
 import net.ulrice.module.IFController;
-import net.ulrice.module.IFModuleTitleRenderer.Usage;
+import net.ulrice.module.IFModuleTitleProvider.Usage;
 import net.ulrice.process.IFBackgroundProcess.ProcessState;
 
 /**
@@ -42,7 +42,7 @@ public class ProcessManager implements IFProcessListener {
 
 		if(ProcessState.Started.equals(process.getProcessState())) {
 			if(process.blocksWorkarea()) {
-				process.getOwningController().block(process);
+				Ulrice.getModuleManager().block (process.getOwningController(), process);
 			}
 		}
 	}
@@ -60,12 +60,12 @@ public class ProcessManager implements IFProcessListener {
 	public void stateChanged(IFBackgroundProcess process) {
 		if(ProcessState.Started.equals(process.getProcessState())) {
 			if(process.blocksWorkarea()) {
-				process.getOwningController().block(process);
+				Ulrice.getModuleManager().block(process.getOwningController(), process);
 			}
 		}
 		if (ProcessState.Done.equals(process.getProcessState())) {
 			if(process.blocksWorkarea()) {
-				process.getOwningController().unblock(process);
+			    Ulrice.getModuleManager().unblock(process.getOwningController(), process);
 			}
 
 			
@@ -73,7 +73,7 @@ public class ProcessManager implements IFProcessListener {
 
 			if (!list.remove(process)) {
 				LOG.warning("Process " + process.getProcessName() + " not found in list of controller "
-						+ process.getOwningController().getModule().getModuleTitle(Usage.Default) + ".");
+						+ Ulrice.getModuleManager().getModule(process.getOwningController()).getModuleTitle(Usage.Default) + ".");
 			}
 		}
 		fireStateChanged(process);

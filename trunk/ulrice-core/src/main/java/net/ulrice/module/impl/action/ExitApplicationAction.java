@@ -37,7 +37,7 @@ public class ExitApplicationAction extends Action {
 	 */
 	@Override
 	public void actionPerformed(ActionEvent e) {
-		Ulrice.getModuleManager().closeAllModules();
+		Ulrice.getModuleManager().closeAllControllers();
 		System.exit(0);
 	}
 }

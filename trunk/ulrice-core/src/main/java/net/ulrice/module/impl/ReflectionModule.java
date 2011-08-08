@@ -8,7 +8,7 @@ import javax.swing.ImageIcon;
 
 import net.ulrice.module.IFController;
 import net.ulrice.module.IFModule;
-import net.ulrice.module.IFModuleTitleRenderer;
+import net.ulrice.module.IFModuleTitleProvider;
 import net.ulrice.module.ModuleIconSize;
 import net.ulrice.module.ModuleType;
 import net.ulrice.module.exception.ModuleInstanciationException;
@@ -18,13 +18,13 @@ import net.ulrice.module.exception.ModuleInstanciationException;
  * 
  * @author ckuhlmeyer
  */
-public class ReflectionModule implements IFModule, IFModuleTitleRenderer {
+public class ReflectionModule implements IFModule, IFModuleTitleProvider {
 
 	/** The unique id of the reflection module. */
 	private String uniqueId;
 
 	/** The module title renderer used by this module. */
-	private IFModuleTitleRenderer titleRenderer;
+	private IFModuleTitleProvider titleRenderer;
 
 	/** The class name of the controller. */
 	private String controllerClassName;
@@ -59,7 +59,7 @@ public class ReflectionModule implements IFModule, IFModuleTitleRenderer {
 	 * @param titleRenderer The renderer used to render the title of this module.
 	 */
 	public ReflectionModule(String uniqueId, ModuleType moduleType, String controllerClassName, String iconName,
-			IFModuleTitleRenderer titleRenderer) {
+			IFModuleTitleProvider titleRenderer) {
 		super();
 		this.uniqueId = uniqueId;
 		this.moduleType = moduleType;
@@ -129,10 +129,10 @@ public class ReflectionModule implements IFModule, IFModuleTitleRenderer {
 	}
 
 	/**
-	 * @see net.ulrice.module.IFModule#instanciateModule()
+	 * @see net.ulrice.module.IFModule#instantiateModule()
 	 */
 	@SuppressWarnings("unchecked")
-	public IFController instanciateModule() throws ModuleInstanciationException {
+	public IFController instantiateModule() throws ModuleInstanciationException {
 
 		// Check, if controller class name is null.
 		if (controllerClassName == null) {
@@ -199,7 +199,7 @@ public class ReflectionModule implements IFModule, IFModuleTitleRenderer {
 	}
 
 	/**
-	 * @see net.ulrice.module.IFModuleTitleRenderer#getModuleTitle(net.ulrice.module.IFModuleTitleRenderer.Usage)
+	 * @see net.ulrice.module.IFModuleTitleProvider#getModuleTitle(net.ulrice.module.IFModuleTitleProvider.Usage)
 	 */
 	public String getModuleTitle(Usage usage) {
 		if (getTitleRenderer() != null) {
@@ -211,14 +211,14 @@ public class ReflectionModule implements IFModule, IFModuleTitleRenderer {
 	/**
 	 * @return the titleRenderer
 	 */
-	public IFModuleTitleRenderer getTitleRenderer() {
+	public IFModuleTitleProvider getTitleRenderer() {
 		return titleRenderer;
 	}
 
 	/**
 	 * @param titleRenderer the titleRenderer to set
 	 */
-	public void setTitleRenderer(IFModuleTitleRenderer titleRenderer) {
+	public void setTitleRenderer(IFModuleTitleProvider titleRenderer) {
 		this.titleRenderer = titleRenderer;
 	}
 	

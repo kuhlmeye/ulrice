@@ -40,9 +40,9 @@ public class CloseModuleAction extends Action {
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		IFModuleManager moduleManager = Ulrice.getModuleManager();
-		IFController currentModule = moduleManager.getCurrentModule();
+		IFController currentModule = moduleManager.getCurrentController();
 		if(currentModule != null) {
-			moduleManager.closeModule(currentModule);
+			moduleManager.closeController(currentModule);
 		}
 	}
 }

@@ -64,11 +64,11 @@ public class DialogManager {
 		switch (mode) {
 		case ApplicationModal:
 			dialog.setModal(true);
-			controller.block(dialog);
+			Ulrice.getModuleManager().block (controller, dialog);
 			break;
 		case ModuleModal:
 			dialog.setAlwaysOnTop(true);
-			controller.block(dialog);
+			Ulrice.getModuleManager().block (controller, dialog);
 			break;
 		case NonModal:
 			break;
@@ -93,7 +93,7 @@ public class DialogManager {
 		}
 
 		@Override
-		public void closeModule(IFController controller) {
+		public void closeController(IFController controller) {
 			List<DialogInformation> dialogs = ctrlDialogMap.get(controller);
 			if (dialogs != null) {
 				for (DialogInformation dialogInfo : dialogs) {
@@ -135,7 +135,7 @@ public class DialogManager {
 					switch (dlgInfo.mode) {
 					case ApplicationModal:
 					case ModuleModal:
-						dlgInfo.ctrl.unblock(dialog);
+					    Ulrice.getModuleManager().unblock(dlgInfo.ctrl, dialog);
 						break;
 					default:
 						break;

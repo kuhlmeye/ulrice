@@ -57,14 +57,14 @@ public class SingleWorkarea implements IFWorkarea, AWTEventListener {
 	public void activateModule(IFController activeController) {
 		this.activeController = activeController;
 		
-		if(activeController.isBlocked()) {
+		if(Ulrice.getModuleManager().isBlocked(activeController)) {
 			moduleBlocked(activeController);
 		} else {
 			moduleUnblocked(activeController);
 		}
 		
-		if (activeController != null && activeController.getView() != null && activeController.getView().getView() != null) {
-			workareaPanel.add(activeController.getView().getView(), BorderLayout.CENTER);
+		if (activeController != null && activeController.getView() != null) {
+			workareaPanel.add(activeController.getView(), BorderLayout.CENTER);
 		} else {
 			workareaPanel.removeAll();
 		}
@@ -90,9 +90,9 @@ public class SingleWorkarea implements IFWorkarea, AWTEventListener {
 	}
 
 	/**
-	 * @see net.ulrice.module.event.IFModuleEventListener#closeModule(net.ulrice.module.IFController)
+	 * @see net.ulrice.module.event.IFModuleEventListener#closeController(net.ulrice.module.IFController)
 	 */
-	public void closeModule(IFController activeController) {
+	public void closeController(IFController activeController) {
 		// This event can be ignored.
 		workareaPanel.removeAll();
 		workareaPanel.revalidate();	

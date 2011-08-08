@@ -1,16 +1,14 @@
 package net.ulrice.module;
 
 /**
- * Interface for a class that renders the module title.
+ * Interface for a class that provides the module title.
  * 
  * @author ckuhlmeyer
  */
-public interface IFModuleTitleRenderer {
+public interface IFModuleTitleProvider {
 
 	/**
 	 * Enumeration defining the default usages of the module titles.
-	 * 
-	 * @author ckuhlmeyer
 	 */
 	enum Usage {
 		/** Usage in the changeover dialog. */

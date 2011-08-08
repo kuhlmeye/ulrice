@@ -13,7 +13,7 @@ import javax.swing.event.EventListenerList;
 
 import net.ulrice.Ulrice;
 import net.ulrice.module.IFController;
-import net.ulrice.module.IFModuleTitleRenderer.Usage;
+import net.ulrice.module.IFModuleTitleProvider.Usage;
 import net.ulrice.module.event.IFModuleActionManagerEventListener;
 import net.ulrice.module.event.IFModuleEventListener;
 import net.ulrice.module.impl.ModuleActionState;
@@ -96,7 +96,7 @@ public class ModuleActionManager implements IFModuleEventListener, PropertyChang
 
 			if (!Ulrice.getSecurityManager().allowExecuteAction(activeController, moduleAction)) {
 				LOG.info("Action [Id: " + moduleAction.getUniqueId() + ", Module: "
-						+ activeController.getModule().getModuleTitle(Usage.Default)
+						+ Ulrice.getModuleManager().getModule(activeController).getModuleTitle(Usage.Default)
 						+ "] will not be executed. Not authorized by ulrice security manager.");
 				return;
 			}
@@ -218,7 +218,7 @@ public class ModuleActionManager implements IFModuleEventListener, PropertyChang
 				Action moduleAction = moduleActionState.getAction();
 				if (!Ulrice.getSecurityManager().allowRegisterAction(activeController, moduleAction)) {
 					LOG.info("Action [Id: " + moduleAction.getUniqueId() + ", Module: "
-							+ activeController.getModule().getModuleTitle(Usage.Default)
+							+ Ulrice.getModuleManager().getModule(activeController).getModuleTitle(Usage.Default)
 							+ "] will not be added. Not authorized by ulrice security manager.");
 					return;
 				}
@@ -235,10 +235,10 @@ public class ModuleActionManager implements IFModuleEventListener, PropertyChang
 	}
 
 	/**
-	 * @see net.ulrice.module.event.IFModuleEventListener#closeModule(net.ulrice.module.IFController)
+	 * @see net.ulrice.module.event.IFModuleEventListener#closeController(net.ulrice.module.IFController)
 	 */
 	@Override
-	public void closeModule(IFController activeController) {
+	public void closeController(IFController activeController) {
 
 		this.activeController = null;
 		controllerActionStateMap.remove(activeController);
@@ -278,7 +278,7 @@ public class ModuleActionManager implements IFModuleEventListener, PropertyChang
 				Action moduleAction = (Action) source;
 				if (!Ulrice.getSecurityManager().allowEnableAction(activeController, moduleAction)) {
 					LOG.info("Action [Id: " + moduleAction.getUniqueId() + ", Module: "
-							+ activeController.getModule().getModuleTitle(Usage.Default)
+							+ Ulrice.getModuleManager().getModule(activeController).getModuleTitle(Usage.Default)
 							+ "] will not be enabled. Not authorized by ulrice security manager.");
 					return;
 				}

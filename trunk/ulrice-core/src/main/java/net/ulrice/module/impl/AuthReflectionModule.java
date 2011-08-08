@@ -1,6 +1,6 @@
 package net.ulrice.module.impl;
 
-import net.ulrice.module.IFModuleTitleRenderer;
+import net.ulrice.module.IFModuleTitleProvider;
 import net.ulrice.module.ModuleType;
 import net.ulrice.security.Authorization;
 
@@ -33,7 +33,7 @@ public class AuthReflectionModule extends ReflectionModule {
 	 * @param titleRenderer The renderer used to render the title of this module.
 	 */
 	public AuthReflectionModule(String uniqueId, ModuleType moduleType, String controllerClassName, String iconName,
-			IFModuleTitleRenderer titleRenderer) {
+			IFModuleTitleProvider titleRenderer) {
 		super(uniqueId, moduleType, controllerClassName, iconName, titleRenderer);
 	}
 

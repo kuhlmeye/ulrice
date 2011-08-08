@@ -14,54 +14,47 @@ public interface IFModuleManager {
 
 	/**
 	 * Registers a module as an instanceable module.
-	 * 
-	 * @param module The module
 	 */
 	void registerModule(IFModule module);
 
 	/**
 	 * Removes a module from the list of instanceable modules.
-	 * 
-	 * @param module The module
 	 */
 	void unregisterModule(IFModule module);
 
 	/**
-	 * Opens a module.
+	 * Opens a module, i.e. initialize it and display its view.
 	 * 
-	 * @param moduleId The id description of the module.
 	 * @return The controller of the instanciated module.
-	 * @throws ModuleInstanciationException If the module could not be instanciated
 	 */
 	IFController openModule(String moduleId) throws ModuleInstanciationException;
 
 	/**
-	 * Activates an instance of a module.
-	 * 
-	 * @param controller The controller of the module that should be activated.
+	 * Activates an instance of a module, i.e. give it the focus.
 	 */
 	void activateModule(IFController controller);
 
 	/**
-	 * Close an instance of a module.
-	 * 
-	 * @param controller The controller of the module that should be closed.
+	 * Close an instance of a module, i.e. remove its view from the UI and call the shutdown hooks.
 	 */
-	void closeModule(IFController controller);
+	void closeController(IFController controller);
 
+	IFModule getModule (IFController controller);
+	IFModuleTitleProvider getTitleProvider (IFController controller);
+	
 	/**
 	 * Returns the controller of the current active module.
 	 * 
 	 * @return The controller.
 	 */
-	IFController getCurrentModule();
+	IFController getCurrentController();
 
 	/**
-	 * Returns the list of the controler of all active modules.
+	 * Returns the list of the controller of all active modules.
 	 * 
 	 * @return A controller list.
 	 */
-	List<IFController> getActiveModules();
+	List<IFController> getActiveControllers();
 
 	/**
 	 * Adds a module event listener to the list of listeners.
@@ -80,16 +73,19 @@ public interface IFModuleManager {
 	/**
 	 * Close all modules.
 	 */
-	void closeAllModules();
+	void closeAllControllers();
 
 	/**
 	 * Close all modules except the one given by the parameter
 	 * 
 	 * @param controller The module the should be left open.
 	 */
-	void closeOtherModules(IFController controller);
+	void closeOtherControllers(IFController controller);
 
-	void fireControllerBlocked(IFController abstractController);
-
-	void fireControllerUnblocked(IFController abstractController);
+	void block (IFController controller, Object blocker);
+	void unblock (IFController controller, Object blocker);
+	boolean isBlocked (IFController controller);
+	
+//	void fireControllerBlocked(IFController abstractController);
+//	void fireControllerUnblocked(IFController abstractController);
 }

@@ -26,7 +26,7 @@ import net.ulrice.Ulrice;
 import net.ulrice.module.IFController;
 import net.ulrice.module.IFModuleManager;
 import net.ulrice.module.ModuleIconSize;
-import net.ulrice.module.IFModuleTitleRenderer.Usage;
+import net.ulrice.module.IFModuleTitleProvider.Usage;
 import net.ulrice.ui.UIConstants;
 
 /**
@@ -36,10 +36,7 @@ import net.ulrice.ui.UIConstants;
  */
 public class ChangeoverDialog extends JPanel implements KeyEventDispatcher {
 
-	/** Default generated serial version uid. */
 	private static final long serialVersionUID = 7295269409658971848L;
-
-	/** The logger used by this class. */
 	private static final Logger LOG = Logger.getLogger(ChangeoverDialog.class.getName());
 
 	/** The default dimension of this panel. */
@@ -117,41 +114,37 @@ public class ChangeoverDialog extends JPanel implements KeyEventDispatcher {
 			int iconsPerRow = UIManager.getInt(UIConstants.CHANGEOVER_ICONS_PER_ROW);
 
 			// Build list of all controller icons.
-			List<IFController> activeModules = Ulrice.getModuleManager().getActiveModules();
-			IFController activeModule = Ulrice.getModuleManager().getCurrentModule();
+			final List <IFController> activeControllers = Ulrice.getModuleManager().getActiveControllers();
+			final IFController activeController = Ulrice.getModuleManager().getCurrentController();
 			listPanel.removeAll();
-			if (activeModules != null && activeModules.size() > 0) {
+			if (activeControllers != null && activeControllers.size() > 0) {
 				int i = 1;
-				for (IFController ctrl : activeModules) {
-					if (ctrl != null && ctrl.getModule() != null) {
-						// Create and add controller label.
-						JLabel ctrlLabel = new JLabel(ctrl.getModule().getIcon(ModuleIconSize.Size_32x32));
-						controllerLabelMap.put(ctrl, ctrlLabel);
+				for (IFController ctrl : activeControllers) {
+				    // Create and add controller label.
+				    final JLabel ctrlLabel = new JLabel(Ulrice.getModuleManager().getModule(ctrl).getIcon(ModuleIconSize.Size_32x32));
+				    controllerLabelMap.put(ctrl, ctrlLabel);
 
-						if (ctrl.equals(activeModule)) {
-							currentMarkedLabel = ctrlLabel;
-							ctrlLabel.setBorder(markedBorder);
-						} else {
-							ctrlLabel.setBorder(nonMarkedBorder);
-						}
+				    if (ctrl.equals(activeController)) {
+				        currentMarkedLabel = ctrlLabel;
+				        ctrlLabel.setBorder(markedBorder);
+				    } else {
+				        ctrlLabel.setBorder(nonMarkedBorder);
+				    }
 
-						if (i % iconsPerRow == 0) {
-							constraints.gridwidth = GridBagConstraints.REMAINDER;
-						} else {
-							constraints.gridwidth = 1;
-						}
+				    if (i % iconsPerRow == 0) {
+				        constraints.gridwidth = GridBagConstraints.REMAINDER;
+				    } else {
+				        constraints.gridwidth = 1;
+				    }
 
-						listLayout.setConstraints(ctrlLabel, constraints);
-						listPanel.add(ctrlLabel);
-						i++;
-
-					}
+				    listLayout.setConstraints(ctrlLabel, constraints);
+				    listPanel.add(ctrlLabel);
+				    i++;
 				}
 
 				// Set the text of the controller
-				if (activeModule != null && activeModule.getModuleTitleRenderer() != null) {
-					currentControllerNameLabel.setText(activeModule.getModuleTitleRenderer().getModuleTitle(
-							Usage.ChangeOverDialog));
+				if (activeController != null) {
+					currentControllerNameLabel.setText(Ulrice.getModuleManager().getTitleProvider(activeController).getModuleTitle(Usage.ChangeOverDialog));
 				}
 
 				super.setVisible(true);
@@ -178,9 +171,8 @@ public class ChangeoverDialog extends JPanel implements KeyEventDispatcher {
 		}
 
 		// Set the name of the controller to the label.
-		if (newController != null && newController.getModuleTitleRenderer() != null) {
-			currentControllerNameLabel.setText(newController.getModuleTitleRenderer().getModuleTitle(
-					Usage.ChangeOverDialog));
+		if (newController != null) {
+			currentControllerNameLabel.setText(Ulrice.getModuleManager().getTitleProvider(newController).getModuleTitle(Usage.ChangeOverDialog));
 		}
 	}
 
@@ -220,8 +212,8 @@ public class ChangeoverDialog extends JPanel implements KeyEventDispatcher {
 
 	private void nextModule() {
 		IFModuleManager moduleManager = Ulrice.getModuleManager();
-		IFController currentModule = moduleManager.getCurrentModule();
-		List<IFController> activeModules = moduleManager.getActiveModules();
+		IFController currentModule = moduleManager.getCurrentController();
+		List<IFController> activeModules = moduleManager.getActiveControllers();
 
 		int idx = activeModules.indexOf(preChosenController);
 		if (idx > -1 && activeModules.size() > 0) {
@@ -239,7 +231,7 @@ public class ChangeoverDialog extends JPanel implements KeyEventDispatcher {
 			return;
 		}
 
-		IFController currentModule = Ulrice.getModuleManager().getCurrentModule();		
+		IFController currentModule = Ulrice.getModuleManager().getCurrentController();		
 		if(currentModule != null) {
 			preChosenController = currentModule;
 			

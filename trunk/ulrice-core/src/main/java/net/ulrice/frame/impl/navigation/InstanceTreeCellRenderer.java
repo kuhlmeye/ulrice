@@ -5,9 +5,10 @@ import java.awt.Component;
 import javax.swing.JTree;
 import javax.swing.tree.DefaultTreeCellRenderer;
 
+import net.ulrice.Ulrice;
 import net.ulrice.module.IFController;
 import net.ulrice.module.IFModule;
-import net.ulrice.module.IFModuleTitleRenderer.Usage;
+import net.ulrice.module.IFModuleTitleProvider.Usage;
 
 /**
  * Renders a node in the instance tree 
@@ -35,7 +36,7 @@ public class InstanceTreeCellRenderer extends DefaultTreeCellRenderer {
 
 		if(value instanceof IFController) {
 			IFController controller = (IFController) value;			
-			renderValue = controller.getModuleTitleRenderer().getModuleTitle(Usage.ModuleTree);
+			renderValue = Ulrice.getModuleManager().getTitleProvider(controller).getModuleTitle(Usage.ModuleTree);
 		}
 		
 		return super.getTreeCellRendererComponent(tree, renderValue, sel, expanded, leaf, row, hasFocus);

@@ -37,6 +37,6 @@ public class CloseAllModulesAction extends Action {
 	 */
 	@Override
 	public void actionPerformed(ActionEvent e) {
-		Ulrice.getModuleManager().closeAllModules();
+		Ulrice.getModuleManager().closeAllControllers();
 	}
 }

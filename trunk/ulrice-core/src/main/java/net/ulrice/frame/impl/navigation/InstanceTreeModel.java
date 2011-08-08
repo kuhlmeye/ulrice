@@ -46,7 +46,7 @@ public class InstanceTreeModel implements TreeModel, IFModuleEventListener {
 
 		// Build up the basic list.
 		if (moduleManager != null) {
-			List<IFController> activeModules = moduleManager.getActiveModules();
+			List<IFController> activeModules = moduleManager.getActiveControllers();
 			if (activeModules != null) {
 				for (IFController controller : activeModules) {
 					addController(controller);
@@ -163,11 +163,11 @@ public class InstanceTreeModel implements TreeModel, IFModuleEventListener {
 			return;
 		}
 
-		List<IFController> controllerList = instanceMap.get(controller.getModule());
+		List<IFController> controllerList = instanceMap.get(Ulrice.getModuleManager().getModule(controller));
 		if (controllerList == null) {
 			controllerList = new ArrayList<IFController>();
-			instanceMap.put(controller.getModule(), controllerList);
-			moduleList.add(controller.getModule());
+			instanceMap.put(Ulrice.getModuleManager().getModule(controller), controllerList);
+			moduleList.add(Ulrice.getModuleManager().getModule(controller));
 		}
 		controllerList.add(controller);
 
@@ -186,19 +186,17 @@ public class InstanceTreeModel implements TreeModel, IFModuleEventListener {
 		}
 
 		// Get the module
-		IFModule module = controller.getModule();
-		if (module != null) {
-			// Get the list of module instances.
-			List<IFController> controllerList = instanceMap.get(module);
-			if (controllerList != null) {
-				// Remove the controller from the list of instances.
-				controllerList.remove(controller);
+		final IFModule module = Ulrice.getModuleManager().getModule(controller);
+		// Get the list of module instances.
+		final List<IFController> controllerList = instanceMap.get(module);
+		if (controllerList != null) {
+		    // Remove the controller from the list of instances.
+		    controllerList.remove(controller);
 
-				// Remove the list from the instance map, if size is null
-				if (controllerList.size() == 0) {
-					instanceMap.remove(module);
-				}
-			}
+		    // Remove the list from the instance map, if size is null
+		    if (controllerList.size() == 0) {
+		        instanceMap.remove(module);
+		    }
 		}
 
 		fireTreeStructureChanged(new TreeModelEvent(getRoot(), new TreePath(getRoot())));
@@ -238,10 +236,10 @@ public class InstanceTreeModel implements TreeModel, IFModuleEventListener {
 	}
 
 	/**
-	 * @see net.ulrice.module.event.IFModuleEventListener#closeModule(net.ulrice.module.IFController)
+	 * @see net.ulrice.module.event.IFModuleEventListener#closeController(net.ulrice.module.IFController)
 	 */
 	@Override
-	public void closeModule(IFController activeController) {
+	public void closeController(IFController activeController) {
 		removeController(activeController);
 	}
 
