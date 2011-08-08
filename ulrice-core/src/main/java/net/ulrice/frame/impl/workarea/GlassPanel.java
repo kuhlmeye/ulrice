@@ -49,7 +49,7 @@ public class GlassPanel extends JPanel implements AWTEventListener {
 			g.setColor(UIManager.getColor(UI.GLASSPANEL_COLOR));
 			g.fillRect(0, 0, getWidth(), getHeight());
 			g.dispose();
-			//TODO Wie wird der Cursor zurückgesetzt?
+			//TODO Wie wird der Cursor zurÃ¼ckgesetzt?
 			//setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
 		} else {
 			super.paint(g);
