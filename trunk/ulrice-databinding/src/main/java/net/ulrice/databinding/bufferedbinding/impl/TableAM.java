@@ -213,13 +213,6 @@ public class TableAM implements IFAttributeModel  {
 	 * @param columnDefinition
 	 */
 	public void addColumn(ColumnDefinition<?> columnDefinition) {
-		if (columnDefinition.isUseAutoValueConverter() && columnDefinition.getValueConverter() == null) {
-			// TODO Cells are always strings...implement checkbox, spinner,... support
-			Class<?> rootType = tableMVA.getModelType();
-			Class<?> columnClass = columnDefinition.getDataAccessor().getModelType(rootType);
-			
-			columnDefinition.setValueConverter(HeuristicConverterFactory.createConverter(String.class, columnClass));
-		}
 		columns.add(columnDefinition);
 	}
 
