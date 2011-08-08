@@ -5,6 +5,7 @@ import java.awt.event.ActionEvent;
 import java.util.Locale;
 
 import javax.swing.ImageIcon;
+import javax.swing.JComponent;
 
 import net.ulrice.databinding.viewadapter.utable.UTableViewAdapter;
 import net.ulrice.module.IFModule;
@@ -15,18 +16,23 @@ import net.ulrice.module.impl.action.ActionType;
 import net.ulrice.process.CtrlProcessExecutor;
 import net.ulrice.translator.service.IFTranslationService;
 
-public class CTranslator extends AbstractController<MTranslator, VTranslator> {
+
+public class CTranslator extends AbstractController<MTranslator> {
 
 	public static final String SERVICE_IMPLEMENTATION = "Translator.Service.Implementation";
-	
 	private IFTranslationService translationService;
-
 	private CtrlProcessExecutor processExecutor;
-				
+
+	private final VTranslator vTranslator = new VTranslator();
+	private final IFModule module;
+	
+	public CTranslator(IFModule module) {
+	    this.module = module;
+	}
 	
 	@Override
-	public void postCreationEvent(IFModule module) {
-		super.postCreationEvent(module);
+	public void postCreate() {
+		super.postCreate();
 		
 		processExecutor = new CtrlProcessExecutor(1); 
 				
@@ -38,9 +44,9 @@ public class CTranslator extends AbstractController<MTranslator, VTranslator> {
 		translationService = (IFTranslationService) value;
 		translationService.openTranslationService();
 			
-		getModel().getDictionaryAM().addViewAdapter(getView().getDictionaryVA());
-		getModel().getUsagesAM().addViewAdapter(getView().getUsagesVA());
-		getModel().getTranslationsAM().addViewAdapter(getView().getTranslationsVA());
+		getModel().getDictionaryAM().addViewAdapter(vTranslator.getDictionaryVA());
+		getModel().getUsagesAM().addViewAdapter(vTranslator.getUsagesVA());
+		getModel().getTranslationsAM().addViewAdapter(vTranslator.getTranslationsVA());
 		
 		processExecutor.executeProcess(new PLoadData(this, "Load Data", getModel(), translationService));
 	}
@@ -52,7 +58,7 @@ public class CTranslator extends AbstractController<MTranslator, VTranslator> {
 			
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				getView().getDictionaryVA().addRow();
+				vTranslator.getDictionaryVA().addRow();
 			}
 		};
 		
@@ -61,7 +67,7 @@ public class CTranslator extends AbstractController<MTranslator, VTranslator> {
 			
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				UTableViewAdapter viewAdapter = getView().getDictionaryVA();
+				UTableViewAdapter viewAdapter = vTranslator.getDictionaryVA();
 				if(viewAdapter.getSelectedRowViewIndex() > -1) {
 					viewAdapter.delRow(viewAdapter.getSelectedRowViewIndex());
 				}
@@ -72,7 +78,7 @@ public class CTranslator extends AbstractController<MTranslator, VTranslator> {
 			
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				getView().getUsagesVA().addRow();
+				vTranslator.getUsagesVA().addRow();
 			}
 		};
 		
@@ -80,7 +86,7 @@ public class CTranslator extends AbstractController<MTranslator, VTranslator> {
 			
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				UTableViewAdapter viewAdapter = getView().getUsagesVA();
+				UTableViewAdapter viewAdapter = vTranslator.getUsagesVA();
 				if(viewAdapter.getSelectedRowViewIndex() > -1) {
 					viewAdapter.delRow(viewAdapter.getSelectedRowViewIndex());
 				}
@@ -129,13 +135,13 @@ public class CTranslator extends AbstractController<MTranslator, VTranslator> {
 	}
 	
 	@Override
-	protected MTranslator instanciateModel() {
+	protected MTranslator instantiateModel() {
 		return new MTranslator();
 	}
 
 	@Override
-	protected VTranslator instanciateView() {
-		return new VTranslator();
+	protected JComponent instantiateView() {
+		return vTranslator.getView();
 	}
 
 }

@@ -6,9 +6,8 @@ import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
 
 import net.ulrice.databinding.viewadapter.utable.UTableViewAdapter;
-import net.ulrice.module.IFView;
 
-public class VTranslator extends JPanel implements IFView<CTranslator> {	
+public class VTranslator extends JPanel {	
 	
 	private static final long serialVersionUID = 76684780973728542L;
 	
@@ -16,7 +15,6 @@ public class VTranslator extends JPanel implements IFView<CTranslator> {
 	private UTableViewAdapter usagesVA;
 	private UTableViewAdapter translationsVA;
 	
-	@Override
 	public void initialize(CTranslator Controller) {
 		
 		dictionaryVA = new UTableViewAdapter();
@@ -32,7 +30,6 @@ public class VTranslator extends JPanel implements IFView<CTranslator> {
 		add(tabbedPane);
 	}
 
-	@Override
 	public JComponent getView() {
 		return this;
 	}
