@@ -9,12 +9,12 @@ import java.util.TreeSet;
 
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
+import javax.swing.JComponent;
 import javax.swing.UIManager;
 
 import net.ulrice.Ulrice;
 import net.ulrice.module.IFModel;
 import net.ulrice.module.IFModule;
-import net.ulrice.module.IFView;
 import net.ulrice.module.impl.AbstractController;
 import net.ulrice.module.impl.ModuleActionState;
 import net.ulrice.module.impl.action.AuthModuleAction;
@@ -37,8 +37,8 @@ public class CLafList extends AbstractController {
 	 * @see net.ulrice.module.impl.AbstractController#postCreationEvent(net.ulrice.module.IFModule)
 	 */
 	@Override
-	public void postCreationEvent(IFModule module) {
-		super.postCreationEvent(module);
+	public void postCreate() {
+		super.postCreate();
 		refresh();
 	}
 
@@ -46,7 +46,6 @@ public class CLafList extends AbstractController {
 	 * 
 	 */
 	private void refresh() {
-		VLafList view = (VLafList)getView();
 		MLafList model = (MLafList)getModel();
 
 		postInfoMessage("Loading look and feel constants loaded...");
@@ -61,7 +60,7 @@ public class CLafList extends AbstractController {
 			model.addValue(key == null ? "" : key.toString(), value == null ? "" : value.toString());
 		}
 
-		view.getTable().setModel(model);
+		v.getTable().setModel(model);
 		
 		postInfoMessage("Look and feel constants loaded.");
 	}
@@ -95,16 +94,17 @@ public class CLafList extends AbstractController {
 	 * @see net.ulrice.module.impl.AbstractController#instanciateModel()
 	 */
 	@Override
-	protected IFModel instanciateModel() {
+	protected IFModel instantiateModel() {
 		return new MLafList();
 	}
 
 	/**
 	 * @see net.ulrice.module.impl.AbstractController#instanciateView()
 	 */
+	private final VLafList v = new VLafList();
 	@Override
-	protected IFView instanciateView() {
-		return new VLafList();
+	protected JComponent instantiateView() {
+	    return v.getView();
 	}
 
 	/***

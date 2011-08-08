@@ -2,9 +2,10 @@ package net.ulrice.sample;
 
 import java.util.logging.Logger;
 
+import net.ulrice.Ulrice;
 import net.ulrice.module.IFController;
 import net.ulrice.module.IFModule;
-import net.ulrice.module.IFModuleTitleRenderer.Usage;
+import net.ulrice.module.IFModuleTitleProvider;
 import net.ulrice.module.impl.action.Action;
 import net.ulrice.security.IFAuthCallback;
 
@@ -18,7 +19,7 @@ public class SampleSecurityCallback implements IFAuthCallback {
 
 	@Override
 	public boolean allowOpenModule(IFModule module, IFController ctrl) {
-		LOG.info("Checking authorization to open module " + ctrl.getModule().getModuleTitle(Usage.Default));
+		LOG.info("Checking authorization to open module " + Ulrice.getModuleManager().getModule(ctrl).getModuleTitle(IFModuleTitleProvider.Usage.Default));
 		return true;
 	}
 
@@ -44,7 +45,7 @@ public class SampleSecurityCallback implements IFAuthCallback {
 
 	@Override
 	public boolean allowRegisterModule(IFModule module) {
-		LOG.info("Checking authorization to register module " + module.getModuleTitle(Usage.Default));
+		LOG.info("Checking authorization to register module " + module.getModuleTitle(IFModuleTitleProvider.Usage.Default));
 		return true;
 	}
 

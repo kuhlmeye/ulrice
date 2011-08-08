@@ -1,7 +1,8 @@
 package net.ulrice.sample.module.sample2;
 
+import javax.swing.JComponent;
+
 import net.ulrice.module.IFModel;
-import net.ulrice.module.IFView;
 import net.ulrice.module.impl.AbstractController;
 
 /**
@@ -15,15 +16,15 @@ public class CSample2 extends AbstractController {
 	 * @see net.ulrice.module.impl.AbstractController#instanciateModel()
 	 */
 	@Override
-	protected IFModel instanciateModel() {
+	protected IFModel instantiateModel() {
 		return new MSample2();
 	}
 
 	/**
 	 * @see net.ulrice.module.impl.AbstractController#instanciateView()
 	 */
-	@Override
-	protected IFView instanciateView() {
-		return new VSample2();
+	private final VSample2 v = new VSample2();
+	protected JComponent instantiateView() {
+	    return v.getView();
 	}
 }

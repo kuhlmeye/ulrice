@@ -1,9 +1,8 @@
 package net.ulrice.sample.module.sample1;
 
-import net.ulrice.Ulrice;
+import javax.swing.JComponent;
+
 import net.ulrice.module.IFModel;
-import net.ulrice.module.IFModule;
-import net.ulrice.module.IFView;
 import net.ulrice.module.impl.AbstractController;
 import net.ulrice.process.CtrlProcessExecutor;
 
@@ -24,7 +23,7 @@ public class CSample1 extends AbstractController {
 	 * @see net.ulrice.module.IFController#postCreationEvent(net.ulrice.module.IFModule)
 	 */
 	@Override
-	public void postCreationEvent(IFModule module) {
+	public void postCreate() {
 		PSample1 process = new PSample1(this);
 		processExecutor.executeProcess(process);
 		processExecutor.executeProcess(new PSample1(this), process);
@@ -39,15 +38,16 @@ public class CSample1 extends AbstractController {
 	 * @see net.ulrice.module.impl.AbstractController#instanciateModel()
 	 */
 	@Override
-	protected IFModel instanciateModel() {
+	protected IFModel instantiateModel() {
 		return new MSample1();
 	}
 
 	/**
 	 * @see net.ulrice.module.impl.AbstractController#instanciateView()
 	 */
+	final VSample1 v = new VSample1();
 	@Override
-	protected IFView instanciateView() {
-		return new VSample1();
+	protected JComponent instantiateView() {
+	    return v.getView();
 	}
 }

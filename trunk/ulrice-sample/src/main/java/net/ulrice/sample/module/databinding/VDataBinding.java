@@ -15,13 +15,12 @@ import net.ulrice.databinding.viewadapter.impl.BorderStateMarker;
 import net.ulrice.databinding.viewadapter.impl.DetailedTooltipHandler;
 import net.ulrice.databinding.viewadapter.impl.JTableViewAdapter;
 import net.ulrice.databinding.viewadapter.impl.JTextComponentViewAdapter;
-import net.ulrice.module.IFView;
 
 /**
  * @author christof
  *
  */
-public class VDataBinding extends JPanel implements IFView<CDataBinding> {
+public class VDataBinding extends JPanel {
 
 	private JTextComponentViewAdapter textFieldGA1;
 	private JTextComponentViewAdapter textFieldGA2;
@@ -30,7 +29,6 @@ public class VDataBinding extends JPanel implements IFView<CDataBinding> {
 	/**
 	 * @see net.ulrice.module.IFView#initialize()
 	 */
-	@Override
 	public void initialize(CDataBinding controller) {
 		JTextField tf1 = new JTextField();
 		JTextField tf2 = new JTextField();
@@ -53,7 +51,6 @@ public class VDataBinding extends JPanel implements IFView<CDataBinding> {
 	/**
 	 * @see net.ulrice.module.IFView#getView()
 	 */
-	@Override
 	public JComponent getView() {
 		return this;
 	}

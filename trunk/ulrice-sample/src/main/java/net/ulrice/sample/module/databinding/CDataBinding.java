@@ -6,9 +6,9 @@ package net.ulrice.sample.module.databinding;
 import java.util.LinkedList;
 import java.util.UUID;
 
+import javax.swing.JComponent;
+
 import net.ulrice.module.IFModel;
-import net.ulrice.module.IFModule;
-import net.ulrice.module.IFView;
 import net.ulrice.module.impl.AbstractController;
 
 /**
@@ -21,24 +21,22 @@ public class CDataBinding extends AbstractController {
      * @see net.ulrice.module.impl.AbstractController#instanciateModel()
      */
     @Override
-    protected IFModel instanciateModel() {
+    protected IFModel instantiateModel() {
         return new MDataBinding();
     }
 
-    /**
-     * @see net.ulrice.module.impl.AbstractController#instanciateView()
-     */
+    private final VDataBinding vDataBinding = new VDataBinding();
     @Override
-    protected IFView instanciateView() {
-        return new VDataBinding();
+    protected JComponent instantiateView() {
+        return vDataBinding.getView();
     }
 
     /**
      * @see net.ulrice.module.impl.AbstractController#postCreationEvent(net.ulrice.module.IFModule)
      */
     @Override
-    public void postCreationEvent(IFModule module) {
-        super.postCreationEvent(module);
+    public void postCreate() {
+        super.postCreate();
 
         MDataBinding model = (MDataBinding) getModel();
         VDataBinding view = (VDataBinding) getView();

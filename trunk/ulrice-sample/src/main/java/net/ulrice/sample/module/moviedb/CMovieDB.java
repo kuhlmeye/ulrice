@@ -2,6 +2,7 @@ package net.ulrice.sample.module.moviedb;
 
 import java.awt.event.ActionEvent;
 
+import javax.swing.JComponent;
 import javax.swing.JTable;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
@@ -13,7 +14,7 @@ import net.ulrice.module.impl.ModuleActionState;
 import net.ulrice.module.impl.action.Action;
 import net.ulrice.module.impl.action.ActionType;
 
-public class CMovieDB extends AbstractController<MMovieDB, VMovieDB> implements ListSelectionListener {
+public class CMovieDB extends AbstractController<MMovieDB> implements ListSelectionListener {
 
 	private BindingGroup overviewGroup = new BindingGroup();
 	private BindingGroup detailGroup = new BindingGroup();
@@ -25,18 +26,18 @@ public class CMovieDB extends AbstractController<MMovieDB, VMovieDB> implements 
 
 		getModel().setMovieList(MovieData.generateData());
 
-		overviewGroup.bind(getModel().getMovieListAM(), getView().getMovieTableAdapter());
+		overviewGroup.bind(getModel().getMovieListAM(), v.getMovieTableAdapter());
 
-		detailGroup.bind(getModel().getTitleAM(), getView().getTitleVA());
-		detailGroup.bind(getModel().getYearAM(), getView().getYearVA());
-		detailGroup.bind(getModel().getDirectorAM(), getView().getDirectorVA());
-		detailGroup.bind(getModel().getActorListAM(), getView().getActorTableVA());
+		detailGroup.bind(getModel().getTitleAM(), v.getTitleVA());
+		detailGroup.bind(getModel().getYearAM(), v.getYearVA());
+		detailGroup.bind(getModel().getDirectorAM(), v.getDirectorVA());
+		detailGroup.bind(getModel().getActorListAM(), v.getActorTableVA());
 
 		overviewGroup.read();
 
 		// FIXME Static column support
-		getView().getMovieTableAdapter().getComponent().getScrollTable().getSelectionModel().addListSelectionListener(this);
-		getView().getMovieTableAdapter().sizeColumns(false);
+		v.getMovieTableAdapter().getComponent().getScrollTable().getSelectionModel().addListSelectionListener(this);
+		v.getMovieTableAdapter().sizeColumns(false);
 
 	}
 
@@ -47,9 +48,9 @@ public class CMovieDB extends AbstractController<MMovieDB, VMovieDB> implements 
 			@Override
 			public void actionPerformed(ActionEvent e) {		
 				// FIXME Static column support
-				JTable movieTable = getView().getMovieTableAdapter().getComponent().getScrollTable();
+				JTable movieTable = v.getMovieTableAdapter().getComponent().getScrollTable();
 				movieTable.getSelectionModel().removeListSelectionListener(CMovieDB.this);
-				getView().getMovieTableAdapter().addRow();
+				v.getMovieTableAdapter().addRow();
 				movieTable.getSelectionModel().addListSelectionListener(CMovieDB.this);
 			}
 		};
@@ -58,11 +59,11 @@ public class CMovieDB extends AbstractController<MMovieDB, VMovieDB> implements 
 			@Override
 			public void actionPerformed(ActionEvent e) {		
 				// FIXME Static column support
-				int selectedRow = getView().getMovieTableAdapter().getComponent().getScrollTable().getSelectedRow();
+				int selectedRow = v.getMovieTableAdapter().getComponent().getScrollTable().getSelectedRow();
 				if(selectedRow >= 0) {
-					JTable movieTable = getView().getMovieTableAdapter().getComponent().getScrollTable();
+					JTable movieTable = v.getMovieTableAdapter().getComponent().getScrollTable();
 					movieTable.getSelectionModel().removeListSelectionListener(CMovieDB.this);
-					getView().getMovieTableAdapter().delRow(selectedRow);
+					v.getMovieTableAdapter().delRow(selectedRow);
 					movieTable.getSelectionModel().addListSelectionListener(CMovieDB.this);
 				}
 			}
@@ -72,9 +73,9 @@ public class CMovieDB extends AbstractController<MMovieDB, VMovieDB> implements 
 			@Override
 			public void actionPerformed(ActionEvent e) {		
 				// FIXME Static column support
-				JTable actorTable = getView().getActorTableVA().getComponent().getScrollTable();
+				JTable actorTable = v.getActorTableVA().getComponent().getScrollTable();
 				actorTable.getSelectionModel().removeListSelectionListener(CMovieDB.this);
-				getView().getActorTableVA().addRow();
+				v.getActorTableVA().addRow();
 				actorTable.getSelectionModel().addListSelectionListener(CMovieDB.this);
 			}
 		};
@@ -82,12 +83,12 @@ public class CMovieDB extends AbstractController<MMovieDB, VMovieDB> implements 
 		Action removeActorAction = new Action("_DEL_ACTOR", "Del Actor", true, ActionType.ModuleAction, null) {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				int selectedRow = getView().getActorTableVA().getComponent().getScrollTable().getSelectedRow();
+				int selectedRow = v.getActorTableVA().getComponent().getScrollTable().getSelectedRow();
 				if(selectedRow >= 0) {		
 					// FIXME Static column support
-					JTable actorTable = getView().getActorTableVA().getComponent().getScrollTable();
+					JTable actorTable = v.getActorTableVA().getComponent().getScrollTable();
 					actorTable.getSelectionModel().removeListSelectionListener(CMovieDB.this);
-					getView().getActorTableVA().delRow(selectedRow);
+					v.getActorTableVA().delRow(selectedRow);
 					actorTable.getSelectionModel().addListSelectionListener(CMovieDB.this);
 				}
 			}
@@ -102,7 +103,7 @@ public class CMovieDB extends AbstractController<MMovieDB, VMovieDB> implements 
 	public void valueChanged(ListSelectionEvent e) {
 		if (!e.getValueIsAdjusting()) {		
 			// FIXME Static column support
-			JTable movieTable = getView().getMovieTableAdapter().getComponent().getScrollTable();
+			JTable movieTable = v.getMovieTableAdapter().getComponent().getScrollTable();
 			movieTable.getSelectionModel().removeListSelectionListener(this);
 			int selectedRow = movieTable.getSelectedRow();
 
@@ -118,7 +119,7 @@ public class CMovieDB extends AbstractController<MMovieDB, VMovieDB> implements 
 				Movie movie = (Movie) selElement.getCurrentValue();
 				getModel().setMovie(movie);
 				detailGroup.read();
-				getView().getActorTableVA().sizeColumns(true);
+				v.getActorTableVA().sizeColumns(true);
 			} else {
 				detailMovieId = null;
 				getModel().setMovie(null);
@@ -130,12 +131,13 @@ public class CMovieDB extends AbstractController<MMovieDB, VMovieDB> implements 
 	}
 
 	@Override
-	protected MMovieDB instanciateModel() {
+	protected MMovieDB instantiateModel() {
 		return new MMovieDB();
 	}
 
+	private final VMovieDB v = new VMovieDB();
 	@Override
-	protected VMovieDB instanciateView() {
-		return new VMovieDB();
+	protected JComponent instantiateView() {
+	    return v.getView();
 	}
 }
