@@ -70,12 +70,13 @@ public class ModuleManager implements IFModuleManager, IFModuleStructureManager 
 			// If it's a single module and if it's already open than return the
 			// instance.
 			ctrlInstance = singleModules.get(module);
+            modulesForControllers.put(ctrlInstance, module);
 			activateModule(ctrlInstance);
 
 		} else {
 			// Create a new instance
 			ctrlInstance = module.instantiateModule();
-			ctrlInstance.preCreate();
+            modulesForControllers.put(ctrlInstance, module);
 
 			if (!Ulrice.getSecurityManager().allowOpenModule(module, ctrlInstance)) {
 				LOG.info("Module [Id: " + module.getUniqueId() + ", Name: " + module.getModuleTitle(Usage.Default)
@@ -99,8 +100,6 @@ public class ModuleManager implements IFModuleManager, IFModuleStructureManager 
 
 			ctrlInstance.postCreate();
 
-			modulesForControllers.put(ctrlInstance, module);
-			
 			// Activate the controller.
 			activateModule(ctrlInstance);
 		}
@@ -109,7 +108,7 @@ public class ModuleManager implements IFModuleManager, IFModuleStructureManager 
 	}
 
 	public IFModule getModule(IFController controller) {
-	    return moduleMap.get(controller);
+	    return modulesForControllers.get(controller);
 	}
 	
 	public IFModuleTitleProvider getTitleProvider(IFController controller) {

@@ -6,14 +6,12 @@ import java.awt.GridLayout;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.JScrollPane;
 
 import net.ulrice.databinding.viewadapter.impl.JTextComponentViewAdapter;
 import net.ulrice.databinding.viewadapter.impl.factory.ViewAdapterFactory;
 import net.ulrice.databinding.viewadapter.utable.UTableViewAdapter;
-import net.ulrice.module.IFView;
 
-public class VMovieDB implements IFView<CMovieDB> {
+public class VMovieDB {
 
 	private JPanel mainPanel;
 	private JPanel detailPanel;
@@ -25,7 +23,6 @@ public class VMovieDB implements IFView<CMovieDB> {
 	private JTextComponentViewAdapter directorVA = ViewAdapterFactory.createTextFieldAdapter();
 	private UTableViewAdapter actorTableVA = ViewAdapterFactory.createUTableViewAdapter(0);
 
-	@Override
 	public void initialize(CMovieDB controller) {					
 		overviewPanel = new JPanel();
 		overviewPanel.setLayout(new BorderLayout());
@@ -51,7 +48,6 @@ public class VMovieDB implements IFView<CMovieDB> {
 		mainPanel.add(detailPanel);		
 	}
 
-	@Override
 	public JComponent getView() {
 		return mainPanel;
 	}

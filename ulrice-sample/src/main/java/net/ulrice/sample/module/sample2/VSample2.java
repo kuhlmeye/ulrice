@@ -6,14 +6,12 @@ import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
-import net.ulrice.module.IFView;
-
 /**
  * View of the sample module 2
  * 
  * @author christof
  */
-public class VSample2 implements IFView<CSample2> {
+public class VSample2 {
 
 	/** The view component. */
 	private JPanel view;

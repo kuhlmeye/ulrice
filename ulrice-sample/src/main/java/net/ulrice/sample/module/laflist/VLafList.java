@@ -10,14 +10,12 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 
-import net.ulrice.module.IFView;
-
 /**
  * The view of the look and feel module.
  * 
  * @author christof
  */
-public class VLafList implements IFView<CLafList> {	
+public class VLafList {	
 	
 	/** The jtable displaying the look and feel constants. */
 	private JTable lafTable;
@@ -28,7 +26,6 @@ public class VLafList implements IFView<CLafList> {
 	/**
 	 * @see net.ulrice.module.IFView#getView()
 	 */
-	@Override
 	public JComponent getView() {
 		return view;
 	}
@@ -36,9 +33,7 @@ public class VLafList implements IFView<CLafList> {
 	/**
 	 * @see net.ulrice.module.IFView#initialize()
 	 */
-	@Override
-	public void initialize(CLafList controller) {
-		
+	{
 		lafTable = new JTable();
 				
 		view = new JPanel();
