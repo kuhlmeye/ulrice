@@ -19,6 +19,7 @@ import net.ulrice.databinding.bufferedbinding.impl.TableAM;
 import net.ulrice.databinding.viewadapter.IFStateMarker;
 import net.ulrice.databinding.viewadapter.IFTooltipHandler;
 
+
 public class UTableComponent extends JPanel {
 
 	private static final long serialVersionUID = 6533485227507042410L;
