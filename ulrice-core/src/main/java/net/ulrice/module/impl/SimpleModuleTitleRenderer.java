@@ -1,13 +1,13 @@
 package net.ulrice.module.impl;
 
-import net.ulrice.module.IFModuleTitleRenderer;
+import net.ulrice.module.IFModuleTitleProvider;
 
 /**
  * A simple non translating module title renderer.
  * 
  * @author ckuhlmeyer
  */
-public class SimpleModuleTitleRenderer implements IFModuleTitleRenderer {
+public class SimpleModuleTitleRenderer implements IFModuleTitleProvider {
 
 	/** The title of this module. */
 	private String title;
@@ -22,7 +22,7 @@ public class SimpleModuleTitleRenderer implements IFModuleTitleRenderer {
 	}
 	
 	/**
-	 * @see net.ulrice.module.IFModuleTitleRenderer#getModuleTitle(net.ulrice.module.IFModuleTitleRenderer.Usage)
+	 * @see net.ulrice.module.IFModuleTitleProvider#getModuleTitle(net.ulrice.module.IFModuleTitleProvider.Usage)
 	 */
 	public String getModuleTitle(Usage usage) {
 		return title;

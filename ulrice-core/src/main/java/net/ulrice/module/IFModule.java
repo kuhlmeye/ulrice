@@ -9,7 +9,7 @@ import net.ulrice.module.exception.ModuleInstanciationException;
  * 
  * @author ckuhlmeyer
  */
-public interface IFModule extends IFModuleTitleRenderer, Comparable<IFModule> {
+public interface IFModule extends IFModuleTitleProvider, Comparable<IFModule> {
 
 	/**
 	 * Returns a parameter by key
@@ -46,5 +46,5 @@ public interface IFModule extends IFModuleTitleRenderer, Comparable<IFModule> {
 	 * @return The instance of the controller of the module
 	 * @throws ModuleInstanciationException If the module could not be instanciated
 	 */
-	IFController instanciateModule() throws ModuleInstanciationException;
+	IFController instantiateModule() throws ModuleInstanciationException;
 }

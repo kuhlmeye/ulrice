@@ -1,30 +1,25 @@
 package net.ulrice.module.impl;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
+
+import javax.swing.JComponent;
 
 import net.ulrice.Ulrice;
 import net.ulrice.message.MessageSeverity;
 import net.ulrice.module.IFController;
 import net.ulrice.module.IFModel;
-import net.ulrice.module.IFModule;
-import net.ulrice.module.IFModuleTitleRenderer;
-import net.ulrice.module.IFView;
+import net.ulrice.module.IFModuleTitleProvider;
 
 /**
  * Creates an abstract controller.
  * 
  * @author ckuhlmeyer
  */
-public abstract class AbstractController<T extends IFModel, U extends IFView> implements IFController {
-
-	/** The module this controller is belonging to. */
-	private IFModule module;
+public abstract class AbstractController<T extends IFModel> implements IFController {
 
 	/** The view of this controller. */
-	private U view;
+	private JComponent view;
 
 	/** The model used by this controller. */
 	private T model;
@@ -32,57 +27,32 @@ public abstract class AbstractController<T extends IFModel, U extends IFView> im
 	/** The set of all module actions that are handled by this controller. */
 	private List<ModuleActionState> moduleActionStates;
 	
-	private Set<Object> blockSet = new HashSet<Object>();
-	
-	@Override
-	public boolean isBlocked() {
-		return !blockSet.isEmpty();
-	}
-	/**
-	 * Creates an abstract controller.
-	 */
-	public AbstractController() {
-		super();
-	}
 
 	/**
 	 * @see net.ulrice.module.IFController#getModel()
 	 */
 	public T getModel() {
 		if (this.model == null) {
-			this.model = instanciateModel();
+			this.model = instantiateModel();
 		}
 		return model;
 	}
 
 	/**
-	 * Instanciate the model. This method is called once during the
-	 * instanciation of the model.
+	 * Instantiate the model. This method is called once during the
+	 * instantiation of the model.
 	 * 
 	 * @return The instance of the model.
 	 */
-	protected abstract T instanciateModel();
+	protected abstract T instantiateModel();
 
-	/**
-	 * @see net.ulrice.module.IFController#getModule()
-	 */
-	public IFModule getModule() {
-		return module;
+	public IFModuleTitleProvider getTitleProvider() {
+	    return null;
 	}
 
-	/**
-	 * @see net.ulrice.module.IFController#getModuleTitleRenderer()
-	 */
-	public IFModuleTitleRenderer getModuleTitleRenderer() {
-		return getModule();
-	}
-
-	/**
-	 * @see net.ulrice.module.IFController#getView()
-	 */
-	public U getView() {
+	public JComponent getView() {
 		if (this.view == null) {
-			this.view = instanciateView();
+			this.view = instantiateView();
 		}
 		return view;
 	}
@@ -93,7 +63,7 @@ public abstract class AbstractController<T extends IFModel, U extends IFView> im
 	 * 
 	 * @return The instance of the view.
 	 */
-	protected abstract U instanciateView();
+	protected abstract JComponent instantiateView();
 
 	/**
 	 * Initializes the sub-components.
@@ -105,10 +75,8 @@ public abstract class AbstractController<T extends IFModel, U extends IFView> im
 	 * 
 	 * @see net.ulrice.module.IFController#postCreation(net.ulrice.module.IFModule)
 	 */	
-	public void preCreationEvent(IFModule module) {
+	public void preCreate() {
 		getModel().initialize(this);
-		getView().initialize(this);
-		this.module = module;
 
 		ModuleActionState[] moduleActionStateArray = getHandledActions();
 		if(moduleActionStateArray != null) {
@@ -133,7 +101,7 @@ public abstract class AbstractController<T extends IFModel, U extends IFView> im
 	/**
 	 * @see net.ulrice.module.IFController#postCreationEvent(net.ulrice.module.IFModule)
 	 */
-	public void postCreationEvent(IFModule module) {
+	public void postCreate() {
 		postEventInitialization();
 	}
 
@@ -206,22 +174,5 @@ public abstract class AbstractController<T extends IFModel, U extends IFView> im
 	@Override
 	public boolean performModuleAction(String actionId) {
 		return false;
-	}
-	
-
-	@Override
-	public void block(Object blocker) {
-		if(blockSet.isEmpty()) {
-			Ulrice.getModuleManager().fireControllerBlocked(this);
-		}
-		blockSet.add(blocker);
-	}
-
-	@Override
-	public void unblock(Object blocker) {
-		blockSet.remove(blocker);
-		if(blockSet.isEmpty()) {
-			Ulrice.getModuleManager().fireControllerUnblocked(this);
-		}
 	}
 }

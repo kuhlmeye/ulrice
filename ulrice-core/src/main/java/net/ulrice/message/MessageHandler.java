@@ -234,10 +234,10 @@ public class MessageHandler implements UncaughtExceptionHandler, IFModuleEventLi
 	}
 
 	/**
-	 * @see net.ulrice.module.event.IFModuleEventListener#closeModule(net.ulrice.module.IFController)
+	 * @see net.ulrice.module.event.IFModuleEventListener#closeController(net.ulrice.module.IFController)
 	 */
 	@Override
-	public void closeModule(IFController controller) {
+	public void closeController(IFController controller) {
 		// Remove all messages from the module.
 		moduleMessages.remove(controller);
 	}

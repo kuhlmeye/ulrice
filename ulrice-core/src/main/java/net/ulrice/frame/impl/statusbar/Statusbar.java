@@ -171,10 +171,10 @@ public class Statusbar extends JPanel implements IFMainFrameComponent, IFMessage
 	}
 
 	/**
-	 * @see net.ulrice.module.event.IFModuleEventListener#closeModule(net.ulrice.module.IFController)
+	 * @see net.ulrice.module.event.IFModuleEventListener#closeController(net.ulrice.module.IFController)
 	 */
 	@Override
-	public void closeModule(IFController activeController) {
+	public void closeController(IFController activeController) {
 		if (this.activeController != null && this.activeController.equals(activeController)) {
 			this.activeController = null;
 		}

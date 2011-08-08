@@ -37,9 +37,9 @@ public abstract class AbstractModuleEventAdapter implements IFModuleEventListene
     /**
      * 
      * {@inheritDoc}
-     * @see net.ulrice.module.event.IFModuleEventListener#closeModule(net.ulrice.module.IFController)
+     * @see net.ulrice.module.event.IFModuleEventListener#closeController(net.ulrice.module.IFController)
      */
-    public void closeModule(IFController activeController){
+    public void closeController(IFController activeController){
     }
 
     @Override
