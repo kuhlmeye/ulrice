@@ -110,6 +110,7 @@ public class TabbedWorkarea extends JTabbedPane implements IFWorkarea, MouseList
 	}
 
 	private int getTabIndex(IFController activeController) {
+	    // TODO Identify tab component in a different way. component is not stable
 		JComponent controllerComponent = getControllerComponent(activeController);
 		GlassPanel glassPanel = glassPanelMap.get(controllerComponent);
 		int idx = indexOfComponent(glassPanel);
