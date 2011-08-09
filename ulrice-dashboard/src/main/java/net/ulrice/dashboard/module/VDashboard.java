@@ -30,14 +30,13 @@ import javax.swing.JPanel;
 import net.ulrice.dashboard.Dashboard;
 import net.ulrice.dashboard.DashboardComponent;
 import net.ulrice.dashboard.UlriceDashboard;
-import net.ulrice.module.IFView;
 
 /**
  * The view of the dashboard module
  * 
  * @author christof
  */
-public class VDashboard implements IFView<CDashboard>, Dashboard, MouseMotionListener {
+public class VDashboard implements Dashboard, MouseMotionListener {
 
     /**
      * This enum contains information of different modification of components on the dashboard.
@@ -119,7 +118,6 @@ public class VDashboard implements IFView<CDashboard>, Dashboard, MouseMotionLis
     /**
      * @see net.ulrice.module.IFView#getView()
      */
-    @Override
     public JComponent getView() {
         return view;
     }
@@ -127,7 +125,6 @@ public class VDashboard implements IFView<CDashboard>, Dashboard, MouseMotionLis
     /**
      * @see net.ulrice.module.IFView#initialize()
      */
-    @Override
     public void initialize(CDashboard controller) {
     	this.controller = controller;
 

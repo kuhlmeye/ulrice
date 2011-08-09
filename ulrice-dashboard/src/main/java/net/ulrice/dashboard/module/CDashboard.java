@@ -4,13 +4,13 @@ import java.awt.Rectangle;
 import java.util.List;
 import java.util.Map;
 
+import javax.swing.JComponent;
+
 import net.ulrice.dashboard.DashboardComponent;
 import net.ulrice.dashboard.DashboardEventListener;
 import net.ulrice.dashboard.IFDashboardComponentProvider;
 import net.ulrice.dashboard.UlriceDashboard;
 import net.ulrice.dashboard.module.VDashboard.CellComponent;
-import net.ulrice.module.IFModel;
-import net.ulrice.module.IFView;
 import net.ulrice.module.impl.AbstractController;
 
 /**
@@ -19,7 +19,7 @@ import net.ulrice.module.impl.AbstractController;
  * 
  * @author christof
  */
-public class CDashboard extends AbstractController<MDashboard, VDashboard> {
+public class CDashboard extends AbstractController {
 
 
 	/** List for dashbard event listener */
@@ -27,6 +27,10 @@ public class CDashboard extends AbstractController<MDashboard, VDashboard> {
 	
 	/** Provider of DashboardComponents */
 	private IFDashboardComponentProvider dashboardComponentProvider;
+
+    private MDashboard model;
+
+    private VDashboard view;
 
 	/**
 	 * Constructor of this class
@@ -41,9 +45,12 @@ public class CDashboard extends AbstractController<MDashboard, VDashboard> {
 	 * 
 	 * @see net.ulrice.module.impl.AbstractController#instanciateModel()
 	 */
-	@Override
 	protected MDashboard instanciateModel() {
-		return new MDashboard();
+	    if(model == null) {
+	        model = new MDashboard();
+	        model.initialize(this);
+	    }
+	    return model;
 	}
 
 	/**
@@ -52,13 +59,16 @@ public class CDashboard extends AbstractController<MDashboard, VDashboard> {
 	 * 
 	 * @see net.ulrice.module.impl.AbstractController#instanciateView()
 	 */
-	@Override
 	protected VDashboard instanciateView() {
-		return new VDashboard();
+		if(view == null) {
+		    view = new VDashboard();
+		    view.initialize(this);
+		}
+		return view;
 	}
 
 	protected void postEventInitialization() {
-		getView().restoreModules();
+		view.restoreModules();
 	}
 
 	/**
@@ -70,7 +80,7 @@ public class CDashboard extends AbstractController<MDashboard, VDashboard> {
 	 *            The <code>CellComponent</code>
 	 */
 	protected void addDashboardComponent(String key, CellComponent value) {
-		getModel().addDashBoardComponent(key, value);
+		model.addDashBoardComponent(key, value);
 	}
 
 	/**
@@ -81,7 +91,7 @@ public class CDashboard extends AbstractController<MDashboard, VDashboard> {
 	 * @return If exist then true, false otherwise
 	 */
 	protected boolean containsDashboardComponent(String key) {
-		return getModel().containsDashboardComponent(key);
+		return model.containsDashboardComponent(key);
 	}
 
 	/**
@@ -91,7 +101,7 @@ public class CDashboard extends AbstractController<MDashboard, VDashboard> {
 	 *            Remove dash board component by model
 	 */
 	protected void deleteDashBoardComponent(String moduleId) {
-		getModel().removeDashboardComponent(moduleId);
+		model.removeDashboardComponent(moduleId);
 	}
 
 	/**
@@ -106,7 +116,7 @@ public class CDashboard extends AbstractController<MDashboard, VDashboard> {
 	 * @return If found then the component, otherwise null
 	 */
 	protected CellComponent getDashBoardComponent(int cellX, int cellY) {
-		return getModel().getDashBoardComponent(cellX, cellY);
+		return model.getDashBoardComponent(cellX, cellY);
 	}
 
 	/**
@@ -119,7 +129,7 @@ public class CDashboard extends AbstractController<MDashboard, VDashboard> {
 	 * @return If a collision is detected then true, false otherwise
 	 */
 	protected boolean checkCollision(String moduleId, Rectangle rectangle) {
-		for (Map.Entry<String, CellComponent> cellComponent : getModel()
+		for (Map.Entry<String, CellComponent> cellComponent : model
 				.getDashBordSet()) {
 			if (!cellComponent.getKey().equals(moduleId)) {
 				if (cellComponent.getValue().getJComponent().getBounds()
@@ -222,4 +232,8 @@ public class CDashboard extends AbstractController<MDashboard, VDashboard> {
 		return dashboardComponentProvider;
 	}
 
+    @Override
+    public JComponent getView() {
+        return view.getView();
+    }
 }
