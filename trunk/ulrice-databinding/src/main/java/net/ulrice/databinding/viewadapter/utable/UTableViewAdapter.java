@@ -4,24 +4,19 @@
 package net.ulrice.databinding.viewadapter.utable;
 
 import java.awt.Component;
-import java.awt.Insets;
 import java.util.List;
 
-import javax.swing.JPanel;
 import javax.swing.JTable;
-import javax.swing.RowSorter;
 import javax.swing.event.EventListenerList;
-import javax.swing.event.RowSorterEvent;
-import javax.swing.event.RowSorterListener;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
 import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumn;
-import javax.swing.table.TableColumnModel;
 import javax.swing.table.TableModel;
 
 import net.ulrice.databinding.IFBinding;
-import net.ulrice.databinding.bufferedbinding.impl.ColumnDefinition;
 import net.ulrice.databinding.bufferedbinding.impl.Element;
 import net.ulrice.databinding.bufferedbinding.impl.TableAM;
 import net.ulrice.databinding.viewadapter.AbstractViewAdapter;
@@ -45,6 +40,31 @@ public class UTableViewAdapter extends AbstractViewAdapter implements TableModel
 		super(List.class);
 
 		table = new UTableComponent(this, fixedColumns);
+		
+		table.getScrollTable().getSelectionModel().addListSelectionListener(new ListSelectionListener() {
+		    private boolean nested = false;
+		    
+            @Override
+            public void valueChanged(ListSelectionEvent e) {
+                if (e.getValueIsAdjusting()) {
+                    return;
+                }
+                
+                if (nested) {
+                    return;
+                }
+                
+                nested = true;
+                try {
+                    for (ListSelectionListener l: listenerList.getListeners(ListSelectionListener.class)) {
+                        l.valueChanged(e);
+                    }
+                }
+                finally {
+                    nested = false;
+                }
+            }
+		});
 	}
 
 	public UTableViewAdapter() {
@@ -98,32 +118,29 @@ public class UTableViewAdapter extends AbstractViewAdapter implements TableModel
 	 */
 	private void fireTableChanged(TableModelEvent e) {
 		TableModelListener[] listeners = listenerList.getListeners(TableModelListener.class);
-		if (listeners != null) {
-			for (TableModelListener listener : listeners) {
-				listener.tableChanged(e);
-			}
+		for (TableModelListener listener : listeners) {
+		    listener.tableChanged(e);
 		}
 	}
 
-	/**
-	 * @see javax.swing.table.TableModel#addTableModelListener(javax.swing.event.TableModelListener)
-	 */
 	@Override
 	public void addTableModelListener(TableModelListener l) {
 		listenerList.add(TableModelListener.class, l);
 	}
 
-	/**
-	 * @see javax.swing.table.TableModel#removeTableModelListener(javax.swing.event.TableModelListener)
-	 */
 	@Override
 	public void removeTableModelListener(TableModelListener l) {
 		listenerList.remove(TableModelListener.class, l);
 	}
 
-	/**
-	 * @see javax.swing.table.TableModel#getColumnClass(int)
-	 */
+	public void addListSelectionListener(ListSelectionListener l) {
+	    listenerList.add(ListSelectionListener.class, l);
+	}
+
+	public void removeListSelectionListener(ListSelectionListener l) {
+	    listenerList.remove(ListSelectionListener.class, l);
+	}
+	
 	@Override
 	public Class<?> getColumnClass(int columnIndex) {
 		if (getAttributeModel() != null) {

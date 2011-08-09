@@ -21,6 +21,7 @@ import net.ulrice.module.impl.action.ActionType;
 import net.ulrice.module.impl.action.UlriceAction;
 import net.ulrice.sample.module.moviedb.Movie.Actor;
 
+
 public class CMovieDB extends AbstractController implements ListSelectionListener {
     private final SingleListTableModel<Movie> overviewModel = new SingleListTableModel<Movie>(Movie.class) {{
         addColumn("name");
@@ -33,7 +34,7 @@ public class CMovieDB extends AbstractController implements ListSelectionListene
     }};
     
     private final SingleObjectModel<Movie> detailModel = new SingleObjectModel<Movie>(Movie.class) {{
-        setAttributeModel("actors", new TableAMBuilder(this, "actors", Actor.class)
+        setAttributeModel("data.actors", new TableAMBuilder(this, "data.actors", Actor.class)
             .addColumn("lastname")
             .addColumn("firstname")
             .build());
@@ -54,15 +55,15 @@ public class CMovieDB extends AbstractController implements ListSelectionListene
 	    overviewModel.setData(MovieData.generateData());
 		overviewGroup.bind(overviewModel.getAttributeModel(), view.getMovieTableAdapter());
 
-		detailGroup.bind(detailModel.getAttributeModel("name"), view.getTitleVA());
-		detailGroup.bind(detailModel.getAttributeModel("year"), view.getYearVA());
-		detailGroup.bind(detailModel.getAttributeModel("director"), view.getDirectorVA());
-		detailGroup.bind(detailModel.getAttributeModel("actors"), view.getActorTableVA());
+		detailGroup.bind(detailModel.getAttributeModel("data.name"), view.getTitleVA());
+		detailGroup.bind(detailModel.getAttributeModel("data.year"), view.getYearVA());
+		detailGroup.bind(detailModel.getAttributeModel("data.director"), view.getDirectorVA());
+		detailGroup.bind(detailModel.getAttributeModel("data.actors"), view.getActorTableVA());
 
 		overviewGroup.read();
 
 		// FIXME Static column support
-		view.getMovieTableAdapter().getComponent().getScrollTable().getSelectionModel().addListSelectionListener(this);
+		view.getMovieTableAdapter().addListSelectionListener(this);
 		view.getMovieTableAdapter().sizeColumns(false);
 
 	}
@@ -122,36 +123,40 @@ public class CMovieDB extends AbstractController implements ListSelectionListene
 
 		return Arrays.asList(new ModuleActionState(true, this, addMovieAction), new ModuleActionState(true, this, removeMovieAction),
 				new ModuleActionState(true, this, addActorAction), new ModuleActionState(true, this, removeActorAction) );
-
 	}
 
+	private void detailToOverview() {
+        detailGroup.write();
+        overviewModel.getAttributeModel().getElementById(detailMovieId).setCurrentValue(detailModel.getData());
+	}
+	
+	private void overviewToDetail() {
+	    final int selectedRow = view.getMovieTableAdapter().getSelectedRowModelIndex();
+        final Element selElement = overviewModel.getAttributeModel().getElementAt(selectedRow);
+        detailMovieId = selElement.getUniqueId();
+        detailModel.setData((Movie) selElement.getCurrentValue());
+        detailGroup.read();
+        view.getActorTableVA().sizeColumns(true);
+	}
+	
+	private void clearDetail() {
+        detailMovieId = null;
+        detailModel.setData(null);
+        detailGroup.read();
+	}
+	
 	@Override
 	public void valueChanged(ListSelectionEvent e) {
-		if (!e.getValueIsAdjusting()) {		
-			// FIXME Static column support
-			JTable movieTable = view.getMovieTableAdapter().getComponent().getScrollTable();
-			movieTable.getSelectionModel().removeListSelectionListener(this);
-			int selectedRow = movieTable.getSelectedRow();
+	    if (detailMovieId != null && detailGroup.isDirty()) {
+	        detailToOverview();
+	    }
 
-			if (detailMovieId != null && detailGroup.isDirty()) {
-				detailGroup.write();
-				overviewModel.getAttributeModel().getElementById(detailMovieId).setCurrentValue(detailModel.getData());
-			}
-
-			if (selectedRow > -1) {
-				Element selElement = overviewModel.getAttributeModel().getElementAt(selectedRow);
-				detailMovieId = selElement.getUniqueId();
-				Movie movie = (Movie) selElement.getCurrentValue();
-				detailModel.setData(movie);
-				detailGroup.read();
-				view.getActorTableVA().sizeColumns(true);
-			} else {
-				detailMovieId = null;
-				detailModel.setData(null);
-				detailGroup.read();
-			}
-
-			movieTable.getSelectionModel().addListSelectionListener(this);
-		}
+	    if (view.getMovieTableAdapter().getSelectedRowModelIndex() > -1) {
+	        overviewToDetail();
+	    } 
+	    else {
+	        clearDetail();
+	    }
 	}
 }
+
