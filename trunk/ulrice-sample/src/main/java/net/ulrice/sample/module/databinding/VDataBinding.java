@@ -22,16 +22,13 @@ import net.ulrice.databinding.viewadapter.impl.JTextComponentViewAdapter;
  */
 public class VDataBinding extends JPanel {
 
-	private JTextComponentViewAdapter textFieldGA1;
-	private JTextComponentViewAdapter textFieldGA2;
-    private JTableViewAdapter listGA;
+	private final JTextComponentViewAdapter textFieldGA1;
+	private final JTextComponentViewAdapter textFieldGA2;
+    private final JTableViewAdapter listGA = new JTableViewAdapter(new JTable());
 
-	/**
-	 * @see net.ulrice.module.IFView#initialize()
-	 */
-	public void initialize(CDataBinding controller) {
-		JTextField tf1 = new JTextField();
-		JTextField tf2 = new JTextField();
+	public VDataBinding() {
+		final JTextField tf1 = new JTextField();
+		final JTextField tf2 = new JTextField();
 		
 		textFieldGA1 = new JTextComponentViewAdapter(tf1);
 		BorderStateMarker borderStateMarker = new BorderStateMarker();
@@ -39,8 +36,6 @@ public class VDataBinding extends JPanel {
 		textFieldGA1.setTooltipHandler(new DetailedTooltipHandler());
 		tf1.setBorder(borderStateMarker);
 		textFieldGA2 = new JTextComponentViewAdapter(tf2);
-		
-		listGA = new JTableViewAdapter(new JTable());
 		
 		setLayout(new BorderLayout());
 		add(textFieldGA1.getComponent(), BorderLayout.NORTH);

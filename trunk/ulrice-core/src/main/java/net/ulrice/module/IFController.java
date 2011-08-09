@@ -48,7 +48,7 @@ public interface IFController {
 	/**
 	 * Returns the array of module actions states that are handled by the module. 
 	 */
-	List<ModuleActionState> getModuleActionStates(); 
+	List<ModuleActionState> getHandledActions(); 
 		
 //	/**
 //	 * Block the controller.

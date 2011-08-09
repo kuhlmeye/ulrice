@@ -7,12 +7,11 @@ import net.ulrice.databinding.bufferedbinding.impl.ColumnDefinition;
 import net.ulrice.databinding.bufferedbinding.impl.TableAM;
 import net.ulrice.databinding.modelaccess.impl.DynamicReflectionMVA;
 import net.ulrice.databinding.modelaccess.impl.IndexedReflectionMVA;
-import net.ulrice.module.IFModel;
 import net.ulrice.translator.service.DictionaryEntryDTO;
 import net.ulrice.translator.service.TranslationDTO;
 import net.ulrice.translator.service.UsageDTO;
 
-public class MTranslator implements IFModel<CTranslator> {
+public class MTranslator {
 
 	private List<TranslationDTO> translations;	
 	private List<DictionaryEntryDTO> dictionary;	
@@ -22,8 +21,7 @@ public class MTranslator implements IFModel<CTranslator> {
 	private TableAM dictionaryAM;
 	private TableAM usagesAM;
 	
-	@Override
-	public void initialize(CTranslator controller) {
+	public MTranslator () {
 		
 		LocaleToStringConverter localeConverter = new LocaleToStringConverter();
 		

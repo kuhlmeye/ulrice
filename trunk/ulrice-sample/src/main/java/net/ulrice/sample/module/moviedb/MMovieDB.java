@@ -9,10 +9,9 @@ import net.ulrice.databinding.modelaccess.impl.DynamicReflectionMVA;
 import net.ulrice.databinding.modelaccess.impl.IndexedReflectionMVA;
 import net.ulrice.databinding.modelaccess.impl.ReflectionMVA;
 import net.ulrice.databinding.validation.impl.StringLengthValidator;
-import net.ulrice.module.IFModel;
 import net.ulrice.sample.module.moviedb.Movie.Actor;
 
-public class MMovieDB implements IFModel<CMovieDB> {
+public class MMovieDB {
 	
 	private List<Movie> movieList;
 	private Movie movie;
@@ -23,9 +22,7 @@ public class MMovieDB implements IFModel<CMovieDB> {
 	private GenericAM<?> directorAM;
 	private TableAM actorListAM;
 
-	@Override
-	public void initialize(CMovieDB controller) {
-
+	public MMovieDB() {
 		movieListAM = new TableAM(new IndexedReflectionMVA(this, "movieList"));
 		ColumnDefinition<String> nameColumn = new ColumnDefinition<String>(new DynamicReflectionMVA(Movie.class, "name"), String.class);
 		nameColumn.setValidator(new StringLengthValidator(1, 255));

@@ -2,7 +2,7 @@ package net.ulrice.security;
 
 import net.ulrice.module.IFController;
 import net.ulrice.module.IFModule;
-import net.ulrice.module.impl.action.Action;
+import net.ulrice.module.impl.action.UlriceAction;
 
 /**
  * Authorization callback.
@@ -31,7 +31,7 @@ public interface IFAuthCallback {
 	 *            The action that is registered.
 	 * @return True, if permission is granted, false otherwise.
 	 */
-	boolean allowRegisterAction(IFController ctrl, Action action);
+	boolean allowRegisterAction(IFController ctrl, UlriceAction action);
 
 	/**
 	 * Grants permission to enable an action
@@ -43,7 +43,7 @@ public interface IFAuthCallback {
 	 *            The action itself.
 	 * @return True, if permission is granted, false otherwise.
 	 */
-	boolean allowEnableAction(IFController ctrl, Action action);
+	boolean allowEnableAction(IFController ctrl, UlriceAction action);
 
 	/**
 	 * Grants permission to execute an action
@@ -54,7 +54,7 @@ public interface IFAuthCallback {
 	 *            The action itself.
 	 * @return True, if permission is granted, false otherwise.
 	 */
-	boolean allowExecuteAction(IFController ctrl, Action action);
+	boolean allowExecuteAction(IFController ctrl, UlriceAction action);
 
 	/**
 	 * Grants permission to register a module.

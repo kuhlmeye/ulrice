@@ -13,22 +13,15 @@ import javax.swing.JPanel;
  */
 public class VSample2 {
 
-	/** The view component. */
-	private JPanel view;
+	private JPanel view = new JPanel();
 
-	/**
-	 * @see net.ulrice.module.IFView#getView()
-	 */
-	public JComponent getView() {
-		return view;
+	
+	public VSample2 () {
+	    view.setLayout(new BorderLayout());
+	    view.add(new JLabel("Sample 2 module."), BorderLayout.CENTER);
 	}
 
-	/**
-	 * @see net.ulrice.module.IFView#initialize()
-	 */
-	public void initialize(CSample2 controller) {
-		view = new JPanel();
-		view.setLayout(new BorderLayout());
-		view.add(new JLabel("Sample 2 module."), BorderLayout.CENTER);
+	public JComponent getView() {
+		return view;
 	}
 }

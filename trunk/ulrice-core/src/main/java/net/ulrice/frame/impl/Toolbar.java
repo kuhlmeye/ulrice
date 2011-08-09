@@ -11,7 +11,7 @@ import javax.swing.JToolBar;
 
 import net.ulrice.Ulrice;
 import net.ulrice.module.event.IFModuleActionManagerEventListener;
-import net.ulrice.module.impl.action.Action;
+import net.ulrice.module.impl.action.UlriceAction;
 
 /**
  * @author christof
@@ -55,9 +55,9 @@ public class Toolbar extends JToolBar implements IFModuleActionManagerEventListe
 				action = action.trim();
 				if (MODULE_ACTIONS.equals(action)) {
 					// Add all module actions to the toolbar.
-					List<Action> moduleActions = Ulrice.getActionManager().getModuleActions();
+					List<UlriceAction> moduleActions = Ulrice.getActionManager().getModuleActions();
 					if (moduleActions != null) {
-						for (Action moduleAction : moduleActions) {
+						for (UlriceAction moduleAction : moduleActions) {
 							add(createButton(moduleAction));
 						}
 					}
@@ -65,7 +65,7 @@ public class Toolbar extends JToolBar implements IFModuleActionManagerEventListe
 				} else if (SEPARATOR.equals(action)) {
 					addSeparator();
 				} else {
-					Action applicationAction = Ulrice.getActionManager().getApplicationAction(action);
+					UlriceAction applicationAction = Ulrice.getActionManager().getApplicationAction(action);
 					if (applicationAction != null) {
 						add(createButton(applicationAction));
 					}
@@ -83,7 +83,7 @@ public class Toolbar extends JToolBar implements IFModuleActionManagerEventListe
 	 * @param moduleAction The module action.
 	 * @return The button.
 	 */
-	private JButton createButton(Action moduleAction) {
+	private JButton createButton(UlriceAction moduleAction) {
 		JButton button = new JButton(moduleAction);
 		button.setOpaque(false);
 		button.setRolloverEnabled(false);

@@ -1,6 +1,8 @@
 package net.ulrice.sample.module.moviedb;
 
 import java.awt.event.ActionEvent;
+import java.util.Arrays;
+import java.util.List;
 
 import javax.swing.JComponent;
 import javax.swing.JTable;
@@ -11,91 +13,95 @@ import net.ulrice.databinding.bufferedbinding.impl.BindingGroup;
 import net.ulrice.databinding.bufferedbinding.impl.Element;
 import net.ulrice.module.impl.AbstractController;
 import net.ulrice.module.impl.ModuleActionState;
-import net.ulrice.module.impl.action.Action;
+import net.ulrice.module.impl.action.UlriceAction;
 import net.ulrice.module.impl.action.ActionType;
 
-public class CMovieDB extends AbstractController<MMovieDB> implements ListSelectionListener {
+public class CMovieDB extends AbstractController implements ListSelectionListener {
+    private final MMovieDB model = new MMovieDB();
+    private final VMovieDB view = new VMovieDB();
+
+    public JComponent getView() {
+        return view.getView();
+    }
 
 	private BindingGroup overviewGroup = new BindingGroup();
 	private BindingGroup detailGroup = new BindingGroup();
 	private String detailMovieId;
 
 	@Override
-	protected void postEventInitialization() {
-		super.postEventInitialization();
+	public void postCreate() {
+		model.setMovieList(MovieData.generateData());
 
-		getModel().setMovieList(MovieData.generateData());
+		overviewGroup.bind(model.getMovieListAM(), view.getMovieTableAdapter());
 
-		overviewGroup.bind(getModel().getMovieListAM(), v.getMovieTableAdapter());
-
-		detailGroup.bind(getModel().getTitleAM(), v.getTitleVA());
-		detailGroup.bind(getModel().getYearAM(), v.getYearVA());
-		detailGroup.bind(getModel().getDirectorAM(), v.getDirectorVA());
-		detailGroup.bind(getModel().getActorListAM(), v.getActorTableVA());
+		detailGroup.bind(model.getTitleAM(), view.getTitleVA());
+		detailGroup.bind(model.getYearAM(), view.getYearVA());
+		detailGroup.bind(model.getDirectorAM(), view.getDirectorVA());
+		detailGroup.bind(model.getActorListAM(), view.getActorTableVA());
 
 		overviewGroup.read();
 
 		// FIXME Static column support
-		v.getMovieTableAdapter().getComponent().getScrollTable().getSelectionModel().addListSelectionListener(this);
-		v.getMovieTableAdapter().sizeColumns(false);
+		view.getMovieTableAdapter().getComponent().getScrollTable().getSelectionModel().addListSelectionListener(this);
+		view.getMovieTableAdapter().sizeColumns(false);
 
 	}
 
 	@Override
-	protected ModuleActionState[] getHandledActions() {
+	public List<ModuleActionState> getHandledActions() {
 
-		Action addMovieAction = new Action("_ADD_MOVIE", "Add Movie", true, ActionType.ModuleAction, null) {
+		UlriceAction addMovieAction = new UlriceAction("_ADD_MOVIE", "Add Movie", true, ActionType.ModuleAction, null) {
 			@Override
 			public void actionPerformed(ActionEvent e) {		
 				// FIXME Static column support
-				JTable movieTable = v.getMovieTableAdapter().getComponent().getScrollTable();
+				JTable movieTable = view.getMovieTableAdapter().getComponent().getScrollTable();
 				movieTable.getSelectionModel().removeListSelectionListener(CMovieDB.this);
-				v.getMovieTableAdapter().addRow();
+				view.getMovieTableAdapter().addRow();
 				movieTable.getSelectionModel().addListSelectionListener(CMovieDB.this);
 			}
 		};
 
-		Action removeMovieAction = new Action("_DEL_MOVIE", "Del Movie", true, ActionType.ModuleAction, null) {
+		UlriceAction removeMovieAction = new UlriceAction("_DEL_MOVIE", "Del Movie", true, ActionType.ModuleAction, null) {
 			@Override
 			public void actionPerformed(ActionEvent e) {		
 				// FIXME Static column support
-				int selectedRow = v.getMovieTableAdapter().getComponent().getScrollTable().getSelectedRow();
+				int selectedRow = view.getMovieTableAdapter().getComponent().getScrollTable().getSelectedRow();
 				if(selectedRow >= 0) {
-					JTable movieTable = v.getMovieTableAdapter().getComponent().getScrollTable();
+					JTable movieTable = view.getMovieTableAdapter().getComponent().getScrollTable();
 					movieTable.getSelectionModel().removeListSelectionListener(CMovieDB.this);
-					v.getMovieTableAdapter().delRow(selectedRow);
+					view.getMovieTableAdapter().delRow(selectedRow);
 					movieTable.getSelectionModel().addListSelectionListener(CMovieDB.this);
 				}
 			}
 		};
 
-		Action addActorAction = new Action("_ADD_ACTOR", "Add Actor", true, ActionType.ModuleAction, null) {
+		UlriceAction addActorAction = new UlriceAction("_ADD_ACTOR", "Add Actor", true, ActionType.ModuleAction, null) {
 			@Override
 			public void actionPerformed(ActionEvent e) {		
 				// FIXME Static column support
-				JTable actorTable = v.getActorTableVA().getComponent().getScrollTable();
+				JTable actorTable = view.getActorTableVA().getComponent().getScrollTable();
 				actorTable.getSelectionModel().removeListSelectionListener(CMovieDB.this);
-				v.getActorTableVA().addRow();
+				view.getActorTableVA().addRow();
 				actorTable.getSelectionModel().addListSelectionListener(CMovieDB.this);
 			}
 		};
 
-		Action removeActorAction = new Action("_DEL_ACTOR", "Del Actor", true, ActionType.ModuleAction, null) {
+		UlriceAction removeActorAction = new UlriceAction("_DEL_ACTOR", "Del Actor", true, ActionType.ModuleAction, null) {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				int selectedRow = v.getActorTableVA().getComponent().getScrollTable().getSelectedRow();
+				int selectedRow = view.getActorTableVA().getComponent().getScrollTable().getSelectedRow();
 				if(selectedRow >= 0) {		
 					// FIXME Static column support
-					JTable actorTable = v.getActorTableVA().getComponent().getScrollTable();
+					JTable actorTable = view.getActorTableVA().getComponent().getScrollTable();
 					actorTable.getSelectionModel().removeListSelectionListener(CMovieDB.this);
-					v.getActorTableVA().delRow(selectedRow);
+					view.getActorTableVA().delRow(selectedRow);
 					actorTable.getSelectionModel().addListSelectionListener(CMovieDB.this);
 				}
 			}
 		};
 
-		return new ModuleActionState[] { new ModuleActionState(true, this, addMovieAction), new ModuleActionState(true, this, removeMovieAction),
-				new ModuleActionState(true, this, addActorAction), new ModuleActionState(true, this, removeActorAction) };
+		return Arrays.asList(new ModuleActionState(true, this, addMovieAction), new ModuleActionState(true, this, removeMovieAction),
+				new ModuleActionState(true, this, addActorAction), new ModuleActionState(true, this, removeActorAction) );
 
 	}
 
@@ -103,41 +109,30 @@ public class CMovieDB extends AbstractController<MMovieDB> implements ListSelect
 	public void valueChanged(ListSelectionEvent e) {
 		if (!e.getValueIsAdjusting()) {		
 			// FIXME Static column support
-			JTable movieTable = v.getMovieTableAdapter().getComponent().getScrollTable();
+			JTable movieTable = view.getMovieTableAdapter().getComponent().getScrollTable();
 			movieTable.getSelectionModel().removeListSelectionListener(this);
 			int selectedRow = movieTable.getSelectedRow();
 
 			if (detailMovieId != null && detailGroup.isDirty()) {
 				detailGroup.write();
-				Movie movie = getModel().getMovie();
-				getModel().getMovieListAM().getElementById(detailMovieId).setCurrentValue(movie);
+				Movie movie = model.getMovie();
+				model.getMovieListAM().getElementById(detailMovieId).setCurrentValue(movie);
 			}
 
 			if (selectedRow > -1) {
-				Element selElement = getModel().getMovieListAM().getElementAt(selectedRow);
+				Element selElement = model.getMovieListAM().getElementAt(selectedRow);
 				detailMovieId = selElement.getUniqueId();
 				Movie movie = (Movie) selElement.getCurrentValue();
-				getModel().setMovie(movie);
+				model.setMovie(movie);
 				detailGroup.read();
-				v.getActorTableVA().sizeColumns(true);
+				view.getActorTableVA().sizeColumns(true);
 			} else {
 				detailMovieId = null;
-				getModel().setMovie(null);
+				model.setMovie(null);
 				detailGroup.read();
 			}
 
 			movieTable.getSelectionModel().addListSelectionListener(this);
 		}
-	}
-
-	@Override
-	protected MMovieDB instantiateModel() {
-		return new MMovieDB();
-	}
-
-	private final VMovieDB v = new VMovieDB();
-	@Override
-	protected JComponent instantiateView() {
-	    return v.getView();
 	}
 }

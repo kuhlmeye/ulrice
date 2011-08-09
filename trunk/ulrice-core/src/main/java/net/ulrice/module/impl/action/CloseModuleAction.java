@@ -16,7 +16,7 @@ import net.ulrice.module.IFModuleManager;
  * 
  * @author christof
  */
-public class CloseModuleAction extends Action {
+public class CloseModuleAction extends UlriceAction {
 
 	/** Default generated serial version uid. */
 	private static final long serialVersionUID = -7876276315275574028L;
@@ -35,7 +35,7 @@ public class CloseModuleAction extends Action {
 	}
 	
 	/**
-	 * @see net.ulrice.module.impl.action.Action#actionPerformed(java.awt.event.ActionEvent)
+	 * @see net.ulrice.module.impl.action.UlriceAction#actionPerformed(java.awt.event.ActionEvent)
 	 */
 	@Override
 	public void actionPerformed(ActionEvent e) {

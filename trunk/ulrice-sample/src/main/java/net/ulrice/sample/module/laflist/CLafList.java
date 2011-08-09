@@ -3,7 +3,9 @@
  */
 package net.ulrice.sample.module.laflist;
 
+import java.util.Arrays;
 import java.util.Comparator;
+import java.util.List;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
@@ -13,8 +15,6 @@ import javax.swing.JComponent;
 import javax.swing.UIManager;
 
 import net.ulrice.Ulrice;
-import net.ulrice.module.IFModel;
-import net.ulrice.module.IFModule;
 import net.ulrice.module.impl.AbstractController;
 import net.ulrice.module.impl.ModuleActionState;
 import net.ulrice.module.impl.action.AuthModuleAction;
@@ -28,11 +28,11 @@ import net.ulrice.security.Authorization;
  */
 public class CLafList extends AbstractController {
 
-	/**
-	 * 
-	 */
 	private static final String REFRESH_ACTION = "REFRESH";
 
+	private final MLafList model = new MLafList();
+	private final VLafList view = new VLafList();
+	
 	/**
 	 * @see net.ulrice.module.impl.AbstractController#postCreationEvent(net.ulrice.module.IFModule)
 	 */
@@ -46,8 +46,6 @@ public class CLafList extends AbstractController {
 	 * 
 	 */
 	private void refresh() {
-		MLafList model = (MLafList)getModel();
-
 		postInfoMessage("Loading look and feel constants loaded...");
 
 		SortedSet<Object> lafKeySet = new TreeSet<Object>(new StringComparator());
@@ -60,7 +58,7 @@ public class CLafList extends AbstractController {
 			model.addValue(key == null ? "" : key.toString(), value == null ? "" : value.toString());
 		}
 
-		v.getTable().setModel(model);
+		view.getTable().setModel(model);
 		
 		postInfoMessage("Look and feel constants loaded.");
 	}
@@ -77,34 +75,18 @@ public class CLafList extends AbstractController {
 		return false;
 	}
 	
-	/**
-	 * @see net.ulrice.module.impl.AbstractController#getHandledActions()
-	 */
 	@Override
-	protected ModuleActionState[] getHandledActions() {
+	public List<ModuleActionState> getHandledActions() {
 		Icon refreshIcon = new ImageIcon(getClass().getResource("refresh.gif"));
 		
 		AuthModuleAction refreshAction = new AuthModuleAction(REFRESH_ACTION, "Refresh", true, refreshIcon);
 		refreshAction.setAuthorization(new Authorization(SampleSecurityCallback.TYPE_EXECUTE_ACTION, "LAFLIST_REFRESH_EXEC"));
 
-		return new ModuleActionState[]{new ModuleActionState(true, this, Ulrice.getActionManager().getApplicationAction("TEST1")), new ModuleActionState(true, this, refreshAction)};
+		return Arrays.asList(new ModuleActionState(true, this, Ulrice.getActionManager().getApplicationAction("TEST1")), new ModuleActionState(true, this, refreshAction));
 	}
 	
-	/**
-	 * @see net.ulrice.module.impl.AbstractController#instanciateModel()
-	 */
-	@Override
-	protected IFModel instantiateModel() {
-		return new MLafList();
-	}
-
-	/**
-	 * @see net.ulrice.module.impl.AbstractController#instanciateView()
-	 */
-	private final VLafList v = new VLafList();
-	@Override
-	protected JComponent instantiateView() {
-	    return v.getView();
+	public JComponent getView() {
+	    return view.getView();
 	}
 
 	/***

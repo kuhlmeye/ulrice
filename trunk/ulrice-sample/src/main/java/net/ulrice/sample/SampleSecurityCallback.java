@@ -6,7 +6,7 @@ import net.ulrice.Ulrice;
 import net.ulrice.module.IFController;
 import net.ulrice.module.IFModule;
 import net.ulrice.module.IFModuleTitleProvider;
-import net.ulrice.module.impl.action.Action;
+import net.ulrice.module.impl.action.UlriceAction;
 import net.ulrice.security.IFAuthCallback;
 
 public class SampleSecurityCallback implements IFAuthCallback {
@@ -24,20 +24,20 @@ public class SampleSecurityCallback implements IFAuthCallback {
 	}
 
 	@Override
-	public boolean allowRegisterAction(IFController ctrl, Action moduleAction) {
+	public boolean allowRegisterAction(IFController ctrl, UlriceAction moduleAction) {
 		LOG.info("Checking authorization to register action " + moduleAction.getUniqueId());
 		return true;
 	}
 
 	@Override
-	public boolean allowEnableAction(IFController ctrl, Action moduleAction) {
+	public boolean allowEnableAction(IFController ctrl, UlriceAction moduleAction) {
 		LOG.info("Checking authorization to enable action " + moduleAction.getUniqueId());
 		return false;
 
 	}
 
 	@Override
-	public boolean allowExecuteAction(IFController ctrl, Action moduleAction) {
+	public boolean allowExecuteAction(IFController ctrl, UlriceAction moduleAction) {
 		LOG.info("Checking authorization to execute action " + moduleAction.getUniqueId());
 		return true;
 
