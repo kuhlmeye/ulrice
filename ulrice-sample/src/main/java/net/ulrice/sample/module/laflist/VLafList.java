@@ -18,34 +18,20 @@ import javax.swing.JTable;
 public class VLafList {	
 	
 	/** The jtable displaying the look and feel constants. */
-	private JTable lafTable;
+	private final JTable lafTable = new JTable ();
 	
 	/** The view component. */
-	private JPanel view;
+	private JPanel view = new JPanel ();
 
-	/**
-	 * @see net.ulrice.module.IFView#getView()
-	 */
+	public VLafList() {
+	    view.setLayout(new BorderLayout());
+	    view.add(new JScrollPane(lafTable), BorderLayout.CENTER );
+	}
+	
 	public JComponent getView() {
 		return view;
 	}
 
-	/**
-	 * @see net.ulrice.module.IFView#initialize()
-	 */
-	{
-		lafTable = new JTable();
-				
-		view = new JPanel();
-		view.setLayout(new BorderLayout());
-		view.add(new JScrollPane(lafTable), BorderLayout.CENTER );
-	}
-
-	/**
-	 * Returns the table displaying the look and feel components. 
-	 * 
-	 * @return The jtable.
-	 */
 	public JTable getTable() {
 		return lafTable;
 	}

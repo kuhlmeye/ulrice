@@ -10,7 +10,7 @@ import javax.swing.Icon;
  * 
  * @author christof
  */
-public abstract class Action extends AbstractAction {
+public abstract class UlriceAction extends AbstractAction {
 
 	/** Default generated serial version uid. */
 	private static final long serialVersionUID = -8961513296023817932L;
@@ -33,7 +33,7 @@ public abstract class Action extends AbstractAction {
 	 * @param name The name of this action.
 	 * @param icon The icon of this action.
 	 */
-	public Action(String uniqueId, String name, boolean enabled, ActionType type, Icon icon) {
+	public UlriceAction(String uniqueId, String name, boolean enabled, ActionType type, Icon icon) {
 		super();
 		this.type = type;
 		this.initiallyEnabled = enabled;

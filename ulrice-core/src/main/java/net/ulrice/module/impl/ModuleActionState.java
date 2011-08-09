@@ -1,7 +1,7 @@
 package net.ulrice.module.impl;
 
 import net.ulrice.module.IFController;
-import net.ulrice.module.impl.action.Action;
+import net.ulrice.module.impl.action.UlriceAction;
 
 /**
  * This class is a wrapper for a module action which holds the state of an action for a module.
@@ -14,7 +14,7 @@ public class ModuleActionState {
 	private boolean enabled;
 	
 	/** The reference to a module action. */
-	private Action action;
+	private UlriceAction action;
 	
 	/** The reference to the controller handling this action. */
 	private IFController controller;
@@ -26,7 +26,7 @@ public class ModuleActionState {
 	 * @param controller Reference to the controller
 	 * @param action Reference to the action.
 	 */
-	public ModuleActionState(boolean enabled, IFController controller, Action action) {
+	public ModuleActionState(boolean enabled, IFController controller, UlriceAction action) {
 		this.enabled = enabled;
 		this.action = action;
 		this.controller = controller;
@@ -50,14 +50,14 @@ public class ModuleActionState {
 	/**
 	 * @return the action
 	 */
-	public Action getAction() {
+	public UlriceAction getAction() {
 		return action;
 	}
 
 	/**
 	 * @param action the action to set
 	 */
-	public void setAction(Action action) {
+	public void setAction(UlriceAction action) {
 		this.action = action;
 	}
 

@@ -14,7 +14,7 @@ import net.ulrice.Ulrice;
  * 
  * @author christof
  */
-public class ModuleAction extends Action {
+public class ModuleAction extends UlriceAction {
 
 	/** Default generated serial version uid. */
 	private static final long serialVersionUID = -8075590936981607102L;
@@ -33,7 +33,7 @@ public class ModuleAction extends Action {
 	}
 
 	/**
-	 * @see net.ulrice.module.impl.action.Action#actionPerformed(java.awt.event.ActionEvent)
+	 * @see net.ulrice.module.impl.action.UlriceAction#actionPerformed(java.awt.event.ActionEvent)
 	 */
 	@Override
 	public void actionPerformed(ActionEvent e) {

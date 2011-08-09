@@ -5,7 +5,7 @@ import java.util.List;
 
 import net.ulrice.module.IFController;
 import net.ulrice.module.IFModule;
-import net.ulrice.module.impl.action.Action;
+import net.ulrice.module.impl.action.UlriceAction;
 
 /**
  * Voting auth callback. Delegates the callback to registered callback.
@@ -41,7 +41,7 @@ public class VotingAuthCallback implements IFAuthCallback {
 	}
 
 	@Override
-	public boolean allowRegisterAction(IFController ctrl, Action moduleAction) {
+	public boolean allowRegisterAction(IFController ctrl, UlriceAction moduleAction) {
 		boolean result = true;
 		for(IFAuthCallback securityCallback : securityCallbackList) {
 			result &= securityCallback.allowRegisterAction(ctrl, moduleAction);
@@ -50,7 +50,7 @@ public class VotingAuthCallback implements IFAuthCallback {
 	}
 
 	@Override
-	public boolean allowEnableAction(IFController ctrl, Action moduleAction) {
+	public boolean allowEnableAction(IFController ctrl, UlriceAction moduleAction) {
 		boolean result = true;
 		for(IFAuthCallback securityCallback : securityCallbackList) {
 			result &= securityCallback.allowExecuteAction(ctrl, moduleAction);
@@ -59,7 +59,7 @@ public class VotingAuthCallback implements IFAuthCallback {
 	}
 
 	@Override
-	public boolean allowExecuteAction(IFController ctrl, Action moduleAction) {
+	public boolean allowExecuteAction(IFController ctrl, UlriceAction moduleAction) {
 		boolean result = true;
 		for(IFAuthCallback securityCallback : securityCallbackList) {
 			result &= securityCallback.allowExecuteAction(ctrl, moduleAction);

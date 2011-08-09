@@ -13,13 +13,12 @@ import net.ulrice.databinding.modelaccess.impl.DynamicReflectionMVA;
 import net.ulrice.databinding.modelaccess.impl.IndexedReflectionMVA;
 import net.ulrice.databinding.modelaccess.impl.ReflectionMVA;
 import net.ulrice.databinding.validation.impl.RegExValidator;
-import net.ulrice.module.IFModel;
 
 /**
  * @author christof
  *
  */
-public class MDataBinding implements IFModel<CDataBinding> {
+public class MDataBinding  {
 
 	public String name;
     public List<Person> personList = new ArrayList<Person>();
@@ -27,11 +26,7 @@ public class MDataBinding implements IFModel<CDataBinding> {
     private GenericAM<String> nameAM;
     private TableAM tableAM;
 	
-	/**
-	 * @see net.ulrice.module.IFModel#initialize()
-	 */
-	@Override
-	public void initialize(CDataBinding controller) {
+	public MDataBinding () {
 		nameAM = new GenericAM<String>(new ReflectionMVA(this, "name"));
 		nameAM.setValidator(new RegExValidator<String>("(hallo|hi)", "Validation failed. Only 'hallo' or 'hi' is allowed"));
 		name = "hallo";
@@ -46,13 +41,9 @@ public class MDataBinding implements IFModel<CDataBinding> {
         tableAM.addColumn(new ColumnDefinition<Integer>(new DynamicReflectionMVA(Person.class, "age"), Integer.class));
 	}
 
-	/**
-	 * @return the nameAM
-	 */
 	public GenericAM<String> getNameAM() {
 		return nameAM;
 	}
-
 
     public TableAM getTableAM() {
         return tableAM;

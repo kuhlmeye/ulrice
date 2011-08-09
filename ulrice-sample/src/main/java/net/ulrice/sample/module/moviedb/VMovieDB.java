@@ -23,7 +23,7 @@ public class VMovieDB {
 	private JTextComponentViewAdapter directorVA = ViewAdapterFactory.createTextFieldAdapter();
 	private UTableViewAdapter actorTableVA = ViewAdapterFactory.createUTableViewAdapter(0);
 
-	public void initialize(CMovieDB controller) {					
+	public VMovieDB() {					
 		overviewPanel = new JPanel();
 		overviewPanel.setLayout(new BorderLayout());
 		overviewPanel.add(movieTableVA.getComponent(), BorderLayout.CENTER);
