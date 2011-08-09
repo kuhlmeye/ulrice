@@ -6,14 +6,13 @@ import java.util.Map;
 import java.util.Set;
 
 import net.ulrice.dashboard.module.VDashboard.CellComponent;
-import net.ulrice.module.IFModel;
 
 /**
  * Datamodel of the dashboard module.
  * 
  * @author christof
  */
-public class MDashboard implements IFModel<CDashboard> {
+public class MDashboard {
 
     /** Default generated serial version uid. */
     private static final long serialVersionUID = 1731283174024412217L;
@@ -27,7 +26,6 @@ public class MDashboard implements IFModel<CDashboard> {
      * 
      * @see net.ulrice.module.IFModel#initialize()
      */
-    @Override
     public void initialize(CDashboard controller) {
         dashboardComponentMap = new HashMap<String, CellComponent>();
     }
