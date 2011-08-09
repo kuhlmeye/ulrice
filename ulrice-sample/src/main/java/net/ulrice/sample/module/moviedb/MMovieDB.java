@@ -2,11 +2,9 @@ package net.ulrice.sample.module.moviedb;
 
 import java.util.List;
 
-import net.ulrice.databinding.bufferedbinding.impl.ColumnDefinition;
+import net.ulrice.databinding.bufferedbinding.TableAMBuilder;
 import net.ulrice.databinding.bufferedbinding.impl.GenericAM;
 import net.ulrice.databinding.bufferedbinding.impl.TableAM;
-import net.ulrice.databinding.modelaccess.impl.DynamicReflectionMVA;
-import net.ulrice.databinding.modelaccess.impl.IndexedReflectionMVA;
 import net.ulrice.databinding.modelaccess.impl.ReflectionMVA;
 import net.ulrice.databinding.validation.impl.StringLengthValidator;
 import net.ulrice.sample.module.moviedb.Movie.Actor;
@@ -16,31 +14,32 @@ public class MMovieDB {
 	private List<Movie> movieList;
 	private Movie movie;
 
-	private TableAM movieListAM;
+	private final TableAM movieListAM;
 	private GenericAM<?> titleAM;
 	private GenericAM<?> yearAM;
 	private GenericAM<?> directorAM;
-	private TableAM actorListAM;
+	private final TableAM actorListAM;
 
 	public MMovieDB() {
-		movieListAM = new TableAM(new IndexedReflectionMVA(this, "movieList"));
-		ColumnDefinition<String> nameColumn = new ColumnDefinition<String>(new DynamicReflectionMVA(Movie.class, "name"), String.class);
-		nameColumn.setValidator(new StringLengthValidator(1, 255));
-		movieListAM.addColumn(nameColumn);		
-		movieListAM.addColumn(new ColumnDefinition<String>(new DynamicReflectionMVA(Movie.class, "director"), String.class));		
-		movieListAM.addColumn(new ColumnDefinition<String>(new DynamicReflectionMVA(Movie.class, "year"), String.class));		
-		ColumnDefinition<String> actorColumn = new ColumnDefinition<String>(new DynamicReflectionMVA(Movie.class, "actors"), String.class);
-		actorColumn.setValueConverter(new ActorValueConverter());
-		actorColumn.setReadOnly(true);
-		movieListAM.addColumn(actorColumn);		
-		
-		titleAM = new GenericAM<String>(new ReflectionMVA(this, "movie.name"));
+        final TableAMBuilder movieListBuilder = new TableAMBuilder(this, "movieList", Movie.class)
+            .addColumn("name")
+            .addColumn("director")
+            .addColumn("year")
+            .addColumn("actors", new ActorValueConverter()); 
+
+        movieListBuilder.getColumn("name").setValidator(new StringLengthValidator(1, 255));
+        movieListBuilder.getColumn("actors").setReadOnly(true);
+
+        movieListAM = movieListBuilder.build();
+
+        titleAM = new GenericAM<String>(new ReflectionMVA(this, "movie.name"));
 		yearAM = new GenericAM<Integer>(new ReflectionMVA(this, "movie.year"));
 		directorAM = new GenericAM<String>(new ReflectionMVA(this, "movie.director"));				
-		
-		actorListAM = new TableAM(new IndexedReflectionMVA(this, "movie.actors"));
-		actorListAM.addColumn(new ColumnDefinition<String>(new DynamicReflectionMVA(Actor.class, "lastname"), String.class));		
-		actorListAM.addColumn(new ColumnDefinition<String>(new DynamicReflectionMVA(Actor.class, "firstname"), String.class));				
+
+		actorListAM = new TableAMBuilder(this, "movie.actors", Actor.class)
+		    .addColumn("lastname")
+		    .addColumn("firstname")
+		    .build();
 	}
 
 	public List<Movie> getMovieList() {

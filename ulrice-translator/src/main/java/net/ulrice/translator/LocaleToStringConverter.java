@@ -6,6 +6,16 @@ import net.ulrice.databinding.converter.IFValueConverter;
 
 public class LocaleToStringConverter implements IFValueConverter {
 
+    @Override
+    public Class<?> getViewType(Class<?> modelType) {
+        return String.class;
+    }
+    
+    @Override
+    public Class<?> getModelType(Class<?> viewType) {
+        return Locale.class;
+    }
+    
 	@Override
 	public Object viewToModel(Object o) {
 		if(o == null) {
