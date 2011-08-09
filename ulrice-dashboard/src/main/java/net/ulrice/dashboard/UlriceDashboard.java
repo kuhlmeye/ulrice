@@ -3,38 +3,24 @@
  */
 package net.ulrice.dashboard;
 
-import java.util.Properties;
+import java.util.List;
 
-import net.ulrice.configuration.ConfigurationException;
-import net.ulrice.dashboard.configuration.IFUlriceDashboardFileConfiguration;
+import net.ulrice.dashboard.configuration.IFUlriceDashboardConfiguration;
 
 /**
  * @author ekaveto
  *
  */
 public class UlriceDashboard {
-
-	/** Provider of DashboardComponents */
-	private static IFDashboardComponentProvider dashboardComponentProvider;
 	
 	/** Service to load/save/put/get properties */
 	private static IFSettings settings;
 	
-	/** The configuration of ulrice-dashboard */
-	private static Properties configuration;
+    private static List<DashboardComponent> dashboardComponentList;
 	
-	public static void initialize(IFUlriceDashboardFileConfiguration configuration) throws ConfigurationException {
-		configuration.loadConfiguration();
-		UlriceDashboard.configuration = configuration.getConfigurationProperties();
-		UlriceDashboard.dashboardComponentProvider = configuration.getDashboardComponentProvider();
+	public static void initialize(IFUlriceDashboardConfiguration configuration) {
+		UlriceDashboard.dashboardComponentList = configuration.getDashboardComponentList();
 		UlriceDashboard.settings = configuration.getSettings();
-	}
-
-	/**
-	 * @return the dashboardComponentProvider
-	 */
-	public static IFDashboardComponentProvider getDashboardComponentProvider() {
-		return dashboardComponentProvider;
 	}
 	
 	/**
@@ -43,24 +29,8 @@ public class UlriceDashboard {
 	public static IFSettings getSettings() {
 		return settings;
 	}
-
-	/**
-	 * Returns a configuration value.
-	 * 
-	 * @param requestingObject The class name of the requestingObject is used as key prefix.
-	 * @param key The parameter key.
-	 * @param defaultValue The default value returned, if the value was not found.
-	 * @return The configuration parameter value.
-	 */
-	public static String getConfiguration(Object requestingObject, String key, String defaultValue) {
-		StringBuilder builder = new StringBuilder();
-		builder.append(requestingObject.getClass().getName());
-		builder.append('.');
-		builder.append(key);
-		if(UlriceDashboard.configuration == null) {
-			return defaultValue;
-		}
-		return UlriceDashboard.configuration.getProperty(builder.toString(), defaultValue);
-	}
-
+	
+	public static List<DashboardComponent> getDashboardComponentList() {
+        return dashboardComponentList;
+    }
 }

@@ -8,7 +8,6 @@ import javax.swing.JComponent;
 
 import net.ulrice.dashboard.DashboardComponent;
 import net.ulrice.dashboard.DashboardEventListener;
-import net.ulrice.dashboard.IFDashboardComponentProvider;
 import net.ulrice.dashboard.UlriceDashboard;
 import net.ulrice.dashboard.module.VDashboard.CellComponent;
 import net.ulrice.module.impl.AbstractController;
@@ -25,18 +24,17 @@ public class CDashboard extends AbstractController {
 	/** List for dashbard event listener */
 	private List<DashboardEventListener> dashBoardEventListeners;
 	
-	/** Provider of DashboardComponents */
-	private IFDashboardComponentProvider dashboardComponentProvider;
-
     private MDashboard model;
 
     private VDashboard view;
+
+    private List<DashboardComponent> dashboardComponentList;
 
 	/**
 	 * Constructor of this class
 	 */
 	public CDashboard() {
-		dashboardComponentProvider = UlriceDashboard.getDashboardComponentProvider();
+		dashboardComponentList = UlriceDashboard.getDashboardComponentList();
         model = new MDashboard();
         model.initialize(this);
         view = new VDashboard();
@@ -205,12 +203,12 @@ public class CDashboard extends AbstractController {
 		return "> Dashboard";
 	}
 
-	public IFDashboardComponentProvider getDashboardComponentProvider() {
-		return dashboardComponentProvider;
-	}
-
     @Override
     public JComponent getView() {
         return view.getView();
+    }
+    
+    public List<DashboardComponent> getDashboardComponentList() {
+        return dashboardComponentList;
     }
 }
