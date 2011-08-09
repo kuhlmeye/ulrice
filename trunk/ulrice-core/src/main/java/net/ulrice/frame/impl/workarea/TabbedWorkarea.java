@@ -360,7 +360,6 @@ public class TabbedWorkarea extends JTabbedPane implements IFWorkarea, MouseList
 
 	@Override
 	public void moduleUnblocked(IFController controller) {
-		System.out.println("Unblock: " + controller.getClass().getCanonicalName());
 		// Get the component of the controller.
 		JComponent controllerComponent = getControllerComponent(controller);
 		GlassPanel glassPanel = glassPanelMap.get(controllerComponent);

@@ -15,15 +15,11 @@ import java.util.Arrays;
 
 import net.ulrice.databinding.ErrorHandler;
 
+
 /**
- * The reflection data accessor.
- * 
  * @author christof
  */
 public class ReflectionUtils {
-
-
-
 
 	public static void setAccessible(final Field field) {
 		AccessController.doPrivileged(new PrivilegedAction<Object>() {
@@ -38,23 +34,16 @@ public class ReflectionUtils {
 	public static Field getFieldByReflection(Class<?> rootClass, String path) {
 		
 		String[] pathArr = path.split("\\.");
-		Class<?> rootObject = rootClass;
+		Class<?> currentClass = rootClass;
 		Field field = null;
 		try {
-			if (pathArr == null || pathArr.length == 0) {
-				field = rootObject.getClass().getDeclaredField(path);
-				if (!field.isAccessible()) {
-					setAccessible(field);
-				}
-			} else {
-				for (String pathElement : pathArr) {
-					field = rootObject.getDeclaredField(pathElement);
-					if (!field.isAccessible()) {
-						setAccessible(field);
-					}
-					rootObject = field.getType();
-				}				
-			}
+		    for (String pathElement : pathArr) {
+		        field = currentClass.getDeclaredField(pathElement);
+		        if (!field.isAccessible()) {
+		            setAccessible(field);
+		        }
+		        currentClass = field.getType();
+		    }				
 		} catch (IllegalArgumentException e) {
 			throw new ReflectionMVAException("Could not read object from path: " + path, e);
 		} catch (SecurityException e) {
@@ -65,7 +54,11 @@ public class ReflectionUtils {
 		return field;
 	}
 	
-		
+	public static Class<?> getFieldType (Class<?> rootClass, String path) {
+	    return getFieldByReflection(rootClass, path).getType();
+	}
+	
+	
 	public static Object getValueByReflection(Object root, String path) {
 
 		if (path == null) {

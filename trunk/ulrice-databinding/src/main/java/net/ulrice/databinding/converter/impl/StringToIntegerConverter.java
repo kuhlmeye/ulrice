@@ -11,6 +11,16 @@ import net.ulrice.databinding.converter.ValueConverterException;
  */
 public class StringToIntegerConverter implements IFValueConverter {
 
+    @Override
+    public Class<?> getViewType(Class<?> modelType) {
+        return Integer.class; // TODO arno - this looks lilke it is the wrong way around
+    }
+
+    @Override
+    public Class<?> getModelType(Class<?> viewType) {
+        return String.class;
+    }
+    
 	/**
 	 * 
 	 * {@inheritDoc}
