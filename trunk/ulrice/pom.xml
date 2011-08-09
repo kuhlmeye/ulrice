@@ -33,7 +33,7 @@
 	</developers>
 
 	<properties>
-		<version.ulrice>0.2.3</version.ulrice>
+		<version.ulrice>0.2.3-SNAPSHOT</version.ulrice>
 	</properties>
 	
 	<dependencyManagement>
