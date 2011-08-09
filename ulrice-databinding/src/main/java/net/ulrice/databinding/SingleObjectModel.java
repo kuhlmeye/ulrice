@@ -38,14 +38,22 @@ public class SingleObjectModel<T> {
     
     @SuppressWarnings("rawtypes")
     public IFAttributeModel getAttributeModel(String path) {
+        if (! path.startsWith("data.")) {
+            throw new IllegalArgumentException("all valid paths must start with 'data.'");
+        }
+        
         if (attributeModels.get(path) == null) {
-            attributeModels.put(path, new GenericAM<T>(new ReflectionMVA(ReflectionMVA.createID(this, path), this, "data." + path, false, ReflectionUtils.getFieldType(dataClass, path))));
+            attributeModels.put(path, new GenericAM<T>(new ReflectionMVA(ReflectionMVA.createID(this, path), this, path, false, ReflectionUtils.getFieldType(dataClass, path.substring("data.".length())))));
         }
         return attributeModels.get(path);
     }
     
     @SuppressWarnings("rawtypes")
     public void setAttributeModel(String path, IFAttributeModel am) {
+        if (! path.startsWith("data.")) {
+            throw new IllegalArgumentException("all valid paths must start with 'data.'");
+        }
+
         attributeModels.put(path, am);
     }
 }

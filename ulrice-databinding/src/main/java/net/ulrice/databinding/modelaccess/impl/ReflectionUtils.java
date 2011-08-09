@@ -119,7 +119,7 @@ public class ReflectionUtils {
 		Object object = root;
 		try {
 			for (String pathElement : writePath) {
-				Field field = object.getClass().getDeclaredField(pathElement);
+				Field field = getFieldInHierarchy(object.getClass(), pathElement);
 				if (!field.isAccessible()) {
 					setAccessible(field);
 				}
@@ -127,9 +127,9 @@ public class ReflectionUtils {
 			}
 			Field field = null;
 			if (pathArr != null && pathArr.length > 1) {
-				field = object.getClass().getDeclaredField(pathArr[pathArr.length - 1]);
+				field = getFieldInHierarchy(object.getClass(), pathArr[pathArr.length - 1]);
 			} else {
-				field = object.getClass().getDeclaredField(path);
+				field = getFieldInHierarchy(object.getClass(), path);
 			}
 			if (!field.isAccessible()) {
 				setAccessible(field);
@@ -141,11 +141,10 @@ public class ReflectionUtils {
 			throw new ReflectionMVAException("Could not write object to path: " + path, e);
 		} catch (IllegalAccessException e) {
 			throw new ReflectionMVAException("Could not write object to path: " + path, e);
-		} catch (NoSuchFieldException e) {
-			throw new ReflectionMVAException("Could not write object to path: " + path, e);
 		}
 	}
 	
+	@Deprecated
 	public static Object cloneObject(Object obj) {
 		if (obj == null) {
 			return null;
