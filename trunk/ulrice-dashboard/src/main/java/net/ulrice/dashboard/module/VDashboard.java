@@ -448,7 +448,7 @@ public class VDashboard implements Dashboard, MouseMotionListener {
      * @param moduleId
      */
     private void loadModule(String uniqueId) {
-        for (DashboardComponent dashboardComponent : controller.getDashboardComponentProvider().getDashboardComponentList()) {
+        for (DashboardComponent dashboardComponent : controller.getDashboardComponentList()) {
             if (uniqueId.equals(dashboardComponent.getUniqueId())) {
                 addModuleToDashboard(dashboardComponent);
             }
@@ -677,18 +677,18 @@ public class VDashboard implements Dashboard, MouseMotionListener {
         public void componentResized(ComponentEvent ev) {
             if (getDashboardWidthInCellUnits() > 0  && !initialized) {
                 int countStoredModules = 0;
-                for (DashboardComponent dashboardComponent : controller.getDashboardComponentProvider().getDashboardComponentList()) {
+                for (DashboardComponent dashboardComponent : controller.getDashboardComponentList()) {
                     String value = UlriceDashboard.getSettings().getValue(dashboardComponent.getUniqueId());
                     if (value != null) {
                         countStoredModules++;
                     }
                 }
 
-                if (controller.getDashboardComponentProvider().getDashboardComponentList().size() != countStoredModules) {
-                    binPack(controller.getDashboardComponentProvider().getDashboardComponentList());
+                if (controller.getDashboardComponentList().size() != countStoredModules) {
+                    binPack(controller.getDashboardComponentList());
                 }
                 else {
-                    for (DashboardComponent dashboardComponent : controller.getDashboardComponentProvider().getDashboardComponentList()) {
+                    for (DashboardComponent dashboardComponent : controller.getDashboardComponentList()) {
                         String value = UlriceDashboard.getSettings().getValue(dashboardComponent.getUniqueId());
                         if (value != null) {
                             restoreModule(dashboardComponent, value);
@@ -1216,7 +1216,7 @@ public class VDashboard implements Dashboard, MouseMotionListener {
             try {
                 Transferable transferable = ev.getTransferable();
                 String val = (String) transferable.getTransferData(transferable.getTransferDataFlavors()[0]);
-                for (DashboardComponent dashboardComponent : controller.getDashboardComponentProvider().getDashboardComponentList()) {
+                for (DashboardComponent dashboardComponent : controller.getDashboardComponentList()) {
                     if (val.equals(dashboardComponent.getUniqueId())) {
                         draggedView = dashboardComponent.getDashboardComponent();
                         draggedView.setSize(dashboardComponent.getDashboardSize());
