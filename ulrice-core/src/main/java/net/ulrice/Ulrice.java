@@ -61,15 +61,14 @@ public class Ulrice {
 	 */
 	public static void initialize(IFUlriceConfiguration configuration) throws ConfigurationException {
 		UI.applyDefaultUI();
-		configuration.loadConfiguration();
-		Ulrice.configuration = configuration.getConfigurationProperties();
-				
+		Ulrice.configuration = configuration.getConfigurationProperties();				
 		Ulrice.moduleManager = configuration.getModuleManager();
 		Ulrice.moduleStructureManager = configuration.getModuleStructureManager();
 		Ulrice.messageHandler = new MessageHandler();
 		Ulrice.actionManager = new ModuleActionManager();
 		Ulrice.processManager = new ProcessManager();
 		Ulrice.dialogManager = new DialogManager();
+		Ulrice.messageProvider = configuration.getMessageProvider();
 		
 		if(configuration.getAuthCallback() != null) {
 			Ulrice.securityManager = configuration.getAuthCallback();
@@ -130,15 +129,6 @@ public class Ulrice {
     }
 
     /**
-     * Set the messageProvider
-     *
-     * @param messageProvider -
-     */
-    public static void setMessageProvider(I18NMessageProvider messageProvider) {
-        Ulrice.messageProvider = messageProvider;
-    }
-
-    /**
 	 * Returns the action manager of ulrice. 
 	 * 
 	 * @return the actionManager
@@ -154,10 +144,6 @@ public class Ulrice {
 
 	public static DialogManager getDialogManager() {
 		return dialogManager;
-	}
-
-	public static void setDialogManager(DialogManager dialogManager) {
-		Ulrice.dialogManager = dialogManager;
 	}
 	
 	/**
