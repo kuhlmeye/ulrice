@@ -37,35 +37,12 @@ public class CDashboard extends AbstractController {
 	 */
 	public CDashboard() {
 		dashboardComponentProvider = UlriceDashboard.getDashboardComponentProvider();
+        model = new MDashboard();
+        model.initialize(this);
+        view = new VDashboard();
+        view.initialize(this);
 	}
 
-	/**
-	 * 
-	 * {@inheritDoc}
-	 * 
-	 * @see net.ulrice.module.impl.AbstractController#instanciateModel()
-	 */
-	protected MDashboard instanciateModel() {
-	    if(model == null) {
-	        model = new MDashboard();
-	        model.initialize(this);
-	    }
-	    return model;
-	}
-
-	/**
-	 * 
-	 * {@inheritDoc}
-	 * 
-	 * @see net.ulrice.module.impl.AbstractController#instanciateView()
-	 */
-	protected VDashboard instanciateView() {
-		if(view == null) {
-		    view = new VDashboard();
-		    view.initialize(this);
-		}
-		return view;
-	}
 
 	protected void postEventInitialization() {
 		view.restoreModules();
