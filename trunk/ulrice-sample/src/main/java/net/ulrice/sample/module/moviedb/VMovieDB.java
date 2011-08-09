@@ -13,18 +13,17 @@ import net.ulrice.databinding.viewadapter.utable.UTableViewAdapter;
 
 public class VMovieDB {
 
-	private JPanel mainPanel;
-	private JPanel detailPanel;
-	private JPanel overviewPanel;
+	private final JPanel mainPanel = new JPanel();
+	private final JPanel detailPanel = new JPanel();
+	private final JPanel overviewPanel = new JPanel();
 
-	private UTableViewAdapter movieTableVA = ViewAdapterFactory.createUTableViewAdapter(1);
-	private JTextComponentViewAdapter titleVA = ViewAdapterFactory.createTextFieldAdapter();
-	private JTextComponentViewAdapter yearVA = ViewAdapterFactory.createTextFieldAdapter();
-	private JTextComponentViewAdapter directorVA = ViewAdapterFactory.createTextFieldAdapter();
-	private UTableViewAdapter actorTableVA = ViewAdapterFactory.createUTableViewAdapter(0);
+	private final UTableViewAdapter movieTableVA = ViewAdapterFactory.createUTableViewAdapter(1);
+	private final JTextComponentViewAdapter titleVA = ViewAdapterFactory.createTextFieldAdapter();
+	private final JTextComponentViewAdapter yearVA = ViewAdapterFactory.createTextFieldAdapter();
+	private final JTextComponentViewAdapter directorVA = ViewAdapterFactory.createTextFieldAdapter();
+	private final UTableViewAdapter actorTableVA = ViewAdapterFactory.createUTableViewAdapter(0);
 
 	public VMovieDB() {					
-		overviewPanel = new JPanel();
 		overviewPanel.setLayout(new BorderLayout());
 		overviewPanel.add(movieTableVA.getComponent(), BorderLayout.CENTER);
 		
@@ -37,12 +36,10 @@ public class VMovieDB {
 		movieAttributePanel.add(new JLabel("Director:"));
 		movieAttributePanel.add(directorVA.getComponent());
 		
-		detailPanel = new JPanel();
 		detailPanel.setLayout(new BorderLayout());
 		detailPanel.add(movieAttributePanel, BorderLayout.NORTH);
 		detailPanel.add(actorTableVA.getComponent(), BorderLayout.CENTER);
 		
-		mainPanel = new JPanel();
 		mainPanel.setLayout(new GridLayout(2, 1));
 		mainPanel.add(overviewPanel);
 		mainPanel.add(detailPanel);		
