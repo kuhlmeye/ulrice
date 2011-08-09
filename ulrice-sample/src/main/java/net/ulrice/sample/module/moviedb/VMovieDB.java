@@ -45,7 +45,7 @@ public class VMovieDB {
 		mainPanel.add(detailPanel);		
 	}
 
-	public JComponent getView() {
+	public JComponent getMainPanel() {
 		return mainPanel;
 	}
 

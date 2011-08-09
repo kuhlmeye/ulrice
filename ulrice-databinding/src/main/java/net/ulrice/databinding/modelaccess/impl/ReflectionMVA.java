@@ -1,33 +1,41 @@
 package net.ulrice.databinding.modelaccess.impl;
 
-import java.lang.reflect.Field;
-
 import net.ulrice.databinding.modelaccess.IFModelValueAccessor;
 
 public class ReflectionMVA implements IFModelValueAccessor {
 
-	private Object rootObject;
-	private String path;
+	private final Object rootObject;
+	private final String path;
+	private final Class<?> modelType;
 
-	private boolean readOnly;
+	private final boolean readOnly;
 
-	private String id;
+	private final String id;
 
 	public ReflectionMVA(String id, Object rootObject, String path, boolean readOnly) {
+	    this (id, rootObject, path, readOnly, ReflectionUtils.getFieldType(rootObject.getClass(), path));
+	}
+	    
+	public ReflectionMVA(String id, Object rootObject, String path, boolean readOnly, Class<?> valueType) {
 		this.rootObject = rootObject;
 		this.path = path;
+		this.modelType = valueType;
 		this.readOnly = readOnly;
 		this.id = id;
 	}
 
-	public ReflectionMVA(Object rootObject, String path) {		
-		this(rootObject.getClass().getSimpleName() + "." + path, rootObject, path, false);
+	public ReflectionMVA(Object rootObject, String path) {
+		this(createID(rootObject, path), rootObject, path, false);
 	}
 
 	public ReflectionMVA(Object rootObject, String path, boolean readOnly) {		
-		this(rootObject.getClass().getSimpleName() + "." + path, rootObject, path, readOnly);
+		this(createID(rootObject, path), rootObject, path, readOnly);
 	}
 
+	public static String createID (Object rootObject, String path) {
+	    return rootObject.getClass().getSimpleName() + "." + path;
+	}
+	
 	@Override
 	public String getAttributeId() {
 		return id;
@@ -45,12 +53,7 @@ public class ReflectionMVA implements IFModelValueAccessor {
 	
 	@Override
 	public Class<?> getModelType() {
-		if (path != null) {
-			Field field = ReflectionUtils.getFieldByReflection(rootObject.getClass(), path);
-			return field.getType();
-		} else {
-			return rootObject.getClass();
-		}
+	    return modelType;
 	}
 	
 	@Override

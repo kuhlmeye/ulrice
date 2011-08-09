@@ -22,6 +22,10 @@ import net.ulrice.databinding.ErrorHandler;
 public class ReflectionUtils {
 
 	public static void setAccessible(final Field field) {
+	    if (field.isAccessible()) {
+	        return;
+	    }
+	    
 		AccessController.doPrivileged(new PrivilegedAction<Object>() {
 			public Object run() {
 				field.setAccessible(true);
@@ -38,17 +42,12 @@ public class ReflectionUtils {
 		Field field = null;
 		try {
 		    for (String pathElement : pathArr) {
-		        field = currentClass.getDeclaredField(pathElement);
-		        if (!field.isAccessible()) {
-		            setAccessible(field);
-		        }
+		        field = getFieldInHierarchy(currentClass, pathElement);
 		        currentClass = field.getType();
 		    }				
 		} catch (IllegalArgumentException e) {
 			throw new ReflectionMVAException("Could not read object from path: " + path, e);
 		} catch (SecurityException e) {
-			throw new ReflectionMVAException("Could not read object from path: " + path, e);
-		} catch (NoSuchFieldException e) {
 			throw new ReflectionMVAException("Could not read object from path: " + path, e);
 		}
 		return field;
@@ -56,6 +55,25 @@ public class ReflectionUtils {
 	
 	public static Class<?> getFieldType (Class<?> rootClass, String path) {
 	    return getFieldByReflection(rootClass, path).getType();
+	}
+	
+	public static Field getFieldInHierarchy (Class<?> cls, String fieldName) {
+	    return getFieldInHierarchy (cls, cls, fieldName);
+	}
+	
+	private static Field getFieldInHierarchy (Class<?> cls, Class<?> originalCls, String fieldName) {
+	    try {
+	        Field result = cls.getDeclaredField(fieldName);
+	        setAccessible(result);
+	        return result;
+	    } catch (SecurityException e) {
+	        throw new ReflectionMVAException("Security exception while accessing field " + cls.getName() + "." + fieldName + ".", e);
+	    } catch (NoSuchFieldException e) {
+	        if (cls.getSuperclass() == null) {
+	            throw new ReflectionMVAException("There is no field " + fieldName + " in " + originalCls.getName() + " or its subclasses", e);
+	        }
+	        return getFieldInHierarchy(cls.getSuperclass(), originalCls, fieldName);
+	    }
 	}
 	
 	
@@ -73,17 +91,7 @@ public class ReflectionUtils {
 				if(object == null) {
 					return null;
 				}
-				Field field = object.getClass().getDeclaredField(pathElement);
-				if (!field.isAccessible()) {
-					setAccessible(field);
-				}
-				object = field.get(object);
-			}
-			if (pathArr == null || pathArr.length == 0) {
-				Field field = object.getClass().getDeclaredField(path);
-				if (!field.isAccessible()) {
-					setAccessible(field);
-				}
+				Field field = getFieldInHierarchy(object.getClass(), pathElement);
 				object = field.get(object);
 			}
 		} catch (IllegalArgumentException e) {
@@ -91,8 +99,6 @@ public class ReflectionUtils {
 		} catch (SecurityException e) {
 			throw new ReflectionMVAException("Could not read object from path: " + path, e);
 		} catch (IllegalAccessException e) {
-			throw new ReflectionMVAException("Could not read object from path: " + path, e);
-		} catch (NoSuchFieldException e) {
 			throw new ReflectionMVAException("Could not read object from path: " + path, e);
 		}
 
