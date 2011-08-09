@@ -7,6 +7,8 @@ import java.util.Properties;
 import net.ulrice.Ulrice;
 import net.ulrice.frame.IFMainFrame;
 import net.ulrice.frame.impl.MainFrame;
+import net.ulrice.message.I18NMessageProvider;
+import net.ulrice.message.IFMessageEventListener;
 import net.ulrice.module.IFModuleManager;
 import net.ulrice.module.IFModuleStructureManager;
 import net.ulrice.module.impl.ModuleManager;
@@ -33,6 +35,8 @@ public class UlriceFileConfiguration extends ClassLoadingHelper implements IFUlr
 	/** The authorization callback. */
 	private IFAuthCallback authCallback;
 
+    private I18NMessageProvider messageProvider;
+
 	/**
 	 * Initialize ulrice by a file configuration.
 	 * 
@@ -55,7 +59,21 @@ public class UlriceFileConfiguration extends ClassLoadingHelper implements IFUlr
 	 */
 	public UlriceFileConfiguration(InputStream configurationStream) throws ConfigurationException {
 		super();
+		
+	      // Load the needed configuration parameters.
+        moduleManager = (IFModuleManager) loadClass(properties.getProperty(IFModuleManager.class.getName(),
+                ModuleManager.class.getName()));
+        moduleStructureManager = (IFModuleStructureManager) loadClass(properties.getProperty(
+                IFModuleStructureManager.class.getName(), ModuleManager.class.getName()));
+        mainFrame = (IFMainFrame) loadClass(properties.getProperty(IFMainFrame.class.getName(), MainFrame.class
+                .getName()));
+        authCallback = (IFAuthCallback) loadClass(properties.getProperty(IFAuthCallback.class.getName(), null));
+        messageProvider = (I18NMessageProvider) loadClass(properties.getProperty(I18NMessageProvider.class.getName(), null));
 
+		if(configurationStream == null) {
+		    throw new IllegalArgumentException("Configuration stream must not be null.");
+		}
+		
 		try {
 			properties = new Properties();
 			properties.load(configurationStream);
@@ -67,9 +85,11 @@ public class UlriceFileConfiguration extends ClassLoadingHelper implements IFUlr
 		Ulrice.initialize(this);
 	}
 
+    
 	/**
 	 * @see net.ulrice.configuration.IFUlriceConfiguration#getConfigurationProperties()
 	 */
+    @Override
 	public Properties getConfigurationProperties() {
 		return properties;
 	}
@@ -77,6 +97,7 @@ public class UlriceFileConfiguration extends ClassLoadingHelper implements IFUlr
 	/**
 	 * @see net.ulrice.configuration.IFUlriceConfiguration#getModuleManager()
 	 */
+    @Override
 	public IFModuleManager getModuleManager() {
 		return moduleManager;
 	}
@@ -84,29 +105,24 @@ public class UlriceFileConfiguration extends ClassLoadingHelper implements IFUlr
 	/**
 	 * @see net.ulrice.configuration.IFUlriceConfiguration#getModuleStructureManager()
 	 */
+    @Override
 	public IFModuleStructureManager getModuleStructureManager() {
 		return moduleStructureManager;
 	}
 
+    @Override
+    public I18NMessageProvider getMessageProvider() {
+        return messageProvider;
+    }
+
 	/**
 	 * @see net.ulrice.configuration.IFUlriceConfiguration#getMainFrame()
 	 */
+    @Override
 	public IFMainFrame getMainFrame() {
 		return mainFrame;
 	}
 
-	public void loadConfiguration() throws ConfigurationException {
-
-		// Load the needed configuration parameters.
-		moduleManager = (IFModuleManager) loadClass(properties.getProperty(IFModuleManager.class.getName(),
-				ModuleManager.class.getName()));
-		moduleStructureManager = (IFModuleStructureManager) loadClass(properties.getProperty(
-				IFModuleStructureManager.class.getName(), ModuleManager.class.getName()));
-		mainFrame = (IFMainFrame) loadClass(properties.getProperty(IFMainFrame.class.getName(), MainFrame.class
-				.getName()));
-		authCallback = (IFAuthCallback) loadClass(properties.getProperty(IFAuthCallback.class.getName(), null));
-
-	}
 
 	@Override
 	public IFAuthCallback getAuthCallback() {		
