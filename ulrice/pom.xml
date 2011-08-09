@@ -35,6 +35,16 @@
 	<properties>
 		<version.ulrice>0.2.2</version.ulrice>
 	</properties>
+	
+	<modules>
+	 	<module>ulrice-core</module>
+	 	<module>ulrice-databinding</module>
+	 	<module>ulrice-dashboard</module>
+	 	<module>ulrice-sample</module>
+	 	<module>ulrice-translator</module>
+	 	<module>ulrice-webstarter</module>
+	 	<module>ulrice-webstarter-maven-plugin</module>
+	</modules>
 
 	<dependencyManagement>
 		<dependencies>
