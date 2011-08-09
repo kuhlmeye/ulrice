@@ -20,17 +20,24 @@ import net.ulrice.databinding.modelaccess.impl.ReflectionUtils;
  * @author arno
  */
 public class TableAMBuilder {
-    private final Object modelRoot;
-    private final String elementCollectionPath;
-    private final Class<?> modelRowClass;
+    private Object modelRoot;
+    private String elementCollectionPath;
+    private Class<?> modelRowClass;
 
     private final List<ColumnDefinition<?>> columnDefs = new ArrayList<ColumnDefinition<?>>();
     private final Map<String, ColumnDefinition<?>> columnDefsByPath = new HashMap<String, ColumnDefinition<?>>();
     
     public TableAMBuilder(Object modelRoot, String elementCollectionPath, Class<?> modelRowClass) {
-        this.modelRoot = modelRoot;
-        this.elementCollectionPath = elementCollectionPath;
-        this.modelRowClass = modelRowClass; // TODO arno derive this via reflection
+        init (modelRoot, elementCollectionPath, modelRowClass);
+    }
+    
+    protected TableAMBuilder() {
+    }
+    
+    protected void init (Object pModelRoot, String pElementCollectionPath, Class<?> pModelRowClass) {
+        this.modelRoot = pModelRoot;
+        this.elementCollectionPath = pElementCollectionPath;
+        this.modelRowClass = pModelRowClass; //TODO arno derive this via reflection
     }
     
     /**

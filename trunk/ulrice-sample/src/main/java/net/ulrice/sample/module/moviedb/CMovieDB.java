@@ -9,35 +9,55 @@ import javax.swing.JTable;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
+import net.ulrice.databinding.SingleListTableModel;
+import net.ulrice.databinding.SingleObjectModel;
+import net.ulrice.databinding.bufferedbinding.TableAMBuilder;
 import net.ulrice.databinding.bufferedbinding.impl.BindingGroup;
 import net.ulrice.databinding.bufferedbinding.impl.Element;
+import net.ulrice.databinding.validation.impl.StringLengthValidator;
 import net.ulrice.module.impl.AbstractController;
 import net.ulrice.module.impl.ModuleActionState;
-import net.ulrice.module.impl.action.UlriceAction;
 import net.ulrice.module.impl.action.ActionType;
+import net.ulrice.module.impl.action.UlriceAction;
+import net.ulrice.sample.module.moviedb.Movie.Actor;
 
 public class CMovieDB extends AbstractController implements ListSelectionListener {
-    private final MMovieDB model = new MMovieDB();
+    private final SingleListTableModel<Movie> overviewModel = new SingleListTableModel<Movie>(Movie.class) {{
+        addColumn("name");
+        addColumn("director");
+        addColumn("year");
+        addColumn("actors", new ActorValueConverter()); 
+
+        getColumn("name").setValidator(new StringLengthValidator(1, 255));
+        getColumn("actors").setReadOnly(true);
+    }};
+    
+    private final SingleObjectModel<Movie> detailModel = new SingleObjectModel<Movie>(Movie.class) {{
+        setAttributeModel("actors", new TableAMBuilder(this, "actors", Actor.class)
+            .addColumn("lastname")
+            .addColumn("firstname")
+            .build());
+    }};
+    
     private final VMovieDB view = new VMovieDB();
 
     public JComponent getView() {
-        return view.getView();
+        return view.getMainPanel();
     }
 
-	private BindingGroup overviewGroup = new BindingGroup();
-	private BindingGroup detailGroup = new BindingGroup();
+	private final BindingGroup overviewGroup = new BindingGroup();
+	private final BindingGroup detailGroup = new BindingGroup();
 	private String detailMovieId;
 
 	@Override
 	public void postCreate() {
-		model.setMovieList(MovieData.generateData());
+	    overviewModel.setData(MovieData.generateData());
+		overviewGroup.bind(overviewModel.getAttributeModel(), view.getMovieTableAdapter());
 
-		overviewGroup.bind(model.getMovieListAM(), view.getMovieTableAdapter());
-
-		detailGroup.bind(model.getTitleAM(), view.getTitleVA());
-		detailGroup.bind(model.getYearAM(), view.getYearVA());
-		detailGroup.bind(model.getDirectorAM(), view.getDirectorVA());
-		detailGroup.bind(model.getActorListAM(), view.getActorTableVA());
+		detailGroup.bind(detailModel.getAttributeModel("name"), view.getTitleVA());
+		detailGroup.bind(detailModel.getAttributeModel("year"), view.getYearVA());
+		detailGroup.bind(detailModel.getAttributeModel("director"), view.getDirectorVA());
+		detailGroup.bind(detailModel.getAttributeModel("actors"), view.getActorTableVA());
 
 		overviewGroup.read();
 
@@ -115,20 +135,19 @@ public class CMovieDB extends AbstractController implements ListSelectionListene
 
 			if (detailMovieId != null && detailGroup.isDirty()) {
 				detailGroup.write();
-				Movie movie = model.getMovie();
-				model.getMovieListAM().getElementById(detailMovieId).setCurrentValue(movie);
+				overviewModel.getAttributeModel().getElementById(detailMovieId).setCurrentValue(detailModel.getData());
 			}
 
 			if (selectedRow > -1) {
-				Element selElement = model.getMovieListAM().getElementAt(selectedRow);
+				Element selElement = overviewModel.getAttributeModel().getElementAt(selectedRow);
 				detailMovieId = selElement.getUniqueId();
 				Movie movie = (Movie) selElement.getCurrentValue();
-				model.setMovie(movie);
+				detailModel.setData(movie);
 				detailGroup.read();
 				view.getActorTableVA().sizeColumns(true);
 			} else {
 				detailMovieId = null;
-				model.setMovie(null);
+				detailModel.setData(null);
 				detailGroup.read();
 			}
 
