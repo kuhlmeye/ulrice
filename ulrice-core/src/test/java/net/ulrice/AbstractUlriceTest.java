@@ -8,6 +8,7 @@ import net.ulrice.Ulrice;
 import net.ulrice.configuration.ConfigurationException;
 import net.ulrice.configuration.IFUlriceConfiguration;
 import net.ulrice.frame.IFMainFrame;
+import net.ulrice.message.I18NMessageProvider;
 import net.ulrice.module.IFModuleManager;
 import net.ulrice.module.IFModuleStructureManager;
 import net.ulrice.module.ModuleType;
@@ -30,6 +31,7 @@ public class AbstractUlriceTest implements IFUlriceConfiguration {
 
 	@Before
 	public void setup() throws ConfigurationException {
+        moduleManager = new ModuleManager();
 		Ulrice.initialize(this);
 		
 		// Define the modules.
@@ -52,10 +54,6 @@ public class AbstractUlriceTest implements IFUlriceConfiguration {
 		moduleManager.addModule(normalModule);
 	}
 
-	@Override
-	public void loadConfiguration() throws ConfigurationException {
-		moduleManager = new ModuleManager();
-	}
 
 	@Override
 	public IFModuleManager getModuleManager() {
@@ -81,5 +79,10 @@ public class AbstractUlriceTest implements IFUlriceConfiguration {
 	public IFAuthCallback getAuthCallback() {
 		return new GrantAllAuthCallback();
 	}
+
+    @Override
+    public I18NMessageProvider getMessageProvider() {
+        return null;
+    }
 
 }

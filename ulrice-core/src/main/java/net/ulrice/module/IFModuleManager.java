@@ -85,6 +85,8 @@ public interface IFModuleManager {
 	void block (IFController controller, Object blocker);
 	void unblock (IFController controller, Object blocker);
 	boolean isBlocked (IFController controller);
+
+	List<IFModule> getAllModules();
 	
 //	void fireControllerBlocked(IFController abstractController);
 //	void fireControllerUnblocked(IFController abstractController);

@@ -60,7 +60,7 @@ public class ModuleManager implements IFModuleManager, IFModuleStructureManager 
 
 		IFModule module = moduleMap.get(moduleId);
 		if (module == null) {
-			throw new ModuleInstanciationException("Module with (" + moduleId + ") could not be found.", null);
+			throw new ModuleInstanciationException("Module with id (" + moduleId + ") could not be found.", null);
 		}
 
         final boolean isSingleModule = ModuleType.SingleModule.equals(module.getModuleInstanceType());
@@ -426,5 +426,10 @@ public class ModuleManager implements IFModuleManager, IFModuleStructureManager 
     public boolean isBlocked(IFController controller) {
         final IdentityHashMap<Object, Object> m = blockers.get(controller);
         return m != null && ! m.isEmpty();
+    }
+
+    @Override
+    public List<IFModule> getAllModules() {        
+        return new ArrayList<IFModule>(moduleMap.values());
     }
 }
