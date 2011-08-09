@@ -270,6 +270,7 @@ public class ModuleManager implements IFModuleManager, IFModuleStructureManager 
 		fireModuleStructureChanged();
 	}
 
+
 	/**
 	 * @return the rootGroup
 	 */
@@ -324,6 +325,7 @@ public class ModuleManager implements IFModuleManager, IFModuleStructureManager 
 		 * @param group
 		 *            The group of modules that should be added to this module.
 		 */
+        @Override
 		public void addModuleGroup(IFModuleGroup group) {
 			moduleGroups.add(group);
 		}
@@ -334,6 +336,7 @@ public class ModuleManager implements IFModuleManager, IFModuleStructureManager 
 		 * @param module
 		 *            The module that should be added to this group.
 		 */
+        @Override
 		public void addModule(IFModule module) {
 			modules.add(module);
 		}

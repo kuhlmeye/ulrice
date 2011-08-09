@@ -22,4 +22,8 @@ public interface IFModuleGroup {
 	 * @return The list of module groups.
 	 */
 	List<IFModuleGroup> getModuleGroups();
+	
+	void addModuleGroup(IFModuleGroup group);
+	
+	void addModule(IFModule module);
 }

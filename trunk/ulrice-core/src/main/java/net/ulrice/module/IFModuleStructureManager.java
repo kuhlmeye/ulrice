@@ -18,12 +18,12 @@ public interface IFModuleStructureManager {
 	 */
 	public void addModuleGroup(IFModuleGroup group);
 
-	/**
-	 * Add a module to this module group
-	 * 
-	 * @param module The module that should be added to this group.
-	 */
-	public void addModule(IFModule module);
+    /**
+     * Add a module to the root group
+     * 
+     * @param module The module that should be added to this group.
+     */
+    public void addModule(IFModule module);
 	
 	/**
 	 * Adds a class listening to the module structure events.
