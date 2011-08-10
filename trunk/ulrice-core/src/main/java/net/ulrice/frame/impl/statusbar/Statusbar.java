@@ -5,7 +5,6 @@ package net.ulrice.frame.impl.statusbar;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
-import java.awt.Image;
 import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -77,7 +76,9 @@ public class Statusbar extends JPanel implements IFMainFrameComponent, IFMessage
 	/** Panel in which the process state is displayed. */
 	private JPanel processPanel;
 
+
 	public Statusbar() {
+	    
 		messageHandler = Ulrice.getMessageHandler();
 		messageHandler.addMessageEventListener(this);
 
