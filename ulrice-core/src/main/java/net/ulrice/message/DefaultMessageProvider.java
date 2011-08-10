@@ -19,6 +19,9 @@ private String bundlePath;
     
     private Locale locale;
 
+    public DefaultMessageProvider() {
+        
+    }
 
     public String getString(String key) {
         try {
