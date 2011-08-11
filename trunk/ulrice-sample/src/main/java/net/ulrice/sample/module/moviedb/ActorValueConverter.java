@@ -6,26 +6,27 @@ import net.ulrice.databinding.converter.IFValueConverter;
 import net.ulrice.sample.module.moviedb.Movie.Actor;
 
 
-public class ActorValueConverter implements IFValueConverter {
+@SuppressWarnings("rawtypes")
+public class ActorValueConverter implements IFValueConverter <List, String> {
     @Override
-    public Class<?> getViewType(Class<?> modelType) {
+    public Class<String> getViewType(Class<? extends List> modelType) {
         return String.class;
     }
     
     @Override
-    public Class<?> getModelType(Class<?> viewType) {
+    public Class<List> getModelType(Class<? extends String> viewType) {
         return List.class;
     }
 
 	@Override
-	public Object viewToModel(Object o) {
+	public List<?> viewToModel(String o) {
 	    throw new UnsupportedOperationException(); // only for r/o columns
 	}
 
-	@Override
 	@SuppressWarnings("unchecked")
-	public Object modelToView(Object o) {
-        List<Actor> actorList = (List<Actor>) o;
+    @Override
+	public String modelToView(List o) {
+        List<Actor> actorList = o;
 		StringBuffer buffer = new StringBuffer();
 
 		if (actorList != null) {

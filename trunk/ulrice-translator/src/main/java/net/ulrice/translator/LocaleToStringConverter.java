@@ -4,36 +4,33 @@ import java.util.Locale;
 
 import net.ulrice.databinding.converter.IFValueConverter;
 
-public class LocaleToStringConverter implements IFValueConverter {
+public class LocaleToStringConverter implements IFValueConverter<Locale, String> {
 
     @Override
-    public Class<?> getViewType(Class<?> modelType) {
+    public Class<String> getViewType(Class<? extends Locale> modelType) {
         return String.class;
     }
     
     @Override
-    public Class<?> getModelType(Class<?> viewType) {
+    public Class<Locale> getModelType(Class<? extends String> viewType) {
         return Locale.class;
     }
     
 	@Override
-	public Object viewToModel(Object o) {
+	public Locale viewToModel(String o) {
 		if(o == null) {
 			return null;
 		}
 		
-		String string = (String)o;
-		Locale locale = new Locale(string);
-		return locale;
+		return new Locale(o);
 	}
 
 	@Override
-	public Object modelToView(Object o) {
+	public String modelToView(Locale o) {
 		if(o == null) {
 			return null;
 		}
-		Locale locale = (Locale)o;
-		return locale.toString();
+		return o.toString();
 	}
 
 }

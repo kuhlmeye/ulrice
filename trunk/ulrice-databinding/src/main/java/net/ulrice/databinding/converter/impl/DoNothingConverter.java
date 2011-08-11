@@ -4,21 +4,28 @@ import net.ulrice.databinding.converter.IFValueConverter;
 
 
 
-public class DoNothingConverter implements IFValueConverter {
+public class DoNothingConverter <M, V> implements IFValueConverter <M, V> {
+    @SuppressWarnings("rawtypes")
+    public static final DoNothingConverter INSTANCE = new DoNothingConverter();
+    
+    @SuppressWarnings({ "unchecked", "rawtypes" })
     @Override
-    public Class<?> getViewType(Class<?> modelType) {
-        return modelType;
+    public Class<? extends V> getViewType(Class<? extends M> modelType) {
+        return (Class) modelType;
     }
     
-    public Class<?> getModelType(Class<?> viewType) {
-        return viewType;
+    @SuppressWarnings({ "unchecked", "rawtypes" })
+    public Class<? extends M> getModelType(Class<? extends V> viewType) {
+        return (Class) viewType;
     }
     
-    public Object modelToView (Object o) {
-        return o;
+    @SuppressWarnings("unchecked")
+    public V modelToView (M o) {
+        return (V) o;
     }
 
-    public Object viewToModel (Object o) {
-        return o;
+    @SuppressWarnings("unchecked")
+    public M viewToModel (V o) {
+        return (M) o;
     }
 }
