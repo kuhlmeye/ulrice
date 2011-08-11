@@ -5,26 +5,29 @@ import java.util.List;
 
 import net.ulrice.databinding.IFBinding;
 import net.ulrice.databinding.converter.IFValueConverter;
+import net.ulrice.databinding.converter.impl.DoNothingConverter;
 
 
 
 
-public abstract class AbstractViewAdapter implements IFViewAdapter {
+public abstract class AbstractViewAdapter <M, V> implements IFViewAdapter <M, V> {
 
     private final List<IFViewChangeListener> _listeners = new ArrayList<IFViewChangeListener> ();
 
     private boolean inNotification = false;
 
-	private Class<?> viewType;
+	private Class<V> viewType;
 	
 	private IFTooltipHandler tooltipHandler;
 	private IFStateMarker stateMarker;
-	private IFValueConverter valueConverter;
+	private IFValueConverter<M, V> valueConverter;
 	private boolean bindWithoutValue;
 	private boolean useAutoValueConverter = true;
 
-    public AbstractViewAdapter(Class<?> viewType) {
+    @SuppressWarnings({ "rawtypes", "unchecked" })
+    public AbstractViewAdapter(Class viewType) {
 		this.viewType = viewType;
+		setValueConverter(null);
 	}
 
 	protected void fireViewChange () {
@@ -39,7 +42,7 @@ public abstract class AbstractViewAdapter implements IFViewAdapter {
 	public void updateFromBinding(IFBinding binding) {
 		if(!isInNotification()) {
 			removeComponentListener();
-			setValue(binding.getCurrentValue());
+			setValue((M) binding.getCurrentValue());
 			addComponentListener();
 		}
 		if(getTooltipHandler() != null) {
@@ -52,7 +55,7 @@ public abstract class AbstractViewAdapter implements IFViewAdapter {
     
     protected abstract void addComponentListener();
 
-	protected abstract void setValue(Object value);
+	protected abstract void setValue(M value);
 
 	protected abstract void removeComponentListener();
 
@@ -73,7 +76,7 @@ public abstract class AbstractViewAdapter implements IFViewAdapter {
     
 
 	@Override
-	public Class<?> getViewType() {
+	public Class<V> getViewType() {
 		return viewType;
 	}
 
@@ -106,29 +109,27 @@ public abstract class AbstractViewAdapter implements IFViewAdapter {
 		this.bindWithoutValue = bindWithoutValue;
 	}
 
-	public void setValueConverter(IFValueConverter valueConverter) {
+	@SuppressWarnings("unchecked")
+    public void setValueConverter(IFValueConverter<M, V> valueConverter) {
 		this.valueConverter = valueConverter;
+		if (this.valueConverter == null) {
+		    this.valueConverter = DoNothingConverter.INSTANCE;
+		}
 	}
 	
 
 	@Override
-	public IFValueConverter getValueConverter() {
+	public IFValueConverter<M, V> getValueConverter() {
 		return valueConverter;
 	}
 
     
-	protected Object viewToModel(Object object) {
-		if(getValueConverter() != null) {
-			return getValueConverter().viewToModel(object);
-		}
-		return object;
+	protected M viewToModel(V object) {
+	    return getValueConverter().viewToModel(object);
 	}
 
-    protected Object modelToView(Object object) {
-		if(getValueConverter() != null) {
-			return getValueConverter().modelToView(object);
-		}
-		return object;
+    protected V modelToView(M object) {
+        return getValueConverter().modelToView(object);
 	}
     
     @Override

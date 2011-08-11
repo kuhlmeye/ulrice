@@ -1,9 +1,9 @@
 package net.ulrice.databinding.modelaccess;
 
 
-public interface IFModelValueAccessor {
-    Object getValue ();
-    void setValue (Object value);
+public interface IFModelValueAccessor <M> {
+    M getValue ();
+    void setValue (M value);
     
     boolean isReadOnly ();
     Class<?> getModelType ();

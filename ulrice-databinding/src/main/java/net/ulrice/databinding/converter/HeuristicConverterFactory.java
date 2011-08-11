@@ -7,19 +7,20 @@ import net.ulrice.databinding.converter.impl.StringToIntegerConverter;
 
 
 public class HeuristicConverterFactory {
-    public static IFValueConverter createConverter (Class<?> presentationType, Class<?> modelType) {
+    @SuppressWarnings({ "unchecked", "rawtypes" })
+    public static <M, V> IFValueConverter<M, V> createConverter (Class<V> presentationType, Class<M> modelType) {
         if (presentationType.equals (modelType)) {
-            return new DoNothingConverter ();
+            return DoNothingConverter.INSTANCE;
         }
 
         // Model: String => View: Int
         if (String.class.equals (modelType) && (Integer.class.equals (presentationType) || Integer.TYPE.equals (presentationType))) {
-            return new StringToIntegerConverter();
+            return (IFValueConverter) new StringToIntegerConverter();
         }
         
         // Model: Int => View: String
         if ((Integer.class.equals (modelType) || Integer.TYPE.equals (modelType)) && String.class.equals (presentationType)) {
-            return new Reverser(new StringToIntegerConverter());
+            return (IFValueConverter) new Reverser <Integer, String> (new StringToIntegerConverter());
         }
         
         throw new IllegalArgumentException ("keine Implizite Konvertierung von " + presentationType.getName () + " in " + modelType.getName () + ".");

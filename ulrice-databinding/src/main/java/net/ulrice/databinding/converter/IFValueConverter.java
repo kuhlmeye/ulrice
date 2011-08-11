@@ -6,13 +6,13 @@ package net.ulrice.databinding.converter;
  * 
  * @author arno
  */
-public interface IFValueConverter {
+public interface IFValueConverter <M, V> {
     /**
      * These two get...Type methods may assume to be called only for types they can actually handle
      */
-    Class<?> getViewType(Class<?> modelType);
-    Class<?> getModelType(Class<?> viewType);
+    Class<? extends V> getViewType(Class<? extends M> modelType);
+    Class<? extends M> getModelType(Class<? extends V> viewType);
     
-    Object viewToModel (Object o);
-    Object modelToView (Object o);
+    M viewToModel (V o);
+    V modelToView (M o);
 }

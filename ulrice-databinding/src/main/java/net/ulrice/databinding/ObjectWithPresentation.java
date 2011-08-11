@@ -1,16 +1,16 @@
 package net.ulrice.databinding;
 
 
-public class ObjectWithPresentation {
-	private final Object value;
+public class ObjectWithPresentation <M> {
+	private final M value;
 	private final String presentation;
 	
-	public ObjectWithPresentation(Object value, String presentation) {
+	public ObjectWithPresentation(M value, String presentation) {
 		this.value = value;
 		this.presentation = presentation;
 	}
 
-	public Object getValue() {
+	public M getValue() {
 		return value;
 	}
 	

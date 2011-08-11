@@ -6,18 +6,18 @@ import net.ulrice.databinding.IFBinding;
 import net.ulrice.databinding.converter.IFValueConverter;
 
 
-public interface IFViewAdapter {
+public interface IFViewAdapter <M, V> {
 
 	void updateFromBinding(IFBinding binding);
 	
-	Object getValue();
+	M getValue();
 
     JComponent getComponent();
 	
     void addViewChangeListener (IFViewChangeListener l);
     void removeViewChangeListener (IFViewChangeListener l);
 
-	Class<?> getViewType();
+	Class<V> getViewType();
 	void setBindWithoutValue(boolean withoutData);
     
     void setEnabled (boolean enabled);
@@ -25,7 +25,7 @@ public interface IFViewAdapter {
     
 	void setTooltipHandler(IFTooltipHandler tooltipHandler);
 	void setStateMarker(IFStateMarker stateMarker);
-	void setValueConverter(IFValueConverter converter);
-	IFValueConverter getValueConverter();
+	void setValueConverter(IFValueConverter<M, V> converter);
+	IFValueConverter<M, V> getValueConverter();
 	boolean isUseAutoValueConverter();
 }

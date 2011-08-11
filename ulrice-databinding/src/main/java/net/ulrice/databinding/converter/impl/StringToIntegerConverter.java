@@ -9,44 +9,32 @@ import net.ulrice.databinding.converter.ValueConverterException;
  * @author andre
  * 
  */
-public class StringToIntegerConverter implements IFValueConverter {
+public class StringToIntegerConverter implements IFValueConverter<String, Integer> {
 
     @Override
-    public Class<?> getViewType(Class<?> modelType) {
+    public Class<Integer> getViewType(Class<? extends String> modelType) {
         return Integer.class; // TODO arno - this looks lilke it is the wrong way around
     }
 
     @Override
-    public Class<?> getModelType(Class<?> viewType) {
+    public Class<String> getModelType(Class<? extends Integer> viewType) {
         return String.class;
     }
     
-	/**
-	 * 
-	 * {@inheritDoc}
-	 * 
-	 * @see net.ulrice.databinding.IFConverter#mapToSource(java.lang.Object)
-	 */
 	@Override
-	public Object viewToModel(Object view) {
+	public String viewToModel(Integer view) {
 		return view == null ? "" : String.valueOf(view);
 	}
 
-	/**
-	 * 
-	 * {@inheritDoc}
-	 * 
-	 * @see net.ulrice.databinding.IFConverter#mapToTarget(java.lang.Object)
-	 */
 	@Override
-	public Object modelToView(Object model) {
-		if (model == null || "".equals(((String) model).trim())) {
+	public Integer modelToView(String model) {
+		if (model == null || "".equals(model.trim())) {
 			return null;
 		}
 		try {
 			return Integer.valueOf(model.toString());
 		} catch (NumberFormatException ex) {
-			return new ValueConverterException(ex);
+			throw new ValueConverterException(ex);
 		}
 	}
 }
