@@ -39,7 +39,7 @@ public class SingleObjectModel<T> {
     @SuppressWarnings("rawtypes")
     public IFAttributeModel getAttributeModel(String path) {
         if (! path.startsWith("data.")) {
-            throw new IllegalArgumentException("all valid paths must start with 'data.'");
+            path = "data." + path;
         }
         
         if (attributeModels.get(path) == null) {

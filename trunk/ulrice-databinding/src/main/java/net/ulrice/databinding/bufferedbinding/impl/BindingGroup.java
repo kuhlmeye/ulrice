@@ -21,10 +21,10 @@ import net.ulrice.databinding.viewadapter.IFViewAdapter;
 public class BindingGroup implements IFDataGroup, IFAttributeModelEventListener {
 
     /** The list of all gui accessors contained in this data group. */
-    private Map<String, List<IFViewAdapter>> vaMap = new HashMap<String, List<IFViewAdapter>>();
+    private final Map<String, List<IFViewAdapter>> vaMap = new HashMap<String, List<IFViewAdapter>>();
 
     /** The list of all attribute models contained in this data group. */
-    private Map<String, IFAttributeModel> amMap = new HashMap<String, IFAttributeModel>();
+    private final Map<String, IFAttributeModel> amMap = new HashMap<String, IFAttributeModel>();
 
     /** The set of all changed attribute models. */
     private Set<String> changedSet = new HashSet<String>();
@@ -109,13 +109,11 @@ public class BindingGroup implements IFDataGroup, IFAttributeModelEventListener 
      * Executes read on all attribute models contained in this data group.
      */
     public void read() {
-        if (amMap != null && !amMap.isEmpty()) {
-            initialized = true;
-            valid = true;
-            dirty = false;
-            for (IFAttributeModel<?> am : amMap.values()) {
-                am.read();
-            }
+        initialized = true;
+        valid = true;
+        dirty = false;
+        for (IFAttributeModel<?> am : amMap.values()) {
+            am.read();
         }
     }
 
@@ -123,10 +121,8 @@ public class BindingGroup implements IFDataGroup, IFAttributeModelEventListener 
      * Executes write on all attribute models contained in this data group.
      */
     public void write() {
-        if (amMap != null && !amMap.isEmpty()) {
-            for (IFAttributeModel<?> am : amMap.values()) {
-                am.write();
-            }
+        for (IFAttributeModel<?> am : amMap.values()) {
+            am.write();
         }
     }
 

@@ -10,6 +10,7 @@ import net.ulrice.module.exception.NoSuchMessageException;
  * 
  * @author dritonshoshi
  */
+@Deprecated
 public interface I18NMessageProvider {
 
     /**

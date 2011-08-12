@@ -6,39 +6,33 @@ import java.awt.event.ItemListener;
 import javax.swing.JComboBox;
 
 import net.ulrice.databinding.ObjectWithPresentation;
-import net.ulrice.databinding.ReflectiveObjectWithPresentationConverter;
 import net.ulrice.databinding.viewadapter.AbstractViewAdapter;
 
 
 public class JComboBoxViewAdapter<M> extends AbstractViewAdapter <M, ObjectWithPresentation<M>> implements ItemListener {
     private final JComboBox comboBox;
+    private final PresentationProvider<M> presentationProvider;
 
-    public JComboBoxViewAdapter() {
-    	this(new JComboBox());
+    public JComboBoxViewAdapter(PresentationProvider<M> presentationProvider) {
+    	this(new JComboBox(), presentationProvider);
     }
     
-    public JComboBoxViewAdapter (JComboBox combo) {
+    public JComboBoxViewAdapter (JComboBox combo, PresentationProvider<M> presentationProvider) {
         super (ObjectWithPresentation.class);
+        this.presentationProvider = presentationProvider;
         comboBox = combo;        
         comboBox.addItemListener(this);
-    }
-
-    public JComboBoxViewAdapter (JComboBox combo, Class<M> modelClass, String attributeToDisplay) {
-        super (ObjectWithPresentation.class);
-        comboBox = combo;        
-        comboBox.addItemListener(this);
-        setValueConverter(new ReflectiveObjectWithPresentationConverter<M> (modelClass, attributeToDisplay));
     }
 
     @SuppressWarnings("unchecked")
     @Override
     public M getValue () {
-        return viewToModel(((ObjectWithPresentation<M>) comboBox.getSelectedItem()));
+        return ((ObjectWithPresentation<M>) comboBox.getSelectedItem()).getValue();
     }
 
 	@Override
 	protected void setValue(M value) {
-    	comboBox.setSelectedItem (new ObjectWithPresentation<M>(value, String.valueOf(modelToView(value))));
+    	comboBox.setSelectedItem (new ObjectWithPresentation<M>(value, presentationProvider.getPresentation(value)));
 	}
 
 	@Override
