@@ -13,7 +13,7 @@ public class HeuristicViewAdapterFactory {
 		_descriptors.add(new JTextComponentAdapterDescriptor());
 		_descriptors.add(new JButtonAdapterDescriptor());
 		_descriptors.add(new JCheckboxAdapterDescriptor());
-		_descriptors.add(new JComboBoxAdapterDescriptor());
+//		_descriptors.add(new JComboBoxAdapterDescriptor()); //TODO what about presentation? maybe for AsyncComboBox (and EnumComboBox)...
 	}
 
 	public static void register(IFViewAdapterDescriptor desc) {
@@ -28,7 +28,7 @@ public class HeuristicViewAdapterFactory {
 			}
 		}
 
-		throw new IllegalArgumentException("Kein ViewAdapter fÃ¼r Elementtyp " + viewElement.getClass().getName() + " gefunden.");
+		throw new IllegalArgumentException("Kein ViewAdapter für Elementtyp " + viewElement.getClass().getName() + " gefunden.");
 	}
 
 }

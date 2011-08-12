@@ -10,29 +10,25 @@ import javax.swing.ImageIcon;
 import javax.swing.JComponent;
 
 import net.ulrice.databinding.viewadapter.utable.UTableViewAdapter;
-import net.ulrice.module.IFModule;
 import net.ulrice.module.impl.AbstractController;
 import net.ulrice.module.impl.ModuleActionState;
-import net.ulrice.module.impl.action.UlriceAction;
 import net.ulrice.module.impl.action.ActionType;
+import net.ulrice.module.impl.action.UlriceAction;
 import net.ulrice.process.CtrlProcessExecutor;
 import net.ulrice.translator.service.IFTranslationService;
 
 
 public class CTranslator extends AbstractController {
 
-	public static final String SERVICE_IMPLEMENTATION = "Translator.Service.Implementation";
-	
-	private IFTranslationService translationService;
 	private CtrlProcessExecutor processExecutor;
 
 	private final VTranslator view = new VTranslator();
 	private final MTranslator model = new MTranslator();
-	private final IFModule module;
+	private final IFTranslationService translationService;
 	
 
-	public CTranslator(IFModule module) {
-	    this.module = module;
+	public CTranslator(IFTranslationService translationService) {
+	    this.translationService = translationService;
 	}
 
 	public JComponent getView() {
@@ -44,13 +40,6 @@ public class CTranslator extends AbstractController {
 		super.postCreate();
 		
 		processExecutor = new CtrlProcessExecutor(1); 
-				
-		Object value = module.getParameter(SERVICE_IMPLEMENTATION);
-		if(value == null || !(value instanceof IFTranslationService)) {
-			throw new RuntimeException("Translation Service Implementation is not set as parameter.");
-		}
-		
-		translationService = (IFTranslationService) value;
 		translationService.openTranslationService();
 			
 		model.getDictionaryAM().addViewAdapter(view.getDictionaryVA());

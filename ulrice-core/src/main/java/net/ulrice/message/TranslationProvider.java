@@ -4,6 +4,6 @@ import java.util.Locale;
 
 
 public interface TranslationProvider {
-    String getTranslation (String component, TranslationUsage usage, String key, Object... params);
-    String getTranslation (Locale locale, String component, TranslationUsage usage, String key, Object... params);
+    String getTranslation (String module, TranslationUsage usage, String key, Object... params);
+    String getTranslation (Locale locale, String module, TranslationUsage usage, String key, Object... params);
 }

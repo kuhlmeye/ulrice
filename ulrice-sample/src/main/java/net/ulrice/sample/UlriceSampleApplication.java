@@ -10,9 +10,13 @@ import javax.swing.JFrame;
 import net.ulrice.Ulrice;
 import net.ulrice.configuration.ConfigurationException;
 import net.ulrice.configuration.UlriceFileConfiguration;
+import net.ulrice.module.IFController;
+import net.ulrice.module.IFModule;
 import net.ulrice.module.IFModuleManager;
 import net.ulrice.module.IFModuleStructureManager;
+import net.ulrice.module.ModuleIconSize;
 import net.ulrice.module.ModuleType;
+import net.ulrice.module.exception.ModuleInstanciationException;
 import net.ulrice.module.impl.AuthReflectionModule;
 import net.ulrice.module.impl.SimpleModuleTitleRenderer;
 import net.ulrice.module.impl.action.CloseAllModulesAction;
@@ -22,6 +26,7 @@ import net.ulrice.module.impl.action.ModuleAction;
 import net.ulrice.module.impl.action.ModuleActionManager;
 import net.ulrice.security.Authorization;
 import net.ulrice.translator.CTranslator;
+import net.ulrice.translator.service.IFTranslationService;
 import net.ulrice.translator.service.xml.XMLInMemoryTranslationService;
 
 public class UlriceSampleApplication {
@@ -75,11 +80,39 @@ public class UlriceSampleApplication {
 				new SimpleModuleTitleRenderer("Data Binding Sample"));
 		dataBindingSample.setAuthorization(new Authorization(SampleSecurityCallback.TYPE_MODULE_REGISTER, "DATABINDING"));
 		
-		AuthReflectionModule translator = new AuthReflectionModule("translator", ModuleType.NormalModule,
-				"net.ulrice.translator.CTranslator", "net/ulrice/translator/translator/moduleicon.png",
-				new SimpleModuleTitleRenderer("Translator"));
-		dataBindingSample.setAuthorization(new Authorization(SampleSecurityCallback.TYPE_MODULE_REGISTER, "DATABINDING"));
-		translator.putParameter(CTranslator.SERVICE_IMPLEMENTATION, new XMLInMemoryTranslationService());
+		IFModule translator = new IFModule() {
+		    final IFTranslationService translatorService = new XMLInMemoryTranslationService();
+		    
+            public String getModuleTitle(Usage usage) {
+                return "Translator";
+            }
+
+            @Override
+            public int compareTo(IFModule o) {
+                return o.getModuleTitle(Usage.ModuleTree).compareTo(getModuleTitle(Usage.ModuleTree)); //TODO this is not good - IFModule should not be Comparable
+            }
+
+            @Override
+            public String getUniqueId() {
+                return "translator";
+            }
+
+            @Override
+            public ImageIcon getIcon(ModuleIconSize preferredSize) {
+                return null; //TODO
+            }
+
+            @Override
+            public ModuleType getModuleInstanceType() {
+                return ModuleType.NormalModule;
+            }
+
+            @Override
+            public IFController instantiateModule() throws ModuleInstanciationException {
+                return new CTranslator(translatorService);
+            }
+		    
+		};
 
 		// Add the modules.
 		IFModuleManager moduleManager = Ulrice.getModuleManager();
