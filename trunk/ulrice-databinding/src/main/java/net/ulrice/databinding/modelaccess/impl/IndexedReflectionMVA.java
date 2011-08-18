@@ -140,7 +140,7 @@ public class IndexedReflectionMVA implements IFIndexedModelValueAccessor {
 			}
 
 			if (listValue instanceof List<?>) {
-				return (Integer)ReflectionUtils.getValueByReflection(rootObject, path + ".size");			
+				return ((List<?>) ReflectionUtils.getValueByReflection(rootObject, path)).size();			
 			}
 			if (listValue.getClass().isArray()) {
 				return (Integer)ReflectionUtils.getValueByReflection(rootObject, path + ".length");			
