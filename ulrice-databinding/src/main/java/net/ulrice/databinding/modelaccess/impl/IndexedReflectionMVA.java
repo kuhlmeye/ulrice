@@ -1,19 +1,10 @@
 package net.ulrice.databinding.modelaccess.impl;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
-import java.io.Serializable;
 import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.List;
 
-import net.ulrice.databinding.ErrorHandler;
 import net.ulrice.databinding.modelaccess.IFIndexedModelValueAccessor;
 import net.ulrice.databinding.modelaccess.IFModelValueAccessor;
 
