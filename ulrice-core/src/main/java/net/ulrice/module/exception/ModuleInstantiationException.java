@@ -5,7 +5,7 @@ package net.ulrice.module.exception;
  * 
  * @author ckuhlmeyer
  */
-public class ModuleInstanciationException extends Exception {
+public class ModuleInstantiationException extends Exception {
 
 	/** Default generated serial module id. */
 	private static final long serialVersionUID = -4181629062909817115L;
@@ -16,7 +16,7 @@ public class ModuleInstanciationException extends Exception {
 	 * @param reason The error reason.
 	 * @param cause The exception caused this exception or null.
 	 */
-	public ModuleInstanciationException(String reason, Throwable cause) {
+	public ModuleInstantiationException(String reason, Throwable cause) {
 		super(reason, cause);
 	}
 }

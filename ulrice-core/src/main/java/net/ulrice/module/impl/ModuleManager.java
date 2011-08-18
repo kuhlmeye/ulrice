@@ -12,6 +12,7 @@ import java.util.logging.Logger;
 import javax.swing.event.EventListenerList;
 
 import net.ulrice.Ulrice;
+import net.ulrice.module.ControllerProviderCallback;
 import net.ulrice.module.IFController;
 import net.ulrice.module.IFModule;
 import net.ulrice.module.IFModuleGroup;
@@ -22,7 +23,7 @@ import net.ulrice.module.IFModuleTitleProvider.Usage;
 import net.ulrice.module.ModuleType;
 import net.ulrice.module.event.IFModuleEventListener;
 import net.ulrice.module.event.IFModuleStructureEventListener;
-import net.ulrice.module.exception.ModuleInstanciationException;
+import net.ulrice.module.exception.ModuleInstantiationException;
 
 /**
  * The default module manager.
@@ -56,55 +57,75 @@ public class ModuleManager implements IFModuleManager, IFModuleStructureManager 
 	private final IdentityHashMap<IFController, IFModule> modulesForControllers = new IdentityHashMap<IFController, IFModule>();  
 	
 	
-	public IFController openModule(String moduleId) throws ModuleInstanciationException {
-
-		IFModule module = moduleMap.get(moduleId);
+	public void openModule (final String moduleId, final ControllerProviderCallback callback) throws ModuleInstantiationException {
+		final IFModule module = moduleMap.get(moduleId);
+		
 		if (module == null) {
-			throw new ModuleInstanciationException("Module with id (" + moduleId + ") could not be found.", null);
+			throw new ModuleInstantiationException("Module with id (" + moduleId + ") could not be found.", null);
 		}
 
         final boolean isSingleModule = ModuleType.SingleModule.equals(module.getModuleInstanceType());
 
-		IFController ctrlInstance = null;
 		if (isSingleModule && singleModules.containsKey(module)) {
 			// If it's a single module and if it's already open than return the
 			// instance.
-			ctrlInstance = singleModules.get(module);
+			final IFController ctrlInstance = singleModules.get(module);
             modulesForControllers.put(ctrlInstance, module);
-			activateModule(ctrlInstance);
-
-		} else {
-			// Create a new instance
-			ctrlInstance = module.instantiateModule();
-            modulesForControllers.put(ctrlInstance, module);
-
-			if (!Ulrice.getSecurityManager().allowOpenModule(module, ctrlInstance)) {
-				LOG.info("Module [Id: " + module.getUniqueId() + ", Name: " + module.getModuleTitle(Usage.Default)
-						+ "] will not be created. Not authorized by ulrice security manager.");
-				throw new ModuleInstanciationException("Not allowed by security manager", null);
+			activateModule (ctrlInstance);
+			if (callback != null) {
+			    callback.onControllerReady (ctrlInstance);
 			}
 
-			activeInstances.add(0, ctrlInstance);
+		} 
+		else {
+		    module.instantiateModule (new ControllerProviderCallback () {
 
-			if (isSingleModule) {
-				singleModules.put(module, ctrlInstance);
-			}
-
-			// Inform event listeners.
-			IFModuleEventListener[] listeners = listenerList.getListeners(IFModuleEventListener.class);
-			if (listeners != null) {
-				for (IFModuleEventListener listener : listeners) {
-					listener.openModule(ctrlInstance);
-				}
-			}
-
-			ctrlInstance.postCreate();
-
-			// Activate the controller.
-			activateModule(ctrlInstance);
+                @Override
+                public void onControllerReady(IFController controller) {
+                    // Create a new instance
+                    modulesForControllers.put (controller, module);
+                    
+                    if (!Ulrice.getSecurityManager().allowOpenModule(module, controller)) {
+                        LOG.info("Module [Id: " + module.getUniqueId() + ", Name: " + module.getModuleTitle(Usage.Default)
+                                + "] will not be created. Not authorized by ulrice security manager.");
+                        if (callback != null) {
+                            callback.onFailure (new ModuleInstantiationException ("Not allowed by security manager", null));
+                        }
+                        return;
+                    }
+                    
+                    activeInstances.add(0, controller);
+                    
+                    if (isSingleModule) {
+                        singleModules.put(module, controller);
+                    }
+                    
+                    // Inform event listeners.
+                    IFModuleEventListener[] listeners = listenerList.getListeners(IFModuleEventListener.class);
+                    if (listeners != null) {
+                        for (IFModuleEventListener listener : listeners) {
+                            listener.openModule (controller);
+                        }
+                    }
+                    
+                    controller.postCreate();
+                    
+                    // Activate the controller.
+                    activateModule (controller);
+                    
+                    if (callback != null) {
+                        callback.onControllerReady (controller);
+                    }
+                }
+                
+                @Override
+                public void onFailure(ModuleInstantiationException exc) {
+                    if (callback != null) {
+                        callback.onFailure (exc);
+                    }
+                }
+		    });
 		}
-		// Return the instance of the listener
-		return ctrlInstance;
 	}
 
 	public IFModule getModule(IFController controller) {

@@ -58,18 +58,6 @@ public class UlriceFileConfiguration extends ClassLoadingHelper implements IFUlr
 	 *             If the configuration could not be loaded.
 	 */
 	public UlriceFileConfiguration(InputStream configurationStream) throws ConfigurationException {
-		super();
-		
-	      // Load the needed configuration parameters.
-        moduleManager = (IFModuleManager) loadClass(properties.getProperty(IFModuleManager.class.getName(),
-                ModuleManager.class.getName()));
-        moduleStructureManager = (IFModuleStructureManager) loadClass(properties.getProperty(
-                IFModuleStructureManager.class.getName(), ModuleManager.class.getName()));
-        mainFrame = (IFMainFrame) loadClass(properties.getProperty(IFMainFrame.class.getName(), MainFrame.class
-                .getName()));
-        authCallback = (IFAuthCallback) loadClass(properties.getProperty(IFAuthCallback.class.getName(), null));
-        messageProvider = (I18NMessageProvider) loadClass(properties.getProperty(I18NMessageProvider.class.getName(), null));
-
 		if(configurationStream == null) {
 		    throw new IllegalArgumentException("Configuration stream must not be null.");
 		}
@@ -80,6 +68,13 @@ public class UlriceFileConfiguration extends ClassLoadingHelper implements IFUlr
 		} catch (IOException e) {
 			throw new ConfigurationException("Ulrice configuration file could not be loaded.", e);
 		}
+
+		// Load the needed configuration parameters.
+		moduleManager = (IFModuleManager) loadClass(properties.getProperty(IFModuleManager.class.getName(),  ModuleManager.class.getName()));
+		moduleStructureManager = (IFModuleStructureManager) loadClass(properties.getProperty(IFModuleStructureManager.class.getName(), ModuleManager.class.getName()));
+		mainFrame = (IFMainFrame) loadClass(properties.getProperty(IFMainFrame.class.getName(), MainFrame.class.getName()));
+		authCallback = (IFAuthCallback) loadClass(properties.getProperty(IFAuthCallback.class.getName(), null));
+//		messageProvider = (I18NMessageProvider) loadClass(properties.getProperty(I18NMessageProvider.class.getName(), null));
 
 		// Initialize ulrice.
 		Ulrice.initialize(this);

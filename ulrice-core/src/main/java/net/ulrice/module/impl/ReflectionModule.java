@@ -6,12 +6,13 @@ import java.util.Map;
 
 import javax.swing.ImageIcon;
 
+import net.ulrice.module.ControllerProviderCallback;
 import net.ulrice.module.IFController;
 import net.ulrice.module.IFModule;
 import net.ulrice.module.IFModuleTitleProvider;
 import net.ulrice.module.ModuleIconSize;
 import net.ulrice.module.ModuleType;
-import net.ulrice.module.exception.ModuleInstanciationException;
+import net.ulrice.module.exception.ModuleInstantiationException;
 
 /**
  * Implementation of a module instanciated by reflection.
@@ -129,19 +130,24 @@ public class ReflectionModule implements IFModule {
 		return new ImageIcon(location);
 	}
 
-	/**
-	 * @see net.ulrice.module.IFModule#instantiateModule()
-	 */
-	@SuppressWarnings("unchecked")
-	public IFController instantiateModule() throws ModuleInstanciationException {
-
-		// Check, if controller class name is null.
+	
+	@Override
+	public void instantiateModule(ControllerProviderCallback callback) {
+	    try {
+	        callback.onControllerReady (instantiateModuleInternal());
+	    }
+	    catch (ModuleInstantiationException exc) {
+	        callback.onFailure(exc);
+	    }
+	}
+	
+	private IFController instantiateModuleInternal() throws ModuleInstantiationException {
 		if (controllerClassName == null) {
-			throw new ModuleInstanciationException("Controller class name is null.", null);
+			throw new ModuleInstantiationException("Controller class name is null.", null);
 		}
 
 		try {
-			Class controllerClass = Class.forName(controllerClassName);
+			Class<?> controllerClass = Class.forName(controllerClassName);
 			Object controllerInstance = controllerClass.newInstance();
 
 			if (controllerInstance instanceof IFController) {
@@ -149,18 +155,18 @@ public class ReflectionModule implements IFModule {
 
 				return controller;
 			} else {
-				throw new ModuleInstanciationException("Controller class (" + controllerClassName
+				throw new ModuleInstantiationException("Controller class (" + controllerClassName
 						+ ") is not an instance of " + IFController.class.getName() + ".", null);
 			}
 
 		} catch (ClassNotFoundException e) {
-			throw new ModuleInstanciationException(
+			throw new ModuleInstantiationException(
 					"Controller class (" + controllerClassName + ") could not be found.", e);
 		} catch (InstantiationException e) {
-			throw new ModuleInstanciationException("Could not instanciate controller class (" + controllerClassName
+			throw new ModuleInstantiationException("Could not instanciate controller class (" + controllerClassName
 					+ ").", e);
 		} catch (IllegalAccessException e) {
-			throw new ModuleInstanciationException("Could not access controller class (" + controllerClassName + ").",
+			throw new ModuleInstantiationException("Could not access controller class (" + controllerClassName + ").",
 					e);
 		}
 	}
@@ -229,13 +235,5 @@ public class ReflectionModule implements IFModule {
 	
 	public Object getParameter(String key) {
 		return parameterMap.get(key);
-	}
-
-	/**
-	 * @see java.lang.Comparable#compareTo(java.lang.Object)
-	 */
-	@Override
-	public int compareTo(IFModule o) {
-		return o.getModuleTitle(Usage.ModuleTree).compareTo(getModuleTitle(Usage.ModuleTree));
 	}
 }

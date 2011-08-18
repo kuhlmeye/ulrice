@@ -9,8 +9,10 @@ import javax.swing.tree.TreePath;
 
 import net.ulrice.Ulrice;
 import net.ulrice.frame.IFMainFrameComponent;
+import net.ulrice.module.ControllerProviderCallback;
+import net.ulrice.module.IFController;
 import net.ulrice.module.IFModule;
-import net.ulrice.module.exception.ModuleInstanciationException;
+import net.ulrice.module.exception.ModuleInstantiationException;
 
 /**
  * Tree component which displays all available modules.
@@ -59,8 +61,17 @@ public class ModuleTree extends JTree implements IFMainFrameComponent, MouseList
 			if(pathComponent instanceof IFModule) {
 				IFModule module = (IFModule)pathComponent;
 				try {
-					Ulrice.getModuleManager().openModule(module.getUniqueId());
-				} catch (ModuleInstanciationException e1) {
+					Ulrice.getModuleManager().openModule (module.getUniqueId(), new ControllerProviderCallback() {
+                        @Override
+                        public void onFailure(ModuleInstantiationException exc) {
+                            Ulrice.getMessageHandler().handleException(exc);
+                        }
+                        
+                        @Override
+                        public void onControllerReady(IFController controller) {
+                        }
+                    });
+				} catch (ModuleInstantiationException e1) {
 					Ulrice.getMessageHandler().handleException(e1);
 				}
 			}

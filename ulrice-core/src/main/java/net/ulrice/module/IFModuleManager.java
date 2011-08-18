@@ -3,7 +3,7 @@ package net.ulrice.module;
 import java.util.List;
 
 import net.ulrice.module.event.IFModuleEventListener;
-import net.ulrice.module.exception.ModuleInstanciationException;
+import net.ulrice.module.exception.ModuleInstantiationException;
 
 /**
  * Interface of the module managers.
@@ -23,11 +23,10 @@ public interface IFModuleManager {
 	void unregisterModule(IFModule module);
 
 	/**
-	 * Opens a module, i.e. initialize it and display its view.
-	 * 
-	 * @return The controller of the instanciated module.
+	 * Opens a module, i.e. initialize it and display its view. If the callback is non-null, it
+	 *  is called with the controller
 	 */
-	IFController openModule(String moduleId) throws ModuleInstanciationException;
+	void openModule (String moduleId, ControllerProviderCallback callback) throws ModuleInstantiationException;
 
 	/**
 	 * Activates an instance of a module, i.e. give it the focus.

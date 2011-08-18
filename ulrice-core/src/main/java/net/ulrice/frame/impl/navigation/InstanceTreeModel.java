@@ -4,9 +4,9 @@
 package net.ulrice.frame.impl.navigation;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
-import java.util.SortedMap;
-import java.util.TreeMap;
+import java.util.Map;
 
 import javax.swing.event.EventListenerList;
 import javax.swing.event.TreeModelEvent;
@@ -36,7 +36,7 @@ public class InstanceTreeModel implements TreeModel, IFModuleEventListener {
 	private EventListenerList listenerList = new EventListenerList();
 
 	/** List of instances per controller. */
-	SortedMap<IFModule, List<IFController>> instanceMap = new TreeMap<IFModule, List<IFController>>();
+	Map<IFModule, List<IFController>> instanceMap = new HashMap<IFModule, List<IFController>>();
 
 	List<IFModule> moduleList = new ArrayList<IFModule>();
 

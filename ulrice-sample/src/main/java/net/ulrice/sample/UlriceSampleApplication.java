@@ -10,13 +10,14 @@ import javax.swing.JFrame;
 import net.ulrice.Ulrice;
 import net.ulrice.configuration.ConfigurationException;
 import net.ulrice.configuration.UlriceFileConfiguration;
+import net.ulrice.module.ControllerProviderCallback;
 import net.ulrice.module.IFController;
 import net.ulrice.module.IFModule;
 import net.ulrice.module.IFModuleManager;
 import net.ulrice.module.IFModuleStructureManager;
 import net.ulrice.module.ModuleIconSize;
 import net.ulrice.module.ModuleType;
-import net.ulrice.module.exception.ModuleInstanciationException;
+import net.ulrice.module.exception.ModuleInstantiationException;
 import net.ulrice.module.impl.AuthReflectionModule;
 import net.ulrice.module.impl.SimpleModuleTitleRenderer;
 import net.ulrice.module.impl.action.CloseAllModulesAction;
@@ -88,11 +89,6 @@ public class UlriceSampleApplication {
             }
 
             @Override
-            public int compareTo(IFModule o) {
-                return o.getModuleTitle(Usage.ModuleTree).compareTo(getModuleTitle(Usage.ModuleTree)); //TODO this is not good - IFModule should not be Comparable
-            }
-
-            @Override
             public String getUniqueId() {
                 return "translator";
             }
@@ -108,8 +104,8 @@ public class UlriceSampleApplication {
             }
 
             @Override
-            public IFController instantiateModule() throws ModuleInstanciationException {
-                return new CTranslator(translatorService);
+            public void instantiateModule(ControllerProviderCallback callback) {
+                callback.onControllerReady (new CTranslator (translatorService));
             }
 		    
 		};

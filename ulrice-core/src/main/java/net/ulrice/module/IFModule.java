@@ -2,7 +2,7 @@ package net.ulrice.module;
 
 import javax.swing.ImageIcon;
 
-import net.ulrice.module.exception.ModuleInstanciationException;
+import net.ulrice.module.exception.ModuleInstantiationException;
 
 
 /**
@@ -10,7 +10,7 @@ import net.ulrice.module.exception.ModuleInstanciationException;
  * 
  * @author ckuhlmeyer
  */
-public interface IFModule extends IFModuleTitleProvider, Comparable<IFModule> { //TODO ehaasec remove the comparable requirement and use external ordering on registration 
+public interface IFModule extends IFModuleTitleProvider { 
 
 	String getUniqueId();
 
@@ -21,5 +21,5 @@ public interface IFModule extends IFModuleTitleProvider, Comparable<IFModule> { 
 	/**
 	 * Creates a new instance of the module.
 	 */
-	IFController instantiateModule() throws ModuleInstanciationException;
+	void instantiateModule (ControllerProviderCallback callback);
 }
