@@ -58,17 +58,17 @@ public class UlriceFileConfiguration extends ClassLoadingHelper implements IFUlr
 	 *             If the configuration could not be loaded.
 	 */
 	public UlriceFileConfiguration(InputStream configurationStream) throws ConfigurationException {
-		if(configurationStream == null) {
-		    throw new IllegalArgumentException("Configuration stream must not be null.");
-		}
-		
-		try {
-			properties = new Properties();
-			properties.load(configurationStream);
-		} catch (IOException e) {
-			throw new ConfigurationException("Ulrice configuration file could not be loaded.", e);
-		}
-
+        if(configurationStream == null) {
+            throw new IllegalArgumentException("Configuration stream must not be null.");
+        }
+	      
+        try {
+            properties = new Properties();
+            properties.load(configurationStream);
+        } catch (IOException e) {
+            throw new ConfigurationException("Ulrice configuration file could not be loaded.", e);
+        }
+        
 		// Load the needed configuration parameters.
 		moduleManager = (IFModuleManager) loadClass(properties.getProperty(IFModuleManager.class.getName(),  ModuleManager.class.getName()));
 		moduleStructureManager = (IFModuleStructureManager) loadClass(properties.getProperty(IFModuleStructureManager.class.getName(), ModuleManager.class.getName()));

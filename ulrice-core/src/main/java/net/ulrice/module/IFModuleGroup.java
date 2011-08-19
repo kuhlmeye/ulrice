@@ -26,4 +26,6 @@ public interface IFModuleGroup {
 	void addModuleGroup(IFModuleGroup group);
 	
 	void addModule(IFModule module);
+	
+	String getTitle();
 }

@@ -34,10 +34,8 @@ public class Toolbar extends JToolBar implements IFModuleActionManagerEventListe
 	/**
 	 * Create a new toolbar. 
 	 */
-	public Toolbar() {
+	public Toolbar(String actionOrder) {
 		Ulrice.getActionManager().addModuleActionManagerEventListener(this);
-
-		String actionOrder = Ulrice.getConfiguration(this, "ActionOrder", "");
 		actionArrays = actionOrder.split(",");
 	}
 
