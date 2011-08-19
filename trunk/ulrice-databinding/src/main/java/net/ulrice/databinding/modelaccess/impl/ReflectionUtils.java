@@ -58,10 +58,15 @@ public class ReflectionUtils {
 	}
 	
 	public static Field getFieldInHierarchy (Class<?> cls, String fieldName) {
-	    return getFieldInHierarchy (cls, cls, fieldName);
+	    try {
+            return getFieldInHierarchy (cls, cls, fieldName);
+        }
+        catch (NoSuchFieldException e) {
+            throw new ReflectionMVAException("There is no field " + fieldName + " in " + cls.getName() + " or its subclasses", e);
+        }
 	}
 	
-	private static Field getFieldInHierarchy (Class<?> cls, Class<?> originalCls, String fieldName) {
+	private static Field getFieldInHierarchy (Class<?> cls, Class<?> originalCls, String fieldName) throws NoSuchFieldException {
 	    try {
 	        Field result = cls.getDeclaredField(fieldName);
 	        setAccessible(result);
@@ -70,7 +75,7 @@ public class ReflectionUtils {
 	        throw new ReflectionMVAException("Security exception while accessing field " + cls.getName() + "." + fieldName + ".", e);
 	    } catch (NoSuchFieldException e) {
 	        if (cls.getSuperclass() == null) {
-	            throw new ReflectionMVAException("There is no field " + fieldName + " in " + originalCls.getName() + " or its subclasses", e);
+	            throw e;
 	        }
 	        return getFieldInHierarchy(cls.getSuperclass(), originalCls, fieldName);
 	    }
@@ -91,8 +96,25 @@ public class ReflectionUtils {
 				if(object == null) {
 					return null;
 				}
-				Field field = getFieldInHierarchy(object.getClass(), pathElement);
-				object = field.get(object);
+				
+                try {
+                    Field field = getFieldInHierarchy(object.getClass(), object.getClass(), pathElement);
+                    object = field.get(object);
+                }
+                catch (NoSuchFieldException e) {
+                    String methodName = "get" + String.valueOf(pathElement.charAt(0)).toUpperCase() + pathElement.substring(1);
+                    try {
+                        Method method = getMethodInHierarchy(object.getClass(), object.getClass(), methodName);
+                        object = method.invoke(object);
+                    }
+                    catch (NoSuchMethodException e1) {
+                        throw new ReflectionMVAException("Could not read object from path: " + path, e1);
+                    }
+                    catch (InvocationTargetException e1) {
+                        throw new ReflectionMVAException("Could not read object from path: " + path, e1);
+                    }
+                    
+                }
 			}
 		} catch (IllegalArgumentException e) {
 			throw new ReflectionMVAException("Could not read object from path: " + path, e);
@@ -105,7 +127,22 @@ public class ReflectionUtils {
 		return object;
 	}
 
-	public static void setValueByReflection(Object root, Object value, String path) {
+	private static Method getMethodInHierarchy(Class< ? extends Object> cls, Class< ? extends Object> originalCls,
+        String methodName) throws NoSuchMethodException {
+        try {
+            Method result = cls.getDeclaredMethod(methodName);
+            return result;
+        } catch (SecurityException e) {
+            throw new ReflectionMVAException("Security exception while accessing method " + cls.getName() + "." + methodName + ".", e);
+        } catch (NoSuchMethodException e) {
+            if (cls.getSuperclass() == null) {
+                throw e;
+            }
+            return getMethodInHierarchy(cls.getSuperclass(), originalCls, methodName);
+        }
+    }
+
+    public static void setValueByReflection(Object root, Object value, String path) {
 		if (path == null) {
 			throw new ReflectionMVAException("Write path must not be null.", null);
 		}
