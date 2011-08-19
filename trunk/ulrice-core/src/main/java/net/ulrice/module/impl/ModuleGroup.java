@@ -78,15 +78,16 @@ public class ModuleGroup implements IFModuleGroup {
         return id;
     }
 
-    public String getTranslatedModuleName() {
-        return translatedModuleName;
-    }
-
     public String getIcon() {
         return icon;
     }
 
     public boolean isEnabled() {
         return enabled;
+    }
+
+    @Override
+    public String getTitle() {
+        return translatedModuleName;
     }
 }

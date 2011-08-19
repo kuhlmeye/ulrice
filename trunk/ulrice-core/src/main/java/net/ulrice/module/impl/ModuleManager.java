@@ -361,6 +361,11 @@ public class ModuleManager implements IFModuleManager, IFModuleStructureManager 
 		public void addModule(IFModule module) {
 			modules.add(module);
 		}
+
+        @Override
+        public String getTitle() {
+            return "ROOT";
+        }
 	}
 
 	/**

@@ -20,6 +20,8 @@ public interface IFModuleTitleProvider {
 		/** The tabbed workarea. */
 		TabbedWorkarea,
 		
+		DetailedTitle,
+		
 		/** The default module title. */
 		Default;		
 	}

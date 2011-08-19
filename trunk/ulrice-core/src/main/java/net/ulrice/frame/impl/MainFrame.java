@@ -49,7 +49,7 @@ public class MainFrame extends JFrame implements IFMainFrame {
 		ModuleTree moduleTree = new ModuleTree();
 		InstanceTree instanceTree = new InstanceTree();
 		Statusbar statusbar = new Statusbar();
-		Toolbar toolbar = new Toolbar();
+		Toolbar toolbar = new Toolbar(Ulrice.getConfiguration(this, "ActionOrder", Toolbar.MODULE_ACTIONS));
 		Menubar menubar = new Menubar();
 		
 		setJMenuBar(menubar);
