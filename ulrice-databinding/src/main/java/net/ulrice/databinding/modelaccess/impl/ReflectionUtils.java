@@ -21,7 +21,9 @@ import net.ulrice.databinding.ErrorHandler;
  */
 public class ReflectionUtils {
 
-	public static void setAccessible(final Field field) {
+	private static final String GET_METHOD_PREFIX = "get";
+
+    public static void setAccessible(final Field field) {
 	    if (field.isAccessible()) {
 	        return;
 	    }
@@ -102,7 +104,7 @@ public class ReflectionUtils {
                     object = field.get(object);
                 }
                 catch (NoSuchFieldException e) {
-                    String methodName = "get" + String.valueOf(pathElement.charAt(0)).toUpperCase() + pathElement.substring(1);
+                    String methodName = GET_METHOD_PREFIX + String.valueOf(pathElement.charAt(0)).toUpperCase() + pathElement.substring(1);
                     try {
                         Method method = getMethodInHierarchy(object.getClass(), object.getClass(), methodName);
                         object = method.invoke(object);
