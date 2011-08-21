@@ -19,6 +19,8 @@ public class ValidationResult {
     /** The list of validation errors. */
     private List<ValidationError> validationErrors;
     
+    private List<String> globalMessages = new ArrayList<String>();
+    
     private Map<IFBinding, List<String>> messagesByBindingMap;
     
     /**
@@ -54,11 +56,17 @@ public class ValidationResult {
     }
     
     public List<String> getMessagesByBinding (IFBinding b) {
-        return messagesByBindingMap.containsKey(b) ? messagesByBindingMap.get (b) : new ArrayList<String>();
+        List<String> messages = new ArrayList<String>();
+        messages.addAll(globalMessages);
+        messages.addAll(messagesByBindingMap.containsKey(b) ? messagesByBindingMap.get (b) : new ArrayList<String>());
+        return messages;
     }
        
     public void addValidationError(ValidationError validationError) {
         this.validationErrors.add(validationError);
+        if(validationError.getBindingId() == null) {
+            globalMessages.add(validationError.getMessage());
+        }        
 		List<String> messageList = messagesByBindingMap.get(validationError.getBindingId());
 		if(messageList == null) {
 			messageList = new ArrayList<String>();
@@ -84,5 +92,7 @@ public class ValidationResult {
      */
     public void clearValidationErrors() {
         this.validationErrors.clear();
+        this.messagesByBindingMap.clear();
+        this.globalMessages.clear();
     }
 }

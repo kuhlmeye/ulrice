@@ -29,7 +29,7 @@ public class GenericAMTest {
 	public void setUp() throws Exception {
         stringAAM = new GenericAM<String>(new ReflectionMVA(this, "stringA"));
         stringBAM = new GenericAM<String>(new ReflectionMVA(this, "stringB"));
-        stringBAM.setValidator(
+        stringBAM.addValidator(
                 new RegExValidator<String>("StringB", "String is not 'stringB'"));
 
 	}

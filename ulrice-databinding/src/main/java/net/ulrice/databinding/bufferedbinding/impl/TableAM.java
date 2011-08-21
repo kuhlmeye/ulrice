@@ -9,14 +9,12 @@ import java.util.Set;
 
 import javax.swing.event.EventListenerList;
 
-import net.ulrice.databinding.ErrorHandler;
 import net.ulrice.databinding.bufferedbinding.IFAttributeModel;
 import net.ulrice.databinding.bufferedbinding.IFAttributeModelEventListener;
-import net.ulrice.databinding.converter.HeuristicConverterFactory;
 import net.ulrice.databinding.converter.IFValueConverter;
 import net.ulrice.databinding.modelaccess.IFIndexedModelValueAccessor;
-import net.ulrice.databinding.modelaccess.IFModelValueAccessor;
 import net.ulrice.databinding.validation.IFValidator;
+import net.ulrice.databinding.validation.ValidationError;
 import net.ulrice.databinding.validation.ValidationResult;
 import net.ulrice.databinding.viewadapter.IFViewAdapter;
 
@@ -33,7 +31,7 @@ public class TableAM implements IFAttributeModel  {
 	protected List<Element> elements = new ArrayList<Element>();
 	protected Map<String, Element> elementIdMap = new HashMap<String, Element>();
 	
-	private IFValidator validator;
+	private List<IFValidator> validators = new ArrayList<IFValidator>();
 	private EventListenerList listenerList;
 	private String id;
 	private List<ColumnDefinition<? extends Object>> columns = new ArrayList<ColumnDefinition<? extends Object>>();
@@ -108,16 +106,16 @@ public class TableAM implements IFAttributeModel  {
 	 * @see net.ulrice.databinding.bufferedbinding.IFAttributeModel#setValidator(net.ulrice.databinding.validation.IFValidator)
 	 */
 	@Override
-	public void setValidator(IFValidator validator) {
-		this.validator = validator;
+	public void addValidator(IFValidator validator) {
+		this.validators.add(validator);
 	}
 
 	/**
 	 * @see net.ulrice.databinding.bufferedbinding.IFAttributeModel#getValidator()
 	 */
 	@Override
-	public IFValidator getValidator() {
-		return validator;
+	public List<IFValidator> getValidators() {
+		return validators;
 	}
 
 	public Element getElementAt(int index) {
@@ -205,11 +203,28 @@ public class TableAM implements IFAttributeModel  {
             modElements.remove(element);            
 		}		
 	    
+		boolean oldValid = valid;
+		boolean oldDirty = dirty;
+		
 	    valid = invElements.isEmpty();
 	    dirty = !modElements.isEmpty() || !delElements.isEmpty() || !newElements.isEmpty();
+	    
+	    if(oldValid != valid || oldDirty != dirty) {
+	        fireStateChanged();
+	    }
+	    
 	}
 
-	/**
+	private void fireStateChanged() {
+        IFAttributeModelEventListener[] listeners = listenerList.getListeners(IFAttributeModelEventListener.class);
+        if(listeners != null) {
+            for(IFAttributeModelEventListener listener : listeners) {
+                listener.stateChanged(null, this);
+            }
+        }
+    }
+
+    /**
 	 * @param columnDefinition
 	 */
 	public void addColumn(ColumnDefinition<?> columnDefinition) {
@@ -461,6 +476,35 @@ public class TableAM implements IFAttributeModel  {
 	
 	public void setReadOnly(boolean readOnly) {
 		this.readOnly = readOnly;
+	}
+    
+    public List<Element> getCreatedElements() {
+        return new ArrayList<Element>(newElements);
+    }
+    
+    public List<Element> getModifiedElements() {
+        return new ArrayList<Element>(modElements);
+    }
+    
+    public List<Element> getDeletedElements() {
+        return new ArrayList<Element>(delElements);
+    }
+	
+	public void commitElement(Element element) {
+	    element.writeObject();
+	    element.readObject();
+	    stateChanged(element);
+        fireUpdateViews();
+	}
+	
+	public void rollbackElement(Element element) {
+        element.readObject();
+        stateChanged(element);
+        fireUpdateViews();
+	}
+	
+	public void markAsFaulty(Element element, String message, Throwable th) {
+	    element.addElementValidationError(new ValidationError(null, message, th));
 	}
 }
 

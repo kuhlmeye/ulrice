@@ -41,7 +41,9 @@ public class ColumnDefinition<T extends Object> {
         GenericAM<T> genericAM = new GenericAM<T>(id);
         genericAM.setReadOnly(isReadOnly());        
         genericAM.setValueConverter(getValueConverter());
-        genericAM.setValidator(getValidator());
+        if(getValidator() != null) {
+            genericAM.addValidator(getValidator());
+        }
 		return genericAM;
     }
 

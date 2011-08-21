@@ -28,5 +28,5 @@ public interface IFValidator<T> {
     /**
      * Clear the validation errors.
      */
-    void clear();
+    void clearValidationErrors();
 }

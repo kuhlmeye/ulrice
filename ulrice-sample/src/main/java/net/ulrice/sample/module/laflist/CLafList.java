@@ -17,7 +17,7 @@ import javax.swing.UIManager;
 import net.ulrice.Ulrice;
 import net.ulrice.module.impl.AbstractController;
 import net.ulrice.module.impl.ModuleActionState;
-import net.ulrice.module.impl.action.AuthModuleAction;
+import net.ulrice.module.impl.action.AuthModuleDelegationAction;
 import net.ulrice.sample.SampleSecurityCallback;
 import net.ulrice.security.Authorization;
 
@@ -79,10 +79,10 @@ public class CLafList extends AbstractController {
 	public List<ModuleActionState> getHandledActions() {
 		Icon refreshIcon = new ImageIcon(getClass().getResource("refresh.gif"));
 		
-		AuthModuleAction refreshAction = new AuthModuleAction(REFRESH_ACTION, "Refresh", true, refreshIcon);
+		AuthModuleDelegationAction refreshAction = new AuthModuleDelegationAction(REFRESH_ACTION, "Refresh", true, refreshIcon);
 		refreshAction.setAuthorization(new Authorization(SampleSecurityCallback.TYPE_EXECUTE_ACTION, "LAFLIST_REFRESH_EXEC"));
 
-		return Arrays.asList(new ModuleActionState(true, this, Ulrice.getActionManager().getApplicationAction("TEST1")), new ModuleActionState(true, this, refreshAction));
+		return Arrays.asList(new ModuleActionState(true, Ulrice.getActionManager().getApplicationAction("TEST1")), new ModuleActionState(true, refreshAction));
 	}
 	
 	public JComponent getView() {

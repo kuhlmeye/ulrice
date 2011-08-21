@@ -122,13 +122,13 @@ public class CTranslator extends AbstractController {
 		};
 				
 		return Arrays.asList (
-				new ModuleActionState(true, this, addDictionaryEntryAction),
-				new ModuleActionState(true, this, delDictionaryEntryAction),
-				new ModuleActionState(true, this, addUsageAction),
-				new ModuleActionState(true, this, delUsageAction),
-				new ModuleActionState(true, this, saveAction),
-				new ModuleActionState(true, this, generateTranslationTableAction),
-				new ModuleActionState(true, this, generatePropertyFilesAction)
+				new ModuleActionState(true, addDictionaryEntryAction),
+				new ModuleActionState(true, delDictionaryEntryAction),
+				new ModuleActionState(true, addUsageAction),
+				new ModuleActionState(true, delUsageAction),
+				new ModuleActionState(true, saveAction),
+				new ModuleActionState(true, generateTranslationTableAction),
+				new ModuleActionState(true, generatePropertyFilesAction)
 		);
 	}
 }

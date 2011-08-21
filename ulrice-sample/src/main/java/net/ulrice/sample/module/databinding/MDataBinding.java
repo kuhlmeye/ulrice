@@ -28,7 +28,7 @@ public class MDataBinding  {
 	
 	public MDataBinding () {
 		nameAM = new GenericAM<String>(new ReflectionMVA(this, "name"));
-		nameAM.setValidator(new RegExValidator<String>("(hallo|hi)", "Validation failed. Only 'hallo' or 'hi' is allowed"));
+		nameAM.addValidator(new RegExValidator<String>("(hallo|hi)", "Validation failed. Only 'hallo' or 'hi' is allowed"));
 		name = "hallo";
 
         personList.add(new Person("Max", "Mustermann", 18));

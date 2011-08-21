@@ -121,8 +121,8 @@ public class CMovieDB extends AbstractController implements ListSelectionListene
 			}
 		};
 
-		return Arrays.asList(new ModuleActionState(true, this, addMovieAction), new ModuleActionState(true, this, removeMovieAction),
-				new ModuleActionState(true, this, addActorAction), new ModuleActionState(true, this, removeActorAction) );
+		return Arrays.asList(new ModuleActionState(true, addMovieAction), new ModuleActionState(true, removeMovieAction),
+				new ModuleActionState(true, addActorAction), new ModuleActionState(true, removeActorAction) );
 	}
 
 	private void detailToOverview() {

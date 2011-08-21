@@ -50,7 +50,7 @@ public class DataGroupTest {
         dataGroup.addAttributeModel(intAAM);
         dataGroup.addAttributeModel(intBAM);
 
-        dataGroup.getAttributeModel("DataGroupTest.stringB").setValidator(
+        dataGroup.getAttributeModel("DataGroupTest.stringB").addValidator(
                 new RegExValidator<Object>("StringB", "String is not 'stringB'"));
     }
 

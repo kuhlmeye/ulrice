@@ -76,6 +76,10 @@ public class DialogManager {
 		List<DialogInformation> list = ctrlDialogMap.get(controller);
 		list.add(dlgInfo);
 
+		if(Ulrice.getModuleManager().getCurrentController() == controller) {
+		    dialog.setVisible(true);
+		}
+		
 		dlgInfoDialogMap.put(dialog, dlgInfo);
 	}
 
@@ -126,7 +130,7 @@ public class DialogManager {
 	private class DialogWindowListener extends WindowAdapter {
 
 		@Override
-		public void windowClosing(WindowEvent e) {
+		public void windowClosed(WindowEvent e) {
 			if (e.getSource() instanceof JDialog) {
 				JDialog dialog = (JDialog) e.getSource();
 				DialogInformation dlgInfo = dlgInfoDialogMap.remove(dialog);

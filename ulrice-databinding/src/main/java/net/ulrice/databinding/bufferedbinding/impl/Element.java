@@ -16,10 +16,16 @@ import java.util.Map;
 
 import javax.swing.event.EventListenerList;
 
+import com.sun.corba.se.spi.orbutil.fsm.Guard.Result;
+
 import net.ulrice.databinding.ErrorHandler;
+import net.ulrice.databinding.IFBinding;
 import net.ulrice.databinding.bufferedbinding.IFAttributeModel;
 import net.ulrice.databinding.modelaccess.IFDynamicModelValueAccessor;
+import net.ulrice.databinding.modelaccess.IFModelValueAccessor;
+import net.ulrice.databinding.validation.IFValidator;
 import net.ulrice.databinding.validation.ValidationError;
+import net.ulrice.databinding.validation.ValidationResult;
 
 /**
  * The element of the list attribute model. It manages the models for all
@@ -47,6 +53,7 @@ public class Element {
 	/** The event listeners. */
 	private EventListenerList listenerList = new EventListenerList();
 
+	
 	/** Flag, if this element is editable. */
 	private boolean readOnly;
 
@@ -54,6 +61,8 @@ public class Element {
 	private boolean valid;
 
 	private TableAM tableAM;
+
+    private ValidationResult validationResult;
 
 	/**
 	 * Creates a new element.
@@ -178,7 +187,7 @@ public class Element {
 		if (model == null) {
 			return;
 		}
-
+		clearElementValidationErrors();
 		model.setValue(aValue);
 		fireValueChanged();
 		updateState();
@@ -194,7 +203,7 @@ public class Element {
 
 		if (modelList != null) {
 			dirty = false;
-			valid = true;
+			valid = validationResult.isValid();
 			for (IFAttributeModel<?> model : modelList) {
 				dirty |= model.isDirty();
 				valid &= model.isValid();
@@ -295,6 +304,23 @@ public class Element {
 		if (columns != null) {
 			for (ColumnDefinition<? extends Object> column : columns) {
 				GenericAM attributeModel = column.createAM();
+				attributeModel.addValidator(new IFValidator() {
+
+                    @Override
+                    public ValidationResult isValid(IFBinding bindingId, Object attribute) {
+                        return validationResult;
+                    }
+
+                    @Override
+                    public ValidationResult getLastValidationErrors() {
+                        return validationResult;
+                    }
+
+                    @Override
+                    public void clearValidationErrors() {
+                        validationResult = new ValidationResult();
+                    }
+                });
 				attributeModel.setReadOnly(column.isReadOnly());
 				modelList.add(attributeModel);
 				idModelMap.put(attributeModel.getId(), attributeModel);
@@ -305,6 +331,7 @@ public class Element {
 					attributeModel.directRead(converted);
 				}
 			}
+            updateState();
 		}
 	}
 
@@ -338,8 +365,9 @@ public class Element {
 		return valid;
 	}
 
-	public List<ValidationError> getValidationErrors() {
-		List<ValidationError> errors = new ArrayList<ValidationError>();
+	public List<ValidationError> getValidationErrors() {	    	    
+		List<ValidationError> errors = new ArrayList<ValidationError>(validationResult.getValidationErrors());
+
 		if (modelList != null) {
 			for (GenericAM<?> model : modelList) {
 				if (model.getValidationResult() != null) {
@@ -352,6 +380,11 @@ public class Element {
 
 	public List<String> getValidationFailures() {
 		List<String> errors = new ArrayList<String>();
+				
+		for(ValidationError elementError : validationResult.getValidationErrors()) {
+		    errors.add(elementError.getMessage());
+		}
+		
 		if (modelList != null) {
 			for (GenericAM<?> model : modelList) {
 				if (model.getValidationResult() != null) {
@@ -362,5 +395,28 @@ public class Element {
 		return errors;
 	}
 
+    public void addElementValidationError(ValidationError validationError) {
+        validationResult.addValidationError(validationError);
+        if(modelList != null) {
+            for(GenericAM<?> model : modelList) {
+                model.recalculateState();
+            }
+        }
+        updateState();
+    }
+
+    public ValidationResult getElementValidationErrors() {
+        return validationResult;
+    }
+
+    public void clearElementValidationErrors() {
+        validationResult = new ValidationResult();
+        if(modelList != null) {
+            for(GenericAM<?> model : modelList) {
+                model.recalculateState();
+            }
+        }
+        updateState();
+    }
 
 }

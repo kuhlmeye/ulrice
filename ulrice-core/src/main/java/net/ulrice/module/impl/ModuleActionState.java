@@ -16,9 +16,6 @@ public class ModuleActionState {
 	/** The reference to a module action. */
 	private UlriceAction action;
 	
-	/** The reference to the controller handling this action. */
-	private IFController controller;
-	
 	/**
 	 * Creates a new module action state.
 	 * 
@@ -26,10 +23,9 @@ public class ModuleActionState {
 	 * @param controller Reference to the controller
 	 * @param action Reference to the action.
 	 */
-	public ModuleActionState(boolean enabled, IFController controller, UlriceAction action) {
+	public ModuleActionState(boolean enabled, UlriceAction action) {
 		this.enabled = enabled;
 		this.action = action;
-		this.controller = controller;
 	}
 		
 	
@@ -59,19 +55,5 @@ public class ModuleActionState {
 	 */
 	public void setAction(UlriceAction action) {
 		this.action = action;
-	}
-
-	/**
-	 * @return the controller
-	 */
-	public IFController getController() {
-		return controller;
-	}
-
-	/**
-	 * @param controller the controller to set
-	 */
-	public void setController(IFController controller) {
-		this.controller = controller;
 	}
 }

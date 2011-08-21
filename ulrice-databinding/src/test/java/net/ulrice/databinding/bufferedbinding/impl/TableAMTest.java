@@ -11,6 +11,7 @@ import net.ulrice.databinding.bufferedbinding.impl.TableAM;
 import net.ulrice.databinding.modelaccess.impl.DynamicReflectionMVA;
 import net.ulrice.databinding.modelaccess.impl.IndexedReflectionMVA;
 import net.ulrice.databinding.modelaccess.impl.ReflectionMVA;
+import net.ulrice.databinding.validation.ValidationError;
 
 import org.junit.After;
 import org.junit.Assert;
@@ -187,6 +188,61 @@ public class TableAMTest {
 		Assert.assertEquals(1, tableAM.getDeletedObjects().size());				
 		Assert.assertEquals("Max Mustermann", ((Person)tableAM.getDeletedObjects().get(0)).name);				
 	}		
+	
+	@Test
+	public void commitElement() {
+	    tableAM.read();
+	    Element element = tableAM.getElementAt(0);
+        element.setValueAt(0, "Other Value");
+
+        Assert.assertEquals(true, tableAM.isDirty());
+        Assert.assertEquals(true, element.isDirty());
+        
+        tableAM.commitElement(element);
+        
+        Assert.assertEquals(false, tableAM.isDirty());
+        Assert.assertEquals(false, element.isDirty());
+        
+        Assert.assertEquals("Other Value", tableAM.getValueAt(0, 0));
+	}
+	
+	@Test
+	public void rollbackElement() {
+        tableAM.read();
+        Element element = tableAM.getElementAt(0);
+        element.setValueAt(0, "Other Value");
+
+        Assert.assertEquals(true, tableAM.isDirty());
+        Assert.assertEquals(true, element.isDirty());
+        
+        tableAM.rollbackElement(element);
+        
+        Assert.assertEquals(false, tableAM.isDirty());
+        Assert.assertEquals(false, element.isDirty());
+        
+        Assert.assertEquals("Max Mustermann", tableAM.getValueAt(0, 0));
+	    
+	}
+	
+	@Test
+	public void markFaulty() {
+        tableAM.read();
+        Element element = tableAM.getElementAt(0);
+        element.setValueAt(0, "Other Value");
+
+        Assert.assertEquals(true, tableAM.isDirty());
+        Assert.assertEquals(true, element.isDirty());
+        Assert.assertEquals(true, tableAM.isValid());
+        
+        tableAM.markAsFaulty(element, "Error", null);
+
+        Assert.assertEquals(true, tableAM.isDirty());
+        Assert.assertEquals(false, tableAM.isValid());
+        Assert.assertEquals(true, element.isDirty());
+        Assert.assertEquals(false, element.isValid());
+        
+        Assert.assertEquals("Other Value", tableAM.getValueAt(0, 0));
+	}
 	
 	public static class Person {
 		public String name;

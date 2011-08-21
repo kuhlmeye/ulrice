@@ -1,5 +1,7 @@
 package net.ulrice.databinding.bufferedbinding;
 
+import java.util.List;
+
 import net.ulrice.databinding.IFBinding;
 import net.ulrice.databinding.converter.IFValueConverter;
 import net.ulrice.databinding.validation.IFValidator;
@@ -44,14 +46,14 @@ public interface IFAttributeModel<T> extends IFBinding {
 	 * @param validator
 	 *            The validator.
 	 */
-	void setValidator(IFValidator<T> validator);
+	void addValidator(IFValidator<T> validator);
 
 	/**
 	 * Returns the validator of this model.
 	 * 
 	 * @return The validator.
 	 */
-	IFValidator<T> getValidator();
+	List<IFValidator<T>> getValidators();
 
 	/**
 	 * Return the current validation errors or null, if the attribute model is valid.
