@@ -4,6 +4,7 @@ import java.awt.event.ActionEvent;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -152,6 +153,7 @@ public class ModuleActionManager implements IFModuleEventListener, PropertyChang
 	public UlriceAction getApplicationAction(String uniqueId) {
 		return applicationActions.get(uniqueId);
 	}
+	
 
 	/**
 	 * 
@@ -170,7 +172,7 @@ public class ModuleActionManager implements IFModuleEventListener, PropertyChang
 			if (actionStateMap != null) {
 				List<UlriceAction> moduleActionList = new ArrayList<UlriceAction>(actionStateMap.size());
 				for (ModuleActionState moduleActionState : actionStateMap.values()) {
-					UlriceAction action = moduleActionState.getAction();
+					UlriceAction action = moduleActionState.getAction();					
 					if (!ActionType.SystemAction.equals(action.getType())) {
 						action.setEnabled(moduleActionState.isEnabled());
 					}
@@ -203,6 +205,21 @@ public class ModuleActionManager implements IFModuleEventListener, PropertyChang
 		return new ArrayList<UlriceAction>(0);
 	}
 
+
+    public boolean isActionUsedByModule(String uniqueId) {
+        if (activeController != null) {
+            List<UlriceAction> actionList = controllerActionOrderMap.get(activeController);
+            if (actionList != null) {
+                for(UlriceAction action : actionList) {
+                    if(uniqueId.equals(action.getUniqueId())) {
+                        return true;
+                    }
+                }
+            }
+        }
+        return false;
+    }
+	
 	/**
 	 * @see net.ulrice.module.event.IFModuleEventListener#openModule(net.ulrice.module.IFController)
 	 */
@@ -230,8 +247,6 @@ public class ModuleActionManager implements IFModuleEventListener, PropertyChang
 		controllerActionOrderMap.put(activeController, actionOrder);
 		controllerActionStateMap.put(activeController, actionStateMap);
 
-		adaptActionStates();
-		fireApplicationActionsChanged();
 	}
 
 	/**
@@ -286,6 +301,20 @@ public class ModuleActionManager implements IFModuleEventListener, PropertyChang
 		}
 	}
 
+	public void setActionState(IFController controller, String actionId, boolean enabled) {
+	    Map<UlriceAction, ModuleActionState> map = controllerActionStateMap.get(controller);
+	    
+	    Collection<ModuleActionState> values = map.values();
+	    for(ModuleActionState state : values) {
+	        if(state.getAction().getUniqueId().equals(actionId)) {
+	            state.setEnabled(enabled);
+	            break;
+	        }
+	    }
+	    adaptActionStates();
+	    fireApplicationActionsChanged();
+	}
+	
 	@Override
 	public void moduleBlocked(IFController controller) {
 		// TODO Auto-generated method stub

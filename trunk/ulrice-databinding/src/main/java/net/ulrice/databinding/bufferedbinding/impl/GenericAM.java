@@ -35,7 +35,7 @@ public class GenericAM<T> implements IFAttributeModel<T>, IFViewChangeListener {
 	private T currentValue;
 
 	/** The validator of this attribute model. */
-	private IFValidator<T> validator;
+	private List<IFValidator<T>> validators = new ArrayList<IFValidator<T>>();
 
 	private List<IFViewAdapter> viewAdapterList;
 
@@ -106,6 +106,10 @@ public class GenericAM<T> implements IFAttributeModel<T>, IFViewChangeListener {
 		calculateState(null);
 		fireDataChanged(null);
 	}
+	
+	public void recalculateState() {
+	    calculateState(null);	    
+	}
 
 	public void gaChanged(IFViewAdapter viewAdapter, T value) {
 		this.currentValue = value;
@@ -120,16 +124,18 @@ public class GenericAM<T> implements IFAttributeModel<T>, IFViewChangeListener {
 		boolean stateChanged = false;
 
 		try {
-			if (getValidator() != null) {
-				ValidationResult errors = getValidator().isValid(this, getCurrentValue());
-				if (errors != null && !errors.isValid()) {
-					stateChanged |= (valid != false);
-					valid = false;
-				} else {
-					getValidator().clear();
-					stateChanged |= (valid != true);
-					valid = true;
-				}
+			if (getValidators() != null) {
+			    for(IFValidator<T> validator : getValidators()) {
+    				ValidationResult errors = validator.isValid(this, getCurrentValue());
+    				if (errors != null && !errors.isValid()) {
+    					stateChanged |= (valid != false);
+    					valid = false;
+    				} else {
+    				    validator.clearValidationErrors();
+    					stateChanged |= (valid != true);
+    					valid = true;
+    				}
+			    }
 			}
 
 			if (getCurrentValue() == null && getOriginalValue() == null) {
@@ -206,16 +212,19 @@ public class GenericAM<T> implements IFAttributeModel<T>, IFViewChangeListener {
 	 * @see net.ulrice.databinding.bufferedbinding.IFAttributeModel#getValidator()
 	 */
 	@Override
-	public IFValidator<T> getValidator() {
-		return validator;
+	public List<IFValidator<T>> getValidators() {
+		return validators;
 	}
 
 	/**
 	 * @see net.ulrice.databinding.bufferedbinding.IFAttributeModel#setValidator(net.ulrice.databinding.validation.IFValidator)
 	 */
 	@Override
-	public void setValidator(IFValidator<T> validator) {
-		this.validator = validator;
+	public void addValidator(IFValidator<T> validator) {
+	    if(validator == null) {
+	        return;
+	    }
+		this.validators.add(validator);
 	}
 
 	/**
@@ -223,8 +232,15 @@ public class GenericAM<T> implements IFAttributeModel<T>, IFViewChangeListener {
 	 */
 	@Override
 	public ValidationResult getValidationResult() {
-		if (getValidator() != null) {
-			return getValidator().getLastValidationErrors();
+		if (getValidators() != null) {
+		    ValidationResult result = new ValidationResult();
+		    for(IFValidator<T> validator : getValidators()) {		        
+		        ValidationResult lastValidationErrors = validator.getLastValidationErrors();
+		        if(lastValidationErrors != null) {
+		            result.addValidationErrors(lastValidationErrors.getValidationErrors());
+		        }
+		    }
+			return result;
 		}
 		return null;
 	}

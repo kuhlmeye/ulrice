@@ -9,7 +9,7 @@ import net.ulrice.security.Authorization;
  * 
  * @author christof
  */
-public class AuthModuleAction extends ModuleAction {
+public class AuthModuleDelegationAction extends ModuleDelegationAction {
 
 	/** Default generated serial version uid. */
 	private static final long serialVersionUID = -3194687027367977235L;
@@ -28,7 +28,7 @@ public class AuthModuleAction extends ModuleAction {
 	 * @param type The type of the action.
 	 * @param icon The icon of this action.
 	 */
-	public AuthModuleAction(String uniqueId, String name, boolean enabled, Icon icon) {
+	public AuthModuleDelegationAction(String uniqueId, String name, boolean enabled, Icon icon) {
 		super(uniqueId, name, enabled, icon);
 	}
 	

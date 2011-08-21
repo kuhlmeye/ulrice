@@ -14,7 +14,7 @@ import net.ulrice.Ulrice;
  * 
  * @author christof
  */
-public class ModuleAction extends UlriceAction {
+public class ModuleDelegationAction extends UlriceAction {
 
 	/** Default generated serial version uid. */
 	private static final long serialVersionUID = -8075590936981607102L;
@@ -28,7 +28,7 @@ public class ModuleAction extends UlriceAction {
 	 * @param type The type of the action.
 	 * @param icon The icon of this action.
 	 */
-	public ModuleAction(String uniqueId, String name, boolean enabled, Icon icon) {
+	public ModuleDelegationAction(String uniqueId, String name, boolean enabled, Icon icon) {
 		super(uniqueId, name, enabled, ActionType.ModuleAction, icon);
 	}
 

@@ -23,7 +23,7 @@ import net.ulrice.module.impl.SimpleModuleTitleRenderer;
 import net.ulrice.module.impl.action.CloseAllModulesAction;
 import net.ulrice.module.impl.action.CloseModuleAction;
 import net.ulrice.module.impl.action.ExitApplicationAction;
-import net.ulrice.module.impl.action.ModuleAction;
+import net.ulrice.module.impl.action.ModuleDelegationAction;
 import net.ulrice.module.impl.action.ModuleActionManager;
 import net.ulrice.security.Authorization;
 import net.ulrice.translator.CTranslator;
@@ -138,11 +138,11 @@ public class UlriceSampleApplication {
 		actionManager.addApplicationAction(new CloseAllModulesAction("Close All", null));
 		actionManager.addApplicationAction(new CloseModuleAction("Close", loadImage("close.gif")));
 		Ulrice.getActionManager().addApplicationAction(
-				new ModuleAction("TEST1", "TEST1", false, null));
+				new ModuleDelegationAction("TEST1", "TEST1", false, null));
 		Ulrice.getActionManager().addApplicationAction(
-				new ModuleAction("TEST2", "TEST2", false, null));
+				new ModuleDelegationAction("TEST2", "TEST2", false, null));
 		Ulrice.getActionManager().addApplicationAction(
-				new ModuleAction("TEST3", "TEST3", false, null));
+				new ModuleDelegationAction("TEST3", "TEST3", false, null));
 
 		// Show main frame.
 		JFrame mainFrame = Ulrice.getMainFrame().getFrame();

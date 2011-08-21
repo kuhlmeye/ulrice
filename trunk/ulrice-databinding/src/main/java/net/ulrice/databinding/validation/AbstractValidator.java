@@ -31,10 +31,10 @@ public abstract class AbstractValidator<T> implements IFValidator<T> {
     }
 
     /**
-     * @see net.ulrice.databinding.validation.IFValidator#clear()
+     * @see net.ulrice.databinding.validation.IFValidator#clearValidationErrors()
      */
     @Override
-    public void clear() {
+    public void clearValidationErrors() {
         this.errors = null;
     }
     
