@@ -34,7 +34,7 @@ public class MessageHandler implements UncaughtExceptionHandler, IFModuleEventLi
 
 	/** Map holding the lists of all module specific messages. */
 	private Map<IFController, List<Message>> moduleMessages;
-
+	
 	/**
 	 * Creates a new message handler instance.
 	 */
@@ -110,9 +110,6 @@ public class MessageHandler implements UncaughtExceptionHandler, IFModuleEventLi
 	 *            The exception.
 	 */
 	public void handleException(IFController controller, String message, Throwable throwable) {
-	    if (throwable != null) {
-	        throwable.printStackTrace(); // TODO for debugging assistance - is this configurable, and if so, is it replaced for 'real' use?
-	    }
 		handleMessage(controller, new Message(controller, MessageSeverity.Exception, message, throwable));
 	}
 
