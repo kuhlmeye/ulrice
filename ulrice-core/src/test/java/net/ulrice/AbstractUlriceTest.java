@@ -2,13 +2,10 @@ package net.ulrice;
 
 import java.util.Properties;
 
-import org.junit.Before;
-
-import net.ulrice.Ulrice;
 import net.ulrice.configuration.ConfigurationException;
 import net.ulrice.configuration.IFUlriceConfiguration;
 import net.ulrice.frame.IFMainFrame;
-import net.ulrice.message.I18NMessageProvider;
+import net.ulrice.message.TranslationProvider;
 import net.ulrice.module.IFModuleManager;
 import net.ulrice.module.IFModuleStructureManager;
 import net.ulrice.module.ModuleType;
@@ -17,6 +14,8 @@ import net.ulrice.module.impl.ReflectionModule;
 import net.ulrice.module.impl.SimpleModuleTitleRenderer;
 import net.ulrice.security.GrantAllAuthCallback;
 import net.ulrice.security.IFAuthCallback;
+
+import org.junit.Before;
 
 public class AbstractUlriceTest implements IFUlriceConfiguration {
 
@@ -81,7 +80,7 @@ public class AbstractUlriceTest implements IFUlriceConfiguration {
 	}
 
     @Override
-    public I18NMessageProvider getMessageProvider() {
+    public TranslationProvider getTranslationProvider() {
         return null;
     }
 

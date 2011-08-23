@@ -7,8 +7,8 @@ import java.util.Properties;
 import net.ulrice.Ulrice;
 import net.ulrice.frame.IFMainFrame;
 import net.ulrice.frame.impl.MainFrame;
-import net.ulrice.message.I18NMessageProvider;
-import net.ulrice.message.IFMessageEventListener;
+import net.ulrice.message.EmptyTranslationProvider;
+import net.ulrice.message.TranslationProvider;
 import net.ulrice.module.IFModuleManager;
 import net.ulrice.module.IFModuleStructureManager;
 import net.ulrice.module.impl.ModuleManager;
@@ -35,7 +35,7 @@ public class UlriceFileConfiguration extends ClassLoadingHelper implements IFUlr
 	/** The authorization callback. */
 	private IFAuthCallback authCallback;
 
-    private I18NMessageProvider messageProvider;
+    private TranslationProvider translationProvider;
 
 	/**
 	 * Initialize ulrice by a file configuration.
@@ -73,8 +73,8 @@ public class UlriceFileConfiguration extends ClassLoadingHelper implements IFUlr
 		moduleManager = (IFModuleManager) loadClass(properties.getProperty(IFModuleManager.class.getName(),  ModuleManager.class.getName()));
 		moduleStructureManager = (IFModuleStructureManager) loadClass(properties.getProperty(IFModuleStructureManager.class.getName(), ModuleManager.class.getName()));
 		mainFrame = (IFMainFrame) loadClass(properties.getProperty(IFMainFrame.class.getName(), MainFrame.class.getName()));
-		authCallback = (IFAuthCallback) loadClass(properties.getProperty(IFAuthCallback.class.getName(), null));
-//		messageProvider = (I18NMessageProvider) loadClass(properties.getProperty(I18NMessageProvider.class.getName(), null));
+		authCallback = (IFAuthCallback) loadClass(properties.getProperty(IFAuthCallback.class.getName(), null));		
+		translationProvider = (TranslationProvider) loadClass(properties.getProperty(TranslationProvider.class.getName(), EmptyTranslationProvider.class.getName()));
 
 		// Initialize ulrice.
 		Ulrice.initialize(this);
@@ -106,8 +106,8 @@ public class UlriceFileConfiguration extends ClassLoadingHelper implements IFUlr
 	}
 
     @Override
-    public I18NMessageProvider getMessageProvider() {
-        return messageProvider;
+    public TranslationProvider getTranslationProvider() {
+        return translationProvider;
     }
 
 	/**

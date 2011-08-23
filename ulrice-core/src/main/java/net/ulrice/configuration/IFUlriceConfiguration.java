@@ -3,7 +3,7 @@ package net.ulrice.configuration;
 import java.util.Properties;
 
 import net.ulrice.frame.IFMainFrame;
-import net.ulrice.message.I18NMessageProvider;
+import net.ulrice.message.TranslationProvider;
 import net.ulrice.module.IFModuleManager;
 import net.ulrice.module.IFModuleStructureManager;
 import net.ulrice.security.IFAuthCallback;
@@ -51,5 +51,5 @@ public interface IFUlriceConfiguration {
 	 */
 	IFAuthCallback getAuthCallback();
 
-    I18NMessageProvider getMessageProvider();
+    TranslationProvider getTranslationProvider();
 }

@@ -6,8 +6,8 @@ import net.ulrice.configuration.ConfigurationException;
 import net.ulrice.configuration.IFUlriceConfiguration;
 import net.ulrice.dialog.DialogManager;
 import net.ulrice.frame.IFMainFrame;
-import net.ulrice.message.I18NMessageProvider;
 import net.ulrice.message.MessageHandler;
+import net.ulrice.message.TranslationProvider;
 import net.ulrice.module.IFModuleManager;
 import net.ulrice.module.IFModuleStructureManager;
 import net.ulrice.module.impl.action.ModuleActionManager;
@@ -44,7 +44,7 @@ public class Ulrice {
 	private static Properties configuration;
 	
 	/** Contains the I18N-Support */
-	private static I18NMessageProvider messageProvider;
+	private static TranslationProvider translationProvider;
 		
 	/** The callback used to handle authorization requests. */
 	private static IFAuthCallback securityManager;	
@@ -68,7 +68,7 @@ public class Ulrice {
 		Ulrice.actionManager = new ModuleActionManager();
 		Ulrice.processManager = new ProcessManager();
 		Ulrice.dialogManager = new DialogManager();
-		Ulrice.messageProvider = configuration.getMessageProvider();
+		Ulrice.translationProvider = configuration.getTranslationProvider();
 		
 		if(configuration.getAuthCallback() != null) {
 			Ulrice.securityManager = configuration.getAuthCallback();
@@ -119,13 +119,8 @@ public class Ulrice {
 		return messageHandler;
 	}
 
-    /**
-     * Get the messageProvider
-     *
-     * @return I18NMessageProvider messageProvider
-     */
-    public static I18NMessageProvider getMessageProvider() {
-        return messageProvider;
+	public static TranslationProvider getTranslationProvider() {
+        return translationProvider;
     }
 
     /**
