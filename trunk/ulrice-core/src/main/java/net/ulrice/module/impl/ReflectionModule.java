@@ -155,19 +155,15 @@ public class ReflectionModule implements IFModule {
 
 				return controller;
 			} else {
-				throw new ModuleInstantiationException("Controller class (" + controllerClassName
-						+ ") is not an instance of " + IFController.class.getName() + ".", null);
+				throw new ModuleInstantiationException("Controller class (" + controllerClassName + ") is not an instance of " + IFController.class.getName() + ".", null);
 			}
 
 		} catch (ClassNotFoundException e) {
-			throw new ModuleInstantiationException(
-					"Controller class (" + controllerClassName + ") could not be found.", e);
+			throw new ModuleInstantiationException("Controller class (" + controllerClassName + ") could not be found.", e);
 		} catch (InstantiationException e) {
-			throw new ModuleInstantiationException("Could not instanciate controller class (" + controllerClassName
-					+ ").", e);
+			throw new ModuleInstantiationException("Could not instanciate controller class (" + controllerClassName	+ ").", e);
 		} catch (IllegalAccessException e) {
-			throw new ModuleInstantiationException("Could not access controller class (" + controllerClassName + ").",
-					e);
+			throw new ModuleInstantiationException("Could not access controller class (" + controllerClassName + ").", e);
 		}
 	}
 

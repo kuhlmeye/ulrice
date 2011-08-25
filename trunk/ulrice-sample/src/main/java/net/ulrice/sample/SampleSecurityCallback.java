@@ -19,7 +19,7 @@ public class SampleSecurityCallback implements IFAuthCallback {
 
 	@Override
 	public boolean allowOpenModule(IFModule module, IFController ctrl) {
-		LOG.info("Checking authorization to open module " + Ulrice.getModuleManager().getModule(ctrl).getModuleTitle(IFModuleTitleProvider.Usage.Default));
+		LOG.info("Checking authorization to open module " + module.getModuleTitle(IFModuleTitleProvider.Usage.Default));
 		return true;
 	}
 
