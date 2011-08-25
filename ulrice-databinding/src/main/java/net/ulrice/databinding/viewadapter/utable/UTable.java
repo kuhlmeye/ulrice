@@ -3,9 +3,10 @@ package net.ulrice.databinding.viewadapter.utable;
 import java.awt.Insets;
 import java.util.EventObject;
 
+import javax.swing.DefaultCellEditor;
 import javax.swing.JTable;
+import javax.swing.JTextField;
 import javax.swing.ListSelectionModel;
-import javax.swing.event.ChangeEvent;
 
 
 public class UTable extends JTable {
@@ -23,6 +24,29 @@ public class UTable extends JTable {
 		
 		uTableHeader = new UTableVAHeader(getColumnModel(), new Insets(1, 1, 3, 1));
 		setTableHeader(uTableHeader);
+		
+        setDefaultRenderer(Integer.class, new UTableVANumericCellRenderer());
+        setDefaultRenderer(Double.class, new UTableVANumericCellRenderer());
+        setDefaultRenderer(Short.class, new UTableVANumericCellRenderer());
+        setDefaultRenderer(Long.class, new UTableVANumericCellRenderer());
+        setDefaultRenderer(Float.class, new UTableVANumericCellRenderer());
+        setDefaultRenderer(Integer.TYPE, new UTableVANumericCellRenderer());
+        setDefaultRenderer(Double.TYPE, new UTableVANumericCellRenderer());
+        setDefaultRenderer(Short.TYPE, new UTableVANumericCellRenderer());
+        setDefaultRenderer(Long.TYPE, new UTableVANumericCellRenderer());
+        setDefaultRenderer(Float.TYPE, new UTableVANumericCellRenderer());
+        setDefaultRenderer(Number.class, new UTableVANumericCellRenderer());
+        setDefaultRenderer(Boolean.class, new UTableVABooleanCellRenderer());
+        setDefaultRenderer(Boolean.TYPE, new UTableVABooleanCellRenderer());
+        setDefaultEditor(Character.class, new DefaultCellEditor(new JTextField()));
+        // TODO add additional renderer
+//        setDefaultRenderer(Object.class, new YTableTextCellRenderer()); // needed, or handled by default?
+//        setDefaultRenderer(Icon.class, new UTableVAIconCellRenderer());
+//        setDefaultRenderer(ImageIcon.class, new UTableVAIconCellRenderer());
+//        setDefaultRenderer(JComboBox.class, new UTableVAComboBoxCellRenderer());
+//        setDefaultRenderer(List.class, new UTableVATextCellRenderer()); // needed, or handled by default?
+        
+        
 	}
 
 	public void setAssocTable(UTable assocTable) {
