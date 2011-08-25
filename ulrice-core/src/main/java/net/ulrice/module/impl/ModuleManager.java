@@ -25,6 +25,7 @@ import net.ulrice.module.event.IFModuleEventListener;
 import net.ulrice.module.event.IFModuleStructureEventListener;
 import net.ulrice.module.exception.ModuleInstantiationException;
 
+
 /**
  * The default module manager.
  * 
@@ -36,42 +37,39 @@ public class ModuleManager implements IFModuleManager, IFModuleStructureManager 
 	private static final Logger LOG = Logger.getLogger(ModuleManager.class.getName());
 
 	/** The mapping between module and module id. */
-	private Map<String, IFModule> moduleMap = new HashMap<String, IFModule>();
+	private final Map<String, IFModule> moduleMap = new HashMap<String, IFModule>();
 
 	/** The set of all controller instances. */
-	private List<IFController> activeInstances = new LinkedList<IFController>();
-
-	/** The set of the instanciated single modules. */
-	private Map<IFModule, IFController> singleModules = new HashMap<IFModule, IFController>();
-
-	/** The controller of the current active module. */
-	private IFController activeController = null;
+	private final OpenControllerPool openControllers = new OpenControllerPool();
 
 	/** List of all listeners listening on module manager events. */
-	private EventListenerList listenerList = new EventListenerList();
+	private final EventListenerList listenerList = new EventListenerList();
 
 	/** The root group of this module manager. */
-	private UlriceRootModule rootGroup = new UlriceRootModule();
+	private final UlriceRootModule rootGroup = new UlriceRootModule();
 
 	private final IdentityHashMap<IFController, IdentityHashMap<Object, Object>> blockers = new IdentityHashMap<IFController, IdentityHashMap<Object,Object>>();
-	private final IdentityHashMap<IFController, IFModule> modulesForControllers = new IdentityHashMap<IFController, IFModule>();  
 	
 	
 	public void openModule (final String moduleId, final ControllerProviderCallback callback) throws ModuleInstantiationException {
+	    openModule (moduleId, null, callback);
+	}
+	
+	public void openModule (final String moduleId, final IFController parent, final ControllerProviderCallback callback) throws ModuleInstantiationException {
 		final IFModule module = moduleMap.get(moduleId);
 		
 		if (module == null) {
 			throw new ModuleInstantiationException("Module with id (" + moduleId + ") could not be found.", null);
 		}
 
-        final boolean isSingleModule = ModuleType.SingleModule.equals(module.getModuleInstanceType());
+        final boolean isSingleModule = ModuleType.SingleModule.equals (module.getModuleInstanceType());
 
-		if (isSingleModule && singleModules.containsKey(module)) {
-			// If it's a single module and if it's already open than return the
-			// instance.
-			final IFController ctrlInstance = singleModules.get(module);
-            modulesForControllers.put(ctrlInstance, module);
+		if (isSingleModule && openControllers.getControllers(module).size() > 0) {
+			// If it's a single module and if it's already open than return the instance.
+			final IFController ctrlInstance = openControllers.getControllers (module).iterator().next();
+
 			activateModule (ctrlInstance);
+			
 			if (callback != null) {
 			    callback.onControllerReady (ctrlInstance);
 			}
@@ -82,35 +80,23 @@ public class ModuleManager implements IFModuleManager, IFModuleStructureManager 
 
                 @Override
                 public void onControllerReady(IFController controller) {
-                    // Create a new instance
-                    modulesForControllers.put (controller, module);
                     
                     if (!Ulrice.getSecurityManager().allowOpenModule(module, controller)) {
-                        LOG.info("Module [Id: " + module.getUniqueId() + ", Name: " + module.getModuleTitle(Usage.Default)
-                                + "] will not be created. Not authorized by ulrice security manager.");
+                        LOG.info("Module [Id: " + module.getUniqueId() + ", Name: " + module.getModuleTitle(Usage.Default) + "] will not be created. Not authorized by ulrice security manager.");
                         if (callback != null) {
                             callback.onFailure (new ModuleInstantiationException ("Not allowed by security manager", null));
                         }
                         return;
                     }
                     
-                    activeInstances.add(0, controller);
+                    openControllers.addController (controller, parent, module);
                     
-                    if (isSingleModule) {
-                        singleModules.put(module, controller);
-                    }
-                    
-                    // Inform event listeners.
-                    IFModuleEventListener[] listeners = listenerList.getListeners(IFModuleEventListener.class);
-                    if (listeners != null) {
-                        for (IFModuleEventListener listener : listeners) {
-                            listener.openModule (controller);
-                        }
+                    for (IFModuleEventListener listener : listenerList.getListeners(IFModuleEventListener.class)) {
+                        listener.openModule (controller);
                     }
                     
                     controller.postCreate();
                     
-                    // Activate the controller.
                     activateModule (controller);
                     
                     if (callback != null) {
@@ -129,7 +115,7 @@ public class ModuleManager implements IFModuleManager, IFModuleStructureManager 
 	}
 
 	public IFModule getModule(IFController controller) {
-	    return modulesForControllers.get(controller);
+	    return openControllers.getModule (controller);
 	}
 	
 	public IFModuleTitleProvider getTitleProvider(IFController controller) {
@@ -144,24 +130,20 @@ public class ModuleManager implements IFModuleManager, IFModuleStructureManager 
 		IFModuleEventListener[] listeners = listenerList.getListeners(IFModuleEventListener.class);
 
 		// Inform event listeners.
-		if (activeController != null) {
+		if (openControllers.getActive() != null) {
 			if (listeners != null) {
 				for (IFModuleEventListener listener : listeners) {
-					listener.deactivateModule(activeController);
+					listener.deactivateModule (openControllers.getActive());
 				}
 			}
 		}
 
-		this.activeController = controller;
-
-		// Move the controller to the top of the list.
-		activeInstances.remove(controller);
-		activeInstances.add(0, controller);
+		openControllers.makeActive (controller);
 
 		// Inform event listeners.
 		if (listeners != null) {
 			for (IFModuleEventListener listener : listeners) {
-				listener.activateModule(activeController);
+				listener.activateModule (openControllers.getActive());
 			}
 		}
 	}
@@ -193,52 +175,35 @@ public class ModuleManager implements IFModuleManager, IFModuleStructureManager 
 		}
 	}
 
-	public void closeController(IFController controller) {
+	public void closeController (IFController controller) {
 		if (controller == null) {
 			return;
 		}
 
-		boolean isSingleModule = ModuleType.SingleModule.equals(getModule(controller).getModuleInstanceType());
-
-		if (isSingleModule) {
-			singleModules.remove(getModule(controller));
-		}
-		activeInstances.remove(controller);
-
-		// Inform event listeners.
-		IFModuleEventListener[] listeners = listenerList.getListeners(IFModuleEventListener.class);
-		if (listeners != null) {
-			for (IFModuleEventListener listener : listeners) {
-				listener.closeController(controller);
-			}
+		while (openControllers.getChildren (controller).size() > 0) {
+		    closeController (openControllers.getChildren(controller).iterator().next());
 		}
 
-		activeController = null;
-		if (activeInstances.size() > 0) {
-			activateModule(activeInstances.get(0));
+		for (IFModuleEventListener listener : listenerList.getListeners(IFModuleEventListener.class)) {
+		    listener.closeController (controller);
+		}
+
+		openControllers.removeController (controller);
+
+		if (openControllers.getActive() != null) {
+			activateModule (openControllers.getActive ());
 		}
 
 	}
 
-	/**
-	 * @see net.ulrice.module.IFModuleManager#getCurrentController()
-	 */
 	public IFController getCurrentController() {
-		return activeController;
+		return openControllers.getActive();
 	}
 
-	/**
-	 * @see net.ulrice.module.IFModuleManager#getActiveControllers()
-	 */
 	public List<IFController> getActiveControllers() {
-		List<IFController> activeModules = new ArrayList<IFController>(activeInstances == null ? 0 : activeInstances.size());
-		activeModules.addAll(activeInstances);
-		return activeModules;
+	    return openControllers.getAll();
 	}
 
-	/**
-	 * @see net.ulrice.module.IFModuleManager#registerModule(net.ulrice.module.IFModule)
-	 */
 	public void registerModule(IFModule module) {
 		if (module == null) {
 			throw new IllegalArgumentException("Module must not be null.");
@@ -354,11 +319,10 @@ public class ModuleManager implements IFModuleManager, IFModuleStructureManager 
 		/**
 		 * Add a module to this module group
 		 * 
-		 * @param module
-		 *            The module that should be added to this group.
+		 * @param module The module that should be added to this group.
 		 */
         @Override
-		public void addModule(IFModule module) {
+		public void addModule (IFModule module) {
 			modules.add(module);
 		}
 
@@ -399,21 +363,15 @@ public class ModuleManager implements IFModuleManager, IFModuleStructureManager 
 	}
 
 	private void fireControllerBlocked(IFController controller) {
-		IFModuleEventListener[] listeners = listenerList.getListeners(IFModuleEventListener.class);
-//		if (activeController != null) { //TODO arno why is this a prerequisite?
-		    for (IFModuleEventListener listener : listeners) {
-		        listener.moduleBlocked(activeController);
-		    }
-//		}
+		for (IFModuleEventListener listener : listenerList.getListeners(IFModuleEventListener.class)) {
+		    listener.moduleBlocked (openControllers.getActive());
+		}
 	}
 
 	private void fireControllerUnblocked(IFController controller) {
-	    IFModuleEventListener[] listeners = listenerList.getListeners(IFModuleEventListener.class);
-//	    if (activeController != null) { //TODO arno why is this a prerequisite?
-	        for (IFModuleEventListener listener : listeners) {
-	            listener.moduleUnblocked(activeController);
-	        }
-//		}
+	    for (IFModuleEventListener listener : listenerList.getListeners(IFModuleEventListener.class)) {
+	        listener.moduleUnblocked (openControllers.getActive());
+	    }
 	}
 
     @Override

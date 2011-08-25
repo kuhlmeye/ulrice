@@ -29,6 +29,12 @@ public interface IFModuleManager {
 	void openModule (String moduleId, ControllerProviderCallback callback) throws ModuleInstantiationException;
 
 	/**
+	 * opens a module as a "child", i.e. creates a new controller instance that is closed automatically when the parent controller
+	 *  is closed. Passing <pre>null</pre> as a parent makes the newly created controller top-level.
+	 */
+	void openModule (String moduleId, IFController parent, ControllerProviderCallback callback) throws ModuleInstantiationException;
+	
+	/**
 	 * Activates an instance of a module, i.e. give it the focus.
 	 */
 	void activateModule(IFController controller);
