@@ -7,7 +7,7 @@ public enum TranslationUsage {
     /** serves for generic text as well */
     Message,
     Title,
-    TableColumnHeader,
+    TableColumn,
     BorderTitle,
     Action,
     SelectItem,

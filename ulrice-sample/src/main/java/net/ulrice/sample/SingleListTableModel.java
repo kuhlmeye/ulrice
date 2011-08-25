@@ -1,8 +1,7 @@
-package net.ulrice.databinding;
+package net.ulrice.sample;
 
 import java.util.List;
 
-import net.ulrice.databinding.bufferedbinding.TableAMBuilder;
 import net.ulrice.databinding.bufferedbinding.impl.TableAM;
 
 

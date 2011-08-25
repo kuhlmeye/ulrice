@@ -9,9 +9,7 @@ import javax.swing.JTable;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
-import net.ulrice.databinding.SingleListTableModel;
 import net.ulrice.databinding.SingleObjectModel;
-import net.ulrice.databinding.bufferedbinding.TableAMBuilder;
 import net.ulrice.databinding.bufferedbinding.impl.BindingGroup;
 import net.ulrice.databinding.bufferedbinding.impl.Element;
 import net.ulrice.databinding.validation.impl.StringLengthValidator;
@@ -19,6 +17,8 @@ import net.ulrice.module.impl.AbstractController;
 import net.ulrice.module.impl.ModuleActionState;
 import net.ulrice.module.impl.action.ActionType;
 import net.ulrice.module.impl.action.UlriceAction;
+import net.ulrice.sample.SingleListTableModel;
+import net.ulrice.sample.TableAMBuilder;
 import net.ulrice.sample.module.moviedb.Movie.Actor;
 
 
