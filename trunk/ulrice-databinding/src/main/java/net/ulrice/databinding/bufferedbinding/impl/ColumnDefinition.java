@@ -17,10 +17,25 @@ public class ColumnDefinition<T extends Object> {
     private IFValueConverter valueConverter;
     private IFValidator validator;
     private boolean readOnly = false;
+    private String columnName;
 	private boolean useAutoValueConverter = true;
 
+	   
     public ColumnDefinition(IFDynamicModelValueAccessor dataAccessor, Class<T> columnClass) {
         this.id = dataAccessor.getAttributeId();
+        this.columnName = id;
+        this.dataAccessor = dataAccessor;
+        this.columnClass = columnClass;
+        
+        this.filterMode = FilterMode.RegEx;
+        if(Number.class.isAssignableFrom(columnClass)) {
+            this.filterMode = FilterMode.Numeric;
+        }
+    }
+	
+    public ColumnDefinition(String columnName, IFDynamicModelValueAccessor dataAccessor, Class<T> columnClass) {
+        this.id = dataAccessor.getAttributeId();
+        this.columnName = columnName;
         this.dataAccessor = dataAccessor;
         this.columnClass = columnClass;
         
@@ -32,6 +47,16 @@ public class ColumnDefinition<T extends Object> {
     
     public ColumnDefinition(IFDynamicModelValueAccessor dataAccessor, Class<T> columnClass, FilterMode filterMode) {
         this.id = dataAccessor.getAttributeId();
+        this.columnName = id;
+        this.dataAccessor = dataAccessor;
+        this.columnClass = columnClass;
+        this.filterMode = filterMode;
+    }
+
+    
+    public ColumnDefinition(String columnName, IFDynamicModelValueAccessor dataAccessor, Class<T> columnClass, FilterMode filterMode) {
+        this.id = dataAccessor.getAttributeId();
+        this.columnName = columnName;
         this.dataAccessor = dataAccessor;
         this.columnClass = columnClass;
         this.filterMode = filterMode;
@@ -55,14 +80,6 @@ public class ColumnDefinition<T extends Object> {
         return columnClass;
     }
 
-    /**
-     * @param columnIndex
-     * @return
-     */
-    public String getColumnName() {
-        // TODO Auto-generated method stub
-        return id;
-    }
 
 
     /**
@@ -147,4 +164,15 @@ public class ColumnDefinition<T extends Object> {
     public void setUseAutoValueConverter(boolean useAutoValueConverter) {
 		this.useAutoValueConverter = useAutoValueConverter;
 	}
+    public void setColumnName(String columnName) {
+        this.columnName = columnName;
+    }
+
+    /**
+     * @param columnIndex
+     * @return
+     */
+    public String getColumnName() {
+        return columnName;
+    }
 }

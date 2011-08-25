@@ -1,4 +1,4 @@
-package net.ulrice.databinding.bufferedbinding;
+package net.ulrice.sample;
 
 import java.util.ArrayList;
 import java.util.HashMap;
