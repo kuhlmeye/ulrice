@@ -19,8 +19,8 @@ public class PGenerateTranslations extends AbstractProcess<List<TranslationDTO>,
 	private Map<String, DictionaryEntryDTO> dictionaryMap = new HashMap<String, DictionaryEntryDTO>();
 
 	public PGenerateTranslations(IFController owner, String name, MTranslator model, Locale... locales) {
-		super(owner, name);
-
+		super(owner);
+		setProcessName(name);
 		this.model = model;
 		this.locales = locales;
 		model.getDictionaryAM().write();

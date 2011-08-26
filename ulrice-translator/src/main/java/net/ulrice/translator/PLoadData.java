@@ -10,7 +10,8 @@ public class PLoadData extends AbstractProcess<Void, Void> {
 	private IFTranslationService service;
 
 	public PLoadData(IFController owner, String name, MTranslator model, IFTranslationService service) {
-		super(owner, name, true);
+        super(owner, true);
+        setProcessName(name);
 		this.model = model;
 		this.service = service;
 	}

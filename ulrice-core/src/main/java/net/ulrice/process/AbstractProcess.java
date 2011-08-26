@@ -24,14 +24,13 @@ public abstract class AbstractProcess<T,V> extends SwingWorker<T, V> implements 
 	private EventListenerList listenerList;
 	private boolean blocksWorkarea = false;
 
-	public AbstractProcess(IFController owner, String name) {
-		this(owner, name, false);
+	public AbstractProcess(IFController owner) {
+		this(owner, false);
 	}
 
-	public AbstractProcess(IFController owner, String name, boolean blocksWorkarea) {
+	public AbstractProcess(IFController owner, boolean blocksWorkarea) {
 		this.blocksWorkarea = blocksWorkarea;
 		this.owner = owner;
-		this.name = name;		
 		this.state = ProcessState.Initialized;
 		this.listenerList = new EventListenerList();
 	}
@@ -136,7 +135,7 @@ public abstract class AbstractProcess<T,V> extends SwingWorker<T, V> implements 
 	 * 
 	 * @return The result of the background process
 	 */
-	protected abstract T work();
+	protected abstract T work() throws Exception;
 
 	/**
 	 * Called in the awt-thread after the background process was finished.
@@ -148,6 +147,10 @@ public abstract class AbstractProcess<T,V> extends SwingWorker<T, V> implements 
 	
 	public boolean blocksWorkarea() {
 		return blocksWorkarea;		
-	}	
+	}
+	
+	public void setProcessName(String name) {
+        this.name = name;
+    }
 }
 

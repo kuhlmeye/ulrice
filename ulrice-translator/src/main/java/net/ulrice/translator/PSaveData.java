@@ -14,7 +14,8 @@ public class PSaveData extends AbstractProcess<Void, Void> {
 	private IFTranslationService service;
 
 	public PSaveData(IFController owner, String name, MTranslator model, IFTranslationService service) {
-		super(owner, name);
+        super(owner);
+        setProcessName(name);
 		this.model = model;
 		this.service = service;
 	}
