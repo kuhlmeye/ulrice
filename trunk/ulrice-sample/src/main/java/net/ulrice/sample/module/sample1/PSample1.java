@@ -10,7 +10,8 @@ public class PSample1 extends AbstractProcess<Void, Void>  {
 	private int progress;
 
 	public PSample1(IFController controller) {
-		super(controller, "Sample Process", true);
+		super(controller, true);
+        setProcessName("Sample Process");
 	}
 
 	@Override

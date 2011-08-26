@@ -20,7 +20,8 @@ public class PGenerateProperties extends AbstractProcess<Void, Void> {
 	private Map<Locale, Properties> propertiesMap = new HashMap<Locale, Properties>();
 
 	public PGenerateProperties(IFController owner, String name, MTranslator model, Locale... locales) {		
-		super(owner, name);
+		super(owner);
+		setProcessName(name);
 		this.model = model;
 		this.locales = locales;
 		model.getTranslationsAM().write();
