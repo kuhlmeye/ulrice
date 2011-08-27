@@ -53,7 +53,7 @@ public class IndexedReflectionMVA implements IFIndexedModelValueAccessor {
 
 	@Override
 	public Object getValue(int index) {
-		Object listValue = ReflectionUtils.getValueByReflection(rootObject, path);
+		Object listValue = UlriceReflectionUtils.getValueByReflection(rootObject, path);
 		if (listValue == null) {
 			throw new NullPointerException();
 		}
@@ -72,7 +72,7 @@ public class IndexedReflectionMVA implements IFIndexedModelValueAccessor {
 	@SuppressWarnings("unchecked")
 	@Override
 	public void setValue(int index, Object value) {
-		Object listValue = ReflectionUtils.getValueByReflection(rootObject, path);
+		Object listValue = UlriceReflectionUtils.getValueByReflection(rootObject, path);
 		if (listValue == null) {
 			throw new NullPointerException();
 		}
@@ -94,7 +94,7 @@ public class IndexedReflectionMVA implements IFIndexedModelValueAccessor {
 	@Override
 	public Class<?> getModelType() {
 		if (path != null) {
-			Field field = ReflectionUtils.getFieldByReflection(rootObject.getClass(), path);
+			Field field = UlriceReflectionUtils.getFieldByReflection(rootObject.getClass(), path);
 			Type genericFieldType = field.getGenericType();
 		    
 			if(genericFieldType instanceof ParameterizedType){
@@ -125,16 +125,16 @@ public class IndexedReflectionMVA implements IFIndexedModelValueAccessor {
 		if(sizeMVA != null) {
 			return (Integer)sizeMVA.getValue();
 		} else {
-			Object listValue = ReflectionUtils.getValueByReflection(rootObject, path);
+			Object listValue = UlriceReflectionUtils.getValueByReflection(rootObject, path);
 			if (listValue == null) {
 				return 0;
 			}
 
 			if (listValue instanceof List<?>) {
-				return ((List<?>) ReflectionUtils.getValueByReflection(rootObject, path)).size();			
+				return ((List<?>) UlriceReflectionUtils.getValueByReflection(rootObject, path)).size();			
 			}
 			if (listValue.getClass().isArray()) {
-				return (Integer)ReflectionUtils.getValueByReflection(rootObject, path + ".length");			
+				return (Integer)UlriceReflectionUtils.getValueByReflection(rootObject, path + ".length");			
 			}
 		}
 		
@@ -155,6 +155,6 @@ public class IndexedReflectionMVA implements IFIndexedModelValueAccessor {
 
 	@Override
 	public Object cloneObject(Object obj) {
-		return ReflectionUtils.cloneObject(obj);
+		return UlriceReflectionUtils.cloneObject(obj);
 	}
 }

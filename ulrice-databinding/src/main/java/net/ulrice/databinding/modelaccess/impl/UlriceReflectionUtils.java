@@ -19,7 +19,7 @@ import net.ulrice.databinding.ErrorHandler;
 /**
  * @author christof
  */
-public class ReflectionUtils {
+public class UlriceReflectionUtils {
 
 	private static final String GET_METHOD_PREFIX = "get";
 

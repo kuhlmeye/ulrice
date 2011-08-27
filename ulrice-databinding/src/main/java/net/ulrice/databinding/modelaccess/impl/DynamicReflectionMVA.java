@@ -20,12 +20,12 @@ public class DynamicReflectionMVA implements IFDynamicModelValueAccessor {
 	
 	@Override
 	public Object getValue(Object root) {
-		return ReflectionUtils.getValueByReflection(root, path);
+		return UlriceReflectionUtils.getValueByReflection(root, path);
 	}
 
 	@Override
 	public void setValue(Object root, Object value) {
-		ReflectionUtils.setValueByReflection(root, value, path);
+		UlriceReflectionUtils.setValueByReflection(root, value, path);
 	}
 
 	@Override
@@ -35,7 +35,7 @@ public class DynamicReflectionMVA implements IFDynamicModelValueAccessor {
 
 	@Override
 	public Class<?> getModelType(Class<?> rootType) {
-		Field field = ReflectionUtils.getFieldByReflection(rootType, path);
+		Field field = UlriceReflectionUtils.getFieldByReflection(rootType, path);
 		return field.getType();
 	}
 }

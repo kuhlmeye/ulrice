@@ -1,7 +1,7 @@
 package net.ulrice.databinding;
 
 import net.ulrice.databinding.converter.IFValueConverter;
-import net.ulrice.databinding.modelaccess.impl.ReflectionUtils;
+import net.ulrice.databinding.modelaccess.impl.UlriceReflectionUtils;
 
 
 public class ReflectiveObjectWithPresentationConverter <M> implements IFValueConverter<M, ObjectWithPresentation<M>> {
@@ -31,7 +31,7 @@ public class ReflectiveObjectWithPresentationConverter <M> implements IFValueCon
 
     @Override
     public ObjectWithPresentation<M> modelToView(M o) {
-        final String presentation = (String) ReflectionUtils.getValueByReflection(o, presentationPath);
+        final String presentation = (String) UlriceReflectionUtils.getValueByReflection(o, presentationPath);
         return new ObjectWithPresentation<M> (o, presentation);
     }
 }

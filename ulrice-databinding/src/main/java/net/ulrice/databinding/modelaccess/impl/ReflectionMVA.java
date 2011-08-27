@@ -13,7 +13,7 @@ public class ReflectionMVA implements IFModelValueAccessor {
 	private final String id;
 
 	public ReflectionMVA(String id, Object rootObject, String path, boolean readOnly) {
-	    this (id, rootObject, path, readOnly, ReflectionUtils.getFieldType(rootObject.getClass(), path));
+	    this (id, rootObject, path, readOnly, UlriceReflectionUtils.getFieldType(rootObject.getClass(), path));
 	}
 	    
 	public ReflectionMVA(String id, Object rootObject, String path, boolean readOnly, Class<?> valueType) {
@@ -43,12 +43,12 @@ public class ReflectionMVA implements IFModelValueAccessor {
 
 	@Override
 	public Object getValue() {
-		return ReflectionUtils.getValueByReflection(rootObject, path);
+		return UlriceReflectionUtils.getValueByReflection(rootObject, path);
 	}
 
 	@Override
 	public void setValue(Object value) {
-		ReflectionUtils.setValueByReflection(rootObject, value, path);
+		UlriceReflectionUtils.setValueByReflection(rootObject, value, path);
 	}
 	
 	@Override

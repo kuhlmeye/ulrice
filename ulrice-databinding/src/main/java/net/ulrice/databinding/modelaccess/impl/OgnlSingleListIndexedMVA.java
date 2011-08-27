@@ -98,7 +98,7 @@ public class OgnlSingleListIndexedMVA implements IFIndexedModelValueAccessor {
 
 	@Override
 	public Object cloneObject(Object obj) {
-		return ReflectionUtils.cloneObject(obj);
+		return UlriceReflectionUtils.cloneObject(obj);
 	}
 
 	@Override
