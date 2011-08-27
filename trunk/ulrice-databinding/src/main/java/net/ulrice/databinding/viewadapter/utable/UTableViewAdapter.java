@@ -4,6 +4,7 @@
 package net.ulrice.databinding.viewadapter.utable;
 
 import java.awt.Component;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.swing.JTable;
@@ -368,6 +369,55 @@ public class UTableViewAdapter extends AbstractViewAdapter implements TableModel
 			return getRowSorter().convertRowIndexToModel(viewIndex);
 		}
 		return -1;
+	}
+	
+	public int[] getSelectedRowsViewIndex() {
+		int min = table.getSelectionModel().getMinSelectionIndex();
+		int max = table.getSelectionModel().getMaxSelectionIndex();
+
+		int[] tmpRows = new int[max - min + 1];
+		int idx = 0;
+		for(int i = min; i <= max; i++) {
+			if(table.getSelectionModel().isSelectedIndex(i))  {
+				tmpRows[idx++] = i; 
+			}
+		}
+
+		int[] result = new int[idx];
+		System.arraycopy(tmpRows,  0, result, 0, idx);
+		return result;
+	}
+	
+	public int[] getSelectedRowsModelIndex() {
+		int min = table.getSelectionModel().getMinSelectionIndex();
+		int max = table.getSelectionModel().getMaxSelectionIndex();
+
+		int[] tmpRows = new int[max - min + 1];
+		int idx = 0;
+		for(int i = min; i <= max; i++) {
+			if(table.getSelectionModel().isSelectedIndex(i))  {
+				tmpRows[idx++] = getRowSorter().convertRowIndexToModel(i); 
+			}
+		}
+
+		int[] result = new int[idx];
+		System.arraycopy(tmpRows,  0, result, 0, idx);
+		return result;
+	}
+	
+	@SuppressWarnings({ "rawtypes", "unchecked" })
+	public List getSelectedObjects() {
+		int[] rowsInModel = getSelectedRowsModelIndex();
+		List result = new ArrayList(rowsInModel.length);
+		for(int row : rowsInModel) {
+			result.add(getAttributeModel().getCurrentValueAt(row));
+		}
+		return result;
+	}
+	
+	public Object getSelectedObject() {
+		int rowInModel = getSelectedRowModelIndex();
+		return getAttributeModel().getCurrentValueAt(rowInModel);
 	}
 	
 	public boolean isDirty() {

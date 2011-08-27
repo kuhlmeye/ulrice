@@ -64,10 +64,44 @@ public class TableAMTest {
 	@Test
 	public void read() {
 		tableAM.read();				
+		
+    	Assert.assertEquals(true, tableAM.isInitialized());
+    	Assert.assertEquals(false, tableAM.isDirty());
+    	Assert.assertEquals(true, tableAM.isValid());
+    	
 		assertEquals(2, tableAM.getRowCount());
 		assertEquals("Max Mustermann", ((Person)tableAM.getElementAt(0).writeObject()).name);
 		assertEquals("Petra Musterfrau", ((Person)tableAM.getElementAt(1).writeObject()).name);
 	}
+	
+
+    
+    @Test
+    public void directReadTestAndClear() {
+    	tableAM.read(list, false);
+    	
+    	Assert.assertEquals(true, tableAM.isInitialized());
+    	Assert.assertEquals(false, tableAM.isDirty());
+    	Assert.assertEquals(true, tableAM.isValid());
+
+		assertEquals(2, tableAM.getRowCount());
+		assertEquals("Max Mustermann", ((Person)tableAM.getElementAt(0).writeObject()).name);
+		assertEquals("Petra Musterfrau", ((Person)tableAM.getElementAt(1).writeObject()).name);
+		
+
+    	tableAM.read(list, true);
+
+		assertEquals(4, tableAM.getRowCount());
+		assertEquals("Max Mustermann", ((Person)tableAM.getElementAt(2).writeObject()).name);
+		assertEquals("Petra Musterfrau", ((Person)tableAM.getElementAt(3).writeObject()).name);
+		
+		tableAM.clear();
+		assertEquals(0, tableAM.getRowCount());
+
+    	Assert.assertEquals(false, tableAM.isInitialized());
+    	Assert.assertEquals(false, tableAM.isDirty());
+    	Assert.assertEquals(true, tableAM.isValid());
+    }
 	
 	/**
 	 * Tests, if the values are read into the internal element objects.
