@@ -4,7 +4,6 @@
 package net.ulrice.databinding.viewadapter.impl;
 
 import java.awt.Component;
-import java.awt.Insets;
 import java.util.List;
 
 import javax.swing.JTable;
@@ -21,12 +20,6 @@ import net.ulrice.databinding.bufferedbinding.impl.ColumnDefinition;
 import net.ulrice.databinding.bufferedbinding.impl.Element;
 import net.ulrice.databinding.bufferedbinding.impl.TableAM;
 import net.ulrice.databinding.viewadapter.AbstractViewAdapter;
-import net.ulrice.databinding.viewadapter.IFStateMarker;
-import net.ulrice.databinding.viewadapter.IFTooltipHandler;
-import net.ulrice.databinding.viewadapter.utable.UTableVADefaultRenderer;
-import net.ulrice.databinding.viewadapter.utable.UTableVAFilter;
-import net.ulrice.databinding.viewadapter.utable.UTableVAHeader;
-import net.ulrice.databinding.viewadapter.utable.UTableVARowSorter;
 
 /**
  * @author christof
@@ -39,8 +32,6 @@ public class JTableViewAdapter extends AbstractViewAdapter implements TableModel
 	private EventListenerList listenerList = new EventListenerList();
 
 	private JTable table;
-	private IFTooltipHandler tooltipHandler;
-	private IFStateMarker stateMarker;
 
 	public JTableViewAdapter() {
 		this(new JTable());
@@ -226,33 +217,7 @@ public class JTableViewAdapter extends AbstractViewAdapter implements TableModel
 		}
 	}
 
-	/**
-	 * @see net.ulrice.databinding.IFGuiAccessor#getStateMarker()
-	 */
-	public IFStateMarker getStateMarker() {
-		return stateMarker;
-	}
 
-	/**
-	 * @see net.ulrice.databinding.IFGuiAccessor#setStateMarker(net.ulrice.databinding.viewadapter.IFStateMarker)
-	 */
-	public void setStateMarker(IFStateMarker stateMarker) {
-		this.stateMarker = stateMarker;
-	}
-
-	/**
-	 * @see net.ulrice.databinding.IFGuiAccessor#getTooltipHandler()
-	 */
-	public IFTooltipHandler getTooltipHandler() {
-		return tooltipHandler;
-	}
-
-	/**
-	 * @see net.ulrice.databinding.IFGuiAccessor#setTooltipHandler(net.ulrice.databinding.viewadapter.IFTooltipHandler)
-	 */
-	public void setTooltipHandler(IFTooltipHandler tooltipHandler) {
-		this.tooltipHandler = tooltipHandler;
-	}
 
 
 	@Override
@@ -276,7 +241,7 @@ public class JTableViewAdapter extends AbstractViewAdapter implements TableModel
 			getTooltipHandler().updateTooltip(binding, table);
 		}
 		if (getStateMarker() != null) {
-			getStateMarker().updateState(binding, table);
+			getStateMarker().updateState(binding.isDirty(), binding.isValid(), table);
 		}
 	}
 

@@ -14,7 +14,9 @@ import javax.swing.event.ListSelectionListener;
 import javax.swing.table.TableColumn;
 import javax.swing.table.TableColumnModel;
 
+import net.ulrice.databinding.IFBinding;
 import net.ulrice.databinding.bufferedbinding.impl.ColumnDefinition;
+import net.ulrice.databinding.bufferedbinding.impl.Element;
 import net.ulrice.databinding.bufferedbinding.impl.TableAM;
 import net.ulrice.databinding.viewadapter.IFStateMarker;
 import net.ulrice.databinding.viewadapter.IFTooltipHandler;
@@ -41,7 +43,7 @@ public class UTableComponent extends JPanel {
 
 	private UTableVADefaultRenderer scrollTableRenderer;
 
-	private IFTooltipHandler tooltipHandler;
+	private IFTooltipHandler<Element> tooltipHandler;
 
 	private IFStateMarker stateMarker;
 
@@ -62,9 +64,9 @@ public class UTableComponent extends JPanel {
 		scrollTable.setRowSorter(sorter.getScrollTableRowSorter());
 		
 
-		staticTableRenderer = new UTableVADefaultRenderer(viewAdapter, 0);
+		staticTableRenderer = new UTableVADefaultRenderer(viewAdapter);
 		staticTable.setDefaultRenderer(Object.class, staticTableRenderer);
-		scrollTableRenderer = new UTableVADefaultRenderer(viewAdapter, fixedColumns);
+		scrollTableRenderer = new UTableVADefaultRenderer(viewAdapter);
 		scrollTable.setDefaultRenderer(Object.class, scrollTableRenderer);
 		
 		filter = new UTableVAFilter(sorter, staticTable.getUTableHeader(), scrollTable.getUTableHeader());
@@ -133,24 +135,24 @@ public class UTableComponent extends JPanel {
 		add(component, BorderLayout.WEST);
 	}
 
-	public void setTooltipHandler(IFTooltipHandler tooltipHandler) {
+	public void setCellTooltipHandler(IFTooltipHandler<Element> tooltipHandler) {
 		this.tooltipHandler = tooltipHandler;
 		staticTableRenderer.setTooltipHandler(tooltipHandler);
 		scrollTableRenderer.setTooltipHandler(tooltipHandler);
 	}
 
 
-	public void setStateMarker(IFStateMarker stateMarker) {
+	public void setCellStateMarker(IFStateMarker stateMarker) {
 		this.stateMarker = stateMarker;
 		staticTableRenderer.setStateMarker(stateMarker);
 		scrollTableRenderer.setStateMarker(stateMarker);
 	}
 
-	public IFTooltipHandler getTooltipHandler() {
+	public IFTooltipHandler<Element> getCellTooltipHandler() {
 		return tooltipHandler;
 	}
 
-	public IFStateMarker getStateMarker() {
+	public IFStateMarker getCellStateMarker() {
 		return stateMarker;
 	}
 
@@ -220,6 +222,16 @@ public class UTableComponent extends JPanel {
 				columnModel.addColumn(column);
 			}
 		}
+	}
+	
+	public int convertColumnIndexToModel(int col) {
+	    int modelCol = col;
+	    if(col < fixedColumns) {
+	        modelCol = staticTable.convertColumnIndexToModel(col);
+	    } else {
+	        modelCol = scrollTable.convertColumnIndexToModel(col) + fixedColumns;
+	    }
+	    return modelCol;
 	}
 
 }
