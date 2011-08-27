@@ -360,18 +360,10 @@ public class TableAM implements IFAttributeModel  {
 	 */
 	@Override
 	public void read() {
+		clear();
 		initialized = true;
-		dirty = false;
-		valid = true;
 
-		int numRows = tableMVA.getSize();
-		
-		elements.clear();
-		elementIdMap.clear();
-		newElements.clear();
-		modElements.clear();
-		invElements.clear();
-		
+		int numRows = tableMVA.getSize();		
 		for(int i = 0; i < numRows; i++) {
 			
 			Object value = tableMVA.getValue(i);
@@ -382,6 +374,40 @@ public class TableAM implements IFAttributeModel  {
 			elements.add(elem);
 		}
 		fireUpdateViews();
+	}
+	
+	public void read(List<?> valueList, boolean append) {
+		if(valueList == null) {
+			return;
+		}
+		
+		if(!append) {
+			clear();
+		}
+		initialized = true;
+		
+		for(int i = 0; i < valueList.size(); i++) {
+			
+			Object value = tableMVA.getValue(i);
+			Element elem = createElement(value, false, true);
+			elem.readObject();
+
+			elementIdMap.put(elem.getUniqueId(), elem);				
+			elements.add(elem);
+		}
+		fireUpdateViews();
+	}
+
+	public void clear() {
+		initialized = false;
+		dirty = false;
+		valid = true;
+		
+		elements.clear();
+		elementIdMap.clear();
+		newElements.clear();
+		modElements.clear();
+		invElements.clear();
 	}
 
 
@@ -517,6 +543,10 @@ public class TableAM implements IFAttributeModel  {
 	
 	public void markAsFaulty(Element element, String message, Throwable th) {
 	    element.addElementValidationError(new ValidationError(null, message, th));
+	}
+
+	public Object getCurrentValueAt(int row) {
+		return getElementAt(row).getCurrentValue();
 	}
 }
 
