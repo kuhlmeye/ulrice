@@ -339,6 +339,19 @@ public class TableAMTest {
         Assert.assertEquals(false, element.isDirty());
         Assert.assertEquals(true, tableAM.isValid());
     }
+    
+    @Test
+    public void updateValueExtern() {
+    	tableAM.read();
+    	
+    	Person person = (Person)tableAM.getCurrentValueAt(0);
+    	person.age = 25;
+    	tableAM.getElementAt(0).setCurrentValue(person, true, false);
+
+    	Assert.assertEquals(0, tableAM.getCreatedObjects().size());
+    	Assert.assertEquals(1, tableAM.getModifiedObjects().size());
+    	Assert.assertEquals(0, tableAM.getDeletedObjects().size());
+    }
 	
 	public static class Person {
 		public String name;

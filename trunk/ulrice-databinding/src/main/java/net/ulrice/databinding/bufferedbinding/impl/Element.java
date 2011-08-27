@@ -300,6 +300,8 @@ public class Element {
     @SuppressWarnings("unchecked")
     public void readObject() {
         modelList.clear();
+        originalValueDirty = false;
+        originalValueValid = true;
 
         if (columns != null) {
             for (ColumnDefinition< ? extends Object> column : columns) {
