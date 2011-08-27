@@ -23,7 +23,7 @@ public interface IFViewAdapter <M, V> {
     void setEnabled (boolean enabled);
     boolean isEnabled();
     
-	void setTooltipHandler(IFTooltipHandler tooltipHandler);
+	void setTooltipHandler(IFTooltipHandler<IFBinding> tooltipHandler);
 	void setStateMarker(IFStateMarker stateMarker);
 	void setValueConverter(IFValueConverter<M, V> converter);
 	IFValueConverter<M, V> getValueConverter();

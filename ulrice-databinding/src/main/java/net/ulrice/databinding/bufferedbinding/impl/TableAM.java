@@ -71,18 +71,22 @@ public class TableAM implements IFAttributeModel  {
 	public String getId() {
 		return id;
 	}
-
-	public GenericAM getCellAttributeModel(int rowIndex, int columnIndex) {
-		return getElementAt(rowIndex).getCellAtributeModel(columnIndex);
+	
+	public boolean isCellValid(int row, int column) {
+	    return getElementAt(row).isColumnValid(column);
+	}
+	
+	public boolean isCellDirty(int row, int column) {
+	    return getElementAt(row).isColumnDirty(column);
 	}
 
 	/**
 	 * @param value
 	 * @return
 	 */
-	protected Element createElement(Object value) {
+	protected Element createElement(Object value, boolean dirty, boolean valid) {
 		String uniqueId = Long.toHexString(nextUniqueId++);
-		Element elem = new Element(this, uniqueId, columns, value, isReadOnly());
+		Element elem = new Element(this, uniqueId, columns, value, isReadOnly(), dirty, valid);
 		return elem;
 	}
 
@@ -371,7 +375,7 @@ public class TableAM implements IFAttributeModel  {
 		for(int i = 0; i < numRows; i++) {
 			
 			Object value = tableMVA.getValue(i);
-			Element elem = createElement(value);
+			Element elem = createElement(value, false, true);
 			elem.readObject();
 
 			elementIdMap.put(elem.getUniqueId(), elem);				
@@ -398,13 +402,17 @@ public class TableAM implements IFAttributeModel  {
 	protected Object createEmptyElementObject() {
 		return tableMVA.newObjectInstance();
 	}
-
+	
 	public Element addElement(Object value) {
+	    return addElement(value, false, true);
+	}
+
+	public Element addElement(Object value, boolean dirty, boolean valid) {
 		if(value == null) {
 			value = createEmptyElementObject();
 		}
 		
-		Element element = createElement(value);
+		Element element = createElement(value, dirty, valid);
 		elements.add(element);
 		elementIdMap.put(element.getUniqueId(), element);
 		newElements.add(element);
@@ -412,13 +420,17 @@ public class TableAM implements IFAttributeModel  {
 		fireUpdateViews();
 		return element;
 	}
-	
-	public Element addElement(int index, Object value) {
+
+    public Element addElement(int index, Object value) {
+        return addElement(index, value, false, true);
+    }
+    
+    public Element addElement(int index, Object value, boolean dirty, boolean valid) {
 		if(value == null) {
 			value = createEmptyElementObject();
 		}
 		
-		Element element = createElement(value);
+		Element element = createElement(value, dirty, valid);
 		elements.add(index, element);
 		elementIdMap.put(element.getUniqueId(), element);
 		newElements.add(element);		

@@ -4,8 +4,7 @@ import java.util.List;
 
 import javax.swing.JComponent;
 
-import net.ulrice.databinding.IFBinding;
-import net.ulrice.databinding.bufferedbinding.IFAttributeModel;
+import net.ulrice.databinding.bufferedbinding.impl.Element;
 import net.ulrice.databinding.viewadapter.IFTooltipHandler;
 
 /**
@@ -14,26 +13,21 @@ import net.ulrice.databinding.viewadapter.IFTooltipHandler;
  * 
  * @author christof
  */
-public class DetailedTooltipHandler implements IFTooltipHandler<IFBinding> {
+public class DetailedCellTooltipHandler implements IFTooltipHandler<Element> {
 
 	/**
 	 * @see net.ulrice.databinding.viewadapter.IFTooltipHandler#updateTooltip(net.ulrice.databinding.IFAttributeModel,
 	 *      net.ulrice.databinding.IFGuiAccessor, javax.swing.JComponent)
 	 */
 	@Override
-	public void updateTooltip(IFBinding binding, JComponent component) {
+	public void updateTooltip(Element element, JComponent component) {
 
-		boolean initialized = true;
-		if (binding instanceof IFAttributeModel) {
-			initialized = ((IFAttributeModel) binding).isInitialized();
-		}
-		if (!initialized) {
-			component.setToolTipText("State: Not initalized");
-		} else if (!binding.isValid()) {
+
+		if (!element.isValid()) {
 			StringBuffer buffer = new StringBuffer();
 			// TODO Add to UI class
 			buffer.append("<html>State: Invalid");
-			List<String> validationFailures = binding.getValidationFailures();
+			List<String> validationFailures = element.getValidationFailures();
 			if (validationFailures != null) {
 				for (String message : validationFailures) {
 					buffer.append("<br>");
@@ -43,9 +37,9 @@ public class DetailedTooltipHandler implements IFTooltipHandler<IFBinding> {
 			buffer.append("</html>");
 			component.setToolTipText(buffer.toString());
 		} else {
-			if (binding.isDirty()) {
-				component.setToolTipText("<html>State: Changed<br>Old value: " + binding.getOriginalValue() + "<br>New value: "
-						+ binding.getCurrentValue() + "</html>");
+			if (element.isDirty()) {
+				component.setToolTipText("<html>State: Changed<br>Old value: " + element.getOriginalValue() + "<br>New value: "
+						+ element.getCurrentValue() + "</html>");
 			} else {
 				component.setToolTipText("State: Not changed");
 			}

@@ -244,6 +244,68 @@ public class TableAMTest {
         Assert.assertEquals("Other Value", tableAM.getValueAt(0, 0));
 	}
 	
+    @Test
+    public void originalValueDirty() {
+        tableAM.read();
+        Element element = tableAM.getElementAt(0);
+        Object value = element.getCurrentValue();
+        element.setCurrentValue(value, true, true);
+        
+        Assert.assertEquals(true, tableAM.isDirty());
+        Assert.assertEquals(true, element.isDirty());
+        Assert.assertEquals(true, tableAM.isValid());
+        
+        Object cellValue = element.getValueAt(0);
+        element.setValueAt(0, "Test");
+        
+        Assert.assertEquals(true, tableAM.isDirty());
+        Assert.assertEquals(true, element.isDirty());
+        Assert.assertEquals(true, tableAM.isValid());
+        
+        element.setValueAt(0, cellValue);
+        
+        Assert.assertEquals(true, tableAM.isDirty());
+        Assert.assertEquals(true, element.isDirty());
+        Assert.assertEquals(true, tableAM.isValid());
+        
+        element.setCurrentValue(value, false, true);
+        
+        Assert.assertEquals(false, tableAM.isDirty());
+        Assert.assertEquals(false, element.isDirty());
+        Assert.assertEquals(true, tableAM.isValid());
+    }
+    
+    @Test
+    public void originalValueValid() {
+        tableAM.read();
+        Element element = tableAM.getElementAt(0);
+        Object value = element.getCurrentValue();
+        element.setCurrentValue(value, false, false);
+        
+        Assert.assertEquals(false, tableAM.isDirty());
+        Assert.assertEquals(false, element.isDirty());
+        Assert.assertEquals(false, tableAM.isValid());
+        
+        Object cellValue = element.getValueAt(0);
+        element.setValueAt(0, "Test");
+        
+        Assert.assertEquals(true, tableAM.isDirty());
+        Assert.assertEquals(true, element.isDirty());
+        Assert.assertEquals(false, tableAM.isValid());
+        
+        element.setValueAt(0, cellValue);
+        
+        Assert.assertEquals(false, tableAM.isDirty());
+        Assert.assertEquals(false, element.isDirty());
+        Assert.assertEquals(false, tableAM.isValid());
+        
+        element.setCurrentValue(value, false, true);
+        
+        Assert.assertEquals(false, tableAM.isDirty());
+        Assert.assertEquals(false, element.isDirty());
+        Assert.assertEquals(true, tableAM.isValid());
+    }
+	
 	public static class Person {
 		public String name;
 		public int age;

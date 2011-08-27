@@ -217,29 +217,29 @@ public class UTableViewAdapter extends AbstractViewAdapter implements TableModel
 	/**
 	 * @see net.ulrice.databinding.IFGuiAccessor#getStateMarker()
 	 */
-	public IFStateMarker getStateMarker() {
-		return table.getStateMarker();
+	public IFStateMarker getCellStateMarker() {
+		return table.getCellStateMarker();
 	}
 
 	/**
 	 * @see net.ulrice.databinding.IFGuiAccessor#getTooltipHandler()
 	 */
-	public IFTooltipHandler getTooltipHandler() {
-		return table.getTooltipHandler();
+	public IFTooltipHandler<Element> getCellTooltipHandler() {
+		return table.getCellTooltipHandler();
 	}
 
 	/**
 	 * @see net.ulrice.databinding.IFGuiAccessor#setStateMarker(net.ulrice.databinding.viewadapter.IFStateMarker)
 	 */
-	public void setStateMarker(IFStateMarker stateMarker) {
-		table.setStateMarker(stateMarker);
+	public void setCellStateMarker(IFStateMarker stateMarker) {
+		table.setCellStateMarker(stateMarker);
 	}
 
 	/**
 	 * @see net.ulrice.databinding.IFGuiAccessor#setTooltipHandler(net.ulrice.databinding.viewadapter.IFTooltipHandler)
 	 */
-	public void setTooltipHandler(IFTooltipHandler tooltipHandler) {
-		table.setTooltipHandler(tooltipHandler);
+	public void setCellTooltipHandler(IFTooltipHandler<Element> tooltipHandler) {
+		table.setCellTooltipHandler(tooltipHandler);
 	}
 
 	/**
@@ -277,7 +277,7 @@ public class UTableViewAdapter extends AbstractViewAdapter implements TableModel
 			getTooltipHandler().updateTooltip(binding, table);
 		}
 		if (getStateMarker() != null) {
-			getStateMarker().updateState(binding, table);
+			getStateMarker().updateState(isDirty(), isValid(), table);
 		}
 	}
 
@@ -369,4 +369,29 @@ public class UTableViewAdapter extends AbstractViewAdapter implements TableModel
 		}
 		return -1;
 	}
+	
+	public boolean isDirty() {
+	    return getAttributeModel() != null ? getAttributeModel().isDirty() : false;
+	}
+	
+	public boolean isValid() {
+        return getAttributeModel() != null ? getAttributeModel().isValid() : true;
+	}
+
+    public boolean isCellDirty(int row, int col) {
+        int modelRow = getRowSorter().convertRowIndexToModel(row);
+        int modelCol = table.convertColumnIndexToModel(col);
+        return getAttributeModel() != null ? getAttributeModel().isCellDirty(modelRow, modelCol) : false;
+    }
+    
+    public boolean isCellValid(int row, int col) {
+        int modelRow = getRowSorter().convertRowIndexToModel(row);
+        int modelCol = table.convertColumnIndexToModel(col);
+        return getAttributeModel() != null ? getAttributeModel().isCellValid(modelRow, modelCol) : true;
+    }
+
+    public Element getElementAt(int row) {
+        int modelRow = getRowSorter().convertRowIndexToModel(row);
+        return getAttributeModel() != null ? getAttributeModel().getElementAt(modelRow) : null;
+    }
 }
