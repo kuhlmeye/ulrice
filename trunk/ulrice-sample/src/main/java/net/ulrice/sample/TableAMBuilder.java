@@ -10,7 +10,7 @@ import net.ulrice.databinding.bufferedbinding.impl.TableAM;
 import net.ulrice.databinding.converter.IFValueConverter;
 import net.ulrice.databinding.modelaccess.impl.DynamicReflectionMVA;
 import net.ulrice.databinding.modelaccess.impl.IndexedReflectionMVA;
-import net.ulrice.databinding.modelaccess.impl.ReflectionUtils;
+import net.ulrice.databinding.modelaccess.impl.UlriceReflectionUtils;
 
 
 /**
@@ -44,7 +44,7 @@ public class TableAMBuilder {
      * This is a convenience method that determines the type of the field / column via reflection on the model.
      */
     public TableAMBuilder addColumn(String path) {
-        return addColumn (path, ReflectionUtils.getFieldType(modelRowClass, path));
+        return addColumn (path, UlriceReflectionUtils.getFieldType(modelRowClass, path));
     }
 
     /**
@@ -53,7 +53,7 @@ public class TableAMBuilder {
      *  usually provided.
      */
     public TableAMBuilder addColumn(String path, IFValueConverter converter) {
-        addColumn(path, converter.getViewType(ReflectionUtils.getFieldType(modelRowClass, path)));
+        addColumn(path, converter.getViewType(UlriceReflectionUtils.getFieldType(modelRowClass, path)));
         getColumn(path).setValueConverter(converter);
         return this;
     }

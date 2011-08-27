@@ -1,4 +1,4 @@
-package net.ulrice.databinding;
+package net.ulrice.sample;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -7,7 +7,7 @@ import net.ulrice.databinding.bufferedbinding.IFAttributeModel;
 import net.ulrice.databinding.bufferedbinding.IFBindingGroup;
 import net.ulrice.databinding.bufferedbinding.impl.GenericAM;
 import net.ulrice.databinding.modelaccess.impl.ReflectionMVA;
-import net.ulrice.databinding.modelaccess.impl.ReflectionUtils;
+import net.ulrice.databinding.modelaccess.impl.UlriceReflectionUtils;
 
 /**
  * This is a convenience class for models that contain a single object, e.g. a Transfer Object.
@@ -47,7 +47,7 @@ public class SingleObjectModel<T> implements IFBindingGroup {
 
         if (attributeModels.get(path) == null) {
             attributeModels.put(path, new GenericAM<T>(new ReflectionMVA(ReflectionMVA.createID(this, path), this,
-                path, false, ReflectionUtils.getFieldType(dataClass, path.substring("data.".length())))));
+                path, false, UlriceReflectionUtils.getFieldType(dataClass, path.substring("data.".length())))));
         }
         return attributeModels.get(path);
     }
