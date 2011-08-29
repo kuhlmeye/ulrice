@@ -8,6 +8,7 @@ import java.util.List;
 
 import net.ulrice.databinding.bufferedbinding.impl.ColumnDefinition;
 import net.ulrice.databinding.bufferedbinding.impl.TableAM;
+import net.ulrice.databinding.bufferedbinding.impl.ColumnDefinition.ColumnType;
 import net.ulrice.databinding.modelaccess.impl.DynamicReflectionMVA;
 import net.ulrice.databinding.modelaccess.impl.IndexedReflectionMVA;
 import net.ulrice.databinding.modelaccess.impl.ReflectionMVA;
@@ -34,8 +35,11 @@ public class TableAMTest {
 	@Before
 	public void setUp() throws Exception {
 		tableAM = new TableAM(new IndexedReflectionMVA(this, "list"));
-		tableAM.addColumn(new ColumnDefinition<String>(new DynamicReflectionMVA(Person.class, "name"), String.class));
+		tableAM.addColumn(new ColumnDefinition<String>(new DynamicReflectionMVA(Person.class, "name"), String.class, ColumnType.NewEditable));
 		tableAM.addColumn(new ColumnDefinition<Integer>(new DynamicReflectionMVA(Person.class, "age"), Integer.class));
+		
+		tableAM.addTableConstraint(new UniqueConstraint("Person.name"));
+		
 		list = new LinkedList<Person>();
 
 		Person a = new Person();
@@ -351,6 +355,62 @@ public class TableAMTest {
     	Assert.assertEquals(0, tableAM.getCreatedObjects().size());
     	Assert.assertEquals(1, tableAM.getModifiedObjects().size());
     	Assert.assertEquals(0, tableAM.getDeletedObjects().size());
+    }
+    
+    @Test 
+    public void uniqueConstraintElementChangeTest() {
+    	tableAM.read();
+    	
+    	tableAM.getElementAt(1).setValueAt(0, tableAM.getElementAt(0).getValueAt(0));
+    	Assert.assertEquals(false, tableAM.isValid());
+    	Assert.assertEquals(false, tableAM.getElementAt(0).isValid());
+    	Assert.assertEquals(false, tableAM.getElementAt(1).isValid());
+    	
+    	tableAM.getElementAt(1).setValueAt(0, "Test");
+    	Assert.assertEquals(true, tableAM.isValid());
+    	Assert.assertEquals(true, tableAM.getElementAt(0).isValid());
+    	Assert.assertEquals(true, tableAM.getElementAt(1).isValid());    	    	
+    }   
+    
+    @Test 
+    public void uniqueConstraintClearTest() {
+    	tableAM.read();
+    	
+    	tableAM.getElementAt(1).setValueAt(0, tableAM.getElementAt(0).getValueAt(0));
+    	Assert.assertEquals(false, tableAM.isValid());
+    	Assert.assertEquals(false, tableAM.getElementAt(0).isValid());
+    	Assert.assertEquals(false, tableAM.getElementAt(1).isValid());
+    	
+    	tableAM.clear();
+    	Assert.assertEquals(true, tableAM.isValid());   	    	
+    }       
+    
+    @Test 
+    public void uniqueConstraintRemoveElementTest() {
+    	tableAM.read();
+    	
+    	tableAM.getElementAt(1).setValueAt(0, tableAM.getElementAt(0).getValueAt(0));
+    	Assert.assertEquals(false, tableAM.isValid());
+    	Assert.assertEquals(false, tableAM.getElementAt(0).isValid());
+    	Assert.assertEquals(false, tableAM.getElementAt(1).isValid());
+    	
+    	tableAM.delElement(0);
+    	Assert.assertEquals(true, tableAM.isValid());
+    	Assert.assertEquals(true, tableAM.getElementAt(0).isValid());
+    }    
+    
+    @Test
+    public void newEditableColumnTypeTest() {
+    	tableAM.read();
+    	
+    	Assert.assertEquals(false, tableAM.isCellEditable(0,  0));
+    	Assert.assertEquals(true, tableAM.isCellEditable(0,  1));
+    	
+    	tableAM.addElement(null);
+    	Assert.assertEquals(true, tableAM.isCellEditable(2,  0));
+
+    	tableAM.commitElement(tableAM.getElementAt(2));
+    	Assert.assertEquals(false, tableAM.isCellEditable(2,  0));    	
     }
 	
 	public static class Person {

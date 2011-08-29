@@ -26,7 +26,8 @@ public class TableAM implements IFAttributeModel  {
 
 
 	private IFIndexedModelValueAccessor tableMVA;
-	
+
+	private List<TableConstraint> tableConstraints = new ArrayList<TableConstraint>();
 	
 	protected List<Element> elements = new ArrayList<Element>();
 	protected Map<String, Element> elementIdMap = new HashMap<String, Element>();
@@ -86,7 +87,7 @@ public class TableAM implements IFAttributeModel  {
 	 */
 	protected Element createElement(Object value, boolean dirty, boolean valid) {
 		String uniqueId = Long.toHexString(nextUniqueId++);
-		Element elem = new Element(this, uniqueId, columns, value, isReadOnly(), dirty, valid);
+		Element elem = new Element(this, uniqueId, columns, value, isReadOnly(), dirty, valid);		
 		return elem;
 	}
 
@@ -154,6 +155,14 @@ public class TableAM implements IFAttributeModel  {
 		return elements == null ? 0 : elements.size();
 	}
 
+	public boolean isNew(Element element) {
+		return newElements.contains(element);
+	}
+	
+	public boolean isRemoved(Element element) {
+		return delElements.contains(element);
+	}
+	
 	/**
 	 * @see javax.swing.table.TableModel#isCellEditable(int, int)
 	 */
@@ -183,17 +192,15 @@ public class TableAM implements IFAttributeModel  {
 		return readOnly;
 	}
 
-	/**
-	 * @see net.ulrice.databinding.bufferedbinding.IFElementChangeListener#dataChanged(net.net.ulrice.databinding.bufferedbinding.impl.Element, java.lang.String, java.lang.String, java.lang.String)
-	 */
-	protected void dataChanged() {
+	protected void elementDataChanged(Element element) {
 	    fireUpdateViews();
+	    
+	    for(TableConstraint constraint : tableConstraints) {
+	    	constraint.elementChanged(this, element);
+	    }	    
 	}
 
-	/**
-	 * @see net.ulrice.databinding.bufferedbinding.IFElementChangeListener#stateChanged(net.net.ulrice.databinding.bufferedbinding.impl.Element, net.ulrice.databinding.DataState, net.ulrice.databinding.DataState)
-	 */
-	protected void stateChanged(Element element) {
+	protected void elementStateChanged(Element element) {
 		if(element.isValid()) {
 			invElements.remove(element);
 		} else {
@@ -372,6 +379,7 @@ public class TableAM implements IFAttributeModel  {
 
 			elementIdMap.put(elem.getUniqueId(), elem);				
 			elements.add(elem);
+			fireElementAdded(elem);
 		}
 		fireUpdateViews();
 	}
@@ -394,6 +402,7 @@ public class TableAM implements IFAttributeModel  {
 
 			elementIdMap.put(elem.getUniqueId(), elem);				
 			elements.add(elem);
+			fireElementAdded(elem);
 		}
 		fireUpdateViews();
 	}
@@ -408,8 +417,9 @@ public class TableAM implements IFAttributeModel  {
 		newElements.clear();
 		modElements.clear();
 		invElements.clear();
+		
+		fireTableCleared();
 	}
-
 
 	/**
 	 * @see net.ulrice.databinding.bufferedbinding.IFAttributeModel#write()
@@ -439,15 +449,16 @@ public class TableAM implements IFAttributeModel  {
 		}
 		
 		Element element = createElement(value, dirty, valid);
-		elements.add(element);
 		elementIdMap.put(element.getUniqueId(), element);
+		elements.add(element);
 		newElements.add(element);
-		stateChanged(element);
+		fireElementAdded(element);
+		elementStateChanged(element);
 		fireUpdateViews();
 		return element;
 	}
 
-    public Element addElement(int index, Object value) {
+	public Element addElement(int index, Object value) {
         return addElement(index, value, false, true);
     }
     
@@ -460,7 +471,7 @@ public class TableAM implements IFAttributeModel  {
 		elements.add(index, element);
 		elementIdMap.put(element.getUniqueId(), element);
 		newElements.add(element);		
-		stateChanged(element);
+		elementStateChanged(element);
 		fireUpdateViews();
 		return element;
 	}
@@ -468,10 +479,10 @@ public class TableAM implements IFAttributeModel  {
 	public void delElement(int index) {
 		Element delElement = elements.remove(index);
 		delElements.add(delElement);	
-		stateChanged(delElement);
+		elementStateChanged(delElement);
+		fireElementDeleted(delElement);
 		fireUpdateViews();
 	}
-	
 	public List getDeletedObjects() {
 		List result = new ArrayList();
 		for(Element element : delElements) {
@@ -531,13 +542,15 @@ public class TableAM implements IFAttributeModel  {
 	public void commitElement(Element element) {
 	    element.writeObject();
 	    element.readObject();
-	    stateChanged(element);
+	    newElements.remove(element);
+	    delElements.remove(element);
+	    elementStateChanged(element);
         fireUpdateViews();
 	}
 	
 	public void rollbackElement(Element element) {
         element.readObject();
-        stateChanged(element);
+        elementStateChanged(element);
         fireUpdateViews();
 	}
 	
@@ -547,6 +560,32 @@ public class TableAM implements IFAttributeModel  {
 
 	public Object getCurrentValueAt(int row) {
 		return getElementAt(row).getCurrentValue();
+	}
+	
+	public void addTableConstraint(TableConstraint constraint) {
+		tableConstraints.add(constraint);		
+	}
+		
+	public void removeTableConstraint(TableConstraint constraint) {
+		tableConstraints.remove(constraint);
+	}
+
+    private void fireElementAdded(Element element) {
+    	for(TableConstraint constraint : tableConstraints) {
+    		constraint.elementAdded(this,  element);
+    	}    
+	}
+	
+	private void fireElementDeleted(Element element) {
+    	for(TableConstraint constraint : tableConstraints) {
+    		constraint.elementRemoved(this,  element);
+    	}    
+	}
+
+	private void fireTableCleared() {
+    	for(TableConstraint constraint : tableConstraints) {
+    		constraint.tableCleared(this);
+    	}    
 	}
 }
 

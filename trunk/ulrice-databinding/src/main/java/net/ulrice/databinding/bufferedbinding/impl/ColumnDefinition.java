@@ -16,9 +16,16 @@ public class ColumnDefinition<T extends Object> {
     private FilterMode filterMode;
     private IFValueConverter valueConverter;
     private IFValidator validator;
-    private boolean readOnly = false;
     private String columnName;
 	private boolean useAutoValueConverter = true;
+	
+	private ColumnType columnType = ColumnType.Editable;
+	
+	public enum ColumnType {
+		Editable,
+		ReadOnly,
+		NewEditable
+	}
 
 	   
     public ColumnDefinition(IFDynamicModelValueAccessor dataAccessor, Class<T> columnClass) {
@@ -26,6 +33,20 @@ public class ColumnDefinition<T extends Object> {
         this.columnName = id;
         this.dataAccessor = dataAccessor;
         this.columnClass = columnClass;
+        
+        this.filterMode = FilterMode.RegEx;
+        if(Number.class.isAssignableFrom(columnClass)) {
+            this.filterMode = FilterMode.Numeric;
+        }
+    }
+
+	   
+    public ColumnDefinition(IFDynamicModelValueAccessor dataAccessor, Class<T> columnClass, ColumnType columnType) {
+        this.id = dataAccessor.getAttributeId();
+        this.columnName = id;
+        this.dataAccessor = dataAccessor;
+        this.columnClass = columnClass;
+        this.columnType = columnType;
         
         this.filterMode = FilterMode.RegEx;
         if(Number.class.isAssignableFrom(columnClass)) {
@@ -46,25 +67,26 @@ public class ColumnDefinition<T extends Object> {
     }
     
     public ColumnDefinition(IFDynamicModelValueAccessor dataAccessor, Class<T> columnClass, FilterMode filterMode) {
-        this.id = dataAccessor.getAttributeId();
-        this.columnName = id;
-        this.dataAccessor = dataAccessor;
-        this.columnClass = columnClass;
-        this.filterMode = filterMode;
+        this(dataAccessor.getAttributeId(), dataAccessor, columnClass, filterMode);
     }
 
     
     public ColumnDefinition(String columnName, IFDynamicModelValueAccessor dataAccessor, Class<T> columnClass, FilterMode filterMode) {
+        this(columnName, dataAccessor, columnClass, filterMode, ColumnType.Editable);
+    }
+    
+    public ColumnDefinition(String columnName, IFDynamicModelValueAccessor dataAccessor, Class<T> columnClass, FilterMode filterMode, ColumnType columnType) {
         this.id = dataAccessor.getAttributeId();
         this.columnName = columnName;
         this.dataAccessor = dataAccessor;
         this.columnClass = columnClass;
         this.filterMode = filterMode;
+        this.columnType = columnType;
     }
 
     public GenericAM<T> createAM() {
         GenericAM<T> genericAM = new GenericAM<T>(id);
-        genericAM.setReadOnly(isReadOnly());        
+        genericAM.setReadOnly(getColumnType().equals(ColumnType.ReadOnly));        
         genericAM.setValueConverter(getValueConverter());
         if(getValidator() != null) {
             genericAM.addValidator(getValidator());
@@ -141,13 +163,6 @@ public class ColumnDefinition<T extends Object> {
 		this.valueConverter = valueConverter;
 	}
 
-	public boolean isReadOnly() {
-		return readOnly;
-	}
-	
-	public void setReadOnly(boolean readOnly) {
-		this.readOnly = readOnly;
-	}
 
 	public IFValidator getValidator() {
 		return validator;
@@ -168,6 +183,14 @@ public class ColumnDefinition<T extends Object> {
         this.columnName = columnName;
     }
 
+    public void setColumnType(ColumnType columnType) {
+		this.columnType = columnType;
+	}
+    
+    public ColumnType getColumnType() {
+		return columnType;
+	}
+    
     /**
      * @param columnIndex
      * @return

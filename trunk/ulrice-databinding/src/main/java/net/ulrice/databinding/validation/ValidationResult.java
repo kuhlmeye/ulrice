@@ -95,4 +95,17 @@ public class ValidationResult {
         this.messagesByBindingMap.clear();
         this.globalMessages.clear();
     }
+
+	public void removeValidationError(ValidationError validationError) {
+        this.validationErrors.remove(validationError);
+        if(validationError.getBindingId() == null) {
+            globalMessages.add(validationError.getMessage());
+        }        
+		List<String> messageList = messagesByBindingMap.get(validationError.getBindingId());
+		if(messageList == null) {
+			messageList = new ArrayList<String>();
+			messagesByBindingMap.put(validationError.getBindingId(), messageList);
+		}
+		messageList.remove(validationError.getMessage());
+	}
 }

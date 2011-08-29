@@ -21,6 +21,7 @@ import com.sun.corba.se.spi.orbutil.fsm.Guard.Result;
 import net.ulrice.databinding.ErrorHandler;
 import net.ulrice.databinding.IFBinding;
 import net.ulrice.databinding.bufferedbinding.IFAttributeModel;
+import net.ulrice.databinding.bufferedbinding.impl.ColumnDefinition.ColumnType;
 import net.ulrice.databinding.modelaccess.IFDynamicModelValueAccessor;
 import net.ulrice.databinding.modelaccess.IFModelValueAccessor;
 import net.ulrice.databinding.validation.IFValidator;
@@ -28,414 +29,459 @@ import net.ulrice.databinding.validation.ValidationError;
 import net.ulrice.databinding.validation.ValidationResult;
 
 /**
- * The element of the list attribute model. It manages the models for all attributes of a data row.
+ * The element of the list attribute model. It manages the models for all
+ * attributes of a data row.
  * 
  * @author christof
  */
 public class Element {
 
-    /** The unique identifier of this element. */
-    private String uniqueId;
+	/** The unique identifier of this element. */
+	private String uniqueId;
 
-    /** The definition of the columns. */
-    private List<ColumnDefinition< ? extends Object>> columns;
+	/** The definition of the columns. */
+	private List<ColumnDefinition<? extends Object>> columns;
 
-    /** The list of models. */
-    private List<GenericAM< ? extends Object>> modelList;
+	/** The list of models. */
+	private List<GenericAM<? extends Object>> modelList;
 
-    /** The map of the models. Key is the column identifier. */
-    private Map<String, GenericAM< ? extends Object>> idModelMap;
+	/** The map of the models. Key is the column identifier. */
+	private Map<String, GenericAM<? extends Object>> idModelMap;
 
-    /** The value read from the list data. */
-    private Object originalValue;
-    
-    private boolean originalValueDirty = false;
-    
-    private boolean originalValueValid = true;
+	/** The value read from the list data. */
+	private Object originalValue;
 
-    /** The event listeners. */
-    private EventListenerList listenerList = new EventListenerList();
+	private boolean originalValueDirty = false;
 
-    /** Flag, if this element is editable. */
-    private boolean readOnly;
+	private boolean originalValueValid = true;
 
-    private boolean dirty;
-    private boolean valid;
+	/** The event listeners. */
+	private EventListenerList listenerList = new EventListenerList();
 
-    private TableAM tableAM;
+	/** Flag, if this element is editable. */
+	private boolean readOnly;
 
-    private ValidationResult validationResult;
+	private boolean dirty;
+	private boolean valid;
 
-    /**
-     * Creates a new element.
-     * 
-     * @param tableAM
-     * @param uniqueId The unique identifier.
-     * @param columns The list of column definitions
-     * @param valueObject The value.
-     * @param editable True, if this element should be readonly.
-     */
-    public Element(TableAM tableAM, String uniqueId, List<ColumnDefinition< ? extends Object>> columns,
-        Object valueObject,
-        boolean readOnly, boolean dirty, boolean valid) {
-        this.originalValueDirty = dirty;
-        this.originalValueValid = valid;
-        this.tableAM = tableAM;
-        this.uniqueId = uniqueId;
-        this.modelList = new ArrayList<GenericAM< ? extends Object>>();
-        this.idModelMap = new HashMap<String, GenericAM< ? extends Object>>();
-        this.originalValue = tableAM.cloneObject(valueObject);
-        this.columns = columns;
-        this.readOnly = readOnly;
+	private TableAM tableAM;
 
-        this.dirty = false;
-        this.valid = true;
+	private ValidationResult validationResult;
 
-        readObject();
-    }
+	/**
+	 * Creates a new element.
+	 * 
+	 * @param tableAM
+	 * @param uniqueId
+	 *            The unique identifier.
+	 * @param columns
+	 *            The list of column definitions
+	 * @param valueObject
+	 *            The value.
+	 * @param editable
+	 *            True, if this element should be readonly.
+	 */
+	public Element(TableAM tableAM, String uniqueId,
+			List<ColumnDefinition<? extends Object>> columns,
+			Object valueObject, boolean readOnly, boolean dirty, boolean valid) {
+		this.originalValueDirty = dirty;
+		this.originalValueValid = valid;
+		this.tableAM = tableAM;
+		this.uniqueId = uniqueId;
+		this.modelList = new ArrayList<GenericAM<? extends Object>>();
+		this.idModelMap = new HashMap<String, GenericAM<? extends Object>>();
+		this.originalValue = tableAM.cloneObject(valueObject);
+		this.columns = columns;
+		this.readOnly = readOnly;
 
-    /**
-     * Returns, if a cell is readonly.
-     * 
-     * @param columnIndex The index of the column.
-     * @return True, if the value is readonly. False otherwise.
-     */
-    public boolean isReadOnly(int columnIndex) {
+		this.dirty = false;
+		this.valid = true;
 
-        if (readOnly) {
-            return true;
-        }
+		readObject();
+	}
 
-        ColumnDefinition< ?> columnDefinition = columns.get(columnIndex);
-        if (!columnDefinition.isReadOnly()) {
-            return modelList.get(columnIndex).isReadOnly();
-        }
+	/**
+	 * Returns, if a cell is readonly.
+	 * 
+	 * @param columnIndex
+	 *            The index of the column.
+	 * @return True, if the value is readonly. False otherwise.
+	 */
+	public boolean isReadOnly(int columnIndex) {
 
-        return true;
-    }
+		if (readOnly) {
+			return true;
+		}
 
-    /**
-     * Returns the cell value.
-     * 
-     * @param columnIndex The index of the column
-     * @return The cell value as an object.
-     * @throws IndexOutOfBoundsException If the column index is not a valid index.
-     */
-    public Object getValueAt(int columnIndex) {
-        if (columnIndex < 0 || columnIndex >= modelList.size()) {
-            throw new IndexOutOfBoundsException("ColumnIndex: " + columnIndex + ", Size: " + modelList.size());
-        }
-        return modelList.get(columnIndex).getCurrentValue();
-    }
+		ColumnDefinition<?> columnDefinition = columns.get(columnIndex);
 
-    /**
-     * Returns the cell value.
-     * 
-     * @param columnId The identifier of the column
-     * @return The cell value as an object.
-     * @throws IllegalStateException If the column identifer is not valid
-     */
-    public Object getValueAt(String columnId) {
-        if (!idModelMap.containsKey(columnId)) {
-            throw new IllegalStateException("Unknown column id: " + columnId);
-        }
-        return idModelMap.get(columnId).getCurrentValue();
-    }
+		ColumnType type = columnDefinition.getColumnType();
+		switch (type) {
+			case Editable:
+				return modelList.get(columnIndex).isReadOnly();
+			case ReadOnly:
+				return true;
+			case NewEditable:
+				if(tableAM.isNew(this)) {
+					return modelList.get(columnIndex).isReadOnly();					
+				} else {
+					return true;
+				}
+		}		
 
-    /**
-     * Set the value of a cell.
-     * 
-     * @param columnIndex Index of the column
-     * @param aValue The value.
-     */
-    public void setValueAt(int columnIndex, Object aValue) {
-        GenericAM< ?> model = modelList.get(columnIndex);
-        setValue(model, columns.get(columnIndex).getId(), aValue);
-    }
+		return true;
+	}
 
-    /**
-     * Set the value of a cell
-     * 
-     * @param columnId The identifier of the column
-     * @param aValue The value
-     */
-    public void setValueAt(String columnId, Object aValue) {
-        GenericAM< ?> model = idModelMap.get(columnId);
-        setValue(model, columnId, aValue);
-    }
+	/**
+	 * Returns the cell value.
+	 * 
+	 * @param columnIndex
+	 *            The index of the column
+	 * @return The cell value as an object.
+	 * @throws IndexOutOfBoundsException
+	 *             If the column index is not a valid index.
+	 */
+	public Object getValueAt(int columnIndex) {
+		if (columnIndex < 0 || columnIndex >= modelList.size()) {
+			throw new IndexOutOfBoundsException("ColumnIndex: " + columnIndex
+					+ ", Size: " + modelList.size());
+		}
+		return modelList.get(columnIndex).getCurrentValue();
+	}
 
-    /**
-     * Internal method for setting a value.
-     * 
-     * @param model The attribute model
-     * @param columnId The identifier of the column
-     * @param aValue The value
-     */
-    private void setValue(GenericAM< ?> model, String columnId, Object aValue) {
-        if (model == null) {
-            return;
-        }
-        clearElementValidationErrors();
-        model.setValue(aValue);
-        fireValueChanged();
-        updateState();
-    }
+	/**
+	 * Returns the cell value.
+	 * 
+	 * @param columnId
+	 *            The identifier of the column
+	 * @return The cell value as an object.
+	 * @throws IllegalStateException
+	 *             If the column identifer is not valid
+	 */
+	public Object getValueAt(String columnId) {
+		if (!idModelMap.containsKey(columnId)) {
+			throw new IllegalStateException("Unknown column id: " + columnId);
+		}
+		return idModelMap.get(columnId).getCurrentValue();
+	}
 
-    /**
-     * Update the state of this element. This method checks all attribute models and calculates the resulting state.
-     */
-    private void updateState() {
-        boolean oldValid = valid;
-        boolean oldDirty = dirty;
+	/**
+	 * Set the value of a cell.
+	 * 
+	 * @param columnIndex
+	 *            Index of the column
+	 * @param aValue
+	 *            The value.
+	 */
+	public void setValueAt(int columnIndex, Object aValue) {
+		GenericAM<?> model = modelList.get(columnIndex);
+		setValue(model, columns.get(columnIndex).getId(), aValue);
+	}
 
-        if (modelList != null) {
-            dirty = false;
-            valid = validationResult.isValid();
-            for (IFAttributeModel< ?> model : modelList) {
-                dirty |= model.isDirty();
-                valid &= model.isValid();
-            }
-        }
-        
-        dirty |= originalValueDirty;
-        valid &= originalValueValid;
-        
-        if (oldDirty != dirty || oldValid != valid) {
-            fireStateChanged();
-        }
-    }
+	/**
+	 * Set the value of a cell
+	 * 
+	 * @param columnId
+	 *            The identifier of the column
+	 * @param aValue
+	 *            The value
+	 */
+	public void setValueAt(String columnId, Object aValue) {
+		GenericAM<?> model = idModelMap.get(columnId);
+		setValue(model, columnId, aValue);
+	}
 
-    /**
-     * Fires the event that the state changed.
-     * 
-     * @param newState The new state
-     * @param oldState The old state
-     */
-    private void fireStateChanged() {
-        tableAM.stateChanged(this);
-    }
+	/**
+	 * Internal method for setting a value.
+	 * 
+	 * @param model
+	 *            The attribute model
+	 * @param columnId
+	 *            The identifier of the column
+	 * @param aValue
+	 *            The value
+	 */
+	private void setValue(GenericAM<?> model, String columnId, Object aValue) {
+		if (model == null) {
+			return;
+		}
+		clearElementValidationErrors();
+		model.setValue(aValue);
+		fireValueChanged();
+		updateState();
+	}
 
-    /**
-     * @param aValue
-     * @param columnId
-     * @param newValue
-     * @param oldValue
-     */
-    private void fireValueChanged() {
-        tableAM.dataChanged();
-    }
+	/**
+	 * Update the state of this element. This method checks all attribute models
+	 * and calculates the resulting state.
+	 */
+	private void updateState() {
+		boolean oldValid = valid;
+		boolean oldDirty = dirty;
 
-    /**
-     * Write the object managed by the element in the value object.
-     * 
-     * @return The value object
-     */
-    @SuppressWarnings("unchecked")
-    public Object writeObject() {
-        if (modelList != null) {
-            for (int i = 0; i < modelList.size(); i++) {
-                GenericAM attributeModel = modelList.get(i);
-                if (!attributeModel.isReadOnly()) {
+		if (modelList != null) {
+			dirty = false;
+			valid = validationResult.isValid();
+			for (IFAttributeModel<?> model : modelList) {
+				dirty |= model.isDirty();
+				valid &= model.isValid();
+			}
+		}
 
-                    IFDynamicModelValueAccessor dataAccessor = columns.get(i).getDataAccessor();
+		dirty |= originalValueDirty;
+		valid &= originalValueValid;
 
-                    Object value = attributeModel.directWrite();
-                    Object converted =
-                            (attributeModel.getValueConverter() != null ? attributeModel.getValueConverter()
-                                .viewToModel(value)
-                                    : value);
-                    dataAccessor.setValue(getOriginalValue(), converted);
-                }
-            }
-        }
-        return getOriginalValue();
-    }
+		if (oldDirty != dirty || oldValid != valid) {
+			fireStateChanged();
+		}
+	}
 
+	/**
+	 * Fires the event that the state changed.
+	 * 
+	 * @param newState
+	 *            The new state
+	 * @param oldState
+	 *            The old state
+	 */
+	private void fireStateChanged() {
+		tableAM.elementStateChanged(this);
+	}
 
-    public void setCurrentValue(Object currentValue) {
-        setCurrentValue(currentValue, false, true);
-    }
-    
-    public void setCurrentValue(Object currentValue, boolean dirty, boolean valid) {
-        this.originalValueDirty = dirty;
-        this.originalValueValid = valid;
-        if (modelList != null) {
-            for (int i = 0; i < modelList.size(); i++) {
-                GenericAM model = modelList.get(i);
-                IFDynamicModelValueAccessor dataAccessor = columns.get(i).getDataAccessor();
+	/**
+	 * @param aValue
+	 * @param columnId
+	 * @param newValue
+	 * @param oldValue
+	 */
+	private void fireValueChanged() {
+		tableAM.elementDataChanged(this);
+	}
 
-                Object value = dataAccessor.getValue(currentValue);
-                Object converted = (model.getValueConverter() != null ? model.getValueConverter().modelToView(value)
-                        : value);
-                model.setValue(converted);
-            }
-            fireValueChanged();
-            updateState();
-        }
-    }
+	/**
+	 * Write the object managed by the element in the value object.
+	 * 
+	 * @return The value object
+	 */
+	@SuppressWarnings("unchecked")
+	public Object writeObject() {
+		if (modelList != null) {
+			for (int i = 0; i < modelList.size(); i++) {
+				GenericAM attributeModel = modelList.get(i);
+				if (!attributeModel.isReadOnly()) {
 
-    public Object getCurrentValue() {
-        Object result = tableAM.cloneObject(getOriginalValue());
-        if (modelList != null) {
-            for (int i = 0; i < modelList.size(); i++) {
-                GenericAM attributeModel = modelList.get(i);
-                if (!attributeModel.isReadOnly()) {
-                    IFDynamicModelValueAccessor dataAccessor = columns.get(i).getDataAccessor();
+					IFDynamicModelValueAccessor dataAccessor = columns.get(i)
+							.getDataAccessor();
 
-                    Object value = attributeModel.getCurrentValue();
-                    Object converted =
-                            (attributeModel.getValueConverter() != null ? attributeModel.getValueConverter()
-                                .viewToModel(value)
-                                    : value);
-                    dataAccessor.setValue(result, converted);
-                }
-            }
-        }
-        return result;
-    }
+					Object value = attributeModel.directWrite();
+					Object converted = (attributeModel.getValueConverter() != null ? attributeModel
+							.getValueConverter().viewToModel(value) : value);
+					dataAccessor.setValue(getOriginalValue(), converted);
+				}
+			}
+		}
+		return getOriginalValue();
+	}
 
-    /**
-     * Read the object from the value object
-     */
-    @SuppressWarnings("unchecked")
-    public void readObject() {
-        modelList.clear();
-        originalValueDirty = false;
-        originalValueValid = true;
+	public void setCurrentValue(Object currentValue) {
+		setCurrentValue(currentValue, false, true);
+	}
 
-        if (columns != null) {
-            for (ColumnDefinition< ? extends Object> column : columns) {
-                GenericAM attributeModel = column.createAM();
-                attributeModel.addValidator(new IFValidator() {
+	public void setCurrentValue(Object currentValue, boolean dirty,
+			boolean valid) {
+		this.originalValueDirty = dirty;
+		this.originalValueValid = valid;
+		if (modelList != null) {
+			for (int i = 0; i < modelList.size(); i++) {
+				GenericAM model = modelList.get(i);
+				IFDynamicModelValueAccessor dataAccessor = columns.get(i)
+						.getDataAccessor();
 
-                    @Override
-                    public ValidationResult isValid(IFBinding bindingId, Object attribute) {
-                        return validationResult;
-                    }
+				Object value = dataAccessor.getValue(currentValue);
+				Object converted = (model.getValueConverter() != null ? model
+						.getValueConverter().modelToView(value) : value);
+				model.setValue(converted);
+			}
+			fireValueChanged();
+			updateState();
+		}
+	}
 
-                    @Override
-                    public ValidationResult getLastValidationErrors() {
-                        return validationResult;
-                    }
+	public Object getCurrentValue() {
+		Object result = tableAM.cloneObject(getOriginalValue());
+		if (modelList != null) {
+			for (int i = 0; i < modelList.size(); i++) {
+				GenericAM attributeModel = modelList.get(i);
+				if (!attributeModel.isReadOnly()) {
+					IFDynamicModelValueAccessor dataAccessor = columns.get(i)
+							.getDataAccessor();
 
-                    @Override
-                    public void clearValidationErrors() {
-                        validationResult = new ValidationResult();
-                    }
-                });
-                attributeModel.setReadOnly(column.isReadOnly());
-                modelList.add(attributeModel);
-                idModelMap.put(attributeModel.getId(), attributeModel);
+					Object value = attributeModel.getCurrentValue();
+					Object converted = (attributeModel.getValueConverter() != null ? attributeModel
+							.getValueConverter().viewToModel(value) : value);
+					dataAccessor.setValue(result, converted);
+				}
+			}
+		}
+		return result;
+	}
 
-                if (getOriginalValue() != null) {
-                    Object value = column.getDataAccessor().getValue(getOriginalValue());
-                    Object converted =
-                            (column.getValueConverter() != null ? column.getValueConverter().modelToView(value)
-                                    : value);
-                    attributeModel.directRead(converted);
-                }
-            }
-            updateState();
-        }
-    }
+	/**
+	 * Read the object from the value object
+	 */
+	@SuppressWarnings("unchecked")
+	public void readObject() {
+		modelList.clear();
+		originalValueDirty = false;
+		originalValueValid = true;
 
-    /**
-     * Return the current value object.
-     * 
-     * @return The value object.
-     */
-    public Object getOriginalValue() {
-        return originalValue;
-    }
+		if (columns != null) {
+			for (ColumnDefinition<? extends Object> column : columns) {
+				GenericAM attributeModel = column.createAM();
+				attributeModel.addValidator(new IFValidator() {
 
-    /**
-     * Return the unique id.
-     * 
-     * @return the uniqueId
-     */
-    public String getUniqueId() {
-        return uniqueId;
-    }
+					@Override
+					public ValidationResult isValid(IFBinding bindingId,
+							Object attribute) {
+						return validationResult;
+					}
 
-    protected GenericAM getCellAtributeModel(int columnIndex) {
-        return modelList.get(columnIndex);
-    }
+					@Override
+					public ValidationResult getLastValidationErrors() {
+						return validationResult;
+					}
 
-    public boolean isDirty() {
-        return dirty;
-    }
+					@Override
+					public void clearValidationErrors() {
+						validationResult = new ValidationResult();
+					}
+				});
+				attributeModel.setReadOnly(column.getColumnType().equals(ColumnType.ReadOnly));
+				modelList.add(attributeModel);
+				idModelMap.put(attributeModel.getId(), attributeModel);
 
-    public boolean isValid() {
-        return valid;
-    }
+				if (getOriginalValue() != null) {
+					Object value = column.getDataAccessor().getValue(
+							getOriginalValue());
+					Object converted = (column.getValueConverter() != null ? column
+							.getValueConverter().modelToView(value) : value);
+					attributeModel.directRead(converted);
+				}
+			}
+			updateState();
+		}
+	}
 
-    public List<ValidationError> getValidationErrors() {
-        List<ValidationError> errors = new ArrayList<ValidationError>(validationResult.getValidationErrors());
+	/**
+	 * Return the current value object.
+	 * 
+	 * @return The value object.
+	 */
+	public Object getOriginalValue() {
+		return originalValue;
+	}
 
-        if (modelList != null) {
-            for (GenericAM< ?> model : modelList) {
-                if (model.getValidationResult() != null) {
-                    errors.addAll(model.getValidationResult().getValidationErrors());
-                }
-            }
-        }
-        return errors;
-    }
+	/**
+	 * Return the unique id.
+	 * 
+	 * @return the uniqueId
+	 */
+	public String getUniqueId() {
+		return uniqueId;
+	}
 
-    public List<String> getValidationFailures() {
-        List<String> errors = new ArrayList<String>();
+	protected GenericAM getCellAtributeModel(int columnIndex) {
+		return modelList.get(columnIndex);
+	}
 
-        for (ValidationError elementError : validationResult.getValidationErrors()) {
-            errors.add(elementError.getMessage());
-        }
+	public boolean isDirty() {
+		return dirty;
+	}
 
-        if (modelList != null) {
-            for (GenericAM< ?> model : modelList) {
-                if (model.getValidationResult() != null) {
-                    errors.addAll(model.getValidationFailures());
-                }
-            }
-        }
-        return errors;
-    }
+	public boolean isValid() {
+		return valid;
+	}
 
-    public void addElementValidationError(ValidationError validationError) {
-        validationResult.addValidationError(validationError);
-        if (modelList != null) {
-            for (GenericAM< ?> model : modelList) {
-                model.recalculateState();
-            }
-        }
-        updateState();
-    }
+	public List<ValidationError> getValidationErrors() {
+		List<ValidationError> errors = new ArrayList<ValidationError>(
+				validationResult.getValidationErrors());
 
-    public ValidationResult getElementValidationErrors() {
-        return validationResult;
-    }
+		if (modelList != null) {
+			for (GenericAM<?> model : modelList) {
+				if (model.getValidationResult() != null) {
+					errors.addAll(model.getValidationResult()
+							.getValidationErrors());
+				}
+			}
+		}
+		return errors;
+	}
 
-    public void clearElementValidationErrors() {
-        validationResult = new ValidationResult();
-        if (modelList != null) {
-            for (GenericAM< ?> model : modelList) {
-                model.recalculateState();
-            }
-        }
-        updateState();
-    }
+	public List<String> getValidationFailures() {
+		List<String> errors = new ArrayList<String>();
 
-    public boolean isOriginalValueDirty() {
-        return originalValueDirty;
-    }
-    
-    public boolean isOriginalValueValid() {
-        return originalValueValid;
-    }
+		for (ValidationError elementError : validationResult
+				.getValidationErrors()) {
+			errors.add(elementError.getMessage());
+		}
 
-    public boolean isColumnValid(int column) {
-        return modelList.get(column).isValid();
-    }
-    
-    public boolean isColumnDirty(int column) {
-        return modelList.get(column).isDirty();
-    }
+		if (modelList != null) {
+			for (GenericAM<?> model : modelList) {
+				if (model.getValidationResult() != null) {
+					errors.addAll(model.getValidationFailures());
+				}
+			}
+		}
+		return errors;
+	}
+
+	public void addElementValidationError(ValidationError validationError) {
+		validationResult.addValidationError(validationError);
+		if (modelList != null) {
+			for (GenericAM<?> model : modelList) {
+				model.recalculateState();
+			}
+		}
+		updateState();
+	}
+
+	public void removeElementValidationError(ValidationError validationError) {
+		validationResult.removeValidationError(validationError);
+		if (modelList != null) {
+			for (GenericAM<?> model : modelList) {
+				model.recalculateState();
+			}
+		}
+		updateState();
+	}
+
+	public ValidationResult getElementValidationErrors() {
+		return validationResult;
+	}
+
+	public void clearElementValidationErrors() {
+		validationResult = new ValidationResult();
+		if (modelList != null) {
+			for (GenericAM<?> model : modelList) {
+				model.recalculateState();
+			}
+		}
+		updateState();
+	}
+
+	public boolean isOriginalValueDirty() {
+		return originalValueDirty;
+	}
+
+	public boolean isOriginalValueValid() {
+		return originalValueValid;
+	}
+
+	public boolean isColumnValid(int column) {
+		return modelList.get(column).isValid();
+	}
+
+	public boolean isColumnDirty(int column) {
+		return modelList.get(column).isDirty();
+	}
 }
