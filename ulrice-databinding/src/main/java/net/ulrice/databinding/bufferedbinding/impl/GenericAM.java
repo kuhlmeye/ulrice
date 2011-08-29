@@ -9,6 +9,7 @@ import net.ulrice.databinding.bufferedbinding.IFAttributeModel;
 import net.ulrice.databinding.bufferedbinding.IFAttributeModelEventListener;
 import net.ulrice.databinding.converter.HeuristicConverterFactory;
 import net.ulrice.databinding.converter.IFValueConverter;
+import net.ulrice.databinding.converter.impl.DoNothingConverter;
 import net.ulrice.databinding.modelaccess.IFModelValueAccessor;
 import net.ulrice.databinding.validation.IFValidator;
 import net.ulrice.databinding.validation.ValidationResult;
@@ -309,7 +310,7 @@ public class GenericAM<T> implements IFAttributeModel<T>, IFViewChangeListener {
 
 	@Override
 	public void addViewAdapter(IFViewAdapter viewAdapter) {
-		if (viewAdapter.isUseAutoValueConverter() && viewAdapter.getValueConverter() == null) {
+		if (viewAdapter.isUseAutoValueConverter() && (viewAdapter.getValueConverter() == null || viewAdapter.getValueConverter().equals(DoNothingConverter.INSTANCE))) {
 			viewAdapter.setValueConverter(HeuristicConverterFactory.createConverter(viewAdapter.getViewType(), modelAccessor.getModelType()));
 		}
 
