@@ -11,6 +11,7 @@ import javax.swing.event.ListSelectionListener;
 
 import net.ulrice.databinding.bufferedbinding.impl.BindingGroup;
 import net.ulrice.databinding.bufferedbinding.impl.Element;
+import net.ulrice.databinding.bufferedbinding.impl.ColumnDefinition.ColumnType;
 import net.ulrice.databinding.validation.impl.StringLengthValidator;
 import net.ulrice.module.impl.AbstractController;
 import net.ulrice.module.impl.ModuleActionState;
@@ -30,7 +31,7 @@ public class CMovieDB extends AbstractController implements ListSelectionListene
         addColumn("actors", new ActorValueConverter()); 
 
         getColumn("name").setValidator(new StringLengthValidator(1, 255));
-        getColumn("actors").setReadOnly(true);
+        getColumn("actors").setColumnType(ColumnType.ReadOnly);
     }};
     
     private final SingleObjectModel<Movie> detailModel = new SingleObjectModel<Movie>(Movie.class) {{
