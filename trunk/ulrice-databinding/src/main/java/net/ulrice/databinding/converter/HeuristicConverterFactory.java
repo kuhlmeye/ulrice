@@ -1,5 +1,6 @@
 package net.ulrice.databinding.converter;
 
+import net.ulrice.databinding.ObjectWithPresentation;
 import net.ulrice.databinding.converter.impl.DoNothingConverter;
 import net.ulrice.databinding.converter.impl.Reverser;
 import net.ulrice.databinding.converter.impl.StringToIntegerConverter;
@@ -9,7 +10,12 @@ import net.ulrice.databinding.converter.impl.StringToIntegerConverter;
 public class HeuristicConverterFactory {
     @SuppressWarnings({ "unchecked", "rawtypes" })
     public static <M, V> IFValueConverter<M, V> createConverter (Class<V> presentationType, Class<M> modelType) {
+        
         if (presentationType.equals (modelType)) {
+            return DoNothingConverter.INSTANCE;
+        }
+        
+        if (ObjectWithPresentation.class.equals (presentationType)) {
             return DoNothingConverter.INSTANCE;
         }
 
