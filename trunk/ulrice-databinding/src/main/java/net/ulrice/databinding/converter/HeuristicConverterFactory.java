@@ -7,9 +7,9 @@ import net.ulrice.databinding.converter.impl.StringToIntegerConverter;
 
 
 
-public class HeuristicConverterFactory {
+public class HeuristicConverterFactory implements IFConverterFactory {
     @SuppressWarnings({ "unchecked", "rawtypes" })
-    public static <M, V> IFValueConverter<M, V> createConverter (Class<V> presentationType, Class<M> modelType) {
+    public <M, V> IFValueConverter<M, V> createConverter (Class<V> presentationType, Class<M> modelType) {
         
         if (presentationType.equals (modelType)) {
             return DoNothingConverter.INSTANCE;

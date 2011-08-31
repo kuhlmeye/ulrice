@@ -10,6 +10,7 @@ import javax.swing.JFrame;
 import net.ulrice.Ulrice;
 import net.ulrice.configuration.ConfigurationException;
 import net.ulrice.configuration.UlriceFileConfiguration;
+import net.ulrice.databinding.UlriceDatabinding;
 import net.ulrice.module.ControllerProviderCallback;
 import net.ulrice.module.IFController;
 import net.ulrice.module.IFModule;
@@ -49,7 +50,8 @@ public class UlriceSampleApplication {
 		// Initialize ulrice.
 		try {
 			InputStream configurationStream = UlriceSampleApplication.class.getResourceAsStream("ulrice.properties");
-			UlriceFileConfiguration.initializeUlrice(configurationStream);			
+			UlriceFileConfiguration.initializeUlrice(configurationStream);
+			UlriceSampleDatabindingConfiguration.initialize();
 		} catch (ConfigurationException e) {
 			LOG.log(Level.SEVERE, "Configuration exception occurred.", e);
 			System.exit(0);
