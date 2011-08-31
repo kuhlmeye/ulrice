@@ -5,6 +5,7 @@ import java.util.List;
 
 import javax.swing.event.EventListenerList;
 
+import net.ulrice.databinding.UlriceDatabinding;
 import net.ulrice.databinding.bufferedbinding.IFAttributeModel;
 import net.ulrice.databinding.bufferedbinding.IFAttributeModelEventListener;
 import net.ulrice.databinding.converter.HeuristicConverterFactory;
@@ -311,7 +312,7 @@ public class GenericAM<T> implements IFAttributeModel<T>, IFViewChangeListener {
 	@Override
 	public void addViewAdapter(IFViewAdapter viewAdapter) {
 		if (viewAdapter.isUseAutoValueConverter() && (viewAdapter.getValueConverter() == null || viewAdapter.getValueConverter().equals(DoNothingConverter.INSTANCE))) {
-			viewAdapter.setValueConverter(HeuristicConverterFactory.createConverter(viewAdapter.getViewType(), modelAccessor.getModelType()));
+			viewAdapter.setValueConverter(UlriceDatabinding.getConverterFactory().createConverter(viewAdapter.getViewType(), modelAccessor.getModelType()));
 		}
 
 		viewAdapterList.add(viewAdapter);

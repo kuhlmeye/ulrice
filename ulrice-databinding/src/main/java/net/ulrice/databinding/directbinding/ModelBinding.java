@@ -11,6 +11,7 @@ import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableModel;
 
 import net.ulrice.databinding.ErrorHandler;
+import net.ulrice.databinding.UlriceDatabinding;
 import net.ulrice.databinding.converter.HeuristicConverterFactory;
 import net.ulrice.databinding.converter.IFValueConverter;
 import net.ulrice.databinding.converter.ValueConverterException;
@@ -271,7 +272,7 @@ public class ModelBinding {
     }
 
     public Binding register (IFViewAdapter viewAdapter, IFModelValueAccessor modelValueAccessor, Predicate enabledPredicate, List<IFValidator<?>> validators, boolean isReadOnly) {
-        return register (viewAdapter, HeuristicConverterFactory.createConverter (viewAdapter.getViewType (), modelValueAccessor.getModelType ()), enabledPredicate, modelValueAccessor, validators, isReadOnly);
+        return register (viewAdapter, UlriceDatabinding.getConverterFactory().createConverter (viewAdapter.getViewType (), modelValueAccessor.getModelType ()), enabledPredicate, modelValueAccessor, validators, isReadOnly);
     }
 
     public Binding register (IFViewAdapter viewAdapter, IFValueConverter viewConverter, Predicate enabledPredicate, IFModelValueAccessor modelValueAccessor, List<IFValidator<?>> validators, boolean isReadOnly) {
@@ -310,7 +311,7 @@ public class ModelBinding {
         for (int col=0; col < columnSpecs.length; col++) {
             final String expr = columnSpecs [col].getExpression ();
             final Class<?> columnType = columnSpecs [col].getType ();
-            final IFValueConverter converter = HeuristicConverterFactory.createConverter (columnType, columnType);
+            final IFValueConverter converter = UlriceDatabinding.getConverterFactory().createConverter (columnType, columnType);
 
             final ColumnAdapter viewAdapter = new DefaultTableModelColumnAdapter (tableModel, columnType, col, ! canBeEditable); //TODO readOnly noch über Typen filtern?
             final IFIndexedModelValueAccessor modelValueAccessor = new OgnlSingleListIndexedMVA (columnType, null, _model, baseExpression, expr, numRowsAccessor);
