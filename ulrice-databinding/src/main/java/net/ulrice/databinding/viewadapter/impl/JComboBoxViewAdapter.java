@@ -27,7 +27,7 @@ public class JComboBoxViewAdapter<M> extends AbstractViewAdapter <M, ObjectWithP
     @SuppressWarnings("unchecked")
     @Override
     public M getValue () {
-        return ((ObjectWithPresentation<M>) comboBox.getSelectedItem()).getValue();
+        return comboBox.getSelectedItem() == null ? null : ((ObjectWithPresentation<M>) comboBox.getSelectedItem()).getValue();
     }
 
 	@Override
