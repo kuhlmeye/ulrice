@@ -11,9 +11,12 @@ public enum FilterMode {
     
     NoFilter,
     
-    
     RegEx,
     
-    Numeric;
+    Numeric,
+    
+    Boolean,
+    
+    Enum;
 
 }

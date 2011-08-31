@@ -9,12 +9,16 @@ import java.util.logging.Logger;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
 
+import javax.swing.DefaultComboBoxModel;
+import javax.swing.JComboBox;
 import javax.swing.JComponent;
 import javax.swing.JTextField;
 import javax.swing.RowFilter;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
+import javax.swing.event.ListDataEvent;
+import javax.swing.event.ListDataListener;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.TableColumnModelEvent;
 import javax.swing.event.TableColumnModelListener;
@@ -30,7 +34,7 @@ import net.ulrice.databinding.bufferedbinding.impl.FilterMode;
  * 
  */
 public class UTableVAFilter extends RowFilter<UTableViewAdapter, String> implements DocumentListener,
-		TableColumnModelListener {
+		TableColumnModelListener, ListDataListener {
 
 	/** The logger used by this class. */
 	private static final Logger LOG = Logger.getLogger(UTableVAFilter.class.getName());
@@ -55,6 +59,12 @@ public class UTableVAFilter extends RowFilter<UTableViewAdapter, String> impleme
 	private UTableVAHeader staticTableHeader;
 
 	private UTableVAHeader scrollTableHeader;
+	
+	private enum BooleanFilter {
+	    All,
+	    Yes,
+	    No;
+	}
 
 	/**
 	 * @param rowSorter
@@ -79,37 +89,63 @@ public class UTableVAFilter extends RowFilter<UTableViewAdapter, String> impleme
 		TableColumnModel columnModel = tableHeader.getColumnModel();
 
 		// TODO Totally inefficient
-		if (rowSorter != null) {
-			UTableViewAdapter model = rowSorter.getModel();
-			this.columnIdentifiers = new ArrayList<String>(model.getColumnCount());
-			for (int i = 0; i < model.getColumnCount(); i++) {
-				ColumnDefinition<?> columnDefinition = (ColumnDefinition<?>) model.getAttributeModel().getColumns()
-						.get(i);
-				columnIdentifiers.add(columnDefinition.getId());
-			}
-		}
+        if (rowSorter != null) {
+            final UTableViewAdapter model = rowSorter.getModel();
+            this.columnIdentifiers = new ArrayList<String>(model.getColumnCount());
+            for (int i = 0; i < model.getColumnCount(); i++) {
+                final ColumnDefinition< ?> columnDefinition = (ColumnDefinition< ?>) model.getAttributeModel().getColumns().get(i);
+                columnIdentifiers.add(columnDefinition.getId());
+            }
+        }
 
 		for (int i = 0; i < columnModel.getColumnCount(); i++) {
-			TableColumn column = columnModel.getColumn(i);
-			ColumnDefinition<?> columnDefinition = (ColumnDefinition<?>) column.getHeaderValue();
-			FilterMode filterMode = columnDefinition.getFilterMode();
+			final TableColumn column = columnModel.getColumn(i);
+			final ColumnDefinition<?> columnDefinition = (ColumnDefinition<?>) column.getHeaderValue();
+			final FilterMode filterMode = columnDefinition.getFilterMode();
 			columnFilterModes.put(columnDefinition.getId(), filterMode);
 			if (!FilterMode.NoFilter.equals(filterMode)) {
-				Class<?> columnClass = columnDefinition.getColumnClass();
-				JComponent component = null;
-				if (String.class.isAssignableFrom(columnClass)) {
-					JTextField field = new JTextField();
-					field.setName(columnDefinition.getId());
-					field.getDocument().putProperty(DOCUMENT_PROPERTY_FIELD_ID, columnDefinition.getId());
-					field.getDocument().addDocumentListener(this);
-					component = field;
-				} else if (Number.class.isAssignableFrom(columnClass)) {
-					JTextField field = new JTextField();
-					field.setName(columnDefinition.getId());
-					field.getDocument().putProperty(DOCUMENT_PROPERTY_FIELD_ID, columnDefinition.getId());
-					field.getDocument().addDocumentListener(this);
-					component = field;
-				}
+				final JComponent component;
+				
+				switch (filterMode) {
+                    case RegEx:
+                    case Numeric:
+                        JTextField field = new JTextField();
+                        field.setName(columnDefinition.getId());
+                        field.getDocument().putProperty(DOCUMENT_PROPERTY_FIELD_ID, columnDefinition.getId());
+                        field.getDocument().addDocumentListener(this);
+                        component = field;
+                        break;
+
+                    case Boolean:
+                        FilterComboBoxModel cbm = new FilterComboBoxModel(columnDefinition.getId());
+                        cbm.addElement(BooleanFilter.All);
+                        cbm.addElement(BooleanFilter.Yes);
+                        cbm.addElement(BooleanFilter.No);
+                        cbm.setSelectedItem(BooleanFilter.All);
+                        cbm.addListDataListener(this);
+                        
+                        JComboBox comboBox = new JComboBox(cbm);
+                        component = comboBox;
+                        break;
+                        
+                    case Enum:
+                        FilterComboBoxModel enumCbm = new FilterComboBoxModel(columnDefinition.getId());
+                        enumCbm.addElement(BooleanFilter.All);
+                        for (Object enumValue : columnDefinition.getColumnClass().getEnumConstants()) {
+                            enumCbm.addElement(enumValue);
+                        }
+                        
+                        enumCbm.addListDataListener(this);
+                        JComboBox enumComboBox = new JComboBox(enumCbm);
+                        component = enumComboBox;
+                        
+                        break;
+                        
+                    default:
+                        component = null;
+                        break;
+                }
+				
 				if (component != null) {
 					tableHeader.add(component, column.getIdentifier());
 				}
@@ -141,6 +177,8 @@ public class UTableVAFilter extends RowFilter<UTableViewAdapter, String> impleme
 		if (columnFilterModes != null && columnFilterModes.containsKey(columnId)) {
 			switch (columnFilterModes.get(columnId)) {
 				case RegEx:
+				case Enum:
+				case Boolean:
 					Pattern pattern = regexExpressionMap.get(columnId);
 					if (pattern != null) {
 						LOG.finest("ColumnId: " + columnId + ", Value: " + strValue + ", Pattern: " + pattern.pattern());
@@ -224,6 +262,8 @@ public class UTableVAFilter extends RowFilter<UTableViewAdapter, String> impleme
 			switch (columnFilterModes.get(columnId)) {
 				case NoFilter:
 					break;
+				case Enum:
+				case Boolean:
 				case RegEx: {
 					String regex = text;
 					regex = regex.replace("?", ".?");
@@ -322,8 +362,40 @@ public class UTableVAFilter extends RowFilter<UTableViewAdapter, String> impleme
 	@Override
 	public void columnMoved(TableColumnModelEvent e) {
 	}
+	
+	@Override
+    public void intervalAdded(ListDataEvent e) {
+    }
 
-	private static class NumericPattern {
+    @Override
+    public void intervalRemoved(ListDataEvent e) {
+    }
+
+    @Override
+    public void contentsChanged(ListDataEvent e) {
+
+        FilterComboBoxModel cbModel = (FilterComboBoxModel) e.getSource();
+        Object value = cbModel.getSelectedItem();
+        
+        if (value == BooleanFilter.All) {
+            filterChanged(cbModel.columndId, "");
+        }
+        else if (value == BooleanFilter.Yes) {
+            filterChanged(cbModel.columndId, Boolean.TRUE.toString());
+        }
+        else if (value == BooleanFilter.No) {
+            filterChanged(cbModel.columndId, Boolean.FALSE.toString());
+        }
+        else if (value != null) {
+            filterChanged(cbModel.columndId, value.toString());
+        }
+        else {
+            filterChanged(cbModel.columndId, "");
+        }
+    }
+
+
+    private static class NumericPattern {
 
 		static enum Operator {
 			Greater, Smaller, Interval, Exact;
@@ -382,4 +454,14 @@ public class UTableVAFilter extends RowFilter<UTableViewAdapter, String> impleme
 		}
 
 	}
+    
+    @SuppressWarnings("serial")
+    private class FilterComboBoxModel extends DefaultComboBoxModel {
+        private String columndId;
+
+        public FilterComboBoxModel(String columndId) {
+            super();
+            this.columndId = columndId;
+        }
+    }
 }
