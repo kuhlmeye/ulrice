@@ -34,13 +34,9 @@ public class ColumnDefinition<T extends Object> {
         this.dataAccessor = dataAccessor;
         this.columnClass = columnClass;
         
-        this.filterMode = FilterMode.RegEx;
-        if(Number.class.isAssignableFrom(columnClass)) {
-            this.filterMode = FilterMode.Numeric;
-        }
+        setFilterMode(columnClass);
     }
 
-	   
     public ColumnDefinition(IFDynamicModelValueAccessor dataAccessor, Class<T> columnClass, ColumnType columnType) {
         this.id = dataAccessor.getAttributeId();
         this.columnName = id;
@@ -48,10 +44,7 @@ public class ColumnDefinition<T extends Object> {
         this.columnClass = columnClass;
         this.columnType = columnType;
         
-        this.filterMode = FilterMode.RegEx;
-        if(Number.class.isAssignableFrom(columnClass)) {
-            this.filterMode = FilterMode.Numeric;
-        }
+        setFilterMode(columnClass);
     }
 	
     public ColumnDefinition(String columnName, IFDynamicModelValueAccessor dataAccessor, Class<T> columnClass) {
@@ -60,10 +53,7 @@ public class ColumnDefinition<T extends Object> {
         this.dataAccessor = dataAccessor;
         this.columnClass = columnClass;
         
-        this.filterMode = FilterMode.RegEx;
-        if(Number.class.isAssignableFrom(columnClass)) {
-            this.filterMode = FilterMode.Numeric;
-        }
+        setFilterMode(columnClass);
     }
     
     public ColumnDefinition(IFDynamicModelValueAccessor dataAccessor, Class<T> columnClass, FilterMode filterMode) {
@@ -92,6 +82,21 @@ public class ColumnDefinition<T extends Object> {
             genericAM.addValidator(getValidator());
         }
 		return genericAM;
+    }
+
+    private void setFilterMode(Class<T> columnClass) {
+        if (Number.class.isAssignableFrom(columnClass)) {
+            this.filterMode = FilterMode.Numeric;
+        }
+        else if (Boolean.class.isAssignableFrom(columnClass)) {
+            this.filterMode = FilterMode.Boolean;
+        }
+        else if (Enum.class.isAssignableFrom(columnClass)) {
+            this.filterMode = FilterMode.Enum;
+        }
+        else {
+            this.filterMode = FilterMode.RegEx;
+        }
     }
 
     /**
