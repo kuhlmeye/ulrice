@@ -10,8 +10,7 @@ public class UlriceValueConverterContributer implements
 		IFExtensibleConverterFactoryContributer {
 	
 	private static final IFValueConverter[] valueConverterArray = {
-			new StringToIntegerConverter(),
-			new DoNothingConverter()
+			new StringToIntegerConverter()
 	};
 
 	@Override
