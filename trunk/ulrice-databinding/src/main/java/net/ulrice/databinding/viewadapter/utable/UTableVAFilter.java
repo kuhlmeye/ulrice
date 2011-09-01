@@ -253,61 +253,63 @@ public class UTableVAFilter extends RowFilter<UTableViewAdapter, String> impleme
 	 * @param text
 	 */
 	private void filterChanged(String columnId, String text) {
-		LOG.finer("Filter changed for column-id '" + columnId + "'. Text is: " + text);
-		if (text == null || text.isEmpty()) {
-			regexExpressionMap.remove(columnId);
-			numericPatternExpressionMap.remove(columnId);
-		} else if (columnFilterModes.containsKey(columnId)) {
+        LOG.finer("Filter changed for column-id '" + columnId + "'. Text is: " + text);
+        if (text == null || text.isEmpty()) {
+            regexExpressionMap.remove(columnId);
+            numericPatternExpressionMap.remove(columnId);
+        }
+        else if (columnFilterModes.containsKey(columnId)) {
 
-			switch (columnFilterModes.get(columnId)) {
-				case NoFilter:
-					break;
-				case Enum:
-				case Boolean:
-				case RegEx: {
-					String regex = text;
-					regex = regex.replace("?", ".?");
-					regex = regex.replace("*", ".*");
-					regex += ".*";
+            switch (columnFilterModes.get(columnId)) {
+                case NoFilter:
+                    break;
+                case Enum:
+                case Boolean:
+                case RegEx: {
+                    String regex = text;
+                    regex = regex.replace("?", ".?");
+                    regex = regex.replace("*", ".*");
+                    regex += ".*";
 
-					try {
-						Pattern pattern = Pattern.compile(regex);
-						regexExpressionMap.put(columnId, pattern);
-					} catch (PatternSyntaxException e) {
-						LOG.log(Level.FINER, "Could not compile regex: " + regex, e);
-					}
-					break;
-				}
-				case Numeric: {
-					String regex = text;
-					if (regex.matches("\\s*>\\s*[\\-\\+]?[0-9]+\\s*")) {
-						regex = regex.trim();
-						Double valueA = Double.valueOf(regex.substring(1));
-						numericPatternExpressionMap.put(columnId, new NumericPattern(NumericPattern.Operator.Greater,
-								valueA, null));
-					} else if (regex.matches("\\s*\\<\\s*[\\-\\+]?[0-9]+\\s*")) {
-						regex = regex.trim();
-						Double valueA = Double.valueOf(regex.substring(1));
-						numericPatternExpressionMap.put(columnId, new NumericPattern(NumericPattern.Operator.Smaller,
-								valueA, null));
-					} else if (regex.matches("\\s*\\[\\s*[\\-\\+]?[0-9]+\\s*,\\s*[\\-\\+]?[0-9]+\\s*\\]\\s*")) {
-						regex = regex.trim();
-						String strValueA = regex.substring(1, regex.indexOf(','));
-						String strValueB = regex.substring(regex.indexOf(',') + 1, regex.length() - 1);
-						Double valueA = Double.valueOf(strValueA);
-						Double valueB = Double.valueOf(strValueB);
-						numericPatternExpressionMap.put(columnId, new NumericPattern(NumericPattern.Operator.Interval,
-								valueA, valueB));
-					} else if (regex.matches("\\s*[\\-\\+]?[0-9]+\\s*")) {
-						regex = regex.trim();
-						Double valueA = Double.valueOf(regex.substring(0));
-						numericPatternExpressionMap.put(columnId, new NumericPattern(NumericPattern.Operator.Exact,
-								valueA, null));
-					} else {
-						numericPatternExpressionMap.remove(columnId);
-					}
-					break;
-				}
+                    try {
+                        final Pattern pattern = Pattern.compile(regex, Pattern.CASE_INSENSITIVE);
+                        regexExpressionMap.put(columnId, pattern);
+                    }
+                    catch (PatternSyntaxException e) {
+                        LOG.log(Level.FINER, "Could not compile regex: " + regex, e);
+                    }
+                    break;
+                }
+                case Numeric: {
+                    String regex = text;
+                    if (regex.matches("\\s*>\\s*[\\-\\+]?[0-9]+\\s*")) {
+                        regex = regex.trim();
+                        final Double valueA = Double.valueOf(regex.substring(1));
+                        numericPatternExpressionMap.put(columnId, new NumericPattern(NumericPattern.Operator.Greater, valueA, null));
+                    }
+                    else if (regex.matches("\\s*\\<\\s*[\\-\\+]?[0-9]+\\s*")) {
+                        regex = regex.trim();
+                        final Double valueA = Double.valueOf(regex.substring(1));
+                        numericPatternExpressionMap.put(columnId, new NumericPattern(NumericPattern.Operator.Smaller, valueA, null));
+                    }
+                    else if (regex.matches("\\s*\\[\\s*[\\-\\+]?[0-9]+\\s*,\\s*[\\-\\+]?[0-9]+\\s*\\]\\s*")) {
+                        regex = regex.trim();
+                        final String strValueA = regex.substring(1, regex.indexOf(','));
+                        final String strValueB = regex.substring(regex.indexOf(',') + 1, regex.length() - 1);
+                        final Double valueA = Double.valueOf(strValueA);
+                        final Double valueB = Double.valueOf(strValueB);
+                        numericPatternExpressionMap.put(columnId, new NumericPattern(NumericPattern.Operator.Interval, valueA, valueB));
+                    }
+                    else if (regex.matches("\\s*[\\-\\+]?[0-9]+\\s*")) {
+                        regex = regex.trim();
+                        final Double valueA = Double.valueOf(regex.substring(0));
+                        numericPatternExpressionMap.put(columnId, new NumericPattern(NumericPattern.Operator.Exact, valueA, null));
+                    }
+                    else {
+                        numericPatternExpressionMap.remove(columnId);
+                    }
+                    break;
+                }
 			}
 		}
 		rowSorter.sort();
