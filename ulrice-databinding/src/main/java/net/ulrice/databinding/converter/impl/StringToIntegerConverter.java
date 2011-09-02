@@ -37,4 +37,15 @@ public class StringToIntegerConverter implements IFValueConverter<String, Intege
 			throw new ValueConverterException(ex);
 		}
 	}
+
+	@Override
+	public boolean canHandle(Class<? extends Object> modelType,
+			Class<? extends Object> viewType) {
+		if (String.class.equals(viewType)) {
+			if (Integer.class.equals(modelType) || Integer.TYPE.equals(modelType)) {
+				return true;
+			}
+		}
+		return false;
+	}
 }
