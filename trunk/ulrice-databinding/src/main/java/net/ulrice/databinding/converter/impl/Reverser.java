@@ -30,4 +30,10 @@ public class Reverser<M, V> implements IFValueConverter<M, V> {
 	public V modelToView(M o) {
 		return inner.viewToModel(o);
 	}
+
+	@Override
+	public boolean canHandle(Class<? extends Object> modelType,
+			Class<? extends Object> viewType) {
+		return inner.canHandle(viewType, modelType);
+	}
 }

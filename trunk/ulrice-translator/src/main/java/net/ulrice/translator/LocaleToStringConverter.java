@@ -33,4 +33,13 @@ public class LocaleToStringConverter implements IFValueConverter<Locale, String>
 		return o.toString();
 	}
 
+	@Override
+	public boolean canHandle(Class<? extends Object> modelType,
+			Class<? extends Object> viewType) {
+		if (String.class.equals(viewType) && Locale.class.equals(modelType)) {
+			return true;
+		}
+		return false;
+	}
+
 }

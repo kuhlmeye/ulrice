@@ -2,9 +2,6 @@ package net.ulrice.databinding.converter;
 
 import java.util.List;
 
-import net.ulrice.databinding.ObjectWithPresentation;
-import net.ulrice.databinding.UlriceDatabinding;
-import net.ulrice.databinding.converter.impl.DoNothingConverter;
 import net.ulrice.databinding.converter.impl.Reverser;
 /**
  * 
@@ -13,30 +10,24 @@ import net.ulrice.databinding.converter.impl.Reverser;
  */
 public class ExtensibleConverterFactory implements IFConverterFactory {
 	
+	@SuppressWarnings("rawtypes")
 	private final List<IFValueConverter> converterList;
 	
+	@SuppressWarnings("rawtypes")
 	public ExtensibleConverterFactory(List<IFValueConverter> converterList) {
 		this.converterList = converterList;
 	}
 	
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public <M, V> IFValueConverter<M, V> createConverter (Class<V> presentationType, Class<M> modelType) {
-        if (presentationType.equals (modelType)) {
-            return DoNothingConverter.INSTANCE;
-        }
-        if (ObjectWithPresentation.class.equals (presentationType)) {
-            return DoNothingConverter.INSTANCE;
-        }
-        
         for (IFValueConverter converter : converterList) {
-        	if (converter.getModelType(null).equals(modelType) && converter.getViewType(null).equals(presentationType)) {
+        	if (converter.canHandle(modelType, presentationType)) {
         		return converter;
         	}
-        	if (converter.getModelType(null).equals(presentationType) && converter.getViewType(null).equals(modelType)) {
+        	if (converter.canHandle(presentationType, modelType)) {
         		return (IFValueConverter<M, V>) new Reverser<V, M>(converter);
         	}
         }
-        
         throw new IllegalArgumentException ("keine Implizite Konvertierung von " + presentationType.getName () + " in " + modelType.getName () + ".");
     }
 

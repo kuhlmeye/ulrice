@@ -13,6 +13,8 @@ public interface IFValueConverter <M, V> {
     Class<? extends V> getViewType(Class<? extends M> modelType);
     Class<? extends M> getModelType(Class<? extends V> viewType);
     
+    boolean canHandle(Class<? extends Object> modelType, Class<? extends Object> viewType);
+    
     M viewToModel (V o);
     V modelToView (M o);
 }

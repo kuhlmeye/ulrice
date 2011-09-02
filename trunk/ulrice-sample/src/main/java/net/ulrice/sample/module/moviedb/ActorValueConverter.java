@@ -44,4 +44,13 @@ public class ActorValueConverter implements IFValueConverter <List, String> {
 		return buffer.toString();
 	}
 
+	@Override
+	public boolean canHandle(Class<? extends Object> modelType,
+			Class<? extends Object> viewType) {
+		if (String.class.equals(viewType) && List.class.equals(modelType)) {
+			return true;
+		}
+		return false;
+	}
+
 }
