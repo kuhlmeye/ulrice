@@ -52,7 +52,10 @@ public class JComboBoxViewAdapter<M> extends AbstractViewAdapter <M, ObjectWithP
 
 	@Override
 	public void itemStateChanged(ItemEvent e) {
-		fireViewChange();
+	    // Fire only event for SELECTED, not for DESELECTED
+	    if (e.getStateChange() == ItemEvent.SELECTED) {
+	        fireViewChange();
+	    }
 	}
 
 	@Override
