@@ -28,9 +28,9 @@ public class BorderStateMarker implements Border, ImageObserver, IFStateMarker {
     /** The cross image draw, if the data is not valid. */
     private ImageIcon crossImage;
     
-    private boolean valid;
+    private boolean valid = true;
     
-    private boolean dirty;
+    private boolean dirty = false;
 
     /**
      * Creates a new border state marker.
