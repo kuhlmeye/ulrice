@@ -22,16 +22,15 @@ import net.ulrice.databinding.viewadapter.IFViewAdapter;
  * @author christof
  * 
  */
-public class TableAM implements IFAttributeModel  {
-
+public class TableAM implements IFAttributeModel {
 
 	private IFIndexedModelValueAccessor tableMVA;
 
 	private List<TableConstraint> tableConstraints = new ArrayList<TableConstraint>();
-	
+
 	protected List<Element> elements = new ArrayList<Element>();
 	protected Map<String, Element> elementIdMap = new HashMap<String, Element>();
-	
+
 	private List<IFValidator> validators = new ArrayList<IFValidator>();
 	private EventListenerList listenerList;
 	private String id;
@@ -42,9 +41,9 @@ public class TableAM implements IFAttributeModel  {
 	private Set<Element> modElements = new HashSet<Element>();
 	private Set<Element> delElements = new HashSet<Element>();
 	private Set<Element> invElements = new HashSet<Element>();
-	
+
 	private List<IFViewAdapter> viewAdapterList = new ArrayList<IFViewAdapter>();
-	
+
 	private IFValueConverter valueConverter;
 	private boolean initialized = false;
 	private boolean dirty = false;
@@ -52,18 +51,17 @@ public class TableAM implements IFAttributeModel  {
 
 	public TableAM(IFIndexedModelValueAccessor tableMVA, boolean readOnly) {
 		this.tableMVA = tableMVA;
-		
+
 		nextUniqueId = System.currentTimeMillis();
-		
+
 		this.id = tableMVA.getAttributeId();
-		this.listenerList = new EventListenerList();	
-		this.readOnly = readOnly;	
+		this.listenerList = new EventListenerList();
+		this.readOnly = readOnly;
 	}
-	
+
 	public TableAM(IFIndexedModelValueAccessor tableMVA) {
 		this(tableMVA, false);
 	}
-
 
 	/**
 	 * @see net.ulrice.databinding.bufferedbinding.IFAttributeModel#getId()
@@ -72,13 +70,13 @@ public class TableAM implements IFAttributeModel  {
 	public String getId() {
 		return id;
 	}
-	
+
 	public boolean isCellValid(int row, int column) {
-	    return getElementAt(row).isColumnValid(column);
+		return getElementAt(row).isColumnValid(column);
 	}
-	
+
 	public boolean isCellDirty(int row, int column) {
-	    return getElementAt(row).isColumnDirty(column);
+		return getElementAt(row).isColumnDirty(column);
 	}
 
 	/**
@@ -87,7 +85,8 @@ public class TableAM implements IFAttributeModel  {
 	 */
 	protected Element createElement(Object value, boolean dirty, boolean valid) {
 		String uniqueId = Long.toHexString(nextUniqueId++);
-		Element elem = new Element(this, uniqueId, columns, value, isReadOnly(), dirty, valid);		
+		Element elem = new Element(this, uniqueId, columns, value,
+				isReadOnly(), dirty, valid);
 		return elem;
 	}
 
@@ -95,7 +94,8 @@ public class TableAM implements IFAttributeModel  {
 	 * @see net.ulrice.databinding.bufferedbinding.IFAttributeModel#addAttributeModelEventListener(net.ulrice.databinding.bufferedbinding.IFAttributeModelEventListener)
 	 */
 	@Override
-	public void addAttributeModelEventListener(IFAttributeModelEventListener listener) {
+	public void addAttributeModelEventListener(
+			IFAttributeModelEventListener listener) {
 		listenerList.add(IFAttributeModelEventListener.class, listener);
 	}
 
@@ -103,7 +103,8 @@ public class TableAM implements IFAttributeModel  {
 	 * @see net.ulrice.databinding.bufferedbinding.IFAttributeModel#removeAttributeModelEventListener(net.ulrice.databinding.bufferedbinding.IFAttributeModelEventListener)
 	 */
 	@Override
-	public void removeAttributeModelEventListener(IFAttributeModelEventListener listener) {
+	public void removeAttributeModelEventListener(
+			IFAttributeModelEventListener listener) {
 		listenerList.remove(IFAttributeModelEventListener.class, listener);
 	}
 
@@ -158,11 +159,11 @@ public class TableAM implements IFAttributeModel  {
 	public boolean isNew(Element element) {
 		return newElements.contains(element);
 	}
-	
+
 	public boolean isRemoved(Element element) {
 		return delElements.contains(element);
 	}
-	
+
 	/**
 	 * @see javax.swing.table.TableModel#isCellEditable(int, int)
 	 */
@@ -193,49 +194,53 @@ public class TableAM implements IFAttributeModel  {
 	}
 
 	protected void elementDataChanged(Element element) {
-	    fireUpdateViews();
-	    
-	    for(TableConstraint constraint : tableConstraints) {
-	    	constraint.elementChanged(this, element);
-	    }	    
+		fireUpdateViews();
+
+		for (TableConstraint constraint : tableConstraints) {
+			constraint.elementChanged(this, element);
+		}
 	}
 
 	protected void elementStateChanged(Element element) {
-		if(element.isValid()) {
+		if (element.isValid()) {
 			invElements.remove(element);
 		} else {
 			invElements.add(element);
 		}
-		
-		if(element.isDirty() && elementIdMap.containsKey(element.getUniqueId())) {
-            modElements.add(element);            
+
+		if (element.isDirty()
+				&& elementIdMap.containsKey(element.getUniqueId())) {
+			modElements.add(element);
 		}
-		if(!element.isDirty() && elementIdMap.containsKey(element.getUniqueId())) {
-            modElements.remove(element);            
-		}		
-	    
+		if (!element.isDirty()
+				&& elementIdMap.containsKey(element.getUniqueId())) {
+			modElements.remove(element);
+		}
+
 		boolean oldValid = valid;
 		boolean oldDirty = dirty;
-		
-	    valid = invElements.isEmpty();
-	    dirty = !modElements.isEmpty() || !delElements.isEmpty() || !newElements.isEmpty();
-	    
-	    if(oldValid != valid || oldDirty != dirty) {
-	        fireStateChanged();
-	    }
-	    
+
+		valid = invElements.isEmpty();
+		dirty = !modElements.isEmpty() || !delElements.isEmpty()
+				|| !newElements.isEmpty();
+
+		if (oldValid != valid || oldDirty != dirty) {
+			fireStateChanged();
+		}
+
 	}
 
 	private void fireStateChanged() {
-        IFAttributeModelEventListener[] listeners = listenerList.getListeners(IFAttributeModelEventListener.class);
-        if(listeners != null) {
-            for(IFAttributeModelEventListener listener : listeners) {
-                listener.stateChanged(null, this);
-            }
-        }
-    }
+		IFAttributeModelEventListener[] listeners = listenerList
+				.getListeners(IFAttributeModelEventListener.class);
+		if (listeners != null) {
+			for (IFAttributeModelEventListener listener : listeners) {
+				listener.stateChanged(null, this);
+			}
+		}
+	}
 
-    /**
+	/**
 	 * @param columnDefinition
 	 */
 	public void addColumn(ColumnDefinition<?> columnDefinition) {
@@ -246,121 +251,119 @@ public class TableAM implements IFAttributeModel  {
 	 * @return the columns
 	 */
 	public List<ColumnDefinition<? extends Object>> getColumns() {
-	    return columns;
+		return columns;
 	}
 
 	/**
-	 * @see net.ulrice.databinding.bufferedbinding.IFAttributeModel#gaChanged(net.ulrice.databinding.IFGuiAccessor, java.lang.Object)
+	 * @see net.ulrice.databinding.bufferedbinding.IFAttributeModel#gaChanged(net.ulrice.databinding.IFGuiAccessor,
+	 *      java.lang.Object)
 	 */
 	@Override
 	public void gaChanged(IFViewAdapter viewAdapter, Object value) {
 		fireUpdateViews();
 	}
-    
-    public void fireUpdateViews() {
-    	if(viewAdapterList != null) {
-    		for(IFViewAdapter viewAdapter: viewAdapterList) {
-    			viewAdapter.updateFromBinding(this);
-    		}
-    	}
-    }
+
+	public void fireUpdateViews() {
+		if (viewAdapterList != null) {
+			for (IFViewAdapter viewAdapter : viewAdapterList) {
+				viewAdapter.updateFromBinding(this);
+			}
+		}
+	}
 
 	@Override
 	public void addViewAdapter(IFViewAdapter viewAdapter) {
 		viewAdapterList.add(viewAdapter);
 		viewAdapter.updateFromBinding(this);
 	}
-	
+
 	public int getIndexOfElement(Element element) {
 		return elements.indexOf(element);
 	}
 
-	
 	public IFValueConverter getValueConverter() {
 		return valueConverter;
 	}
-	
+
 	@Override
 	public void setValueConverter(IFValueConverter valueConverter) {
 		this.valueConverter = valueConverter;
 	}
-	
+
 	@Override
 	public boolean isInitialized() {
 		return initialized;
 	}
-	
+
 	protected void setInitialized(boolean initialized) {
 		this.initialized = initialized;
 	}
-	
+
 	@Override
 	public boolean isDirty() {
 		return dirty;
 	}
-	
+
 	protected void setDirty(boolean dirty) {
 		this.dirty = dirty;
 	}
-	
+
 	@Override
 	public boolean isValid() {
 		return valid;
 	}
-	
+
 	protected void setValid(boolean valid) {
 		this.valid = valid;
 	}
-	
-	
+
 	@Override
 	public ValidationResult getValidationResult() {
 		ValidationResult result = new ValidationResult();
-		if(invElements != null) {
-			for(Element element : invElements) {
+		if (invElements != null) {
+			for (Element element : invElements) {
 				result.addValidationErrors(element.getValidationErrors());
 			}
 		}
-		
+
 		return result;
 	}
 
 	@Override
 	public List<String> getValidationFailures() {
 		List<String> result = new ArrayList<String>();
-		if(invElements != null) {
-			for(Element element : invElements) {
+		if (invElements != null) {
+			for (Element element : invElements) {
 				result.addAll(element.getValidationFailures());
 			}
 		}
-		
+
 		return result;
 	}
 
-
-	
 	@Override
 	public Object getCurrentValue() {
-		List<Object> result = new ArrayList<Object>(elements == null ? 0 : elements.size());
-		
-		for(Element element : elements) {
+		List<Object> result = new ArrayList<Object>(elements == null ? 0
+				: elements.size());
+
+		for (Element element : elements) {
 			result.add(element.getCurrentValue());
 		}
-		
+
 		return result;
 	}
-	
+
 	@Override
 	public Object getOriginalValue() {
-		List<Object> result = new ArrayList<Object>(elements == null ? 0 : elements.size());
-		
-		for(Element element : elements) {
+		List<Object> result = new ArrayList<Object>(elements == null ? 0
+				: elements.size());
+
+		for (Element element : elements) {
 			result.add(element.getOriginalValue());
 		}
-		
+
 		return result;
 	}
-	
 
 	/**
 	 * @see net.ulrice.databinding.bufferedbinding.IFAttributeModel#read()
@@ -370,37 +373,37 @@ public class TableAM implements IFAttributeModel  {
 		clear();
 		initialized = true;
 
-		int numRows = tableMVA.getSize();		
-		for(int i = 0; i < numRows; i++) {
-			
+		int numRows = tableMVA.getSize();
+		for (int i = 0; i < numRows; i++) {
+
 			Object value = tableMVA.getValue(i);
 			Element elem = createElement(value, false, true);
 			elem.readObject();
 
-			elementIdMap.put(elem.getUniqueId(), elem);				
+			elementIdMap.put(elem.getUniqueId(), elem);
 			elements.add(elem);
 			fireElementAdded(elem);
 		}
 		fireUpdateViews();
 	}
-	
+
 	public void read(List<?> valueList, boolean append) {
-		if(valueList == null) {
+		if (valueList == null) {
 			return;
 		}
-		
-		if(!append) {
+
+		if (!append) {
 			clear();
 		}
 		initialized = true;
-		
-		for(int i = 0; i < valueList.size(); i++) {
-			
+
+		for (int i = 0; i < valueList.size(); i++) {
+
 			Object value = tableMVA.getValue(i);
 			Element elem = createElement(value, false, true);
 			elem.readObject();
 
-			elementIdMap.put(elem.getUniqueId(), elem);				
+			elementIdMap.put(elem.getUniqueId(), elem);
 			elements.add(elem);
 			fireElementAdded(elem);
 		}
@@ -411,13 +414,13 @@ public class TableAM implements IFAttributeModel  {
 		initialized = false;
 		dirty = false;
 		valid = true;
-		
+
 		elements.clear();
 		elementIdMap.clear();
 		newElements.clear();
 		modElements.clear();
 		invElements.clear();
-		
+
 		fireTableCleared();
 	}
 
@@ -425,10 +428,10 @@ public class TableAM implements IFAttributeModel  {
 	 * @see net.ulrice.databinding.bufferedbinding.IFAttributeModel#write()
 	 */
 	@Override
-	public void write() {		
+	public void write() {
 		int numRows = elements.size();
-		
-		for(int i = 0; i < numRows; i++) {
+
+		for (int i = 0; i < numRows; i++) {
 			Element elem = elements.get(i);
 			elem.writeObject();
 			tableMVA.setValue(i, elem.getOriginalValue());
@@ -438,16 +441,16 @@ public class TableAM implements IFAttributeModel  {
 	protected Object createEmptyElementObject() {
 		return tableMVA.newObjectInstance();
 	}
-	
+
 	public Element addElement(Object value) {
-	    return addElement(value, false, true);
+		return addElement(value, false, true);
 	}
 
 	public Element addElement(Object value, boolean dirty, boolean valid) {
-		if(value == null) {
+		if (value == null) {
 			value = createEmptyElementObject();
 		}
-		
+
 		Element element = createElement(value, dirty, valid);
 		elementIdMap.put(element.getUniqueId(), element);
 		elements.add(element);
@@ -459,57 +462,72 @@ public class TableAM implements IFAttributeModel  {
 	}
 
 	public Element addElement(int index, Object value) {
-        return addElement(index, value, false, true);
-    }
-    
-    public Element addElement(int index, Object value, boolean dirty, boolean valid) {
-		if(value == null) {
+		return addElement(index, value, false, true);
+	}
+
+	public Element addElement(int index, Object value, boolean dirty,
+			boolean valid) {
+		if (value == null) {
 			value = createEmptyElementObject();
 		}
-		
+
 		Element element = createElement(value, dirty, valid);
 		elements.add(index, element);
 		elementIdMap.put(element.getUniqueId(), element);
-		newElements.add(element);		
+		newElements.add(element);
 		elementStateChanged(element);
 		fireUpdateViews();
 		return element;
 	}
-	
-	public void delElement(int index) {
-		Element delElement = elements.remove(index);
-		delElements.add(delElement);	
-		elementStateChanged(delElement);
-		fireElementDeleted(delElement);
-		fireUpdateViews();
+
+	public boolean delElement(int index) {
+		return delElement(elements.get(index));
 	}
+
+	public boolean delElement(Element element) {
+		if(element == null) {
+			return false;
+		}
+		
+		boolean removed = elements.remove(element);
+		if (!removed) {
+			return false;
+		}
+		delElements.add(element);
+		elementStateChanged(element);
+		fireElementDeleted(element);
+		fireUpdateViews();
+
+		return true;
+	}
+
 	public List getDeletedObjects() {
 		List result = new ArrayList();
-		for(Element element : delElements) {
+		for (Element element : delElements) {
 			result.add(element.getCurrentValue());
 		}
 		return result;
 	}
-	
+
 	public List getCreatedObjects() {
 		List result = new ArrayList();
-		for(Element element : newElements) {
+		for (Element element : newElements) {
 			result.add(element.getCurrentValue());
 		}
 		return result;
 	}
-	
+
 	public List getModifiedObjects() {
 		List result = new ArrayList();
-		for(Element element : modElements) {
+		for (Element element : modElements) {
 			result.add(element.getCurrentValue());
 		}
 		return result;
 	}
-	
+
 	public List getInvalidObjects() {
 		List result = new ArrayList();
-		for(Element element : invElements) {
+		for (Element element : invElements) {
 			result.add(element.getCurrentValue());
 		}
 		return result;
@@ -522,70 +540,69 @@ public class TableAM implements IFAttributeModel  {
 	protected Object cloneObject(Object value) {
 		return tableMVA.cloneObject(value);
 	}
-	
+
 	public void setReadOnly(boolean readOnly) {
 		this.readOnly = readOnly;
 	}
-    
-    public List<Element> getCreatedElements() {
-        return new ArrayList<Element>(newElements);
-    }
-    
-    public List<Element> getModifiedElements() {
-        return new ArrayList<Element>(modElements);
-    }
-    
-    public List<Element> getDeletedElements() {
-        return new ArrayList<Element>(delElements);
-    }
-	
+
+	public List<Element> getCreatedElements() {
+		return new ArrayList<Element>(newElements);
+	}
+
+	public List<Element> getModifiedElements() {
+		return new ArrayList<Element>(modElements);
+	}
+
+	public List<Element> getDeletedElements() {
+		return new ArrayList<Element>(delElements);
+	}
+
 	public void commitElement(Element element) {
-	    element.writeObject();
-	    element.readObject();
-	    newElements.remove(element);
-	    delElements.remove(element);
-	    elementStateChanged(element);
-        fireUpdateViews();
+		element.writeObject();
+		element.readObject();
+		newElements.remove(element);
+		delElements.remove(element);
+		elementStateChanged(element);
+		fireUpdateViews();
 	}
-	
+
 	public void rollbackElement(Element element) {
-        element.readObject();
-        elementStateChanged(element);
-        fireUpdateViews();
+		element.readObject();
+		elementStateChanged(element);
+		fireUpdateViews();
 	}
-	
+
 	public void markAsFaulty(Element element, String message, Throwable th) {
-	    element.addElementValidationError(new ValidationError(null, message, th));
+		element.addElementValidationError(new ValidationError(null, message, th));
 	}
 
 	public Object getCurrentValueAt(int row) {
 		return getElementAt(row).getCurrentValue();
 	}
-	
+
 	public void addTableConstraint(TableConstraint constraint) {
-		tableConstraints.add(constraint);		
+		tableConstraints.add(constraint);
 	}
-		
+
 	public void removeTableConstraint(TableConstraint constraint) {
 		tableConstraints.remove(constraint);
 	}
 
-    private void fireElementAdded(Element element) {
-    	for(TableConstraint constraint : tableConstraints) {
-    		constraint.elementAdded(this,  element);
-    	}    
+	private void fireElementAdded(Element element) {
+		for (TableConstraint constraint : tableConstraints) {
+			constraint.elementAdded(this, element);
+		}
 	}
-	
+
 	private void fireElementDeleted(Element element) {
-    	for(TableConstraint constraint : tableConstraints) {
-    		constraint.elementRemoved(this,  element);
-    	}    
+		for (TableConstraint constraint : tableConstraints) {
+			constraint.elementRemoved(this, element);
+		}
 	}
 
 	private void fireTableCleared() {
-    	for(TableConstraint constraint : tableConstraints) {
-    		constraint.tableCleared(this);
-    	}    
+		for (TableConstraint constraint : tableConstraints) {
+			constraint.tableCleared(this);
+		}
 	}
 }
-
