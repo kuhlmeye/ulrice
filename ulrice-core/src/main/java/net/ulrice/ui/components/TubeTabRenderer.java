@@ -4,6 +4,6 @@ import javax.swing.JComponent;
 
 public interface TubeTabRenderer {
 
-	JComponent getComponent();
+	JComponent getComponent(boolean selected);
 
 }

@@ -12,7 +12,7 @@ public class DefaultTubeTabRenderer implements TubeTabRenderer {
 	}
 
 	@Override
-	public JComponent getComponent() {
+	public JComponent getComponent(boolean selected) {
 		return renderer;
 	}
 

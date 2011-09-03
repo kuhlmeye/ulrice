@@ -39,7 +39,7 @@ public class GenericAM<T> implements IFAttributeModel<T>, IFViewChangeListener {
 	/** The validator of this attribute model. */
 	private List<IFValidator<T>> validators = new ArrayList<IFValidator<T>>();
 
-	private List<IFViewAdapter> viewAdapterList;
+	private List<IFViewAdapter> viewAdapterList = new ArrayList<IFViewAdapter>();
 
 	private boolean readOnly = false;
 
@@ -61,7 +61,6 @@ public class GenericAM<T> implements IFAttributeModel<T>, IFViewChangeListener {
 	 */
 	public GenericAM(IFModelValueAccessor modelAccessor) {
 		this.modelAccessor = modelAccessor;
-		this.viewAdapterList = new ArrayList<IFViewAdapter>();
 		this.id = modelAccessor.getAttributeId();
 	}
 
@@ -311,8 +310,9 @@ public class GenericAM<T> implements IFAttributeModel<T>, IFViewChangeListener {
 
 	@Override
 	public void addViewAdapter(IFViewAdapter viewAdapter) {
-		if (viewAdapter.isUseAutoValueConverter() && (viewAdapter.getValueConverter() == null || viewAdapter.getValueConverter().equals(DoNothingConverter.INSTANCE))) {
-			viewAdapter.setValueConverter(UlriceDatabinding.getConverterFactory().createConverter(viewAdapter.getViewType(), modelAccessor.getModelType()));
+		Class<?> modelType = modelAccessor != null ? modelAccessor.getModelType() : null;
+		if (modelType != null && viewAdapter.isUseAutoValueConverter() && (viewAdapter.getValueConverter() == null || viewAdapter.getValueConverter().equals(DoNothingConverter.INSTANCE))) {
+			viewAdapter.setValueConverter(UlriceDatabinding.getConverterFactory().createConverter(viewAdapter.getViewType(), modelType));
 		}
 
 		viewAdapterList.add(viewAdapter);

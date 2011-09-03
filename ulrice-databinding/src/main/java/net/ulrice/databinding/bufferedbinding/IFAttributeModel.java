@@ -17,6 +17,9 @@ public interface IFAttributeModel<T> extends IFBinding {
 	 */
 	void read();
 
+	T getCurrentValue();
+	
+	T getOriginalValue();
 	
 	/**
 	 * Called by a gui accessor if a value was changed.
