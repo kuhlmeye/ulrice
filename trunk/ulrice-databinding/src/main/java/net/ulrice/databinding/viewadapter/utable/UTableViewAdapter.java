@@ -78,7 +78,7 @@ public class UTableViewAdapter extends AbstractViewAdapter implements
 				MouseListener[] listeners = listenerList.getListeners(MouseListener.class);
 				if (listeners != null) {
 					for (MouseListener listener : listeners) {
-						listener.mouseClicked(adaptMouseEvent(e));
+						listener.mouseReleased(adaptMouseEvent(e));
 					}
 				}
 
@@ -89,7 +89,7 @@ public class UTableViewAdapter extends AbstractViewAdapter implements
 				MouseListener[] listeners = listenerList.getListeners(MouseListener.class);
 				if (listeners != null) {
 					for (MouseListener listener : listeners) {
-						listener.mouseClicked(adaptMouseEvent(e));
+						listener.mousePressed(adaptMouseEvent(e));
 					}
 				}
 
@@ -100,7 +100,7 @@ public class UTableViewAdapter extends AbstractViewAdapter implements
 				MouseListener[] listeners = listenerList.getListeners(MouseListener.class);
 				if (listeners != null) {
 					for (MouseListener listener : listeners) {
-						listener.mouseClicked(adaptMouseEvent(e));
+						listener.mouseExited(adaptMouseEvent(e));
 					}
 				}
 			}
@@ -110,7 +110,7 @@ public class UTableViewAdapter extends AbstractViewAdapter implements
 				MouseListener[] listeners = listenerList.getListeners(MouseListener.class);
 				if (listeners != null) {
 					for (MouseListener listener : listeners) {
-						listener.mouseClicked(adaptMouseEvent(e));
+						listener.mouseEntered(adaptMouseEvent(e));
 					}
 				}
 			}
