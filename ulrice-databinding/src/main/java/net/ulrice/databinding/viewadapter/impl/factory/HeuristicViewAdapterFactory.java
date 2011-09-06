@@ -28,7 +28,7 @@ public class HeuristicViewAdapterFactory {
 			}
 		}
 
-		throw new IllegalArgumentException("Kein ViewAdapter für Elementtyp " + viewElement.getClass().getName() + " gefunden.");
+		throw new IllegalArgumentException("No ViewAdapter for elementtype " + viewElement.getClass().getName());
 	}
 
 }
