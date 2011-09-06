@@ -10,8 +10,7 @@ import net.ulrice.databinding.converter.IFValueConverter;
 
 public interface IFUlriceDatabindingConfiguration {
 	
-	@SuppressWarnings("rawtypes")
-	List<IFValueConverter> getValueConverterList();
+	List<IFValueConverter<?, ?>> getValueConverterList();
 	
 	IFConverterFactory getConverterFactory();
 
