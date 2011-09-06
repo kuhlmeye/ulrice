@@ -9,13 +9,13 @@ import net.ulrice.databinding.converter.IFValueConverter;
 public class UlriceValueConverterContributer implements
 		IFExtensibleConverterFactoryContributer {
 	
-	private static final IFValueConverter[] valueConverterArray = {
+	private static final IFValueConverter<?, ?>[] valueConverterArray = {
 			DoNothingConverter.INSTANCE,
 			new StringToIntegerConverter()
 	};
 
 	@Override
-	public List<IFValueConverter> contribute() {
+	public List<IFValueConverter<?, ?>> contribute() {
 		return Arrays.asList(valueConverterArray);
 	}
 

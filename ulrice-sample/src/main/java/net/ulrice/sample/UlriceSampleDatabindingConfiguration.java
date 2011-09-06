@@ -12,7 +12,7 @@ import net.ulrice.databinding.converter.impl.UlriceValueConverterContributer;
 public class UlriceSampleDatabindingConfiguration implements
 		IFUlriceDatabindingConfiguration {
 	
-	private static List<IFValueConverter> valueConverterList;
+	private static List<IFValueConverter<?, ?>> valueConverterList;
 	
 	private static IFConverterFactory converterFactory;
 	
@@ -21,16 +21,17 @@ public class UlriceSampleDatabindingConfiguration implements
 	}
 	
 	public UlriceSampleDatabindingConfiguration() {
+		ExtensibleConverterFactory factory = new ExtensibleConverterFactory();
 		valueConverterList = new UlriceValueConverterContributer().contribute();
-//		for (IFExtensibleConverterFactoryContributer contributer : contributerList) {
-//			valueConverterList.addAll(contributer.contribute());
-//		}
-		converterFactory = new ExtensibleConverterFactory(valueConverterList);
+		for (IFValueConverter<?, ?> converter : new UlriceValueConverterContributer().contribute()) {
+			factory.registerConverter(converter);
+		}
+		converterFactory = factory;
 		UlriceDatabinding.initialize(this);
 	}
 
 	@Override
-	public List<IFValueConverter> getValueConverterList() {
+	public List<IFValueConverter<?, ?>> getValueConverterList() {
 		return valueConverterList;
 	}
 
