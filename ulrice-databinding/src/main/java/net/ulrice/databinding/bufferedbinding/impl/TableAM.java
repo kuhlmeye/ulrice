@@ -388,26 +388,30 @@ public class TableAM implements IFAttributeModel {
 	}
 
 	public void read(List<?> valueList, boolean append) {
-		if (valueList == null) {
-			return;
-		}
+	    read(valueList, append, 0);
+	}
+	
+	public void read(List<?> valueList, boolean append, int firstRow) {
+	    if (valueList == null) {
+            return;
+        }
 
-		if (!append) {
-			clear();
-		}
-		initialized = true;
+        if (!append) {
+            clear();
+        }
+        initialized = true;
 
-		for (int i = 0; i < valueList.size(); i++) {
+        for (int i = firstRow; i < valueList.size() + firstRow; i++) {
 
-			Object value = tableMVA.getValue(i);
-			Element elem = createElement(value, false, true);
-			elem.readObject();
+            Object value = tableMVA.getValue(i);
+            Element elem = createElement(value, false, true);
+            elem.readObject();
 
-			elementIdMap.put(elem.getUniqueId(), elem);
-			elements.add(elem);
-			fireElementAdded(elem);
-		}
-		fireUpdateViews();
+            elementIdMap.put(elem.getUniqueId(), elem);
+            elements.add(elem);
+            fireElementAdded(elem);
+        }
+        fireUpdateViews();
 	}
 
 	public void clear() {

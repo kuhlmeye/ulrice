@@ -6,13 +6,9 @@ import static org.junit.Assert.assertEquals;
 import java.util.LinkedList;
 import java.util.List;
 
-import net.ulrice.databinding.bufferedbinding.impl.ColumnDefinition;
-import net.ulrice.databinding.bufferedbinding.impl.TableAM;
 import net.ulrice.databinding.bufferedbinding.impl.ColumnDefinition.ColumnType;
 import net.ulrice.databinding.modelaccess.impl.DynamicReflectionMVA;
 import net.ulrice.databinding.modelaccess.impl.IndexedReflectionMVA;
-import net.ulrice.databinding.modelaccess.impl.ReflectionMVA;
-import net.ulrice.databinding.validation.ValidationError;
 
 import org.junit.After;
 import org.junit.Assert;
@@ -105,6 +101,43 @@ public class TableAMTest {
     	Assert.assertEquals(false, tableAM.isInitialized());
     	Assert.assertEquals(false, tableAM.isDirty());
     	Assert.assertEquals(true, tableAM.isValid());
+    }
+    
+    @Test
+    public void incrementalReadTest() {
+        tableAM.read(list, false);
+        
+        Assert.assertEquals(true, tableAM.isInitialized());
+        Assert.assertEquals(false, tableAM.isDirty());
+        Assert.assertEquals(true, tableAM.isValid());
+
+        assertEquals(2, tableAM.getRowCount());
+        assertEquals("Max Mustermann", ((Person)tableAM.getElementAt(0).writeObject()).name);
+        assertEquals("Petra Musterfrau", ((Person)tableAM.getElementAt(1).writeObject()).name);
+
+        List<Person> list2 = new LinkedList<Person>();
+
+        Person c = new Person();
+        c.name = "Max Mustermann2";
+        c.age = 19;
+        
+        Person d = new Person();
+        d.name = "Petra Musterfrau2";
+        d.age = 21;
+        
+        list2.add(c);
+        list2.add(d);
+        
+        list.addAll(list2);
+
+        tableAM.read(list2, true, 2);
+
+        assertEquals(4, tableAM.getRowCount());
+        assertEquals("Max Mustermann2", ((Person)tableAM.getElementAt(2).writeObject()).name);
+        assertEquals("Petra Musterfrau2", ((Person)tableAM.getElementAt(3).writeObject()).name);
+        
+        list.remove(3);
+        list.remove(2);
     }
 	
 	/**
