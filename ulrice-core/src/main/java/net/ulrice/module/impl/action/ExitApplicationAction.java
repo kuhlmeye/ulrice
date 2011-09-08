@@ -16,28 +16,23 @@ import net.ulrice.Ulrice;
  */
 public class ExitApplicationAction extends UlriceAction {
 
-	/** Default generated serial version uid. */
 	private static final long serialVersionUID = -7876276315275574028L;
 	
-	/** The unique id of the close all action. */
 	public static final String ACTION_ID = "EXIT_APPLICATION";
 
-	/**
-	 * Create the close all action.
-	 * 
-	 * @param name The translated name of the close-all action.
-	 * @param icon The icon of the close-all action
-	 */
 	public ExitApplicationAction(String name, Icon icon) {
 		super(ACTION_ID, name, true, ActionType.SystemAction, icon);
 	}
 	
-	/**
-	 * @see net.ulrice.module.impl.action.UlriceAction#actionPerformed(java.awt.event.ActionEvent)
-	 */
 	@Override
 	public void actionPerformed(ActionEvent e) {
-		Ulrice.getModuleManager().closeAllControllers();
-		System.exit(0);
+	    
+		Ulrice.getModuleManager().closeAllControllers(new Runnable() {
+            
+            @Override
+            public void run() {
+                System.exit(0);
+            }
+        });
 	}
 }

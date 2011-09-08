@@ -3,6 +3,7 @@ package net.ulrice.sample.module.sample1;
 import javax.swing.JComponent;
 
 import net.ulrice.module.impl.AbstractController;
+import net.ulrice.module.impl.IFClosing;
 import net.ulrice.process.CtrlProcessExecutor;
 
 /**
@@ -38,4 +39,10 @@ public class CSample1 extends AbstractController {
 	public JComponent getView() {
 	    return v.getView();
 	}
+    
+	@Override
+    public void onClose(IFClosing closing) {
+        
+        closing.doClose();
+    }
 }

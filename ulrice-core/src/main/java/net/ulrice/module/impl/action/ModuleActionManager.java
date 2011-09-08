@@ -302,15 +302,21 @@ public class ModuleActionManager implements IFModuleEventListener, PropertyChang
 	}
 
 	public void setActionState(IFController controller, String actionId, boolean enabled) {
-	    Map<UlriceAction, ModuleActionState> map = controllerActionStateMap.get(controller);
 	    
-	    Collection<ModuleActionState> values = map.values();
+	    final Map<UlriceAction, ModuleActionState> map = controllerActionStateMap.get(controller);
+	    
+	    if (map == null) {
+	        return;
+	    }
+	    
+	    final Collection<ModuleActionState> values = map.values();
 	    for(ModuleActionState state : values) {
 	        if(state.getAction().getUniqueId().equals(actionId)) {
 	            state.setEnabled(enabled);
 	            break;
 	        }
 	    }
+	    
 	    adaptActionStates();
 	    fireApplicationActionsChanged();
 	}

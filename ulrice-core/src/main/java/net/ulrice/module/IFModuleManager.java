@@ -4,6 +4,7 @@ import java.util.List;
 
 import net.ulrice.module.event.IFModuleEventListener;
 import net.ulrice.module.exception.ModuleInstantiationException;
+import net.ulrice.module.impl.IFCloseHandler;
 
 /**
  * Interface of the module managers.
@@ -39,11 +40,24 @@ public interface IFModuleManager {
 	 */
 	void activateModule(IFController controller);
 
-	/**
-	 * Close an instance of a module, i.e. remove its view from the UI and call the shutdown hooks.
-	 */
-	void closeController(IFController controller);
+    /**
+     * Close all modules. The {@code Runnable} will only be executed if all modules where closed. If the closing is
+     * canceled by a module, the {@code Runnable} is not executed.
+     */
+    void closeAllControllers(Runnable afterClosingAllModules);
 
+    /**
+     * Close all modules except the one given by the parameter
+     * 
+     * @param controller The module the should be left open.
+     */
+    void closeOtherControllers(IFController controller, IFCloseHandler closeHandler);
+
+	/**
+	 * Close the controller and all its child controllers. The child controllers will be closed first.
+	 */
+	void closeController(IFController controller, IFCloseHandler closeHandler);
+	
 	IFModule getModule (IFController controller);
 	IFModuleTitleProvider getTitleProvider (IFController controller);
 	
@@ -74,18 +88,6 @@ public interface IFModuleManager {
 	 * @param listener The listener that should be removed from the list.
 	 */
 	void removeModuleEventListener(IFModuleEventListener listener);
-
-	/**
-	 * Close all modules.
-	 */
-	void closeAllControllers();
-
-	/**
-	 * Close all modules except the one given by the parameter
-	 * 
-	 * @param controller The module the should be left open.
-	 */
-	void closeOtherControllers(IFController controller);
 
 	void block (IFController controller, Object blocker);
 	void unblock (IFController controller, Object blocker);

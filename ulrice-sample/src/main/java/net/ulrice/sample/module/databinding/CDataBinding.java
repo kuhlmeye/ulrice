@@ -9,6 +9,7 @@ import java.util.UUID;
 import javax.swing.JComponent;
 
 import net.ulrice.module.impl.AbstractController;
+import net.ulrice.module.impl.IFClosing;
 
 /**
  * @author christof
@@ -50,5 +51,11 @@ public class CDataBinding extends AbstractController {
         Person result = new Person(UUID.randomUUID().toString(),
                 UUID.randomUUID().toString(), (int) ((Math.random() * 100.0) / 1));
         return result;
+    }
+    
+    @Override
+    public void onClose(IFClosing closing) {
+        
+        closing.doClose();
     }
 }

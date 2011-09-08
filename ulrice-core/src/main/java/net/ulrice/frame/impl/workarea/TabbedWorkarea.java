@@ -3,7 +3,6 @@ package net.ulrice.frame.impl.workarea;
 import java.awt.BorderLayout;
 import java.awt.Insets;
 import java.awt.Point;
-import java.awt.event.ActionEvent;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.net.URL;
@@ -11,7 +10,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Logger;
 
-import javax.swing.AbstractAction;
 import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -20,15 +18,15 @@ import javax.swing.JLabel;
 import javax.swing.JPopupMenu;
 import javax.swing.JTabbedPane;
 import javax.swing.SwingConstants;
-import javax.swing.UIManager;
 
 import net.ulrice.Ulrice;
 import net.ulrice.frame.IFWorkarea;
 import net.ulrice.module.IFController;
-import net.ulrice.module.IFModuleTitleProvider;
 import net.ulrice.module.IFModuleTitleProvider.Usage;
 import net.ulrice.module.ModuleIconSize;
-import net.ulrice.ui.UIConstants;
+import net.ulrice.module.impl.action.CloseAllModulesAction;
+import net.ulrice.module.impl.action.CloseModuleAction;
+import net.ulrice.module.impl.action.CloseOtherModulesAction;
 
 /**
  * Workspace that displays the modules in a tabbed view.
@@ -92,7 +90,7 @@ public class TabbedWorkarea extends JTabbedPane implements IFWorkarea, MouseList
 			setSelectedIndex(idx);
 		} else {
 			// Print out log because module could not be found in the tab.
-			final String moduleId = Ulrice.getModuleManager().getModule(activeController).getUniqueId();
+		    final String moduleId = Ulrice.getModuleManager().getModule(activeController).getUniqueId();
 			LOG.warning("Activated module [id:" + moduleId + "] could not be found in the tab.");
 
 			openModule(activeController);
@@ -191,15 +189,8 @@ public class TabbedWorkarea extends JTabbedPane implements IFWorkarea, MouseList
 	 * @return The view component of this controller.
 	 */
 	private JComponent getControllerComponent(IFController controller) {
-		if (controller == null) {
-			return null;
-		}
 
-		JComponent controllerComponent = null;
-		if (controller.getView() != null) {
-			controllerComponent = controller.getView();
-		}
-		return controllerComponent;
+		return controller == null ? null : controller.getView();
 	}
 
 	/**
@@ -226,22 +217,22 @@ public class TabbedWorkarea extends JTabbedPane implements IFWorkarea, MouseList
 			// Get the icon.
 			final ImageIcon icon = Ulrice.getModuleManager().getModule(controller).getIcon(ModuleIconSize.Size_16x16);
 
-			AbstractAction closeAction = new AbstractAction("X", closeIcon) {
-
-				/** Default generated serial version uid. */
-				private static final long serialVersionUID = 4006169832402886959L;
-
-				/**
-				 * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
-				 */
-				@Override
-				public void actionPerformed(ActionEvent e) {
-					Ulrice.getModuleManager().closeController(controller);
-				}
-			};
+//			AbstractAction closeAction = new AbstractAction("X", closeIcon) {
+//
+//				/** Default generated serial version uid. */
+//				private static final long serialVersionUID = 4006169832402886959L;
+//
+//				/**
+//				 * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
+//				 */
+//				@Override
+//				public void actionPerformed(ActionEvent e) {
+//					Ulrice.getModuleManager().closeController(controller);
+//				}
+//			};
 
 			// Create the button for closing the controller.
-			JButton closeButton = new JButton(closeAction);
+			JButton closeButton = new JButton(new CloseModuleAction("X", closeIcon));
 			closeButton.setOpaque(false);
 			closeButton.setBorderPainted(false);
 			closeButton.setContentAreaFilled(false);
@@ -296,40 +287,45 @@ public class TabbedWorkarea extends JTabbedPane implements IFWorkarea, MouseList
 	}
 
 	private void showPopup(final TabControllerPanel tabCtrlPanel, Point point) {
-		JPopupMenu popup = new JPopupMenu();
+	    
+		final JPopupMenu popup = new JPopupMenu();
 
-		popup.add(new AbstractAction(UIManager.getString(UIConstants.CLOSE_ACTION_TEXT)) {
+//		popup.add(new AbstractAction(UIManager.getString(UIConstants.CLOSE_ACTION_TEXT)) {
+//
+//			/** Default generated serial version uid.*/
+//			private static final long serialVersionUID = 4669265533306602938L;
+//
+//			@Override
+//			public void actionPerformed(ActionEvent e) {
+//				Ulrice.getModuleManager().closeController(tabCtrlPanel.getController());
+//			}
+//		});
+		popup.add(new CloseModuleAction(CloseModuleAction.ACTION_ID, null));
 
-			/** Default generated serial version uid.*/
-			private static final long serialVersionUID = 4669265533306602938L;
+//		popup.add(new AbstractAction(UIManager.getString(UIConstants.CLOSE_OTHER_ACTION_TEXT)) {
+//
+//			/** Default generated serial version uid.*/
+//			private static final long serialVersionUID = 7971222651198540021L;
+//
+//			@Override
+//			public void actionPerformed(ActionEvent e) {
+//				Ulrice.getModuleManager().closeOtherControllers(tabCtrlPanel.getController(), null);
+//			}
+//		});
+		popup.add(new CloseOtherModulesAction(CloseOtherModulesAction.ACTION_ID, null));
 
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				Ulrice.getModuleManager().closeController(tabCtrlPanel.getController());
-			}
-		});
-
-		popup.add(new AbstractAction(UIManager.getString(UIConstants.CLOSE_OTHER_ACTION_TEXT)) {
-
-			/** Default generated serial version uid.*/
-			private static final long serialVersionUID = 7971222651198540021L;
-
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				Ulrice.getModuleManager().closeOtherControllers(tabCtrlPanel.getController());
-			}
-		});
-
-		popup.add(new AbstractAction(UIManager.getString(UIConstants.CLOSE_ALL_ACTION_TEXT)) {
-
-			/** Default generated serial version uid.*/
-			private static final long serialVersionUID = 8170793754336153114L;
-
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				Ulrice.getModuleManager().closeAllControllers();
-			}
-		});
+//		popup.add(new AbstractAction(UIManager.getString(UIConstants.CLOSE_ALL_ACTION_TEXT)) {
+//
+//			/** Default generated serial version uid.*/
+//			private static final long serialVersionUID = 8170793754336153114L;
+//
+//			@Override
+//			public void actionPerformed(ActionEvent e) {
+//				Ulrice.getModuleManager().closeAllControllers(null);
+//			}
+//		});
+		popup.add(new CloseAllModulesAction(CloseAllModulesAction.ACTION_ID, null));
+		
 		popup.show(tabCtrlPanel, point.x, point.y);
 	}
 
