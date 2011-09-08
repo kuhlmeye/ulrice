@@ -44,7 +44,7 @@ public class TabbedWorkarea extends JTabbedPane implements IFWorkarea, MouseList
 	/** The close icon. */
 	private ImageIcon closeIcon;
 	
-	private Map<JComponent, GlassPanel> glassPanelMap = new HashMap<JComponent, GlassPanel>();
+	private final Map<JComponent, GlassPanel> glassPanelMap = new HashMap<JComponent, GlassPanel>();
 
 	/**
 	 * Creates a new tabbed workarea.
@@ -52,7 +52,7 @@ public class TabbedWorkarea extends JTabbedPane implements IFWorkarea, MouseList
 	public TabbedWorkarea() {
 		super();
 
-		URL closeIconUrl = getClass().getResource("close.gif");
+		final URL closeIconUrl = getClass().getResource("close.gif");
 		if (closeIconUrl != null) {
 			closeIcon = new ImageIcon(closeIconUrl);
 		}
@@ -85,7 +85,7 @@ public class TabbedWorkarea extends JTabbedPane implements IFWorkarea, MouseList
 	public void activateModule(IFController activeController) {
 
 		// Get the component of the controller.
-		int idx = getTabIndex(activeController);
+		final int idx = getTabIndex(activeController);
 		if (idx >= 0) {
 			setSelectedIndex(idx);
 		} else {
@@ -106,8 +106,8 @@ public class TabbedWorkarea extends JTabbedPane implements IFWorkarea, MouseList
 
 	private int getTabIndex(IFController activeController) {
 	    // TODO Identify tab component in a different way. component is not stable
-		JComponent controllerComponent = getControllerComponent(activeController);
-		GlassPanel glassPanel = glassPanelMap.get(controllerComponent);
+		final JComponent controllerComponent = getControllerComponent(activeController);
+		final GlassPanel glassPanel = glassPanelMap.get(controllerComponent);
 		int idx = indexOfComponent(glassPanel);
 		return idx;
 	}
@@ -144,13 +144,14 @@ public class TabbedWorkarea extends JTabbedPane implements IFWorkarea, MouseList
 	 * @see net.ulrice.module.event.IFModuleEventListener#openModule(net.ulrice.module.IFController)
 	 */
 	public void openModule(IFController activeController) {
+	    
 		if (activeController == null) {
 			return;
 		}
 
 		// Get the component of the controller.
-		JComponent controllerComponent = getControllerComponent(activeController);
-		GlassPanel glassPanel = new GlassPanel();
+		final JComponent controllerComponent = getControllerComponent(activeController);
+		final GlassPanel glassPanel = new GlassPanel();
 		glassPanel.setLayout(new BorderLayout());
 		glassPanel.add(controllerComponent, BorderLayout.CENTER);
 		
@@ -170,6 +171,7 @@ public class TabbedWorkarea extends JTabbedPane implements IFWorkarea, MouseList
 			// Insert the tab after current selected one.
 			insertTab(null, null, glassPanel, null, selectedIdx);
 		}
+		
 		setSelectedComponent(glassPanel);
 		selectedIdx = getSelectedIndex();
 		setTabComponentAt(selectedIdx, new TabControllerPanel(activeController));
@@ -213,26 +215,10 @@ public class TabbedWorkarea extends JTabbedPane implements IFWorkarea, MouseList
 			setBorder(BorderFactory.createEmptyBorder());
 
 			final String controllerTitle = Ulrice.getModuleManager().getTitleProvider(controller).getModuleTitle(Usage.TabbedWorkarea);
-
-			// Get the icon.
 			final ImageIcon icon = Ulrice.getModuleManager().getModule(controller).getIcon(ModuleIconSize.Size_16x16);
 
-//			AbstractAction closeAction = new AbstractAction("X", closeIcon) {
-//
-//				/** Default generated serial version uid. */
-//				private static final long serialVersionUID = 4006169832402886959L;
-//
-//				/**
-//				 * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
-//				 */
-//				@Override
-//				public void actionPerformed(ActionEvent e) {
-//					Ulrice.getModuleManager().closeController(controller);
-//				}
-//			};
-
 			// Create the button for closing the controller.
-			JButton closeButton = new JButton(new CloseModuleAction("X", closeIcon));
+			final JButton closeButton = new JButton(new CloseModuleAction("X", closeIcon));
 			closeButton.setOpaque(false);
 			closeButton.setBorderPainted(false);
 			closeButton.setContentAreaFilled(false);
@@ -243,7 +229,7 @@ public class TabbedWorkarea extends JTabbedPane implements IFWorkarea, MouseList
 			closeButton.setMargin(new Insets(0, 0, 0, 0));
 
 			// Create the label displaying the controller title
-			JLabel label = new JLabel(controllerTitle, icon, JLabel.HORIZONTAL);
+			final JLabel label = new JLabel(controllerTitle, icon, JLabel.HORIZONTAL);
 			label.setBorder(BorderFactory.createEmptyBorder(2, 0, 0, 20));
 			label.setHorizontalAlignment(SwingConstants.LEFT);
 
@@ -256,7 +242,6 @@ public class TabbedWorkarea extends JTabbedPane implements IFWorkarea, MouseList
 		public IFController getController() {
 			return controller;
 		}
-
 	}
 
 	/**
@@ -269,16 +254,17 @@ public class TabbedWorkarea extends JTabbedPane implements IFWorkarea, MouseList
 
 	@Override
 	public void mouseClicked(MouseEvent e) {
+	    
 	}
 
 	@Override
 	public void mousePressed(MouseEvent e) {
+	    
 		if (e.getComponent() instanceof TabControllerPanel) {			
 			
-			TabControllerPanel tabCtrlPanel = (TabControllerPanel) e.getComponent();
+			final TabControllerPanel tabCtrlPanel = (TabControllerPanel) e.getComponent();
 
 			Ulrice.getModuleManager().activateModule(tabCtrlPanel.getController());
-
 			
 			if (e.isPopupTrigger()) {
 				showPopup(tabCtrlPanel, e.getPoint());
@@ -290,40 +276,8 @@ public class TabbedWorkarea extends JTabbedPane implements IFWorkarea, MouseList
 	    
 		final JPopupMenu popup = new JPopupMenu();
 
-//		popup.add(new AbstractAction(UIManager.getString(UIConstants.CLOSE_ACTION_TEXT)) {
-//
-//			/** Default generated serial version uid.*/
-//			private static final long serialVersionUID = 4669265533306602938L;
-//
-//			@Override
-//			public void actionPerformed(ActionEvent e) {
-//				Ulrice.getModuleManager().closeController(tabCtrlPanel.getController());
-//			}
-//		});
 		popup.add(new CloseModuleAction(CloseModuleAction.ACTION_ID, null));
-
-//		popup.add(new AbstractAction(UIManager.getString(UIConstants.CLOSE_OTHER_ACTION_TEXT)) {
-//
-//			/** Default generated serial version uid.*/
-//			private static final long serialVersionUID = 7971222651198540021L;
-//
-//			@Override
-//			public void actionPerformed(ActionEvent e) {
-//				Ulrice.getModuleManager().closeOtherControllers(tabCtrlPanel.getController(), null);
-//			}
-//		});
 		popup.add(new CloseOtherModulesAction(CloseOtherModulesAction.ACTION_ID, null));
-
-//		popup.add(new AbstractAction(UIManager.getString(UIConstants.CLOSE_ALL_ACTION_TEXT)) {
-//
-//			/** Default generated serial version uid.*/
-//			private static final long serialVersionUID = 8170793754336153114L;
-//
-//			@Override
-//			public void actionPerformed(ActionEvent e) {
-//				Ulrice.getModuleManager().closeAllControllers(null);
-//			}
-//		});
 		popup.add(new CloseAllModulesAction(CloseAllModulesAction.ACTION_ID, null));
 		
 		popup.show(tabCtrlPanel, point.x, point.y);
@@ -331,6 +285,7 @@ public class TabbedWorkarea extends JTabbedPane implements IFWorkarea, MouseList
 
 	@Override
 	public void mouseReleased(MouseEvent e) {
+	    
 	}
 
 	@Override
@@ -340,8 +295,8 @@ public class TabbedWorkarea extends JTabbedPane implements IFWorkarea, MouseList
 
 	@Override
 	public void mouseExited(MouseEvent e) {
+	    
 	}
-
 
 	@Override
 	public void moduleBlocked(IFController controller) {
