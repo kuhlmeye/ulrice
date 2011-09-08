@@ -1,5 +1,8 @@
 package net.ulrice.sample;
 
+import java.awt.event.ActionEvent;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.io.InputStream;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -10,22 +13,19 @@ import javax.swing.JFrame;
 import net.ulrice.Ulrice;
 import net.ulrice.configuration.ConfigurationException;
 import net.ulrice.configuration.UlriceFileConfiguration;
-import net.ulrice.databinding.UlriceDatabinding;
 import net.ulrice.module.ControllerProviderCallback;
-import net.ulrice.module.IFController;
 import net.ulrice.module.IFModule;
 import net.ulrice.module.IFModuleManager;
 import net.ulrice.module.IFModuleStructureManager;
 import net.ulrice.module.ModuleIconSize;
 import net.ulrice.module.ModuleType;
-import net.ulrice.module.exception.ModuleInstantiationException;
 import net.ulrice.module.impl.AuthReflectionModule;
 import net.ulrice.module.impl.SimpleModuleTitleRenderer;
 import net.ulrice.module.impl.action.CloseAllModulesAction;
 import net.ulrice.module.impl.action.CloseModuleAction;
 import net.ulrice.module.impl.action.ExitApplicationAction;
-import net.ulrice.module.impl.action.ModuleDelegationAction;
 import net.ulrice.module.impl.action.ModuleActionManager;
+import net.ulrice.module.impl.action.ModuleDelegationAction;
 import net.ulrice.security.Authorization;
 import net.ulrice.translator.CTranslator;
 import net.ulrice.translator.service.IFTranslationService;
@@ -148,10 +148,19 @@ public class UlriceSampleApplication {
 
 		// Show main frame.
 		JFrame mainFrame = Ulrice.getMainFrame().getFrame();
-		mainFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		mainFrame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
 		mainFrame.setSize(640, 468);
 		mainFrame.setLocationRelativeTo(null);
 		mainFrame.setVisible(true);
+		
+        mainFrame.addWindowListener(new WindowAdapter() {
+
+            @Override
+            public void windowClosing(WindowEvent e) {
+                
+                new ExitApplicationAction(null, null).actionPerformed(new ActionEvent(this, e.getID(), null));
+            }
+        });
 	}
 
 	private static ImageIcon loadImage(String image) {

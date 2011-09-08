@@ -4,6 +4,7 @@ import java.util.List;
 
 import javax.swing.JComponent;
 
+import net.ulrice.module.impl.IFClosing;
 import net.ulrice.module.impl.ModuleActionState;
 
 /**
@@ -48,7 +49,12 @@ public interface IFController {
 	/**
 	 * Returns the array of module actions states that are handled by the module. 
 	 */
-	List<ModuleActionState> getHandledActions(); 
+	List<ModuleActionState> getHandledActions();
+	
+	/**
+	 * This method is called when a controller is closed by the user or an other controller. 
+	 */
+	void onClose(IFClosing closing);
 		
 //	/**
 //	 * Block the controller.

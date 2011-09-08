@@ -14,6 +14,7 @@ import net.ulrice.databinding.bufferedbinding.impl.Element;
 import net.ulrice.databinding.bufferedbinding.impl.ColumnDefinition.ColumnType;
 import net.ulrice.databinding.validation.impl.StringLengthValidator;
 import net.ulrice.module.impl.AbstractController;
+import net.ulrice.module.impl.IFClosing;
 import net.ulrice.module.impl.ModuleActionState;
 import net.ulrice.module.impl.action.ActionType;
 import net.ulrice.module.impl.action.UlriceAction;
@@ -159,5 +160,10 @@ public class CMovieDB extends AbstractController implements ListSelectionListene
 	        clearDetail();
 	    }
 	}
+    
+	@Override
+    public void onClose(IFClosing closing) {
+        
+        closing.doClose();
+    }
 }
-

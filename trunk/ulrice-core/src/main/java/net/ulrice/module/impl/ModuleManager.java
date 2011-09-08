@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.IdentityHashMap;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -49,7 +50,6 @@ public class ModuleManager implements IFModuleManager, IFModuleStructureManager 
 	private final UlriceRootModule rootGroup = new UlriceRootModule();
 
 	private final IdentityHashMap<IFController, IdentityHashMap<Object, Object>> blockers = new IdentityHashMap<IFController, IdentityHashMap<Object,Object>>();
-	
 	
 	public void openModule (final String moduleId, final ControllerProviderCallback callback) throws ModuleInstantiationException {
 	    openModule (moduleId, null, callback);
@@ -148,54 +148,148 @@ public class ModuleManager implements IFModuleManager, IFModuleStructureManager 
 		}
 	}
 
-	/**
-	 * @see net.ulrice.module.IFModuleManager#closeAllControllers()
-	 */
-	@Override
-	public void closeAllControllers() {
-		List<IFController> activeModules = getActiveControllers();
+    @Override
+    public void closeAllControllers(final Runnable afterClosingAllModules) {
 
-		if (activeModules != null) {
-			for (IFController controller : activeModules) {
-				closeController(controller);
-			}
-		}
-	}
+        final IFController controller = getCurrentController();
+        if (controller == null) {
+            return;
+        }
 
-	@Override
-	public void closeOtherControllers(IFController controller) {
-		List<IFController> activeModules = getActiveControllers();
+        closeController(controller, new IFCloseHandler() {
 
-		if (activeModules != null) {
-			for (IFController closeController : activeModules) {
-				if (closeController != controller) {
-					closeController(closeController);
-				}
-			}
-		}
-	}
+            @Override
+            public void closeSuccess() {
 
-	public void closeController (IFController controller) {
-		if (controller == null) {
-			return;
-		}
+                final Iterator<IFController> iterator = getActiveControllers().iterator();
+                if (iterator.hasNext()) {
+                    closeAllControllers(afterClosingAllModules);
+                }
+                else {
+                    if (afterClosingAllModules != null) {
+                        afterClosingAllModules.run();
+                    }
+                }
+            }
 
-		while (openControllers.getChildren (controller).size() > 0) {
-		    closeController (openControllers.getChildren(controller).iterator().next());
-		}
+            @Override
+            public void closeFailure() {
 
-		for (IFModuleEventListener listener : listenerList.getListeners(IFModuleEventListener.class)) {
-		    listener.closeController (controller);
-		}
+            }
+        });
+    }
 
-		openControllers.removeController (controller);
+    @Override
+    public void closeOtherControllers(final IFController controller, final IFCloseHandler closeHandler) {
 
-		if (openControllers.getActive() != null) {
-			activateModule (openControllers.getActive ());
-		}
+        final List<IFController> notCurrentControllerList = getNotCurrentControllers(controller);
+        if (notCurrentControllerList.isEmpty()) {
 
-	}
+            if (closeHandler == null) {
+                return;
+            }
 
+            closeHandler.closeSuccess();
+        }
+
+        final IFController firstNotCurrentController = notCurrentControllerList.get(0);
+        activateModule(firstNotCurrentController);
+
+        // TODO ehaasec handle 'controller does nothing'
+        closeController(firstNotCurrentController, new IFCloseHandler() {
+
+            @Override
+            public void closeSuccess() {
+                closeOtherControllers(controller, closeHandler);
+            }
+
+            @Override
+            public void closeFailure() {
+                if (closeHandler != null) {
+                    closeHandler.closeFailure();
+                }
+            }
+        });
+    }
+
+    @Override
+    public void closeController(final IFController controller, final IFCloseHandler closeHandler) {
+
+        closeController(controller, controller, null, closeHandler);
+    }
+
+    private void closeController(final IFController rootControllerToClose, final IFController controllerToClose, final IFController controllersParent,
+        final IFCloseHandler closeHandler) {
+
+        if (openControllers.getChildren(controllerToClose).size() == 0) {
+
+            controllerToClose.onClose(new IFClosing() {
+
+                @Override
+                public void doClose() {
+
+                    internalCloseController(controllerToClose);
+
+                    if (controllersParent == null) {
+                        if (closeHandler != null) {
+                            closeHandler.closeSuccess();
+                        }
+                    }
+                    else {
+                        if (openControllers.getChildren(controllersParent).iterator().hasNext()) {
+                            closeController(rootControllerToClose, openControllers.getChildren(controllersParent).iterator().next(), controllersParent, closeHandler);
+                        }
+                        else {
+                            if (openControllers.getChildren(rootControllerToClose).iterator().hasNext()) {
+                                closeController(rootControllerToClose, openControllers.getChildren(rootControllerToClose).iterator().next(), rootControllerToClose, closeHandler);
+                            }
+                        }
+                    }
+                }
+
+                @Override
+                public void doCancelClose() {
+
+                    if (closeHandler != null) {
+                        closeHandler.closeFailure();
+                    }
+                }
+            });
+        }
+        else {
+            closeController(rootControllerToClose, openControllers.getChildren(controllerToClose).iterator().next(), controllerToClose, closeHandler);
+        }
+    }
+
+    private void internalCloseController(final IFController controller) {
+
+        for (IFModuleEventListener listener : listenerList.getListeners(IFModuleEventListener.class)) {
+            listener.closeController(controller);
+        }
+
+        openControllers.removeController(controller);
+
+        if (openControllers.getActive() != null) {
+            activateModule(openControllers.getActive());
+        }
+    }
+
+    /**
+     * @return A list with all opened, but currently not selected controllers.
+     */
+    private List<IFController> getNotCurrentControllers(final IFController currentController) {
+
+        final List<IFController> notCurrentControllers = new ArrayList<IFController>();
+
+        for (IFController controller : getActiveControllers()) {
+            if (controller != currentController) {
+                notCurrentControllers.add(controller);
+            }
+        }
+
+        return notCurrentControllers;
+    }
+	
 	public IFController getCurrentController() {
 		return openControllers.getActive();
 	}
@@ -363,15 +457,15 @@ public class ModuleManager implements IFModuleManager, IFModuleStructureManager 
 	}
 
 	private void fireControllerBlocked(IFController controller) {
-		for (IFModuleEventListener listener : listenerList.getListeners(IFModuleEventListener.class)) {
-		    listener.moduleBlocked (openControllers.getActive());
-		}
+        for (final IFModuleEventListener listener : listenerList.getListeners(IFModuleEventListener.class)) {
+            listener.moduleBlocked(openControllers.getActive());
+        }
 	}
 
 	private void fireControllerUnblocked(IFController controller) {
-	    for (IFModuleEventListener listener : listenerList.getListeners(IFModuleEventListener.class)) {
-	        listener.moduleUnblocked (openControllers.getActive());
-	    }
+	    for (final IFModuleEventListener listener : listenerList.getListeners(IFModuleEventListener.class)) {
+            listener.moduleUnblocked(openControllers.getActive());
+        }
 	}
 
     @Override

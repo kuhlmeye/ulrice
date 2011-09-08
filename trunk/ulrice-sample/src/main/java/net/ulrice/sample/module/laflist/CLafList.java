@@ -16,6 +16,7 @@ import javax.swing.UIManager;
 
 import net.ulrice.Ulrice;
 import net.ulrice.module.impl.AbstractController;
+import net.ulrice.module.impl.IFClosing;
 import net.ulrice.module.impl.ModuleActionState;
 import net.ulrice.module.impl.action.AuthModuleDelegationAction;
 import net.ulrice.sample.SampleSecurityCallback;
@@ -104,4 +105,10 @@ public class CLafList extends AbstractController {
 			return o1.toString().compareTo(o2.toString());
 		}
 	}
+    
+	@Override
+    public void onClose(IFClosing closing) {
+        
+        closing.doClose();
+    }
 }

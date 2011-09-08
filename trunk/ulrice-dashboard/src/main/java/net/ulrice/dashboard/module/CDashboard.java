@@ -11,6 +11,7 @@ import net.ulrice.dashboard.DashboardEventListener;
 import net.ulrice.dashboard.UlriceDashboard;
 import net.ulrice.dashboard.module.VDashboard.CellComponent;
 import net.ulrice.module.impl.AbstractController;
+import net.ulrice.module.impl.IFClosing;
 
 /**
  * Controller of the dashboard module. The dashboard module is used to start all
@@ -210,5 +211,11 @@ public class CDashboard extends AbstractController {
     
     public List<DashboardComponent> getDashboardComponentList() {
         return dashboardComponentList;
+    }
+    
+    @Override
+    public void onClose(IFClosing closing) {
+        
+        closing.doClose();
     }
 }
