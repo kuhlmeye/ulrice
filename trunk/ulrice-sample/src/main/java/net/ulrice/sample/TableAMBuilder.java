@@ -1,13 +1,16 @@
 package net.ulrice.sample;
 
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import net.ulrice.databinding.bufferedbinding.impl.ColumnDefinition;
+import net.ulrice.databinding.bufferedbinding.impl.ColumnDefinition.ColumnType;
 import net.ulrice.databinding.bufferedbinding.impl.TableAM;
 import net.ulrice.databinding.converter.IFValueConverter;
+import net.ulrice.databinding.modelaccess.IFDynamicModelValueAccessor;
 import net.ulrice.databinding.modelaccess.impl.DynamicReflectionMVA;
 import net.ulrice.databinding.modelaccess.impl.IndexedReflectionMVA;
 import net.ulrice.databinding.modelaccess.impl.UlriceReflectionUtils;
@@ -67,6 +70,17 @@ public class TableAMBuilder {
         return this;
     }
     
+    /**
+     * This is a convenience method that adds a readonly 'derived' column that can reference one or more model values
+     */
+    public TableAMBuilder addDerivedColumn (String columnName, String pattern, String... paths) {
+        final ColumnDefinition<String> newColumn = new ColumnDefinition<String> (new CompositeMVA (modelRowClass, pattern, paths), String.class, ColumnType.ReadOnly);
+        newColumn.setColumnName (columnName);
+        columnDefs.add (newColumn);
+        
+        return this;
+    }
+
     @SuppressWarnings("rawtypes")
     public ColumnDefinition getColumn(int index) {
         return columnDefs.get(index);
@@ -84,4 +98,48 @@ public class TableAMBuilder {
         }
         return result;
     }
+    
+    private static class CompositeMVA implements IFDynamicModelValueAccessor {
+        private final String pattern;
+        private final String[] paths;
+        private final String id;
+        
+        public CompositeMVA (Class<?> modelRowClass, String pattern, String... paths) {
+            this.pattern = pattern;
+            this.paths = paths;
+            this.id = modelRowClass.getName() + "." + pattern;
+        }
+
+        @Override
+        public Object getValue (Object root) {
+            final List<Object> arguments = new ArrayList<Object>();
+            
+            for (String path: paths) {
+                arguments.add (UlriceReflectionUtils.getValueByReflection (root, path));
+            }
+            
+            return MessageFormat.format (pattern, arguments.toArray());
+        }
+
+        @Override
+        public void setValue (Object root, Object value) {
+            throw new UnsupportedOperationException();
+        }
+
+        @Override
+        public String getAttributeId () {
+            return id;
+        }
+
+        @Override
+        public Class<?> getModelType (Class<?> rootType) {
+            return String.class;
+        }
+    }
+
+
+
+
+    
+    
 }
