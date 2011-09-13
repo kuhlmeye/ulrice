@@ -21,5 +21,5 @@ public interface IFModule extends IFModuleTitleProvider {
 	/**
 	 * Creates a new instance of the module.
 	 */
-	void instantiateModule (ControllerProviderCallback callback);
+	void instantiateModule (ControllerProviderCallback callback, Object... parameters);
 }

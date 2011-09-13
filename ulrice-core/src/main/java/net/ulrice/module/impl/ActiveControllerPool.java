@@ -40,6 +40,13 @@ class OpenControllerPool {
         return moduleByController.get(c);
     }
     
+    public IFController getParent(IFController c) {
+    	if (withParent.containsKey(c)) {
+    		return withParent.get(c);
+    	}
+    	return null;
+    }
+    
     public Collection<IFController> getChildren (IFController parent) {
         final List<IFController> result = new ArrayList<IFController>();
         for (IFController child: withParent.keySet()) {

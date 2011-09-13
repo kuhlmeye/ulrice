@@ -27,13 +27,13 @@ public interface IFModuleManager {
 	 * Opens a module, i.e. initialize it and display its view. If the callback is non-null, it
 	 *  is called with the controller
 	 */
-	void openModule (String moduleId, ControllerProviderCallback callback) throws ModuleInstantiationException;
+	void openModule (String moduleId, ControllerProviderCallback callback, Object... parameters) throws ModuleInstantiationException;
 
 	/**
 	 * opens a module as a "child", i.e. creates a new controller instance that is closed automatically when the parent controller
 	 *  is closed. Passing <pre>null</pre> as a parent makes the newly created controller top-level.
 	 */
-	void openModule (String moduleId, IFController parent, ControllerProviderCallback callback) throws ModuleInstantiationException;
+	void openModule (String moduleId, IFController parent, ControllerProviderCallback callback, Object... parameters) throws ModuleInstantiationException;
 	
 	/**
 	 * Activates an instance of a module, i.e. give it the focus.
@@ -67,6 +67,8 @@ public interface IFModuleManager {
 	 * @return The controller.
 	 */
 	IFController getCurrentController();
+	
+	IFController getParentController(IFController controller);
 
 	/**
 	 * Returns the list of the controller of all active modules.

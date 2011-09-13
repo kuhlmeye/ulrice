@@ -51,11 +51,11 @@ public class ModuleManager implements IFModuleManager, IFModuleStructureManager 
 
 	private final IdentityHashMap<IFController, IdentityHashMap<Object, Object>> blockers = new IdentityHashMap<IFController, IdentityHashMap<Object,Object>>();
 	
-	public void openModule (final String moduleId, final ControllerProviderCallback callback) throws ModuleInstantiationException {
-	    openModule (moduleId, null, callback);
+	public void openModule (final String moduleId, final ControllerProviderCallback callback, final Object... parameters) throws ModuleInstantiationException {
+	    openModule (moduleId, null, callback, parameters);
 	}
 	
-	public void openModule (final String moduleId, final IFController parent, final ControllerProviderCallback callback) throws ModuleInstantiationException {
+	public void openModule (final String moduleId, final IFController parent, final ControllerProviderCallback callback, final Object... parameters) throws ModuleInstantiationException {
 		final IFModule module = moduleMap.get(moduleId);
 		
 		if (module == null) {
@@ -110,7 +110,7 @@ public class ModuleManager implements IFModuleManager, IFModuleStructureManager 
                         callback.onFailure (exc);
                     }
                 }
-		    });
+		    }, parameters);
 		}
 	}
 
@@ -299,6 +299,10 @@ public class ModuleManager implements IFModuleManager, IFModuleStructureManager 
 
 	public List<IFController> getActiveControllers() {
 	    return openControllers.getAll();
+	}
+	
+	public IFController getParentController(IFController controller) {
+		return openControllers.getParent(controller);
 	}
 
 	public void registerModule(IFModule module) {
@@ -513,4 +517,5 @@ public class ModuleManager implements IFModuleManager, IFModuleStructureManager 
     public List<IFModule> getAllModules() {        
         return new ArrayList<IFModule>(moduleMap.values());
     }
+
 }
