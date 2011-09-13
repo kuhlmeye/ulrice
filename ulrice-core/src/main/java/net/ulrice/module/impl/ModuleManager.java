@@ -153,6 +153,9 @@ public class ModuleManager implements IFModuleManager, IFModuleStructureManager 
 
         final IFController controller = getCurrentController();
         if (controller == null) {
+            if (afterClosingAllModules != null) {
+                afterClosingAllModules.run();
+            }
             return;
         }
 
