@@ -106,7 +106,7 @@ public class UlriceSampleApplication {
             }
 
             @Override
-            public void instantiateModule(ControllerProviderCallback callback, Object... parameters) {
+            public void instantiateModule(ControllerProviderCallback callback) {
                 callback.onControllerReady (new CTranslator (translatorService));
             }
 		    

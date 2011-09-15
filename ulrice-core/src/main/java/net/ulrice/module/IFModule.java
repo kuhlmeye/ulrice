@@ -2,8 +2,6 @@ package net.ulrice.module;
 
 import javax.swing.ImageIcon;
 
-import net.ulrice.module.exception.ModuleInstantiationException;
-
 
 /**
  * Interface of a module description. 
@@ -21,5 +19,5 @@ public interface IFModule extends IFModuleTitleProvider {
 	/**
 	 * Creates a new instance of the module.
 	 */
-	void instantiateModule (ControllerProviderCallback callback, Object... parameters);
+	void instantiateModule (ControllerProviderCallback callback);
 }
