@@ -4,20 +4,20 @@ import java.util.HashMap;
 import java.util.Map;
 
 import net.ulrice.databinding.bufferedbinding.IFAttributeModel;
-import net.ulrice.databinding.bufferedbinding.IFBindingGroup;
+import net.ulrice.databinding.bufferedbinding.impl.AbstractBindingGroup;
 import net.ulrice.databinding.bufferedbinding.impl.GenericAM;
 import net.ulrice.databinding.modelaccess.impl.ReflectionMVA;
 import net.ulrice.databinding.modelaccess.impl.UlriceReflectionUtils;
+import net.ulrice.databinding.viewadapter.IFViewAdapter;
 
 /**
  * This is a convenience class for models that contain a single object, e.g. a Transfer Object.
  * 
  * @author arno
  */
-public class SingleObjectModel<T> implements IFBindingGroup {
+public class SingleObjectModel<T> extends AbstractBindingGroup<T> {
     private final Class<T> dataClass;
-    private T data;
-    
+    private T data;    
     
     @SuppressWarnings("rawtypes")
     private final Map<String, IFAttributeModel> attributeModels = new HashMap<String, IFAttributeModel>();
@@ -92,4 +92,17 @@ public class SingleObjectModel<T> implements IFBindingGroup {
             am.write();
         }
     }
+
+	@SuppressWarnings("rawtypes")
+	@Override
+	public void dataChanged(IFViewAdapter viewAdapter,
+			IFAttributeModel<T> amSource) {
+		// ignore
+	}
+
+	@Override
+	protected void stateChangedInternal(IFViewAdapter viewAdapter,
+			IFAttributeModel<T> amSource) {
+	}
+
 }

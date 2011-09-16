@@ -17,4 +17,8 @@ public interface IFBindingGroup {
     public abstract void write();
 
     public abstract void read();
+    
+    void addBindingGroupChangeListener(IFBindingGroupEventListener l);
+    
+    void removeBindingGroupChangeListener(IFBindingGroupEventListener l);
 }
