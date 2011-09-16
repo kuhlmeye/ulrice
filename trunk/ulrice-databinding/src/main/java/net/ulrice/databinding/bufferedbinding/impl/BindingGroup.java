@@ -8,8 +8,6 @@ import java.util.Map;
 import java.util.Set;
 
 import net.ulrice.databinding.bufferedbinding.IFAttributeModel;
-import net.ulrice.databinding.bufferedbinding.IFAttributeModelEventListener;
-import net.ulrice.databinding.bufferedbinding.IFBindingGroup;
 import net.ulrice.databinding.viewadapter.IFViewAdapter;
 
 /**
@@ -17,9 +15,9 @@ import net.ulrice.databinding.viewadapter.IFViewAdapter;
  * 
  * @author christof
  */
-@SuppressWarnings("unchecked")
-public class BindingGroup implements IFBindingGroup, IFAttributeModelEventListener {
-
+@SuppressWarnings({ "unchecked", "rawtypes" })
+public class BindingGroup extends AbstractBindingGroup {
+	
     /** The list of all gui accessors contained in this data group. */
     private final Map<String, List<IFViewAdapter>> vaMap = new HashMap<String, List<IFViewAdapter>>();
 
@@ -128,15 +126,11 @@ public class BindingGroup implements IFBindingGroup, IFAttributeModelEventListen
             am.write();
         }
     }
-
-    /**
-     * @see net.ulrice.databinding.bufferedbinding.IFAttributeModelEventListener#stateChanged(net.ulrice.databinding.IFGuiAccessor,
-     *      net.ulrice.databinding.bufferedbinding.IFAttributeModel,
-     *      net.ulrice.databinding.DataState, net.ulrice.databinding.DataState)
-     */
+    
     @Override
-    public void stateChanged(IFViewAdapter gaSource, IFAttributeModel amSource) {
-        String id = amSource.getId();
+	protected void stateChangedInternal(IFViewAdapter viewAdapter,
+			IFAttributeModel amSource) {
+    	String id = amSource.getId();
         changedSet.remove(id);
         invalidSet.remove(id);
         
@@ -149,8 +143,8 @@ public class BindingGroup implements IFBindingGroup, IFAttributeModelEventListen
         }
 
         dirty = !changedSet.isEmpty();
-        valid = invalidSet.isEmpty();
-    }
+        valid = invalidSet.isEmpty();		
+	}
 
     /**
      * @see net.ulrice.databinding.bufferedbinding.IFAttributeModelEventListener#dataChanged(net.ulrice.databinding.IFGuiAccessor,
@@ -246,4 +240,5 @@ public class BindingGroup implements IFBindingGroup, IFAttributeModelEventListen
     public void removeAttributeModel(String id) {
         amMap.remove(id);
     }
+
 }
