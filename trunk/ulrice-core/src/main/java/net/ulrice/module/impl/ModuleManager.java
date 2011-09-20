@@ -226,6 +226,7 @@ public class ModuleManager implements IFModuleManager, IFModuleStructureManager 
 
         if (openControllers.getChildren(controllerToClose).size() == 0) {
 
+            activateModule(controllerToClose);
             controllerToClose.onClose(new IFClosing() {
 
                 @Override
@@ -245,6 +246,9 @@ public class ModuleManager implements IFModuleManager, IFModuleStructureManager 
                         else {
                             if (openControllers.getChildren(rootControllerToClose).iterator().hasNext()) {
                                 closeController(rootControllerToClose, openControllers.getChildren(rootControllerToClose).iterator().next(), rootControllerToClose, closeHandler);
+                            }
+                            else {
+                                closeController(rootControllerToClose, rootControllerToClose, null, closeHandler);
                             }
                         }
                     }
