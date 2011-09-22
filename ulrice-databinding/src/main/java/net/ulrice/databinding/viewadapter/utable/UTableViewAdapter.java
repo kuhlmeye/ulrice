@@ -20,8 +20,10 @@ import javax.swing.table.TableColumn;
 import javax.swing.table.TableModel;
 
 import net.ulrice.databinding.IFBinding;
+import net.ulrice.databinding.bufferedbinding.impl.ColumnDefinition;
 import net.ulrice.databinding.bufferedbinding.impl.Element;
 import net.ulrice.databinding.bufferedbinding.impl.TableAM;
+import net.ulrice.databinding.bufferedbinding.impl.TableAMListener;
 import net.ulrice.databinding.viewadapter.AbstractViewAdapter;
 import net.ulrice.databinding.viewadapter.IFStateMarker;
 import net.ulrice.databinding.viewadapter.IFTooltipHandler;
@@ -39,6 +41,20 @@ public class UTableViewAdapter extends AbstractViewAdapter implements
 	private TableAM attributeModel;
 
 	private UTableComponent table;
+	
+	private TableAMListener tableAMListener = new TableAMListener() {
+        
+        @Override
+        public void columnValueRangeChanged(TableAM tableAM, ColumnDefinition< ?> colDef) {
+            table.updateColumnModel(tableAM);
+        }
+
+        @Override
+        public void columnFilterModeChanged(TableAM tableAM, ColumnDefinition< ?> colDef) {
+            getFilter().rebuildFilter();
+        }
+    };
+	
 
 	public UTableViewAdapter(int fixedColumns) {
 		super(List.class);
@@ -163,11 +179,16 @@ public class UTableViewAdapter extends AbstractViewAdapter implements
 	public void setAttributeModel(TableAM attributeModel) {
 		if (this.attributeModel == null
 				|| !this.attributeModel.equals(attributeModel)) {
+		    if(this.attributeModel != null) {
+		        this.attributeModel.removeTableAMListener(tableAMListener);
+		    }
 			this.attributeModel = attributeModel;
+			this.attributeModel.addTableAMListener(tableAMListener);
 			table.updateColumnModel(attributeModel);
+			
 			fireTableStructureChanged();
 		}
-	}
+	}		
 
 	/**
 	 * @see javax.swing.event.TableModelListener#tableChanged(javax.swing.event.TableModelEvent)

@@ -17,6 +17,6 @@ public enum FilterMode {
     
     Boolean,
     
-    Enum;
+    ComboBox;
 
 }

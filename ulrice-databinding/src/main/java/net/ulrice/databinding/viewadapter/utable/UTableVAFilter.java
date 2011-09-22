@@ -14,6 +14,7 @@ import javax.swing.JComboBox;
 import javax.swing.JComponent;
 import javax.swing.JTextField;
 import javax.swing.RowFilter;
+import javax.swing.SwingUtilities;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
@@ -88,6 +89,7 @@ public class UTableVAFilter extends RowFilter<UTableViewAdapter, String> impleme
 	private void createFilterComponents(UTableVAHeader tableHeader) {
 		TableColumnModel columnModel = tableHeader.getColumnModel();
 
+
 		// TODO Totally inefficient
         if (rowSorter != null) {
             final UTableViewAdapter model = rowSorter.getModel();
@@ -97,6 +99,8 @@ public class UTableVAFilter extends RowFilter<UTableViewAdapter, String> impleme
                 columnIdentifiers.add(columnDefinition.getId());
             }
         }
+        
+        tableHeader.removeAll();
 
 		for (int i = 0; i < columnModel.getColumnCount(); i++) {
 			final TableColumn column = columnModel.getColumn(i);
@@ -128,11 +132,17 @@ public class UTableVAFilter extends RowFilter<UTableViewAdapter, String> impleme
                         component = comboBox;
                         break;
                         
-                    case Enum:
+                    case ComboBox:
                         FilterComboBoxModel enumCbm = new FilterComboBoxModel(columnDefinition.getId());
                         enumCbm.addElement(BooleanFilter.All);
-                        for (Object enumValue : columnDefinition.getColumnClass().getEnumConstants()) {
-                            enumCbm.addElement(enumValue);
+                        if(columnDefinition.isUseValueRange() && columnDefinition.getValueRange() != null) {
+                            for (Object value : columnDefinition.getValueRange()) {
+                                enumCbm.addElement(value);
+                            }
+                        } else if(columnDefinition.getColumnClass().isEnum()) {                            
+                            for (Object enumValue : columnDefinition.getColumnClass().getEnumConstants()) {
+                                enumCbm.addElement(enumValue);
+                            }
                         }
                         
                         enumCbm.addListDataListener(this);
@@ -153,6 +163,8 @@ public class UTableVAFilter extends RowFilter<UTableViewAdapter, String> impleme
 		}
 	}
 
+	
+	
 	/**
 	 * @see javax.swing.RowFilter#include(javax.swing.RowFilter.Entry)
 	 */
@@ -177,7 +189,7 @@ public class UTableVAFilter extends RowFilter<UTableViewAdapter, String> impleme
 		if (columnFilterModes != null && columnFilterModes.containsKey(columnId)) {
 			switch (columnFilterModes.get(columnId)) {
 				case RegEx:
-				case Enum:
+				case ComboBox:
 				case Boolean:
 					Pattern pattern = regexExpressionMap.get(columnId);
 					if (pattern != null) {
@@ -263,7 +275,7 @@ public class UTableVAFilter extends RowFilter<UTableViewAdapter, String> impleme
             switch (columnFilterModes.get(columnId)) {
                 case NoFilter:
                     break;
-                case Enum:
+                case ComboBox:
                 case Boolean:
                 case RegEx: {
                     String regex = text;
@@ -330,6 +342,11 @@ public class UTableVAFilter extends RowFilter<UTableViewAdapter, String> impleme
 		}
 	}
 
+	public void rebuildFilter() {
+        createFilterComponents(staticTableHeader);
+        createFilterComponents(scrollTableHeader);
+	}
+	
 	/**
 	 * @see javax.swing.event.TableColumnModelListener#columnRemoved(javax.swing.event.TableColumnModelEvent)
 	 */
