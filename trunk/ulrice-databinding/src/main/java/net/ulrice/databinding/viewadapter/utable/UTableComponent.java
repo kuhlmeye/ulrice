@@ -1,9 +1,13 @@
 package net.ulrice.databinding.viewadapter.utable;
 
 import java.awt.BorderLayout;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
+import java.util.Collections;
 import java.util.List;
 
 import javax.swing.DefaultListSelectionModel;
+import javax.swing.JComboBox;
 import javax.swing.JComponent;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -185,7 +189,7 @@ public class UTableComponent extends JPanel {
 	/**
 	 * @param attributeModel
 	 */
-	protected void updateColumnModel(TableAM attributeModel) {
+	protected void updateColumnModel(final TableAM attributeModel) {
 		TableColumnModel columnModel = null;
 		List<ColumnDefinition<? extends Object>> columnDefinitions = attributeModel.getColumns();
 
@@ -220,6 +224,14 @@ public class UTableComponent extends JPanel {
 				column.setModelIndex(i - fixedColumns);
 
 				columnModel.addColumn(column);
+				
+				if(columnDefinition.isUseValueRange()) {				    
+				    if(columnDefinition.getValueRange() != null) {
+				        column.setCellEditor(new UTableComboBoxCellEditor(columnDefinition.getValueRange()));
+				    } else {
+                        column.setCellEditor(new UTableComboBoxCellEditor(Collections.EMPTY_LIST));
+				    }
+				}
 			}
 		}
 	}

@@ -37,6 +37,7 @@ public class TableAM implements IFAttributeModel {
 	private List<ColumnDefinition<? extends Object>> columns = new ArrayList<ColumnDefinition<? extends Object>>();
 	private boolean readOnly;
 	private long nextUniqueId;
+	
 	private Set<Element> newElements = new HashSet<Element>();
 	private Set<Element> modElements = new HashSet<Element>();
 	private Set<Element> delElements = new HashSet<Element>();
@@ -244,8 +245,45 @@ public class TableAM implements IFAttributeModel {
 	 * @param columnDefinition
 	 */
 	public void addColumn(ColumnDefinition<?> columnDefinition) {
-		columns.add(columnDefinition);
+	    columnDefinition.addChangeListener(new ColumnDefinitionChangedListener() {            
+            @Override
+            public void valueRangeChanged(ColumnDefinition<?> colDef) {
+                fireColumnValueRangeChanged(colDef);
+            }
+
+            @Override
+            public void filterModeChanged(ColumnDefinition< ?> colDef) {
+                fireColumnFilterModeChanged(colDef);
+            }
+        });
+		columns.add(columnDefinition);		
 	}
+	
+	public void addTableAMListener(TableAMListener listener) {
+	    listenerList.add(TableAMListener.class, listener);
+	}
+	
+	public void removeTableAMListener(TableAMListener listener) {
+	    listenerList.add(TableAMListener.class, listener);
+	}
+
+
+    private void fireColumnValueRangeChanged(ColumnDefinition<?> colDef) {
+        TableAMListener[] listeners = listenerList.getListeners(TableAMListener.class);
+        if(listeners != null) {
+            for(TableAMListener listener : listeners) {
+                listener.columnValueRangeChanged(this, colDef);
+            }
+        }
+    }
+    private void fireColumnFilterModeChanged(ColumnDefinition<?> colDef) {
+        TableAMListener[] listeners = listenerList.getListeners(TableAMListener.class);
+        if(listeners != null) {
+            for(TableAMListener listener : listeners) {
+                listener.columnFilterModeChanged(this, colDef);
+            }
+        }
+    }
 
 	/**
 	 * @return the columns

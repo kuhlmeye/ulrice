@@ -1,5 +1,11 @@
 package net.ulrice.databinding.bufferedbinding.impl;
 
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
+import java.util.List;
+
+import javax.swing.event.EventListenerList;
+
 import net.ulrice.databinding.converter.IFValueConverter;
 import net.ulrice.databinding.modelaccess.IFDynamicModelValueAccessor;
 import net.ulrice.databinding.validation.IFValidator;
@@ -18,6 +24,10 @@ public class ColumnDefinition<T extends Object> {
     private IFValidator validator;
     private String columnName;
 	private boolean useAutoValueConverter = true;
+	private boolean useValueRange = false;
+	private List<T> valueRange;
+	
+	private EventListenerList eventListeners = new EventListenerList();
 	
 	private ColumnType columnType = ColumnType.Editable;
 	
@@ -27,6 +37,7 @@ public class ColumnDefinition<T extends Object> {
 		NewEditable
 	}
 
+	
 	   
     public ColumnDefinition(IFDynamicModelValueAccessor dataAccessor, Class<T> columnClass) {
         this.id = dataAccessor.getAttributeId();
@@ -86,17 +97,22 @@ public class ColumnDefinition<T extends Object> {
 
     private void setFilterMode(Class<T> columnClass) {
         if (Number.class.isAssignableFrom(columnClass)) {
-            this.filterMode = FilterMode.Numeric;
+            setFilterMode(FilterMode.Numeric);
         }
         else if (Boolean.class.isAssignableFrom(columnClass)) {
-            this.filterMode = FilterMode.Boolean;
+            setFilterMode(FilterMode.Boolean);
         }
         else if (Enum.class.isAssignableFrom(columnClass)) {
-            this.filterMode = FilterMode.Enum;
+            setFilterMode(FilterMode.ComboBox);
         }
         else {
-            this.filterMode = FilterMode.RegEx;
+            setFilterMode(FilterMode.RegEx);
         }
+    }
+    
+    public void setFilterMode(FilterMode filterMode) {
+        this.filterMode = filterMode;
+        fireFilterModeChanged();
     }
 
     /**
@@ -160,6 +176,7 @@ public class ColumnDefinition<T extends Object> {
         return filterMode;
     }
 
+    
 	public IFValueConverter getValueConverter() {
 		return valueConverter;
 	}
@@ -203,4 +220,48 @@ public class ColumnDefinition<T extends Object> {
     public String getColumnName() {
         return columnName;
     }
+    
+    public boolean isUseValueRange() {
+        return useValueRange;
+    }
+    
+    public void setUseValueRange(boolean useValueRange) {
+        this.useValueRange = useValueRange;
+    }
+    
+    public List<T> getValueRange() {
+        return valueRange;
+    }
+    
+    public void setValueRange(List<T> valueRange) {
+        this.valueRange = valueRange;
+        fireValueRangeChanged();
+    }
+    
+    private void fireValueRangeChanged() {
+        ColumnDefinitionChangedListener[] listeners = eventListeners.getListeners(ColumnDefinitionChangedListener.class);
+        if(listeners != null) {
+            for(ColumnDefinitionChangedListener listener : listeners) {
+                listener.valueRangeChanged(this);
+            }
+        }
+    }
+    
+    private void fireFilterModeChanged() {
+        ColumnDefinitionChangedListener[] listeners = eventListeners.getListeners(ColumnDefinitionChangedListener.class);
+        if(listeners != null) {
+            for(ColumnDefinitionChangedListener listener : listeners) {
+                listener.filterModeChanged(this);
+            }
+        }
+    }
+
+    public void addChangeListener(ColumnDefinitionChangedListener listener) {
+        eventListeners.add(ColumnDefinitionChangedListener.class, listener);
+    }
+
+    public void removeChangeListener(ColumnDefinitionChangedListener listener) {
+        eventListeners.remove(ColumnDefinitionChangedListener.class, listener);
+    }
+
 }
