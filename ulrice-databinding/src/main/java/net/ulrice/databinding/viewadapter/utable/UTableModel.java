@@ -87,4 +87,8 @@ public class UTableModel implements TableModel, TableModelListener {
 			}
 		}
 	}
+
+    public void setOffset(int offset) {
+        this.offset = offset;
+    }
 }

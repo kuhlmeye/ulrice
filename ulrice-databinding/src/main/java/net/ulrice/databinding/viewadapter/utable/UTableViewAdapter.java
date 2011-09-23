@@ -182,6 +182,7 @@ public class UTableViewAdapter extends AbstractViewAdapter implements
 		    if(this.attributeModel != null) {
 		        this.attributeModel.removeTableAMListener(tableAMListener);
 		    }
+		    
 			this.attributeModel = attributeModel;
 			this.attributeModel.addTableAMListener(tableAMListener);
 			table.updateColumnModel(attributeModel);

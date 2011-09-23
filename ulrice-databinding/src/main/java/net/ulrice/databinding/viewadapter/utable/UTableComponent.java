@@ -38,6 +38,8 @@ public class UTableComponent extends JPanel {
 	private ListSelectionModel rowSelModel;
 
 	private int fixedColumns;
+	
+	private int originalFixedColumns;
 
 	private int selColumn = -1;
 
@@ -51,16 +53,21 @@ public class UTableComponent extends JPanel {
 
 	private IFStateMarker stateMarker;
 
+    private UTableModel staticTableModel;
+
+    private UTableModel scrollTableModel;
+
 	public UTableComponent(final UTableViewAdapter viewAdapter, final int fixedColumns) {
 
 		rowSelModel = new DefaultListSelectionModel();
 
 		this.fixedColumns = fixedColumns;
+		this.originalFixedColumns = fixedColumns;
 		
-		UTableModel staticTableModel = new UTableModel(false, fixedColumns, viewAdapter);
+		staticTableModel = new UTableModel(false, fixedColumns, viewAdapter);
 		staticTable = new UTable(viewAdapter, staticTableModel, rowSelModel);
 		
-		UTableModel scrollTableModel = new UTableModel(true, fixedColumns, viewAdapter);
+		scrollTableModel = new UTableModel(true, fixedColumns, viewAdapter);
 		scrollTable = new UTable(viewAdapter, scrollTableModel, rowSelModel);
 
 		sorter = new UTableRowSorter(viewAdapter, fixedColumns, staticTableModel, scrollTableModel);
@@ -190,6 +197,11 @@ public class UTableComponent extends JPanel {
 	 * @param attributeModel
 	 */
 	protected void updateColumnModel(final TableAM attributeModel) {
+	    
+	    if(originalFixedColumns >= attributeModel.getColumnCount()) {
+	        setFixedColumns(attributeModel.getColumnCount() > 0 ? attributeModel.getColumnCount() - 1 : 0);
+	    }
+	    
 		TableColumnModel columnModel = null;
 		List<ColumnDefinition<? extends Object>> columnDefinitions = attributeModel.getColumns();
 
@@ -197,7 +209,9 @@ public class UTableComponent extends JPanel {
 		for (int i = columnModel.getColumnCount() - 1; i >= 0; i--) {
 			columnModel.removeColumn(columnModel.getColumn(i));
 		}
-
+		
+		
+		
 		if (columnDefinitions != null) {
 			for (int i = 0; i < fixedColumns; i++) {
 				ColumnDefinition<?> columnDefinition = columnDefinitions.get(i);
@@ -236,7 +250,13 @@ public class UTableComponent extends JPanel {
 		}
 	}
 	
-	public int convertColumnIndexToModel(int col) {
+	private void setFixedColumns(int fixedColumns) {
+        this.fixedColumns = fixedColumns;
+        this.scrollTableModel.setOffset(fixedColumns);
+        this.staticTableModel.setOffset(fixedColumns);
+    }
+
+    public int convertColumnIndexToModel(int col) {
 	    int modelCol = col;
 	    if(col < fixedColumns) {
 	        modelCol = staticTable.convertColumnIndexToModel(col);
