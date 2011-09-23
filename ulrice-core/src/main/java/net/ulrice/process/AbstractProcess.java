@@ -6,6 +6,7 @@ import java.util.concurrent.ExecutionException;
 import javax.swing.SwingWorker;
 import javax.swing.event.EventListenerList;
 
+import net.ulrice.Ulrice;
 import net.ulrice.module.IFController;
 
 /**
@@ -86,11 +87,9 @@ public abstract class AbstractProcess<T,V> extends SwingWorker<T, V> implements 
 		try {
 			finished(get());
 		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+		    Ulrice.getMessageHandler().handleException(e);
 		} catch (ExecutionException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+            Ulrice.getMessageHandler().handleException(e);
 		} finally {
 			this.state = ProcessState.Done;
 		}
