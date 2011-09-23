@@ -69,6 +69,22 @@ public class IndexedReflectionMVA implements IFIndexedModelValueAccessor {
 		throw new ReflectionMVAException("Type: " + listValue.getClass() + " is not allowed for indexed model value access", null);
 	}
 
+	@Override
+	public void setValues (Object values) {
+	    if (values instanceof List) {
+	        final List<?> l = (List<?>) values;
+	        for (int i=0; i<l.size(); i++) {
+	            setValue (i, l.get(i));
+	        }
+	    }
+	    else {
+	        final Object[] l = (Object[]) values;
+	        for (int i=0; i<l.length; i++) {
+	            setValue (i, l[i]);
+	        }
+	    }
+	}
+	
 	@SuppressWarnings("unchecked")
 	@Override
 	public void setValue(int index, Object value) {

@@ -29,7 +29,7 @@ public class OgnlSingleListIndexedMVA implements IFIndexedModelValueAccessor {
             _ognlElementTree = Ognl.parseExpression (elementExpression);
         } catch (OgnlException exc) {
             ErrorHandler.handle (exc);
-            throw new RuntimeException (); // für den Compiler
+            throw new RuntimeException (); // for the compiler
         }
         _isReadOnly = isReadOnly != null ? isReadOnly : guessReadOnly ();
         id = _model.getClass().getName() + "." + baseExpression + "." + elementExpression;
@@ -42,7 +42,7 @@ public class OgnlSingleListIndexedMVA implements IFIndexedModelValueAccessor {
                 o = getValue (0);
             }
             catch (Exception exc) {
-                //TODO logging, dass das "Raten" nicht funktioniert hat
+                //TODO log that 'guessing' did not work
                 return true;
             }
             
@@ -62,6 +62,7 @@ public class OgnlSingleListIndexedMVA implements IFIndexedModelValueAccessor {
         return _isReadOnly;
     }
 
+    
     public Object getValue (int index) {
         try {
             final List<?> list = (List<?>) Ognl.getValue (_ognlBaseTree, _model);
@@ -71,10 +72,27 @@ public class OgnlSingleListIndexedMVA implements IFIndexedModelValueAccessor {
         }
         catch (OgnlException exc) {
             ErrorHandler.handle (exc);
-            return null; // für den Compiler
+            return null; // for the compiler
         }
     }
 
+    @Override
+    public void setValues (Object values) {
+        if (values instanceof List) {
+            final List<?> l = (List<?>) values;
+            for (int i=0; i<l.size(); i++) {
+                setValue (i, l.get(i));
+            }
+        }
+        else {
+            final Object[] l = (Object[]) values;
+            for (int i=0; i<l.length; i++) {
+                setValue (i, l[i]);
+            }
+        }
+    }
+    
+    @Override
     public void setValue (int index, Object value) {
         try {
             final List<?> list = (List<?>) Ognl.getValue (_ognlBaseTree, _model);

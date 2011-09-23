@@ -8,6 +8,7 @@ import net.ulrice.databinding.bufferedbinding.IFBindingGroup;
 import net.ulrice.databinding.bufferedbinding.IFBindingGroupEventListener;
 import net.ulrice.databinding.viewadapter.IFViewAdapter;
 
+
 public abstract class AbstractBindingGroup<T> implements IFBindingGroup,
 		IFAttributeModelEventListener<T> {
 	
