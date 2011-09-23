@@ -471,13 +471,14 @@ public class TableAM implements IFAttributeModel {
 	 */
 	@Override
 	public void write() {
-		int numRows = elements.size();
-
-		for (int i = 0; i < numRows; i++) {
-			Element elem = elements.get(i);
-			elem.writeObject();
-			tableMVA.setValue(i, elem.getOriginalValue());
-		}
+	    final List<Object> values = new ArrayList<Object>();
+	    
+	    for (Element elem: elements) {
+	        elem.writeObject();
+	        values.add (elem.getOriginalValue());
+	    }
+	    
+	    tableMVA.setValues (values);
 	}
 
 	protected Object createEmptyElementObject() {
