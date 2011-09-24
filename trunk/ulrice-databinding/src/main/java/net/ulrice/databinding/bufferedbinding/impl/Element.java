@@ -278,6 +278,7 @@ public class Element {
 			boolean valid) {
 		this.originalValueDirty = dirty;
 		this.originalValueValid = valid;
+		this.originalValue = currentValue;
 		if (modelList != null) {
 			for (int i = 0; i < modelList.size(); i++) {
 				GenericAM model = modelList.get(i);

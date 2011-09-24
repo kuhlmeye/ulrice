@@ -44,10 +44,10 @@ public class UTable extends JTable {
 //        setDefaultRenderer(Icon.class, new UTableVAIconCellRenderer());
 //        setDefaultRenderer(ImageIcon.class, new UTableVAIconCellRenderer());
 //        setDefaultRenderer(JComboBox.class, new UTableVAComboBoxCellRenderer());
-//        setDefaultRenderer(List.class, new UTableVATextCellRenderer()); // needed, or handled by default?
-        
-        
+//        setDefaultRenderer(List.class, new UTableVATextCellRenderer()); // needed, or handled by default?                    
 	}
+	
+	
 
 	public void setAssocTable(UTable assocTable) {
 		this.assocTable = assocTable;

@@ -236,6 +236,12 @@ public class UTableComponent extends JPanel {
 				column.setIdentifier(columnDefinition.getId());
 				column.setHeaderValue(columnDefinition);
 				column.setModelIndex(i - fixedColumns);
+				if(columnDefinition.getCellEditor() != null) {
+				    column.setCellEditor(columnDefinition.getCellEditor());
+				}
+				if(columnDefinition.getCellRenderer() != null) {
+				    column.setCellRenderer(columnDefinition.getCellRenderer());
+				}
 
 				columnModel.addColumn(column);
 				
