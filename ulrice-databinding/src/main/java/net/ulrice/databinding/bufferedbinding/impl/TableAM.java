@@ -208,13 +208,12 @@ public class TableAM implements IFAttributeModel {
 		} else {
 			invElements.add(element);
 		}
-
-		if (element.isDirty()
-				&& elementIdMap.containsKey(element.getUniqueId())) {
+	
+		if (element.isDirty() && elementIdMap.containsKey(element.getUniqueId()) && !newElements.contains(element) && !delElements.contains(element)) {
 			modElements.add(element);
 		}
-		if (!element.isDirty()
-				&& elementIdMap.containsKey(element.getUniqueId())) {
+		
+		if (!element.isDirty() && elementIdMap.containsKey(element.getUniqueId())) {
 			modElements.remove(element);
 		}
 
@@ -536,7 +535,12 @@ public class TableAM implements IFAttributeModel {
 		if (!removed) {
 			return false;
 		}
-		delElements.add(element);
+		if(!newElements.contains(element)) {
+		    delElements.add(element);
+		}
+		invElements.remove(element);
+		newElements.remove(element);
+		modElements.remove(element);
 		elementStateChanged(element);
 		fireElementDeleted(element);
 		fireUpdateViews();

@@ -1,10 +1,10 @@
 package net.ulrice.databinding.bufferedbinding.impl;
 
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
 import java.util.List;
 
 import javax.swing.event.EventListenerList;
+import javax.swing.table.TableCellEditor;
+import javax.swing.table.TableCellRenderer;
 
 import net.ulrice.databinding.converter.IFValueConverter;
 import net.ulrice.databinding.modelaccess.IFDynamicModelValueAccessor;
@@ -26,6 +26,9 @@ public class ColumnDefinition<T extends Object> {
 	private boolean useAutoValueConverter = true;
 	private boolean useValueRange = false;
 	private List<T> valueRange;
+	
+	private TableCellEditor cellEditor;
+	private TableCellRenderer cellRenderer;
 	
 	private EventListenerList eventListeners = new EventListenerList();
 	
@@ -264,4 +267,12 @@ public class ColumnDefinition<T extends Object> {
         eventListeners.remove(ColumnDefinitionChangedListener.class, listener);
     }
 
+    public TableCellEditor getCellEditor() {
+        return cellEditor;
+    }
+    
+    public TableCellRenderer getCellRenderer() {
+        return cellRenderer;
+    }
+    
 }
