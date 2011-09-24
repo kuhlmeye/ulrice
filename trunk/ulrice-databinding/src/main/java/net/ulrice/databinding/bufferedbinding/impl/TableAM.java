@@ -221,8 +221,7 @@ public class TableAM implements IFAttributeModel {
 		boolean oldDirty = dirty;
 
 		valid = invElements.isEmpty();
-		dirty = !modElements.isEmpty() || !delElements.isEmpty()
-				|| !newElements.isEmpty();
+		dirty = !modElements.isEmpty() || !delElements.isEmpty() || !newElements.isEmpty();
 
 		if (oldValid != valid || oldDirty != dirty) {
 			fireStateChanged();
