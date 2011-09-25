@@ -47,6 +47,10 @@ public class IncrementalLoader<T> extends AbstractProcess<T, Object>{
             final List<T> chunk = provider.getData (numLoaded, chunkSize);
             provider.onChunkLoaded (chunk, numLoaded);
             numLoaded += chunk.size();
+            
+            if(chunk.size() == 0) {
+                break;
+            }
         }
         provider.onFinished();
         return null;

@@ -62,6 +62,7 @@ public class UTableVADefaultRenderer extends DefaultTableCellRenderer {
             component.setBackground(row % 2 == 0 ? evenNormalBackground : oddNormalBackground);
         }
 
+        String columnId = table.getColumnModel().getColumn(column).getIdentifier().toString();
         // TODO SELECTION BACKGROUND
 
         boolean dirty = false;
@@ -72,8 +73,8 @@ public class UTableVADefaultRenderer extends DefaultTableCellRenderer {
             dirty |= element.isOriginalValueDirty();
             valid &= element.isOriginalValueValid();
 
-            dirty |= tableVA.isCellDirty(row, column);
-            valid &= tableVA.isCellValid(row, column);
+            dirty |= element.isColumnDirty(columnId);
+            valid &= element.isColumnValid(columnId);
 
             stateMarker.initialize(component);
             stateMarker.updateState(dirty, valid, component);
