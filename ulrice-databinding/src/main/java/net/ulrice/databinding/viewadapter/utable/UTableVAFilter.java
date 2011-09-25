@@ -325,7 +325,8 @@ public class UTableVAFilter extends RowFilter<UTableViewAdapter, String> impleme
 			}
 		}
 		rowSorter.sort();
-		rowSorter.getModel().getComponent().repaint();
+        rowSorter.getModel().fireTableStructureChanged();
+        //rowSorter.getModel().getComponent().repaint();
 	}
 
 	/**

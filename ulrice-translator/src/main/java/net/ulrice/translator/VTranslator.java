@@ -21,7 +21,7 @@ public class VTranslator extends JPanel {
 		usagesVA = new UTableViewAdapter();
 		translationsVA = new UTableViewAdapter();
 		
-		JTabbedPane tabbedPane = new JTabbedPane(JTabbedPane.BOTTOM);
+		JTabbedPane tabbedPane = new JTabbedPane();
 		tabbedPane.addTab("Usage", usagesVA.getComponent());
 		tabbedPane.addTab("Translations", translationsVA.getComponent());
 		

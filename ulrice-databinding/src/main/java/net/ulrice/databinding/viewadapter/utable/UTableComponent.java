@@ -64,13 +64,13 @@ public class UTableComponent extends JPanel {
 		this.fixedColumns = fixedColumns;
 		this.originalFixedColumns = fixedColumns;
 		
-		staticTableModel = new UTableModel(false, fixedColumns, viewAdapter);
+		staticTableModel = new UTableModel(false, UTableComponent.this.fixedColumns, viewAdapter);
 		staticTable = new UTable(viewAdapter, staticTableModel, rowSelModel);
 		
-		scrollTableModel = new UTableModel(true, fixedColumns, viewAdapter);
+		scrollTableModel = new UTableModel(true, UTableComponent.this.fixedColumns, viewAdapter);
 		scrollTable = new UTable(viewAdapter, scrollTableModel, rowSelModel);
 
-		sorter = new UTableRowSorter(viewAdapter, fixedColumns, staticTableModel, scrollTableModel);
+		sorter = new UTableRowSorter(viewAdapter, UTableComponent.this.fixedColumns, staticTableModel, scrollTableModel);
 		staticTable.setRowSorter(sorter.getStaticTableRowSorter());
 		scrollTable.setRowSorter(sorter.getScrollTableRowSorter());
 		
@@ -87,13 +87,29 @@ public class UTableComponent extends JPanel {
 		staticTable.getColumnModel().getSelectionModel().addListSelectionListener(new ListSelectionListener() {
 			@Override
 			public void valueChanged(ListSelectionEvent e) {
-				selColumn = staticTable.getSelectedColumn();
+			    if(staticTable.getSelectedColumn() >= 0) {
+			        selColumn = staticTable.getSelectedColumn();
+			    } 
+			    else if(scrollTable.getSelectedColumn() >= 0) {
+                    selColumn = scrollTable.getSelectedColumn() + UTableComponent.this.fixedColumns;
+                }
+			    else {
+			        selColumn = -1;
+			    }
 			}
 		});
 		scrollTable.getColumnModel().getSelectionModel().addListSelectionListener(new ListSelectionListener() {
 			@Override
 			public void valueChanged(ListSelectionEvent e) {
-				selColumn = scrollTable.getSelectedColumn() + fixedColumns;
+			    if(scrollTable.getSelectedColumn() >= 0) {
+			        selColumn = scrollTable.getSelectedColumn() + UTableComponent.this.fixedColumns;
+			    } 
+			    else if(staticTable.getSelectedColumn() >= 0) {
+                    selColumn = staticTable.getSelectedColumn();
+                } 
+			    else {
+			        selColumn = -1;
+			    }
 			}
 		});
 
@@ -215,12 +231,7 @@ public class UTableComponent extends JPanel {
 		if (columnDefinitions != null) {
 			for (int i = 0; i < fixedColumns; i++) {
 				ColumnDefinition<?> columnDefinition = columnDefinitions.get(i);
-				TableColumn column = new TableColumn();
-				column.setIdentifier(columnDefinition.getId());
-				column.setHeaderValue(columnDefinition);
-				column.setModelIndex(i);
-
-				columnModel.addColumn(column);
+                addColumn(columnModel, i, columnDefinition);
 			}
 		}
 
@@ -232,29 +243,33 @@ public class UTableComponent extends JPanel {
 		if (columnDefinitions != null) {
 			for (int i = fixedColumns; i < columnDefinitions.size(); i++) {
 				ColumnDefinition<?> columnDefinition = columnDefinitions.get(i);
-				TableColumn column = new TableColumn();
-				column.setIdentifier(columnDefinition.getId());
-				column.setHeaderValue(columnDefinition);
-				column.setModelIndex(i - fixedColumns);
-				if(columnDefinition.getCellEditor() != null) {
-				    column.setCellEditor(columnDefinition.getCellEditor());
-				}
-				if(columnDefinition.getCellRenderer() != null) {
-				    column.setCellRenderer(columnDefinition.getCellRenderer());
-				}
-
-				columnModel.addColumn(column);
-				
-				if(columnDefinition.isUseValueRange()) {				    
-				    if(columnDefinition.getValueRange() != null) {
-				        column.setCellEditor(new UTableComboBoxCellEditor(columnDefinition.getValueRange()));
-				    } else {
-                        column.setCellEditor(new UTableComboBoxCellEditor(Collections.EMPTY_LIST));
-				    }
-				}
+				addColumn(columnModel, i - fixedColumns, columnDefinition);
 			}
 		}
 	}
+
+    private void addColumn(TableColumnModel columnModel, int columnIndex, ColumnDefinition< ?> columnDefinition) {
+        TableColumn column = new TableColumn();
+        column.setIdentifier(columnDefinition.getId());
+        column.setHeaderValue(columnDefinition);
+        column.setModelIndex(columnIndex);
+        if(columnDefinition.getCellEditor() != null) {
+            column.setCellEditor(columnDefinition.getCellEditor());
+        }
+        if(columnDefinition.getCellRenderer() != null) {
+            column.setCellRenderer(columnDefinition.getCellRenderer());
+        }
+
+        columnModel.addColumn(column);
+        
+        if(columnDefinition.isUseValueRange()) {				    
+            if(columnDefinition.getValueRange() != null) {
+                column.setCellEditor(new UTableComboBoxCellEditor(columnDefinition.getValueRange()));
+            } else {
+                column.setCellEditor(new UTableComboBoxCellEditor(Collections.EMPTY_LIST));
+            }
+        }
+    }
 	
 	private void setFixedColumns(int fixedColumns) {
         this.fixedColumns = fixedColumns;
@@ -271,5 +286,9 @@ public class UTableComponent extends JPanel {
 	    }
 	    return modelCol;
 	}
+
+    public boolean stopEditing() {
+        return staticTable.getCellEditor().stopCellEditing() || scrollTable.getCellEditor().stopCellEditing();
+    }
 
 }

@@ -48,8 +48,8 @@ public class CTranslator extends AbstractController {
 		
 		processExecutor = new CtrlProcessExecutor(1); 
 		translationService.openTranslationService();
-			
-		model.getDictionaryAM().addViewAdapter(view.getDictionaryVA());
+
+        model.getDictionaryAM().addViewAdapter(view.getDictionaryVA());
 		model.getUsagesAM().addViewAdapter(view.getUsagesVA());
 		model.getTranslationsAM().addViewAdapter(view.getTranslationsVA());
 
@@ -57,13 +57,13 @@ public class CTranslator extends AbstractController {
 	}
 
     private void loadData() {
-        processExecutor.executeProcess(getUsageLoader());       
-        processExecutor.executeProcess(getTranslationLoader());       
         processExecutor.executeProcess(getDictionaryEntryLoader());
+        processExecutor.executeProcess(getUsageLoader());        
+        processExecutor.executeProcess(getTranslationLoader());      
     }
 
     private IncrementalLoader<DictionaryEntryDTO> getDictionaryEntryLoader() {
-        return new IncrementalLoader<DictionaryEntryDTO>(this, true, translationService.getDictionaryEntriesChunkSize(), Integer.MAX_VALUE, new IncrementalDataProvider<DictionaryEntryDTO>() {
+        return new IncrementalLoader<DictionaryEntryDTO>(this, false, translationService.getDictionaryEntriesChunkSize(), Integer.MAX_VALUE, new IncrementalDataProvider<DictionaryEntryDTO>() {
 
             @Override
             public List<DictionaryEntryDTO> getData(int firstRow, int maxNumRows) throws Exception {
@@ -88,7 +88,7 @@ public class CTranslator extends AbstractController {
     }
 
     private IncrementalLoader<TranslationDTO> getTranslationLoader() {
-        return new IncrementalLoader<TranslationDTO>(this, true, translationService.getTranslationsChunkSize(), Integer.MAX_VALUE, new IncrementalDataProvider<TranslationDTO>() {
+        return new IncrementalLoader<TranslationDTO>(this, false, translationService.getTranslationsChunkSize(), Integer.MAX_VALUE, new IncrementalDataProvider<TranslationDTO>() {
 
             @Override
             public List<TranslationDTO> getData(int firstRow, int maxNumRows) throws Exception {
@@ -113,7 +113,7 @@ public class CTranslator extends AbstractController {
     }
 
     private IncrementalLoader<UsageDTO> getUsageLoader() {
-        return new IncrementalLoader<UsageDTO>(this, true, translationService.getUsagesChunkSize(), Integer.MAX_VALUE, new IncrementalDataProvider<UsageDTO>() {
+        return new IncrementalLoader<UsageDTO>(this, false, translationService.getUsagesChunkSize(), Integer.MAX_VALUE, new IncrementalDataProvider<UsageDTO>() {
 
             @Override
             public List<UsageDTO> getData(int firstRow, int maxNumRows) throws Exception {
@@ -127,7 +127,9 @@ public class CTranslator extends AbstractController {
 
             @Override
             public void onChunkLoaded(List<UsageDTO> chunk, int firstRow) throws Exception {
-                model.getUsagesAM().read(chunk, true);
+                if(chunk != null) {
+                    model.getUsagesAM().read(chunk, true);
+                }
             }
 
             @Override
@@ -188,8 +190,8 @@ public class CTranslator extends AbstractController {
 				
 				processExecutor.executeProcess(saveDataProcess);
                 processExecutor.executeProcess(getUsageLoader(), saveDataProcess);
-                processExecutor.executeProcess(getTranslationLoader(), saveDataProcess);
                 processExecutor.executeProcess(getDictionaryEntryLoader(), saveDataProcess);
+                processExecutor.executeProcess(getTranslationLoader(), saveDataProcess);
 			}
 		};
 		

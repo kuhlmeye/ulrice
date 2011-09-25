@@ -130,7 +130,7 @@ public class TableAMTest {
         
         list.addAll(list2);
 
-        tableAM.read(list2, true, 2);
+        tableAM.read(list2, true);
 
         assertEquals(4, tableAM.getRowCount());
         assertEquals("Max Mustermann2", ((Person)tableAM.getElementAt(2).writeObject()).name);

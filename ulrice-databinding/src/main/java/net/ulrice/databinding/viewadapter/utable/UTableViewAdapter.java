@@ -199,13 +199,21 @@ public class UTableViewAdapter extends AbstractViewAdapter implements
 		fireTableChanged(e);
 	}
 
-	/**
-	 * Sends a {@link TableModelEvent} to all registered listeners to inform
-	 * them that the table structure has changed.
-	 */
-	public void fireTableStructureChanged() {
-		fireTableChanged(new TableModelEvent(this, TableModelEvent.HEADER_ROW));
-	}
+    /**
+     * Sends a {@link TableModelEvent} to all registered listeners to inform
+     * them that the table structure has changed.
+     */
+    public void fireTableStructureChanged() {
+        fireTableChanged(new TableModelEvent(this, TableModelEvent.HEADER_ROW));
+    }
+
+    /**
+     * Sends a {@link TableModelEvent} to all registered listeners to inform
+     * them that the table structure has changed.
+     */
+    public void fireTableDataChanged() {
+        fireTableChanged(new TableModelEvent(this));
+    }
 
 	/**
 	 * @param e
@@ -573,4 +581,9 @@ public class UTableViewAdapter extends AbstractViewAdapter implements
 		return getAttributeModel() != null ? getAttributeModel().getElementAt(
 				modelRow) : null;
 	}
+	
+	public boolean stopEditing() {
+	    return table.stopEditing();
+	}
+	
 }

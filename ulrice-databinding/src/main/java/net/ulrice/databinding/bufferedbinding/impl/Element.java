@@ -472,4 +472,12 @@ public class Element {
 	public boolean isColumnDirty(int column) {
 		return modelList.get(column).isDirty();
 	}
+
+    public boolean isColumnDirty(String columnId) {
+        return idModelMap.containsKey(columnId) ? idModelMap.get(columnId).isDirty() : false;
+    }
+
+    public boolean isColumnValid(String columnId) {
+        return idModelMap.containsKey(columnId) ? idModelMap.get(columnId).isValid() : true;
+    }
 }
