@@ -47,10 +47,19 @@ public class XMLInMemoryTranslationService implements IFTranslationService {
 	}
 
 	@Override
-	public List<DictionaryEntryDTO> findAllDictionaryEntries() {
+	public List<DictionaryEntryDTO> getDictionaryEntries(int start, int length) {
 		return new ArrayList<DictionaryEntryDTO>(dictionary.values());
 	}
-
+	
+	@Override
+	public int getNumDictionaryEntries() {
+	    return dictionary.size();
+	}
+	
+    @Override
+	public int getDictionaryEntriesChunkSize() {
+	    return 0;
+	}
 
 	private String buildDictionaryKey(DictionaryEntryDTO entry) {
 		StringBuffer key = new StringBuffer();
@@ -87,8 +96,16 @@ public class XMLInMemoryTranslationService implements IFTranslationService {
 	}
 	
 	@Override
-	public List<UsageDTO> findAllUsages() {
+	public List<UsageDTO> getUsages(int start, int length) {
 		return new ArrayList<UsageDTO>(usages.values());
+	}
+	
+	public int getNumUsages() {
+	    return usages.size();
+	}
+	
+	public int getUsagesChunkSize() {
+	    return 0;
 	}
 
 	@Override
@@ -110,8 +127,16 @@ public class XMLInMemoryTranslationService implements IFTranslationService {
 	}
 
 	@Override
-	public List<TranslationDTO> findAllTranslations() {
+	public List<TranslationDTO> getTranslations(int start, int length) {
 		return translations;
+	}
+	
+	public int getNumTranslations() {
+	    return translations.size();
+	}
+	
+	public int getTranslationsChunkSize() {
+	    return 0;
 	}
 
 	@Override

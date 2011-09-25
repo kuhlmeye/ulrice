@@ -10,7 +10,11 @@ public interface IFTranslationService {
 	
 	void deleteDictionaryEntry(DictionaryEntryDTO entry);
 	
-	List<DictionaryEntryDTO> findAllDictionaryEntries();
+	List<DictionaryEntryDTO> getDictionaryEntries(int start, int size);
+	
+	int getNumDictionaryEntries();
+	
+	int getDictionaryEntriesChunkSize();
 	
 	
 	void createUsage(UsageDTO usage);
@@ -19,7 +23,11 @@ public interface IFTranslationService {
 	
 	void deleteUsage(UsageDTO usage);
 	
-	List<UsageDTO> findAllUsages();
+	List<UsageDTO> getUsages(int start, int size);
+	
+	int getNumUsages();
+	
+	int getUsagesChunkSize();
 	
 	
 	void createTranslation(TranslationDTO translation);
@@ -28,7 +36,11 @@ public interface IFTranslationService {
 	
 	void deleteTranslation(TranslationDTO translation);
 	
-	List<TranslationDTO> findAllTranslations();
+	List<TranslationDTO> getTranslations(int start, int size);
+	
+	int getNumTranslations();
+	
+	int getTranslationsChunkSize();
 	
 	void openTranslationService();
 	

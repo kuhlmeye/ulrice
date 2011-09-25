@@ -16,7 +16,12 @@ import net.ulrice.module.impl.ModuleActionState;
 import net.ulrice.module.impl.action.ActionType;
 import net.ulrice.module.impl.action.UlriceAction;
 import net.ulrice.process.CtrlProcessExecutor;
+import net.ulrice.process.IncrementalDataProvider;
+import net.ulrice.process.IncrementalLoader;
+import net.ulrice.translator.service.DictionaryEntryDTO;
 import net.ulrice.translator.service.IFTranslationService;
+import net.ulrice.translator.service.TranslationDTO;
+import net.ulrice.translator.service.UsageDTO;
 
 
 public class CTranslator extends AbstractController {
@@ -30,6 +35,7 @@ public class CTranslator extends AbstractController {
 
 	public CTranslator(IFTranslationService translationService) {
 	    this.translationService = translationService;
+	    view.initialize(this);	    
 	}
 
 	public JComponent getView() {
@@ -46,9 +52,90 @@ public class CTranslator extends AbstractController {
 		model.getDictionaryAM().addViewAdapter(view.getDictionaryVA());
 		model.getUsagesAM().addViewAdapter(view.getUsagesVA());
 		model.getTranslationsAM().addViewAdapter(view.getTranslationsVA());
-		
-		processExecutor.executeProcess(new PLoadData(this, "Load Data", model, translationService));
+
+        loadData();
 	}
+
+    private void loadData() {
+        processExecutor.executeProcess(getUsageLoader());       
+        processExecutor.executeProcess(getTranslationLoader());       
+        processExecutor.executeProcess(getDictionaryEntryLoader());
+    }
+
+    private IncrementalLoader<DictionaryEntryDTO> getDictionaryEntryLoader() {
+        return new IncrementalLoader<DictionaryEntryDTO>(this, true, translationService.getDictionaryEntriesChunkSize(), Integer.MAX_VALUE, new IncrementalDataProvider<DictionaryEntryDTO>() {
+
+            @Override
+            public List<DictionaryEntryDTO> getData(int firstRow, int maxNumRows) throws Exception {
+                return translationService.getDictionaryEntries(firstRow, maxNumRows);
+            }
+
+            @Override
+            public int getNumRows() throws Exception {
+                return translationService.getNumDictionaryEntries();
+            }
+
+            @Override
+            public void onChunkLoaded(List<DictionaryEntryDTO> chunk, int firstRow) throws Exception {
+                model.getDictionaryAM().read(chunk, true);
+            }
+
+            @Override
+            public void onFinished() throws Exception {                
+            }
+            
+        });
+    }
+
+    private IncrementalLoader<TranslationDTO> getTranslationLoader() {
+        return new IncrementalLoader<TranslationDTO>(this, true, translationService.getTranslationsChunkSize(), Integer.MAX_VALUE, new IncrementalDataProvider<TranslationDTO>() {
+
+            @Override
+            public List<TranslationDTO> getData(int firstRow, int maxNumRows) throws Exception {
+                return translationService.getTranslations(firstRow, maxNumRows);
+            }
+
+            @Override
+            public int getNumRows() throws Exception {
+                return translationService.getNumTranslations();
+            }
+
+            @Override
+            public void onChunkLoaded(List<TranslationDTO> chunk, int firstRow) throws Exception {
+                model.getTranslationsAM().read(chunk, true);
+            }
+
+            @Override
+            public void onFinished() throws Exception {                
+            }
+            
+        });
+    }
+
+    private IncrementalLoader<UsageDTO> getUsageLoader() {
+        return new IncrementalLoader<UsageDTO>(this, true, translationService.getUsagesChunkSize(), Integer.MAX_VALUE, new IncrementalDataProvider<UsageDTO>() {
+
+            @Override
+            public List<UsageDTO> getData(int firstRow, int maxNumRows) throws Exception {
+                return translationService.getUsages(firstRow, maxNumRows);
+            }
+
+            @Override
+            public int getNumRows() throws Exception {
+                return translationService.getNumUsages();
+            }
+
+            @Override
+            public void onChunkLoaded(List<UsageDTO> chunk, int firstRow) throws Exception {
+                model.getUsagesAM().read(chunk, true);
+            }
+
+            @Override
+            public void onFinished() throws Exception {                
+            }
+            
+        });
+    }
 	
 	@Override
 	public List<ModuleActionState> getHandledActions() {
@@ -98,9 +185,11 @@ public class CTranslator extends AbstractController {
 			public void actionPerformed(ActionEvent e) {
 				// TODO Let user select locales in Dialog..
 				PSaveData saveDataProcess = new PSaveData(CTranslator.this, "Save Data", model, translationService);
-				PLoadData loadDataProcess = new PLoadData(CTranslator.this, "Load Data", model, translationService);				
+				
 				processExecutor.executeProcess(saveDataProcess);
-				processExecutor.executeProcess(loadDataProcess, saveDataProcess);
+                processExecutor.executeProcess(getUsageLoader(), saveDataProcess);
+                processExecutor.executeProcess(getTranslationLoader(), saveDataProcess);
+                processExecutor.executeProcess(getDictionaryEntryLoader(), saveDataProcess);
 			}
 		};
 		
