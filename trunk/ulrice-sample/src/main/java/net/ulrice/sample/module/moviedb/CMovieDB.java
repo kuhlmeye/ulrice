@@ -10,6 +10,7 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
 import net.ulrice.databinding.bufferedbinding.impl.BindingGroup;
+import net.ulrice.databinding.bufferedbinding.impl.CellChangedListener;
 import net.ulrice.databinding.bufferedbinding.impl.Element;
 import net.ulrice.databinding.bufferedbinding.impl.ColumnDefinition.ColumnType;
 import net.ulrice.databinding.validation.impl.StringLengthValidator;
@@ -57,7 +58,7 @@ public class CMovieDB extends AbstractController implements ListSelectionListene
 	public void postCreate() {
 	    overviewModel.setData(MovieData.generateData());
 		overviewGroup.bind(overviewModel.getAttributeModel(), view.getMovieTableAdapter());
-
+		
 		detailGroup.bind(detailModel.getAttributeModel("data.name"), view.getTitleVA());
 		detailGroup.bind(detailModel.getAttributeModel("data.year"), view.getYearVA());
 		detailGroup.bind(detailModel.getAttributeModel("data.director"), view.getDirectorVA());

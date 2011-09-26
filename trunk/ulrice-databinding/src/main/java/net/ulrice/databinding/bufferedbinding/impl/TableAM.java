@@ -194,12 +194,13 @@ public class TableAM implements IFAttributeModel {
 		return readOnly;
 	}
 
-	protected void elementDataChanged(Element element) {
+	protected void elementDataChanged(Element element, String columnId) {
 		fireUpdateViews();
 
 		for (TableConstraint constraint : tableConstraints) {
 			constraint.elementChanged(this, element);
 		}
+		fireCellDataChangedEvent(element, columnId);
 	}
 
 	protected void elementStateChanged(Element element) {
@@ -264,7 +265,23 @@ public class TableAM implements IFAttributeModel {
 	public void removeTableAMListener(TableAMListener listener) {
 	    listenerList.add(TableAMListener.class, listener);
 	}
+	
+	public void addCellChangedListener(CellChangedListener listener) {
+	    listenerList.add(CellChangedListener.class, listener);
+	}
+	
+	public void removeCellChangedListener(CellChangedListener listener) {
+	    listenerList.remove(CellChangedListener.class, listener);
+	}
 
+	public void fireCellDataChangedEvent(Element element, String columnId) {
+	    CellChangedListener[] listeners = listenerList.getListeners(CellChangedListener.class);
+	    if(listeners != null) {
+    	    for(CellChangedListener listener : listeners) {
+    	        listener.cellValueChanged(element, columnId);
+    	    }
+	    }
+	}
 
     private void fireColumnValueRangeChanged(ColumnDefinition<?> colDef) {
         TableAMListener[] listeners = listenerList.getListeners(TableAMListener.class);

@@ -194,7 +194,7 @@ public class Element {
 		}
 		clearElementValidationErrors();
 		model.setValue(aValue);
-		fireValueChanged();
+		fireValueChanged(columnId);
 		updateState();
 	}
 
@@ -241,8 +241,8 @@ public class Element {
 	 * @param newValue
 	 * @param oldValue
 	 */
-	private void fireValueChanged() {
-		tableAM.elementDataChanged(this);
+	private void fireValueChanged(String columnId) {
+		tableAM.elementDataChanged(this, columnId);
 	}
 
 	/**
@@ -290,7 +290,8 @@ public class Element {
 						.getValueConverter().modelToView(value) : value);
 				model.setValue(converted);
 			}
-			fireValueChanged();
+			// TODO Do we need this? Or is it only because of the change of the original value
+			fireValueChanged(null);
 			updateState();
 		}
 	}
