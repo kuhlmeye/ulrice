@@ -3,6 +3,7 @@ package net.ulrice.sample;
 import java.util.HashMap;
 import java.util.Map;
 
+import net.ulrice.databinding.bufferedbinding.IFAttributeInfo;
 import net.ulrice.databinding.bufferedbinding.IFAttributeModel;
 import net.ulrice.databinding.bufferedbinding.impl.AbstractBindingGroup;
 import net.ulrice.databinding.bufferedbinding.impl.GenericAM;
@@ -41,13 +42,16 @@ public class SingleObjectModel<T> extends AbstractBindingGroup<T> {
 
     @SuppressWarnings("rawtypes")
     public IFAttributeModel getAttributeModel(String path) {
+        IFAttributeInfo attributeInfo = new IFAttributeInfo() {
+        };
+        
         if (!path.startsWith("data.")) {
             path = "data." + path;
         }
 
         if (attributeModels.get(path) == null) {
             attributeModels.put(path, new GenericAM<T>(new ReflectionMVA(ReflectionMVA.createID(this, path), this,
-                path, false, UlriceReflectionUtils.getFieldType(dataClass, path.substring("data.".length())))));
+                path, false, UlriceReflectionUtils.getFieldType(dataClass, path.substring("data.".length()))), attributeInfo));
         }
         return attributeModels.get(path);
     }

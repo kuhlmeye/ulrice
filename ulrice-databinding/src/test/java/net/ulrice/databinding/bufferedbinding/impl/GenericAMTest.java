@@ -2,6 +2,7 @@ package net.ulrice.databinding.bufferedbinding.impl;
 
 
 import static org.junit.Assert.assertEquals;
+import net.ulrice.databinding.bufferedbinding.IFAttributeInfo;
 import net.ulrice.databinding.bufferedbinding.impl.GenericAM;
 import net.ulrice.databinding.modelaccess.impl.ReflectionMVA;
 import net.ulrice.databinding.validation.impl.RegExValidator;
@@ -27,9 +28,11 @@ public class GenericAMTest {
 	 */
 	@Before
 	public void setUp() throws Exception {
-        stringAAM = new GenericAM<String>(new ReflectionMVA(this, "stringA"));
-        stringBAM = new GenericAM<String>(new ReflectionMVA(this, "stringB"));
-        stringBAM.addValidator(
+       IFAttributeInfo attributeInfo = new IFAttributeInfo() {};
+	    
+	   stringAAM = new GenericAM<String>(new ReflectionMVA(this, "stringA"), attributeInfo);
+       stringBAM = new GenericAM<String>(new ReflectionMVA(this, "stringB"), attributeInfo);
+       stringBAM.addValidator(
                 new RegExValidator<String>("StringB", "String is not 'stringB'"));
 
 	}

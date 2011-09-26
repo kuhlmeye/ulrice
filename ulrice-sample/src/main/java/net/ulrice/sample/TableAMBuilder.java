@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import net.ulrice.databinding.bufferedbinding.IFAttributeInfo;
 import net.ulrice.databinding.bufferedbinding.impl.ColumnDefinition;
 import net.ulrice.databinding.bufferedbinding.impl.ColumnDefinition.ColumnType;
 import net.ulrice.databinding.bufferedbinding.impl.TableAM;
@@ -92,7 +93,11 @@ public class TableAMBuilder {
     }
 
     public TableAM build() {
-        final TableAM result = new TableAM(new IndexedReflectionMVA(modelRoot, elementCollectionPath));
+        IFAttributeInfo attributeInfo = new IFAttributeInfo() {
+        };
+        
+        
+        final TableAM result = new TableAM(new IndexedReflectionMVA(modelRoot, elementCollectionPath), attributeInfo);
         for (ColumnDefinition<?> colDef: columnDefs) {
             result.addColumn (colDef);
         }

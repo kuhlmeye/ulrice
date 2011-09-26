@@ -9,6 +9,7 @@ import java.util.Set;
 
 import javax.swing.event.EventListenerList;
 
+import net.ulrice.databinding.bufferedbinding.IFAttributeInfo;
 import net.ulrice.databinding.bufferedbinding.IFAttributeModel;
 import net.ulrice.databinding.bufferedbinding.IFAttributeModelEventListener;
 import net.ulrice.databinding.converter.IFValueConverter;
@@ -46,11 +47,14 @@ public class TableAM implements IFAttributeModel {
 	private List<IFViewAdapter> viewAdapterList = new ArrayList<IFViewAdapter>();
 
 	private IFValueConverter valueConverter;
+	
+	private IFAttributeInfo attributeInfo;
+	
 	private boolean initialized = false;
 	private boolean dirty = false;
 	private boolean valid = true;
 
-	public TableAM(IFIndexedModelValueAccessor tableMVA, boolean readOnly) {
+	public TableAM(IFIndexedModelValueAccessor tableMVA, IFAttributeInfo attributeInfo, boolean readOnly) {
 		this.tableMVA = tableMVA;
 
 		nextUniqueId = System.currentTimeMillis();
@@ -60,8 +64,8 @@ public class TableAM implements IFAttributeModel {
 		this.readOnly = readOnly;
 	}
 
-	public TableAM(IFIndexedModelValueAccessor tableMVA) {
-		this(tableMVA, false);
+	public TableAM(IFIndexedModelValueAccessor tableMVA, IFAttributeInfo attributeInfo) {
+		this(tableMVA, attributeInfo, false);
 	}
 
 	/**
@@ -680,4 +684,9 @@ public class TableAM implements IFAttributeModel {
 			constraint.tableCleared(this);
 		}
 	}
+
+    @Override
+    public IFAttributeInfo getAttributeInfo() {
+        return attributeInfo;
+    }
 }

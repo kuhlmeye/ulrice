@@ -6,9 +6,9 @@ import java.util.List;
 import javax.swing.event.EventListenerList;
 
 import net.ulrice.databinding.UlriceDatabinding;
+import net.ulrice.databinding.bufferedbinding.IFAttributeInfo;
 import net.ulrice.databinding.bufferedbinding.IFAttributeModel;
 import net.ulrice.databinding.bufferedbinding.IFAttributeModelEventListener;
-import net.ulrice.databinding.converter.HeuristicConverterFactory;
 import net.ulrice.databinding.converter.IFValueConverter;
 import net.ulrice.databinding.converter.impl.DoNothingConverter;
 import net.ulrice.databinding.modelaccess.IFModelValueAccessor;
@@ -44,6 +44,8 @@ public class GenericAM<T> implements IFAttributeModel<T>, IFViewChangeListener {
 	private boolean readOnly = false;
 
 	private IFValueConverter valueConverter;
+	
+	private IFAttributeInfo attributeInfo;
 
 	private boolean dirty = false;
 	private boolean valid = true;
@@ -59,8 +61,9 @@ public class GenericAM<T> implements IFAttributeModel<T>, IFViewChangeListener {
 	 * @param dataAccessor
 	 *            The data accessor.
 	 */
-	public GenericAM(IFModelValueAccessor modelAccessor) {
+	public GenericAM(IFModelValueAccessor modelAccessor, IFAttributeInfo attributeInfo) {
 		this.modelAccessor = modelAccessor;
+		this.attributeInfo = attributeInfo;
 		this.id = modelAccessor.getAttributeId();
 	}
 
@@ -347,4 +350,9 @@ public class GenericAM<T> implements IFAttributeModel<T>, IFViewChangeListener {
 	public boolean isInitialized() {
 		return initialized;
 	}
+
+    @Override
+    public IFAttributeInfo getAttributeInfo() {
+        return attributeInfo;
+    }
 }

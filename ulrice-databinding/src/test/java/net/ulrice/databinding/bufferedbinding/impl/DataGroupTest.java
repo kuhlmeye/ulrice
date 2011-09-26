@@ -1,6 +1,7 @@
 package net.ulrice.databinding.bufferedbinding.impl;
 
 import static org.junit.Assert.assertEquals;
+import net.ulrice.databinding.bufferedbinding.IFAttributeInfo;
 import net.ulrice.databinding.bufferedbinding.impl.BindingGroup;
 import net.ulrice.databinding.bufferedbinding.impl.GenericAM;
 import net.ulrice.databinding.modelaccess.impl.ReflectionMVA;
@@ -39,10 +40,13 @@ public class DataGroupTest {
     @SuppressWarnings("unchecked")
     @Before
     public void setUp() throws Exception {
-        stringAAM = new GenericAM<String>(new ReflectionMVA(this, "stringA"));
-        stringBAM = new GenericAM<String>(new ReflectionMVA(this, "stringB"));
-        intAAM = new GenericAM<Integer>(new ReflectionMVA(this, "intA"));
-        intBAM = new GenericAM<Integer>(new ReflectionMVA(this, "intB"));
+        IFAttributeInfo attributeInfo = new IFAttributeInfo() {
+        };
+        
+        stringAAM = new GenericAM<String>(new ReflectionMVA(this, "stringA"), attributeInfo);
+        stringBAM = new GenericAM<String>(new ReflectionMVA(this, "stringB"), attributeInfo);
+        intAAM = new GenericAM<Integer>(new ReflectionMVA(this, "intA"), attributeInfo);
+        intBAM = new GenericAM<Integer>(new ReflectionMVA(this, "intB"), attributeInfo);
 
         dataGroup = new BindingGroup();
         dataGroup.addAttributeModel(stringAAM);
