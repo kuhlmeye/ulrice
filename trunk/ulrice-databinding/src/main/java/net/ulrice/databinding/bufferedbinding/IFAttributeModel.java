@@ -85,4 +85,6 @@ public interface IFAttributeModel<T> extends IFBinding {
 	void setValueConverter(IFValueConverter valueConverter);		
 	
 	boolean isInitialized();
+	
+	IFAttributeInfo getAttributeInfo();
 }
