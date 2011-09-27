@@ -1,28 +1,30 @@
 package net.ulrice.databinding.bufferedbinding.impl;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
 import net.ulrice.databinding.validation.ValidationError;
 
-public class UniqueConstraint implements TableConstraint {
+public class UniqueConstraint implements ElementLifecycleListener {
 
 	private String[] columnIds;
 
-	private Map<String, Set<String>> uniqueMap = new HashMap<String, Set<String>>();
+	private Map<List<?>, Set<String>> uniqueMap = new HashMap<List<?>, Set<String>>();
 
-	private Map<String, String> keyMap = new HashMap<String, String>();
+	private Map<String, List<?>> keyMap = new HashMap<String, List<?>>();
 
-	private Map<String, ValidationError> currentErrorMap = new HashMap<String, ValidationError>();
+	private Map<List<?>, ValidationError> currentErrorMap = new HashMap<List<?>, ValidationError>();
 
 	public UniqueConstraint(String... columnIds) {
 		this.columnIds = columnIds;
 	}
 
 	@Override
-	public void elementChanged(TableAM table, Element element) {
+	public void elementChanged(TableAM table, Element element, String columnId) {
 		checkUniqueConstraint(table, element);
 	}
 
@@ -47,7 +49,7 @@ public class UniqueConstraint implements TableConstraint {
 			return;
 		}
 
-		String key = buildKey(element);
+		List<?> key = buildKey(element);
 		if (handleKey(table, element.getUniqueId(), key)) {
 			if (uniqueMap.containsKey(key)) {
 				Set<String> uniqueIdSet = uniqueMap.get(key);
@@ -70,8 +72,8 @@ public class UniqueConstraint implements TableConstraint {
 		}
 	}
 
-	private boolean handleKey(TableAM table, String uniqueId, String key) {
-		String oldKey = keyMap.get(uniqueId);
+	private boolean handleKey(TableAM table, String uniqueId, List<?> key) {
+		List<?> oldKey = keyMap.get(uniqueId);
 		if (oldKey == null && key != null) {
 			keyMap.put(uniqueId, key);
 			return true;
@@ -100,17 +102,11 @@ public class UniqueConstraint implements TableConstraint {
 		return false;
 	}
 
-	private String buildKey(Element element) {
-		StringBuffer buffer = new StringBuffer();
-		int i = 0;
-		for (String columnId : columnIds) {
-			buffer.append('#').append(i).append(':');
-			Object value = element.getValueAt(columnId);
-			if (value != null) {
-				buffer.append(value);
-			}
+	private List<?> buildKey(Element element) {
+	    List<Object> key = new ArrayList<Object>(columnIds.length);
+	    for (String columnId : columnIds) {
+	        key.add(element.getValueAt(columnId));
 		}
-		String key = buffer.toString();
-		return key;
+	    return key;
 	}
 }

@@ -1,8 +1,10 @@
 package net.ulrice.databinding.bufferedbinding.impl;
 
-public interface TableConstraint {
+import java.util.EventListener;
 
-	void elementChanged(TableAM table, Element element);
+public interface ElementLifecycleListener extends EventListener {
+
+	void elementChanged(TableAM table, Element element, String columnId);
 
 	void elementAdded(TableAM table, Element element);
 	
