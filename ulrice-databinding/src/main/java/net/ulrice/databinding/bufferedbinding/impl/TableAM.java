@@ -201,11 +201,14 @@ public class TableAM implements IFAttributeModel {
 
 	protected void elementDataChanged(Element element, String columnId) {
 		fireUpdateViews();
-		
+
+		if(uniqueConstraint != null) {
+		    uniqueConstraint.elementChanged(this, element, columnId);
+		}
+
 		ElementLifecycleListener[] listeners = listenerList.getListeners(ElementLifecycleListener.class);
 		if(listeners != null) {
     		for (ElementLifecycleListener constraint : listeners) {
-    		    uniqueConstraint.elementChanged(this, element, columnId);
     			constraint.elementChanged(this, element, columnId);
     		}
 		}
@@ -695,30 +698,39 @@ public class TableAM implements IFAttributeModel {
 	}
 
 	private void fireElementAdded(Element element) {
+	    if(uniqueConstraint != null) {
+	        uniqueConstraint.elementAdded(this, element);
+	    }
+
         ElementLifecycleListener[] listeners = listenerList.getListeners(ElementLifecycleListener.class);
         if(listeners != null) {
             for (ElementLifecycleListener constraint : listeners) {
-    		    uniqueConstraint.elementAdded(this, element);
     			constraint.elementAdded(this, element);
     		}
     	}
 	}
 
 	private void fireElementDeleted(Element element) {
+        if(uniqueConstraint != null) {
+            uniqueConstraint.elementRemoved(this, element);
+        }
+
         ElementLifecycleListener[] listeners = listenerList.getListeners(ElementLifecycleListener.class);
         if(listeners != null) {
             for (ElementLifecycleListener constraint : listeners) {
-    	        uniqueConstraint.elementRemoved(this, element);
-    			constraint.elementRemoved(this, element);
+                constraint.elementRemoved(this, element);
     		}
         }
 	}
 
 	private void fireTableCleared() {
+        if(uniqueConstraint != null) {
+            uniqueConstraint.tableCleared(this);
+        }
+
 	    ElementLifecycleListener[] listeners = listenerList.getListeners(ElementLifecycleListener.class);
 	    if(listeners != null) {
     		for (ElementLifecycleListener constraint : listeners) {
-    		    uniqueConstraint.tableCleared(this);
     			constraint.tableCleared(this);
     		}
 	    }
@@ -726,10 +738,13 @@ public class TableAM implements IFAttributeModel {
 	
 
     private void fireElementStatusChanged(Element element) {
+        if(uniqueConstraint != null) {
+            uniqueConstraint.elementStateChanged(this, element);
+        }
+
         ElementLifecycleListener[] listeners = listenerList.getListeners(ElementLifecycleListener.class);
         if(listeners != null) {
             for (ElementLifecycleListener constraint : listeners) {
-                uniqueConstraint.elementStateChanged(this, element);
                 constraint.elementStateChanged(this, element);
             }
         }
