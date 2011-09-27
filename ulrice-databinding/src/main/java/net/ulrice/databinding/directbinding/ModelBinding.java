@@ -39,7 +39,7 @@ import net.ulrice.databinding.viewadapter.impl.factory.HeuristicViewAdapterFacto
 
 
 /**
- * Dies ist die Einstiegsklasse - sie repr‰sentiert bzw. sammelt die Detail zu einem Binding von UI-Elementen
+ * Dies ist die Einstiegsklasse - sie repr√§sentiert bzw. sammelt die Detail zu einem Binding von UI-Elementen
  *  an ein Model. 
  */
 public class ModelBinding {
