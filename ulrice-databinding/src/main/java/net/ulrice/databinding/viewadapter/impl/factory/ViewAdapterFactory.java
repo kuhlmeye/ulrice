@@ -16,63 +16,38 @@ import net.ulrice.databinding.viewadapter.utable.UTableViewAdapter;
 
 public class ViewAdapterFactory {
 
-    public static void setDefaultStateMarker(IFViewAdapter< ?, ?> viewAdapter) {
-        if (viewAdapter instanceof JTableViewAdapter) {
-            viewAdapter.setStateMarker(new BackgroundStateMarker());
-        }
-        else if (viewAdapter instanceof UTableViewAdapter) {
-            ((UTableViewAdapter) viewAdapter).setCellStateMarker(new BackgroundStateMarker());
-        }
-        else {
-            BorderStateMarker stateMarker = new BorderStateMarker();
-            viewAdapter.setStateMarker(stateMarker);
-            viewAdapter.getComponent().setBorder(stateMarker);
-        }
+    private static ViewAdapterFactoryCallback callback;
+    
+    public static void setViewAdapterFactoryCallback(ViewAdapterFactoryCallback callback) {
+        ViewAdapterFactory.callback = callback;
+    }    
+    
+    public static void setDefaultStateMarker(IFViewAdapter< ?, ?> viewAdapter) {        
+        callback.setDefaultStateMarker(viewAdapter);
     }
 
     public static void setDefaultTooltipHandler(IFViewAdapter< ?, ?> viewAdapter) {
-        if (viewAdapter instanceof UTableViewAdapter) {
-            ((UTableViewAdapter) viewAdapter).setCellTooltipHandler(new DetailedCellTooltipHandler());
-        }
-        else {
-            viewAdapter.setTooltipHandler(new DetailedTooltipHandler());
-        }
+        callback.setDefaultTooltipHandler(viewAdapter);
     }
 
     public static JTextComponentViewAdapter createTextFieldAdapter() {
-        JTextComponentViewAdapter viewAdapter = new JTextComponentViewAdapter();
-        setDefaultStateMarker(viewAdapter);
-        setDefaultTooltipHandler(viewAdapter);
-        return viewAdapter;
+        return callback.createTextFieldAdapter();
     }
 
     public static JTableViewAdapter createTableViewAdapter() {
-        JTableViewAdapter viewAdapter = new JTableViewAdapter();
-        viewAdapter.getComponent().setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
-        setDefaultStateMarker(viewAdapter);
-        setDefaultTooltipHandler(viewAdapter);
-        return viewAdapter;
+        return callback.createTableViewAdapter();
     }
 
     public static UTableViewAdapter createUTableViewAdapter(int staticColumns) {
-        UTableViewAdapter viewAdapter = new UTableViewAdapter(staticColumns);
-        setDefaultStateMarker(viewAdapter);
-        setDefaultTooltipHandler(viewAdapter);
-        return viewAdapter;
+        return callback.createUTableViewAdapter(staticColumns);
     }
 
     public static <M> JComboBoxViewAdapter createComboBoxAdapter(PresentationProvider<M> presentationProvider) {
-        JComboBoxViewAdapter<M> viewAdapter = new JComboBoxViewAdapter<M>(presentationProvider);
-        setDefaultStateMarker(viewAdapter);
-        setDefaultTooltipHandler(viewAdapter);
-        return viewAdapter;
+        return callback.createComboBoxAdapter(presentationProvider);
     }
 
     public static JCheckBoxViewAdapter createCheckBoxAdapter() {
-        JCheckBoxViewAdapter viewAdapter = new JCheckBoxViewAdapter();
-        setDefaultStateMarker(viewAdapter);
-        setDefaultTooltipHandler(viewAdapter);
-        return viewAdapter;
+        return callback.createCheckBoxAdapter();
     }
 
 }
