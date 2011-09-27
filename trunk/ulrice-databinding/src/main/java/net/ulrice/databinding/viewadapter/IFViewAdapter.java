@@ -8,12 +8,17 @@ import net.ulrice.databinding.converter.IFValueConverter;
 
 public interface IFViewAdapter <M, V> {
 
+    void bind(IFBinding binding);
+    void detach(IFBinding binding);
 	void updateFromBinding(IFBinding binding);
 	
 	M getValue();
 
     JComponent getComponent();
 	
+    void addBindingListener(ViewAdapterBindingListener l);
+    void removeBindingListener(ViewAdapterBindingListener l);
+    
     void addViewChangeListener (IFViewChangeListener l);
     void removeViewChangeListener (IFViewChangeListener l);
 

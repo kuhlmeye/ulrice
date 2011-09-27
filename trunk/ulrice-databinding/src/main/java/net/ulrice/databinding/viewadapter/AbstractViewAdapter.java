@@ -3,13 +3,17 @@ package net.ulrice.databinding.viewadapter;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.swing.event.EventListenerList;
+
 import net.ulrice.databinding.IFBinding;
+import net.ulrice.databinding.bufferedbinding.IFAttributeModel;
+import net.ulrice.databinding.bufferedbinding.impl.TableAM;
 import net.ulrice.databinding.converter.IFValueConverter;
 import net.ulrice.databinding.converter.impl.DoNothingConverter;
 
 public abstract class AbstractViewAdapter<M, V> implements IFViewAdapter<M, V> {
 
-    private final List<IFViewChangeListener> _listeners = new ArrayList<IFViewChangeListener>();
+    private final EventListenerList listenerList = new EventListenerList();
 
     private boolean inNotification = false;
 
@@ -30,13 +34,51 @@ public abstract class AbstractViewAdapter<M, V> implements IFViewAdapter<M, V> {
     protected void fireViewChange() {
         inNotification = true;
         if (isEnabled()) {
-            for (IFViewChangeListener l : _listeners) {
-                l.viewValueChanged(this);
+            IFViewChangeListener[] listeners = listenerList.getListeners(IFViewChangeListener.class);
+            if(listeners != null) {
+                for (IFViewChangeListener l : listeners) {
+                    l.viewValueChanged(this);
+                }
             }
         }
         inNotification = false;
     }
 
+    public void addBindingListener(ViewAdapterBindingListener l) {
+        listenerList.add(ViewAdapterBindingListener.class, l);
+    }
+    
+    public void removeBindingListener(ViewAdapterBindingListener l) {
+        listenerList.remove(ViewAdapterBindingListener.class, l);
+    }
+    
+    
+
+
+    protected void fireAttributeModelBound(IFBinding binding) {
+        ViewAdapterBindingListener[] listeners = listenerList.getListeners(ViewAdapterBindingListener.class);
+        for (ViewAdapterBindingListener listener : listeners) {
+            listener.attributeModelBound(this, binding);
+        }
+    }
+
+    protected void fireAttributeModelDetached(IFBinding binding) {
+        ViewAdapterBindingListener[] listeners = listenerList.getListeners(ViewAdapterBindingListener.class);
+        for (ViewAdapterBindingListener listener : listeners) {
+            listener.attributeModelDetached(this, binding);
+        }
+    }
+
+    @Override
+    public void bind(IFBinding binding) {
+        fireAttributeModelBound(binding);
+    }
+    
+    @Override
+    public void detach(IFBinding binding) {
+        fireAttributeModelDetached(binding);
+    }
+    
     @Override
     public void updateFromBinding(IFBinding binding) {
         if (!isInNotification()) {
@@ -58,14 +100,15 @@ public abstract class AbstractViewAdapter<M, V> implements IFViewAdapter<M, V> {
 
     protected abstract void removeComponentListener();
 
+    
     @Override
     public void addViewChangeListener(IFViewChangeListener l) {
-        _listeners.add(l);
+        listenerList.add(IFViewChangeListener.class, l);
     }
 
     @Override
     public void removeViewChangeListener(IFViewChangeListener l) {
-        _listeners.remove(l);
+        listenerList.remove(IFViewChangeListener.class, l);
     }
 
     protected boolean isInNotification() {

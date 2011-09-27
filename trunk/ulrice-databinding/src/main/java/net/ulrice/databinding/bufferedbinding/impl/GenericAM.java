@@ -320,6 +320,13 @@ public class GenericAM<T> implements IFAttributeModel<T>, IFViewChangeListener {
 
 		viewAdapterList.add(viewAdapter);
 		viewAdapter.addViewChangeListener(this);
+		viewAdapter.bind(this);
+	}
+	
+	public void removeViewAdapter(IFViewAdapter viewAdapter) {
+	    viewAdapterList.remove(viewAdapter);
+	    viewAdapter.removeViewChangeListener(this);
+	    viewAdapter.detach(this);
 	}
 
 	@Override

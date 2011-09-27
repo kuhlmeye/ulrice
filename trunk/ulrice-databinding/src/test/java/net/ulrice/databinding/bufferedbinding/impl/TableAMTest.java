@@ -34,7 +34,7 @@ public class TableAMTest {
 		tableAM.addColumn(new ColumnDefinition<String>(new DynamicReflectionMVA(Person.class, "name"), String.class, ColumnType.NewEditable));
 		tableAM.addColumn(new ColumnDefinition<Integer>(new DynamicReflectionMVA(Person.class, "age"), Integer.class));
 		
-		tableAM.addTableConstraint(new UniqueConstraint("Person.name"));
+		tableAM.addElementLifecycleListener(new UniqueConstraint("Person.name"));
 		
 		list = new LinkedList<Person>();
 

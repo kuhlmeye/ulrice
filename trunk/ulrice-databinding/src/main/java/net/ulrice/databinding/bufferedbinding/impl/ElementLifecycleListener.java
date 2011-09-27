@@ -10,5 +10,7 @@ public interface ElementLifecycleListener extends EventListener {
 	
 	void elementRemoved(TableAM table, Element element);
 
+	void elementStateChanged(TableAM table, Element element);
+	
 	void tableCleared(TableAM table);
 }
