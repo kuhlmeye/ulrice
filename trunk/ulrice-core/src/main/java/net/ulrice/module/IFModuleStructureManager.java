@@ -38,4 +38,6 @@ public interface IFModuleStructureManager {
 	 * @param listener The listener that should be removed.
 	 */
 	public void removeModuleStructureEventListener(IFModuleStructureEventListener listener);
+
+    void fireModuleStructureChanged();
 }
