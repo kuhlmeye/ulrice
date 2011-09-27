@@ -341,7 +341,6 @@ public class ModuleManager implements IFModuleManager, IFModuleStructureManager 
 	 */
 	public void addModuleGroup(IFModuleGroup group) {
 		rootGroup.addModuleGroup(group);
-		fireModuleStructureChanged();
 	}
 
 	/**
@@ -358,7 +357,6 @@ public class ModuleManager implements IFModuleManager, IFModuleStructureManager 
 		}
 
 		rootGroup.addModule(module);
-		fireModuleStructureChanged();
 	}
 
 
@@ -441,7 +439,7 @@ public class ModuleManager implements IFModuleManager, IFModuleStructureManager 
 	 * Inform the event listeners after the structure of the module tree has
 	 * changed (e.g. adding/removing a module(group))
 	 */
-	private void fireModuleStructureChanged() {
+	public void fireModuleStructureChanged() {
 		// Inform event listeners.
 		IFModuleStructureEventListener[] listeners = listenerList.getListeners(IFModuleStructureEventListener.class);
 		if (listeners != null) {

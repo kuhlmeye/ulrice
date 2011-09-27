@@ -1,7 +1,7 @@
 package net.ulrice.module.impl;
 
+import java.util.ArrayList;
 import java.util.Collections;
-import java.util.LinkedList;
 import java.util.List;
 
 import net.ulrice.module.IFModule;
@@ -10,10 +10,10 @@ import net.ulrice.module.IFModuleGroup;
 public class ModuleGroup implements IFModuleGroup {
 
 	/** The list of contained module groups. */
-	private List<IFModuleGroup> moduleGroups = new LinkedList<IFModuleGroup>();
+	private List<IFModuleGroup> moduleGroups = new ArrayList<IFModuleGroup>();
 
 	/** The list of modules directly assigned to the root group. */
-	private List<IFModule> modules = new LinkedList<IFModule>();
+	private List<IFModule> modules = new ArrayList<IFModule>();
 
     private int orderNumber;
 
@@ -89,5 +89,5 @@ public class ModuleGroup implements IFModuleGroup {
     @Override
     public String getTitle() {
         return translatedModuleName;
-    }
+    }    
 }

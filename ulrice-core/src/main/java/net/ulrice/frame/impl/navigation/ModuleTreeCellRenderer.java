@@ -16,11 +16,17 @@ public class ModuleTreeCellRenderer extends DefaultTreeCellRenderer {
 
 		Object renderValue = value;
 		
-		if(value instanceof IFModule) {
-			IFModule module = (IFModule) renderValue;
-			StringBuffer buffer = new StringBuffer();
-			buffer.append(module.getModuleTitle(Usage.ModuleTree));
-			renderValue = buffer.toString();
+		if(value instanceof ModuleTreeNode) {
+		    ModuleTreeNode node = (ModuleTreeNode) renderValue;
+		    if(node.isGroup()) {
+                StringBuffer buffer = new StringBuffer();
+                buffer.append(node.getModuleGroup().getTitle());
+                renderValue = buffer.toString();
+		    } else {
+    			StringBuffer buffer = new StringBuffer();
+    			buffer.append(node.getModule().getModuleTitle(Usage.ModuleTree));
+    			renderValue = buffer.toString();
+		    }
 		}
 	
 		

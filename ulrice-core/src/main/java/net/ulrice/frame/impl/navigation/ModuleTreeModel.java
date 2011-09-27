@@ -1,5 +1,8 @@
 package net.ulrice.frame.impl.navigation;
 
+import java.util.Comparator;
+
+import javax.jws.soap.SOAPBinding.Use;
 import javax.swing.event.EventListenerList;
 import javax.swing.event.TreeModelEvent;
 import javax.swing.event.TreeModelListener;
@@ -7,8 +10,10 @@ import javax.swing.tree.TreeModel;
 import javax.swing.tree.TreePath;
 
 import net.ulrice.Ulrice;
+import net.ulrice.module.IFModule;
 import net.ulrice.module.IFModuleGroup;
 import net.ulrice.module.IFModuleStructureManager;
+import net.ulrice.module.IFModuleTitleProvider.Usage;
 import net.ulrice.module.event.IFModuleStructureEventListener;
 
 /**
@@ -22,14 +27,21 @@ public class ModuleTreeModel implements TreeModel, IFModuleStructureEventListene
 	private EventListenerList listenerList = new EventListenerList();
 
 	/** The reference to the used structure manager of ulrice. */
-	private IFModuleStructureManager structureManager;
+	private IFModuleStructureManager structureManager;		
 
+	private ModuleTreeNode root;
+
+    private ModuleTreeNodeFilter moduleTreeFilter;
+
+    private Comparator<ModuleTreeNode> moduleNodeComparator;
+	
 	/**
 	 * Creates a new model of the module tree.
 	 */
 	public ModuleTreeModel() {
 		structureManager = Ulrice.getModuleStructureManager();
 		structureManager.addModuleStructureEventListener(this);
+		
 	}
 
 	/**
@@ -37,11 +49,8 @@ public class ModuleTreeModel implements TreeModel, IFModuleStructureEventListene
 	 */
 	@Override
 	public Object getChild(Object parent, int index) {
-		if (parent instanceof IFModuleGroup) {
-			IFModuleGroup group = (IFModuleGroup) parent;
-			int groups = group.getModuleGroups() == null ? 0 : group.getModuleGroups().size();
-
-			return index < groups ? group.getModuleGroups().get(index) : group.getModules().get(index - groups);
+		if (parent instanceof ModuleTreeNode) {
+			return ((ModuleTreeNode)parent).getChild(index);
 		}
 
 		return null;
@@ -52,12 +61,8 @@ public class ModuleTreeModel implements TreeModel, IFModuleStructureEventListene
 	 */
 	@Override
 	public int getChildCount(Object parent) {
-		if (parent instanceof IFModuleGroup) {
-			IFModuleGroup group = (IFModuleGroup) parent;
-			int groups = group.getModuleGroups() == null ? 0 : group.getModuleGroups().size();
-			int modules = group.getModules() == null ? 0 : group.getModules().size();
-
-			return modules + groups;
+		if (parent instanceof ModuleTreeNode) {
+			return ((ModuleTreeNode)parent).getChildCount();
 		}
 
 		return 0;
@@ -69,17 +74,8 @@ public class ModuleTreeModel implements TreeModel, IFModuleStructureEventListene
 	 */
 	@Override
 	public int getIndexOfChild(Object parent, Object child) {
-		if (parent instanceof IFModuleGroup) {
-			IFModuleGroup group = (IFModuleGroup) parent;
-
-			int groupIdx = group.getModuleGroups().indexOf(child);
-			if (groupIdx >= 0) {
-				return groupIdx;
-			}
-			int moduleIdx = group.getModules().indexOf(child);
-			if (moduleIdx >= 0) {
-				return groupIdx + moduleIdx;
-			}
+		if (parent instanceof ModuleTreeNode && child instanceof ModuleTreeNode) {
+		    ((ModuleTreeNode)parent).getIndex((ModuleTreeNode)child);
 		}
 		return -1;
 	}
@@ -89,7 +85,7 @@ public class ModuleTreeModel implements TreeModel, IFModuleStructureEventListene
 	 */
 	@Override
 	public Object getRoot() {
-		return structureManager.getRootGroup();
+		return root;
 	}
 
 	/**
@@ -97,7 +93,7 @@ public class ModuleTreeModel implements TreeModel, IFModuleStructureEventListene
 	 */
 	@Override
 	public boolean isLeaf(Object node) {
-		return !(node instanceof IFModuleGroup);
+		return !((ModuleTreeNode)node).isGroup();
 	}
 
 	/**
@@ -130,7 +126,16 @@ public class ModuleTreeModel implements TreeModel, IFModuleStructureEventListene
 	 */
 	@Override
 	public void moduleStructureChanged() {
-		fireTreeStructureChanged(new TreeModelEvent(getRoot(), new TreePath(getRoot())));
+        root = new ModuleTreeNode(structureManager.getRootGroup(), moduleNodeComparator, moduleTreeFilter);        
+		fireTreeStructureChanged(new TreeModelEvent(getRoot(), new TreePath(getRoot())));	
+	}
+	
+	public void setModuleTreeFilter(ModuleTreeNodeFilter moduleTreeFilter) {
+	    this.moduleTreeFilter = moduleTreeFilter;
+	}
+	
+	public void setNodeComparator(Comparator<ModuleTreeNode> moduleNodeComparator) {
+	    this.moduleNodeComparator = moduleNodeComparator;
 	}
 
 	/**
@@ -148,4 +153,5 @@ public class ModuleTreeModel implements TreeModel, IFModuleStructureEventListene
 			}
 		}
 	}
+
 }
