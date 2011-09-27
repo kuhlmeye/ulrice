@@ -140,11 +140,5 @@ public class TableAMBuilder {
         public Class<?> getModelType (Class<?> rootType) {
             return String.class;
         }
-    }
-
-
-
-
-    
-    
+    }  
 }
