@@ -53,15 +53,15 @@ public class ModuleTree extends JTree implements IFMainFrameComponent, MouseList
     }
 
     public void updateModel() {
-        ((ModuleTreeModel)getModel()).moduleStructureChanged();
+        ((ModuleTreeModel) getModel()).moduleStructureChanged();
     }
 
     public void setModuleTreeFilter(ModuleTreeNodeFilter moduleTreeFilter) {
-        ((ModuleTreeModel)getModel()).setModuleTreeFilter(moduleTreeFilter);
+        ((ModuleTreeModel) getModel()).setModuleTreeFilter(moduleTreeFilter);
     }
 
     public void setNodeComparator(Comparator<ModuleTreeNode> moduleNodeComparator) {
-        ((ModuleTreeModel)getModel()).setNodeComparator(moduleNodeComparator);
+        ((ModuleTreeModel) getModel()).setNodeComparator(moduleNodeComparator);
     }
 
     /**
@@ -72,22 +72,24 @@ public class ModuleTree extends JTree implements IFMainFrameComponent, MouseList
         if (e.getClickCount() == 2) {
             TreePath path = getClosestPathForLocation(e.getX(), e.getY());
             Object pathComponent = path.getLastPathComponent();
-            if (pathComponent instanceof IFModule) {
-                IFModule module = (IFModule) pathComponent;
-                try {
-                    Ulrice.getModuleManager().openModule(module.getUniqueId(), new ControllerProviderCallback() {
-                        @Override
-                        public void onFailure(ModuleInstantiationException exc) {
-                            Ulrice.getMessageHandler().handleException(exc);
-                        }
+            if (pathComponent instanceof ModuleTreeNode) {
+                ModuleTreeNode node = (ModuleTreeNode) pathComponent;
+                if (!node.isGroup()) {
+                    try {
+                        Ulrice.getModuleManager().openModule(node.getModule().getUniqueId(), new ControllerProviderCallback() {
+                            @Override
+                            public void onFailure(ModuleInstantiationException exc) {
+                                Ulrice.getMessageHandler().handleException(exc);
+                            }
 
-                        @Override
-                        public void onControllerReady(IFController controller) {
-                        }
-                    });
-                }
-                catch (ModuleInstantiationException e1) {
-                    Ulrice.getMessageHandler().handleException(e1);
+                            @Override
+                            public void onControllerReady(IFController controller) {
+                            }
+                        });
+                    }
+                    catch (ModuleInstantiationException e1) {
+                        Ulrice.getMessageHandler().handleException(e1);
+                    }
                 }
             }
         }
