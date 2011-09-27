@@ -27,7 +27,8 @@ public class TableAM implements IFAttributeModel {
 
 	private IFIndexedModelValueAccessor tableMVA;
 
-	private List<TableConstraint> tableConstraints = new ArrayList<TableConstraint>();
+	
+	private ElementLifecycleListener uniqueConstraint = null;
 
 	protected List<Element> elements = new ArrayList<Element>();
 	protected Map<String, Element> elementIdMap = new HashMap<String, Element>();
@@ -200,11 +201,14 @@ public class TableAM implements IFAttributeModel {
 
 	protected void elementDataChanged(Element element, String columnId) {
 		fireUpdateViews();
-
-		for (TableConstraint constraint : tableConstraints) {
-			constraint.elementChanged(this, element);
+		
+		ElementLifecycleListener[] listeners = listenerList.getListeners(ElementLifecycleListener.class);
+		if(listeners != null) {
+    		for (ElementLifecycleListener constraint : listeners) {
+    		    uniqueConstraint.elementChanged(this, element, columnId);
+    			constraint.elementChanged(this, element, columnId);
+    		}
 		}
-		fireCellDataChangedEvent(element, columnId);
 	}
 
 	protected void elementStateChanged(Element element) {
@@ -270,23 +274,6 @@ public class TableAM implements IFAttributeModel {
 	    listenerList.add(TableAMListener.class, listener);
 	}
 	
-	public void addCellChangedListener(CellChangedListener listener) {
-	    listenerList.add(CellChangedListener.class, listener);
-	}
-	
-	public void removeCellChangedListener(CellChangedListener listener) {
-	    listenerList.remove(CellChangedListener.class, listener);
-	}
-
-	public void fireCellDataChangedEvent(Element element, String columnId) {
-	    CellChangedListener[] listeners = listenerList.getListeners(CellChangedListener.class);
-	    if(listeners != null) {
-    	    for(CellChangedListener listener : listeners) {
-    	        listener.cellValueChanged(element, columnId);
-    	    }
-	    }
-	}
-
     private void fireColumnValueRangeChanged(ColumnDefinition<?> colDef) {
         TableAMListener[] listeners = listenerList.getListeners(TableAMListener.class);
         if(listeners != null) {
@@ -659,30 +646,46 @@ public class TableAM implements IFAttributeModel {
 		return getElementAt(row).getCurrentValue();
 	}
 
-	public void addTableConstraint(TableConstraint constraint) {
-		tableConstraints.add(constraint);
+	public void setUniqueConstraint(String... columnIds) {
+	    this.uniqueConstraint = new UniqueConstraint(columnIds);
+    }
+	
+	public void addTableConstraint(ElementLifecycleListener constraint) {
+		listenerList.add(ElementLifecycleListener.class, constraint);
 	}
 
-	public void removeTableConstraint(TableConstraint constraint) {
-		tableConstraints.remove(constraint);
+	public void removeTableConstraint(ElementLifecycleListener constraint) {
+		listenerList.remove(ElementLifecycleListener.class, constraint);
 	}
 
 	private void fireElementAdded(Element element) {
-		for (TableConstraint constraint : tableConstraints) {
-			constraint.elementAdded(this, element);
-		}
+        ElementLifecycleListener[] listeners = listenerList.getListeners(ElementLifecycleListener.class);
+        if(listeners != null) {
+            for (ElementLifecycleListener constraint : listeners) {
+    		    uniqueConstraint.elementAdded(this, element);
+    			constraint.elementAdded(this, element);
+    		}
+    	}
 	}
 
 	private void fireElementDeleted(Element element) {
-		for (TableConstraint constraint : tableConstraints) {
-			constraint.elementRemoved(this, element);
-		}
+        ElementLifecycleListener[] listeners = listenerList.getListeners(ElementLifecycleListener.class);
+        if(listeners != null) {
+            for (ElementLifecycleListener constraint : listeners) {
+    	        uniqueConstraint.elementRemoved(this, element);
+    			constraint.elementRemoved(this, element);
+    		}
+        }
 	}
 
 	private void fireTableCleared() {
-		for (TableConstraint constraint : tableConstraints) {
-			constraint.tableCleared(this);
-		}
+	    ElementLifecycleListener[] listeners = listenerList.getListeners(ElementLifecycleListener.class);
+	    if(listeners != null) {
+    		for (ElementLifecycleListener constraint : listeners) {
+    		    uniqueConstraint.tableCleared(this);
+    			constraint.tableCleared(this);
+    		}
+	    }
 	}
 
     @Override

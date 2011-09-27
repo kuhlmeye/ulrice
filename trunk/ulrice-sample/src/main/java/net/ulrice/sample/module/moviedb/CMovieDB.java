@@ -10,9 +10,8 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
 import net.ulrice.databinding.bufferedbinding.impl.BindingGroup;
-import net.ulrice.databinding.bufferedbinding.impl.CellChangedListener;
-import net.ulrice.databinding.bufferedbinding.impl.Element;
 import net.ulrice.databinding.bufferedbinding.impl.ColumnDefinition.ColumnType;
+import net.ulrice.databinding.bufferedbinding.impl.Element;
 import net.ulrice.databinding.validation.impl.StringLengthValidator;
 import net.ulrice.module.impl.AbstractController;
 import net.ulrice.module.impl.IFClosing;
