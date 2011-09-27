@@ -12,7 +12,6 @@ import javax.swing.table.TableModel;
 
 import net.ulrice.databinding.ErrorHandler;
 import net.ulrice.databinding.UlriceDatabinding;
-import net.ulrice.databinding.converter.HeuristicConverterFactory;
 import net.ulrice.databinding.converter.IFValueConverter;
 import net.ulrice.databinding.converter.ValueConverterException;
 import net.ulrice.databinding.directbinding.table.ColumnAdapter;

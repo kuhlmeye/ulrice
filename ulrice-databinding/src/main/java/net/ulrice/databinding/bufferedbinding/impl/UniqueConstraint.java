@@ -109,4 +109,10 @@ public class UniqueConstraint implements ElementLifecycleListener {
 		}
 	    return key;
 	}
+
+    @Override
+    public void elementStateChanged(TableAM table, Element element) {
+        // TODO Auto-generated method stub
+        
+    }
 }

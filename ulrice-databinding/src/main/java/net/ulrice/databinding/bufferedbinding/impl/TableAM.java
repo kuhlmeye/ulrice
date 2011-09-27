@@ -209,6 +209,7 @@ public class TableAM implements IFAttributeModel {
     			constraint.elementChanged(this, element, columnId);
     		}
 		}
+		fireDataChanged();
 	}
 
 	protected void elementStateChanged(Element element) {
@@ -232,21 +233,34 @@ public class TableAM implements IFAttributeModel {
 		valid = invElements.isEmpty();
 		dirty = !modElements.isEmpty() || !delElements.isEmpty() || !newElements.isEmpty();
 
+		fireElementStatusChanged(element);
+		
 		if (oldValid != valid || oldDirty != dirty) {
-			fireStateChanged();
-		}
+			fireStateChanged();			
+		}				
 
 	}
 
-	private void fireStateChanged() {
-		IFAttributeModelEventListener[] listeners = listenerList
-				.getListeners(IFAttributeModelEventListener.class);
-		if (listeners != null) {
-			for (IFAttributeModelEventListener listener : listeners) {
-				listener.stateChanged(null, this);
-			}
-		}
-	}
+
+    private void fireDataChanged() {
+        IFAttributeModelEventListener[] listeners = listenerList
+                .getListeners(IFAttributeModelEventListener.class);
+        if (listeners != null) {
+            for (IFAttributeModelEventListener listener : listeners) {
+                listener.dataChanged(null, this);
+            }
+        }
+    }
+
+    private void fireStateChanged() {
+        IFAttributeModelEventListener[] listeners = listenerList
+                .getListeners(IFAttributeModelEventListener.class);
+        if (listeners != null) {
+            for (IFAttributeModelEventListener listener : listeners) {
+                listener.stateChanged(null, this);
+            }
+        }
+    }
 
 	/**
 	 * @param columnDefinition
@@ -318,8 +332,14 @@ public class TableAM implements IFAttributeModel {
 	@Override
 	public void addViewAdapter(IFViewAdapter viewAdapter) {
 		viewAdapterList.add(viewAdapter);
-		viewAdapter.updateFromBinding(this);
+	    viewAdapter.bind(this);
+		viewAdapter.updateFromBinding(this);	
 	}
+	
+    public void removeViewAdapter(IFViewAdapter viewAdapter) {
+        viewAdapterList.remove(viewAdapter);
+        viewAdapter.detach(this);
+    }
 
 	public int getIndexOfElement(Element element) {
 		return elements.indexOf(element);
@@ -598,6 +618,22 @@ public class TableAM implements IFAttributeModel {
 		}
 		return result;
 	}
+	
+	public int getCreatedCount() {
+	    return newElements.size();
+	}
+	
+	public int getModifiedCount() {
+	    return modElements.size();
+	}
+	
+	public int getDeletedCount() {
+	    return delElements.size();
+	}
+	
+	public int getInvalidCount() {
+	    return invElements.size();
+	}
 
 	public Element getElementById(String uniqueId) {
 		return elementIdMap.get(uniqueId);
@@ -650,11 +686,11 @@ public class TableAM implements IFAttributeModel {
 	    this.uniqueConstraint = new UniqueConstraint(columnIds);
     }
 	
-	public void addTableConstraint(ElementLifecycleListener constraint) {
+	public void addElementLifecycleListener(ElementLifecycleListener constraint) {
 		listenerList.add(ElementLifecycleListener.class, constraint);
 	}
 
-	public void removeTableConstraint(ElementLifecycleListener constraint) {
+	public void removeElementLifecycleListener(ElementLifecycleListener constraint) {
 		listenerList.remove(ElementLifecycleListener.class, constraint);
 	}
 
@@ -687,6 +723,17 @@ public class TableAM implements IFAttributeModel {
     		}
 	    }
 	}
+	
+
+    private void fireElementStatusChanged(Element element) {
+        ElementLifecycleListener[] listeners = listenerList.getListeners(ElementLifecycleListener.class);
+        if(listeners != null) {
+            for (ElementLifecycleListener constraint : listeners) {
+                uniqueConstraint.elementStateChanged(this, element);
+                constraint.elementStateChanged(this, element);
+            }
+        }
+    }
 
     @Override
     public IFAttributeInfo getAttributeInfo() {
