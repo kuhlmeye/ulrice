@@ -161,12 +161,13 @@ public class UTableViewAdapter extends AbstractViewAdapter implements TableModel
         return table;
     }
 
+    
     /**
      * @see net.ulrice.databinding.IFGuiAccessor#getAttributeModel()
      */
     public TableAM getAttributeModel() {
         return attributeModel;
-    }
+    }       
 
     /**
      * @see net.ulrice.databinding.IFGuiAccessor#setAttributeModel(net.ulrice.databinding.IFAttributeModel)
