@@ -1,13 +1,10 @@
 package net.ulrice.databinding.viewadapter.utable;
 
 import java.awt.BorderLayout;
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
 import java.util.Collections;
 import java.util.List;
 
 import javax.swing.DefaultListSelectionModel;
-import javax.swing.JComboBox;
 import javax.swing.JComponent;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -19,7 +16,6 @@ import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumn;
 import javax.swing.table.TableColumnModel;
 
-import net.ulrice.databinding.IFBinding;
 import net.ulrice.databinding.bufferedbinding.impl.ColumnDefinition;
 import net.ulrice.databinding.bufferedbinding.impl.Element;
 import net.ulrice.databinding.bufferedbinding.impl.TableAM;
@@ -58,85 +54,89 @@ public class UTableComponent extends JPanel {
 
     private UTableModel scrollTableModel;
 
-	public UTableComponent(final UTableViewAdapter viewAdapter, final int fixedColumns) {
+    public UTableComponent(final int fixedColumns) {
+        this.fixedColumns = fixedColumns;
+        this.originalFixedColumns = fixedColumns;
+        
+        staticTable = new UTable();
+        
+        scrollTable = new UTable();
 
-		rowSelModel = new DefaultListSelectionModel();
+        staticTable.setAssocTable(scrollTable);
+        scrollTable.setAssocTable(staticTable);
+        
+        UTableViewport staticViewport = new UTableViewport();
+        staticTable.setBackground(staticViewport.getBackground());
+        staticViewport.setView(staticTable);
 
-		this.fixedColumns = fixedColumns;
-		this.originalFixedColumns = fixedColumns;
-		
-		staticTableModel = new UTableModel(false, UTableComponent.this.fixedColumns, viewAdapter);
-		staticTable = new UTable(viewAdapter, staticTableModel, rowSelModel);
-		
-		scrollTableModel = new UTableModel(true, UTableComponent.this.fixedColumns, viewAdapter);
-		scrollTable = new UTable(viewAdapter, scrollTableModel, rowSelModel);
+        UTableViewport scrollViewport = new UTableViewport();
+        scrollTable.setBackground(scrollViewport.getBackground());
+        scrollViewport.setView(scrollTable);
 
-		sorter = new UTableRowSorter(viewAdapter, UTableComponent.this.fixedColumns, staticTableModel, scrollTableModel);
-		staticTable.setRowSorter(sorter.getStaticTableRowSorter());
-		scrollTable.setRowSorter(sorter.getScrollTableRowSorter());
-		
+        staticViewport.addChangeListener(scrollViewport);
+        scrollViewport.addChangeListener(staticViewport);
 
-		staticTableRenderer = new UTableVADefaultRenderer(viewAdapter);
-		staticTable.setDefaultRenderer(Object.class, staticTableRenderer);
-		scrollTableRenderer = new UTableVADefaultRenderer(viewAdapter);
-		scrollTable.setDefaultRenderer(Object.class, scrollTableRenderer);
-		
-		filter = new UTableVAFilter(sorter, staticTable.getUTableHeader(), scrollTable.getUTableHeader());
-		sorter.setRowFilter(filter);
+        JScrollPane scrollPane = new JScrollPane();
+        scrollPane.setCorner(JScrollPane.UPPER_LEFT_CORNER, staticTable.getTableHeader());
+        scrollPane.setRowHeader(staticViewport);
+        scrollPane.setViewport(scrollViewport);
 
-		
-		staticTable.getColumnModel().getSelectionModel().addListSelectionListener(new ListSelectionListener() {
-			@Override
-			public void valueChanged(ListSelectionEvent e) {
-			    if(staticTable.getSelectedColumn() >= 0) {
-			        selColumn = staticTable.getSelectedColumn();
-			    } 
-			    else if(scrollTable.getSelectedColumn() >= 0) {
-                    selColumn = scrollTable.getSelectedColumn() + UTableComponent.this.fixedColumns;
-                }
-			    else {
-			        selColumn = -1;
-			    }
-			}
-		});
-		scrollTable.getColumnModel().getSelectionModel().addListSelectionListener(new ListSelectionListener() {
-			@Override
-			public void valueChanged(ListSelectionEvent e) {
-			    if(scrollTable.getSelectedColumn() >= 0) {
-			        selColumn = scrollTable.getSelectedColumn() + UTableComponent.this.fixedColumns;
-			    } 
-			    else if(staticTable.getSelectedColumn() >= 0) {
+        setLayout(new BorderLayout());
+        add(scrollPane, BorderLayout.CENTER);
+    }
+	
+	public void init(final UTableViewAdapter viewAdapter) {
+	    rowSelModel = new DefaultListSelectionModel();
+	    
+	    staticTableModel = new UTableModel(false, UTableComponent.this.fixedColumns, viewAdapter);
+	    staticTable.setModel(staticTableModel);
+	    staticTable.setSelectionModel(rowSelModel);
+	    
+	    scrollTableModel = new UTableModel(true, UTableComponent.this.fixedColumns, viewAdapter);
+	    scrollTable.setModel(scrollTableModel);
+	    scrollTable.setSelectionModel(rowSelModel);
+	    
+        sorter = new UTableRowSorter(viewAdapter, UTableComponent.this.fixedColumns, staticTableModel, scrollTableModel);
+        staticTable.setRowSorter(sorter.getStaticTableRowSorter());
+        scrollTable.setRowSorter(sorter.getScrollTableRowSorter());
+        
+        staticTableRenderer = new UTableVADefaultRenderer(viewAdapter);
+        staticTable.setDefaultRenderer(Object.class, staticTableRenderer);
+        scrollTableRenderer = new UTableVADefaultRenderer(viewAdapter);
+        scrollTable.setDefaultRenderer(Object.class, scrollTableRenderer);
+        
+        filter = new UTableVAFilter(sorter, staticTable.getUTableHeader(), scrollTable.getUTableHeader());
+        sorter.setRowFilter(filter);
+        
+        staticTable.getColumnModel().getSelectionModel().addListSelectionListener(new ListSelectionListener() {
+            @Override
+            public void valueChanged(ListSelectionEvent e) {
+                if(staticTable.getSelectedColumn() >= 0) {
                     selColumn = staticTable.getSelectedColumn();
                 } 
-			    else {
-			        selColumn = -1;
-			    }
-			}
-		});
-
-		staticTable.setAssocTable(scrollTable);
-		scrollTable.setAssocTable(staticTable);
-		
-
-
-		UTableViewport staticViewport = new UTableViewport();
-		staticTable.setBackground(staticViewport.getBackground());
-		staticViewport.setView(staticTable);
-
-		UTableViewport scrollViewport = new UTableViewport();
-		scrollTable.setBackground(scrollViewport.getBackground());
-		scrollViewport.setView(scrollTable);
-
-		staticViewport.addChangeListener(scrollViewport);
-		scrollViewport.addChangeListener(staticViewport);
-
-		JScrollPane scrollPane = new JScrollPane();
-		scrollPane.setCorner(JScrollPane.UPPER_LEFT_CORNER, staticTable.getTableHeader());
-		scrollPane.setRowHeader(staticViewport);
-		scrollPane.setViewport(scrollViewport);
-
-		setLayout(new BorderLayout());
-		add(scrollPane, BorderLayout.CENTER);
+                else if(scrollTable.getSelectedColumn() >= 0) {
+                    selColumn = scrollTable.getSelectedColumn() + UTableComponent.this.fixedColumns;
+                }
+                else {
+                    selColumn = -1;
+                }
+            }
+        });
+        scrollTable.getColumnModel().getSelectionModel().addListSelectionListener(new ListSelectionListener() {
+            @Override
+            public void valueChanged(ListSelectionEvent e) {
+                if(scrollTable.getSelectedColumn() >= 0) {
+                    selColumn = scrollTable.getSelectedColumn() + UTableComponent.this.fixedColumns;
+                } 
+                else if(staticTable.getSelectedColumn() >= 0) {
+                    selColumn = staticTable.getSelectedColumn();
+                } 
+                else {
+                    selColumn = -1;
+                }
+            }
+        });
+	    
 	}
 
 	public JTable getStaticTable() {

@@ -59,14 +59,6 @@ public class ViewAdapterFactoryCallbackImpl implements ViewAdapterFactoryCallbac
     }
 
     @Override
-    public UTableViewAdapter createUTableViewAdapter(int staticColumns) {
-        UTableViewAdapter viewAdapter = new UTableViewAdapter(staticColumns);
-        setDefaultStateMarker(viewAdapter);
-        setDefaultTooltipHandler(viewAdapter);
-        return viewAdapter;
-    }
-
-    @Override
     public <M> JComboBoxViewAdapter createComboBoxAdapter(PresentationProvider<M> presentationProvider) {
         JComboBoxViewAdapter<M> viewAdapter = new JComboBoxViewAdapter<M>(presentationProvider);
         setDefaultStateMarker(viewAdapter);

@@ -6,19 +6,15 @@ import java.util.EventObject;
 import javax.swing.DefaultCellEditor;
 import javax.swing.JTable;
 import javax.swing.JTextField;
-import javax.swing.ListSelectionModel;
-
-import net.ulrice.databinding.bufferedbinding.impl.ColumnDefinition;
 
 
 public class UTable extends JTable {
+    private static final long serialVersionUID = -4005234806899231797L;
 
-	private UTableVAHeader uTableHeader;
+    private UTableVAHeader uTableHeader;
 	private UTable assocTable;
 
-	public UTable(UTableViewAdapter viewAdapter, UTableModel model, ListSelectionModel selectionModel) {
-		setModel(model);
-		setSelectionModel(selectionModel);
+	public UTable() {
 		setAutoCreateColumnsFromModel(false);
 		setAutoResizeMode(AUTO_RESIZE_OFF);
 		setColumnSelectionAllowed(false);
