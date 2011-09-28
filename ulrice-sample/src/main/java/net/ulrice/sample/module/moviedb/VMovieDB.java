@@ -17,11 +17,15 @@ public class VMovieDB {
 	private final JPanel detailPanel = new JPanel();
 	private final JPanel overviewPanel = new JPanel();
 
-	private final UTableViewAdapter movieTableVA = ViewAdapterFactory.createUTableViewAdapter(1);
+	// TODO repair example
+	
+//	private final UTableViewAdapter movieTableVA = ViewAdapterFactory.createUTableViewAdapter(1);
+	private final UTableViewAdapter movieTableVA = new UTableViewAdapter();
 	private final JTextComponentViewAdapter titleVA = ViewAdapterFactory.createTextFieldAdapter();
 	private final JTextComponentViewAdapter yearVA = ViewAdapterFactory.createTextFieldAdapter();
 	private final JTextComponentViewAdapter directorVA = ViewAdapterFactory.createTextFieldAdapter();
-	private final UTableViewAdapter actorTableVA = ViewAdapterFactory.createUTableViewAdapter(0);
+//	private final UTableViewAdapter actorTableVA = ViewAdapterFactory.createUTableViewAdapter(0);
+	private final UTableViewAdapter actorTableVA = new UTableViewAdapter();
 
 	public VMovieDB() {					
 		overviewPanel.setLayout(new BorderLayout());
