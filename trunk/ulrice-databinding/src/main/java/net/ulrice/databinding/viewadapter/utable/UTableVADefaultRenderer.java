@@ -49,7 +49,7 @@ public class UTableVADefaultRenderer extends DefaultTableCellRenderer {
         JComponent component =
                 (JComponent) super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
 
-        boolean readOnly = !tableVA.isCellEditable(row, column);
+        boolean readOnly = !getTableVA().isCellEditable(row, column);
         
 
         if (isSelected) {
@@ -68,7 +68,7 @@ public class UTableVADefaultRenderer extends DefaultTableCellRenderer {
         boolean dirty = false;
         boolean valid = true;
 
-        Element element = tableVA.getElementAt(row);
+        Element element = getTableVA().getElementAt(row);
         if (stateMarker != null) {
             dirty |= element.isOriginalValueDirty();
             valid &= element.isOriginalValueValid();
@@ -101,5 +101,9 @@ public class UTableVADefaultRenderer extends DefaultTableCellRenderer {
 
     public void setTooltipHandler(IFTooltipHandler<Element> tooltipHandler) {
         this.tooltipHandler = tooltipHandler;
+    }
+
+    protected UTableViewAdapter getTableVA() {
+        return tableVA;
     }
 }

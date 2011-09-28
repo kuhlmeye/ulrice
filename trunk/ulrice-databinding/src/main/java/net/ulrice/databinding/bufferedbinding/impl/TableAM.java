@@ -30,13 +30,15 @@ public class TableAM implements IFAttributeModel {
 	
 	private ElementLifecycleListener uniqueConstraint = null;
 
+    private List<ColumnDefinition<? extends Object>> columns = new ArrayList<ColumnDefinition<? extends Object>>();
+    private Map<String, ColumnDefinition> columnIdMap = new HashMap<String, ColumnDefinition>();
+
 	protected List<Element> elements = new ArrayList<Element>();
 	protected Map<String, Element> elementIdMap = new HashMap<String, Element>();
 
 	private List<IFValidator> validators = new ArrayList<IFValidator>();
 	private EventListenerList listenerList;
 	private String id;
-	private List<ColumnDefinition<? extends Object>> columns = new ArrayList<ColumnDefinition<? extends Object>>();
 	private boolean readOnly;
 	private long nextUniqueId;
 	
@@ -54,6 +56,8 @@ public class TableAM implements IFAttributeModel {
 	private boolean initialized = false;
 	private boolean dirty = false;
 	private boolean valid = true;
+
+
 
 	public TableAM(IFIndexedModelValueAccessor tableMVA, IFAttributeInfo attributeInfo, boolean readOnly) {
 		this.tableMVA = tableMVA;
@@ -280,7 +284,8 @@ public class TableAM implements IFAttributeModel {
                 fireColumnFilterModeChanged(colDef);
             }
         });
-		columns.add(columnDefinition);		
+		columns.add(columnDefinition);	
+		columnIdMap.put(columnDefinition.getId(), columnDefinition);
 	}
 	
 	public void addTableAMListener(TableAMListener listener) {
@@ -753,5 +758,9 @@ public class TableAM implements IFAttributeModel {
     @Override
     public IFAttributeInfo getAttributeInfo() {
         return attributeInfo;
+    }
+
+    public ColumnDefinition getColumnById(String key) {
+        return columnIdMap.get(key);
     }
 }

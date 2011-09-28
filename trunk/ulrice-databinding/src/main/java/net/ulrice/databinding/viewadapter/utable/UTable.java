@@ -8,6 +8,8 @@ import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.ListSelectionModel;
 
+import net.ulrice.databinding.bufferedbinding.impl.ColumnDefinition;
+
 
 public class UTable extends JTable {
 
@@ -46,7 +48,7 @@ public class UTable extends JTable {
 //        setDefaultRenderer(JComboBox.class, new UTableVAComboBoxCellRenderer());
 //        setDefaultRenderer(List.class, new UTableVATextCellRenderer()); // needed, or handled by default?                    
 	}
-	
+
 	
 
 	public void setAssocTable(UTable assocTable) {
