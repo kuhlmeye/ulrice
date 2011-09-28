@@ -135,7 +135,10 @@ public class TableAM implements IFAttributeModel {
 	}
 
 	public Element getElementAt(int index) {
-		return elements.get(index);
+	    if(index < elements.size()) {
+	        return elements.get(index);
+	    }
+	    return null;
 	}
 
 	/**
@@ -185,7 +188,11 @@ public class TableAM implements IFAttributeModel {
 	 * @see javax.swing.table.TableModel#getValueAt(int, int)
 	 */
 	public Object getValueAt(int rowIndex, int columnIndex) {
-		return getElementAt(rowIndex).getValueAt(columnIndex);
+		Element element = getElementAt(rowIndex);
+		if(element != null) {
+		    return element.getValueAt(columnIndex);
+		} 
+		return null;
 	}
 
 	/**
@@ -503,11 +510,11 @@ public class TableAM implements IFAttributeModel {
 		dirty = false;
 		valid = true;
 
+        elementIdMap.clear();
+        newElements.clear();
+        modElements.clear();
+        invElements.clear();
 		elements.clear();
-		elementIdMap.clear();
-		newElements.clear();
-		modElements.clear();
-		invElements.clear();
 
 		fireTableCleared();
 	}
