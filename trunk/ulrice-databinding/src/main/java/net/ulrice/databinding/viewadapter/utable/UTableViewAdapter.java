@@ -28,7 +28,6 @@ import net.ulrice.databinding.bufferedbinding.impl.TableAMListener;
 import net.ulrice.databinding.viewadapter.AbstractViewAdapter;
 import net.ulrice.databinding.viewadapter.IFStateMarker;
 import net.ulrice.databinding.viewadapter.IFTooltipHandler;
-import net.ulrice.databinding.viewadapter.ViewAdapterBindingListener;
 
 /**
  * @author christof
@@ -55,10 +54,10 @@ public class UTableViewAdapter extends AbstractViewAdapter implements TableModel
         }
     };
 
-    public UTableViewAdapter(int fixedColumns) {
+    public UTableViewAdapter(final UTableComponent table) {
         super(List.class);
 
-        table = new UTableComponent(this, fixedColumns);
+        this.table = table;
 
         table.getScrollTable().getSelectionModel().addListSelectionListener(new ListSelectionListener() {
             private boolean nested = false;
@@ -150,7 +149,7 @@ public class UTableViewAdapter extends AbstractViewAdapter implements TableModel
     }
 
     public UTableViewAdapter() {
-        this(0);
+        this(new UTableComponent(0));
     }
 
     /**
