@@ -6,6 +6,7 @@ import javax.swing.event.EventListenerList;
 import javax.swing.table.TableCellEditor;
 import javax.swing.table.TableCellRenderer;
 
+import net.ulrice.databinding.bufferedbinding.IFAttributeInfo;
 import net.ulrice.databinding.converter.IFValueConverter;
 import net.ulrice.databinding.modelaccess.IFDynamicModelValueAccessor;
 import net.ulrice.databinding.validation.IFValidator;
@@ -22,6 +23,7 @@ public class ColumnDefinition<T extends Object> {
     private FilterMode filterMode;
     private IFValueConverter valueConverter;
     private IFValidator validator;
+    private IFAttributeInfo attributeInfo;
     private String columnName;
 	private boolean useAutoValueConverter = true;
 	private boolean useValueRange = false;
@@ -274,5 +276,12 @@ public class ColumnDefinition<T extends Object> {
     public TableCellRenderer getCellRenderer() {
         return cellRenderer;
     }
+
+    public void setAttributeInfo(IFAttributeInfo attributeInfo) {
+        this.attributeInfo = attributeInfo;
+    }
     
+    public IFAttributeInfo getAttributeInfo() {
+        return attributeInfo;
+    }
 }
