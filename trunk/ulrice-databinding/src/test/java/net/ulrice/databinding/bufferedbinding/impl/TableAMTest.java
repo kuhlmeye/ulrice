@@ -233,7 +233,7 @@ public class TableAMTest {
         Assert.assertTrue(tableAM.isDirty());
         Assert.assertTrue(tableAM.isValid());
         Assert.assertEquals(null, tableAM.getElementAt(2).getValueAt(0));
-        Assert.assertFalse(tableAM.getElementAt(2).isDirty());
+        Assert.assertTrue(tableAM.getElementAt(2).isDirty());
         Assert.assertEquals(0, tableAM.getElementAt(2).getValueAt(1));
         
         Assert.assertEquals(1, tableAM.getCreatedObjects().size());
@@ -251,7 +251,7 @@ public class TableAMTest {
         Assert.assertTrue(tableAM.isDirty());
         Assert.assertTrue(tableAM.isValid());
         Assert.assertEquals(null, tableAM.getElementAt(2).getValueAt(0));
-        Assert.assertFalse(tableAM.getElementAt(2).isDirty());
+        Assert.assertTrue(tableAM.getElementAt(2).isDirty());
         Assert.assertEquals(0, tableAM.getElementAt(2).getValueAt(1));
         
         element.setValueAt(0, "Test");
@@ -291,7 +291,7 @@ public class TableAMTest {
         Assert.assertTrue(tableAM.isDirty());
         Assert.assertTrue(tableAM.isValid());
         Assert.assertEquals(null, tableAM.getElementAt(2).getValueAt(0));
-        Assert.assertFalse(tableAM.getElementAt(2).isDirty());
+        Assert.assertTrue(tableAM.getElementAt(2).isDirty());
         Assert.assertEquals(0, tableAM.getElementAt(2).getValueAt(1));
                         
         tableAM.delElement(element);
@@ -311,7 +311,7 @@ public class TableAMTest {
         Assert.assertTrue(tableAM.isDirty());
         Assert.assertTrue(tableAM.isValid());
         Assert.assertEquals(null, tableAM.getElementAt(2).getValueAt(0));
-        Assert.assertFalse(tableAM.getElementAt(2).isDirty());
+        Assert.assertTrue(tableAM.getElementAt(2).isDirty());
         Assert.assertEquals(0, tableAM.getElementAt(2).getValueAt(1));
         
         tableAM.delElement(element);
@@ -339,11 +339,11 @@ public class TableAMTest {
         Assert.assertEquals(1, tableAM.getDeletedObjects().size());             
         Assert.assertEquals("Max Mustermann", ((Person)tableAM.getDeletedObjects().get(0)).name);               
     }
-	
-	@Test
-	public void commitElement() {
-	    tableAM.read();
-	    Element element = tableAM.getElementAt(0);
+
+    @Test
+    public void commitElement() {
+        tableAM.read();
+        Element element = tableAM.getElementAt(0);
         element.setValueAt(0, "Other Value");
 
         Assert.assertEquals(true, tableAM.isDirty());
@@ -355,7 +355,21 @@ public class TableAMTest {
         Assert.assertEquals(false, element.isDirty());
         
         Assert.assertEquals("Other Value", tableAM.getValueAt(0, 0));
-	}
+    }
+
+    @Test
+    public void commitNewElement() {
+        tableAM.read();
+        Element element = tableAM.addElement(null);
+        Assert.assertEquals(true, tableAM.isDirty());
+        Assert.assertEquals(true, element.isDirty());
+        
+        tableAM.commitElement(element);
+        
+        Assert.assertEquals(false, tableAM.isDirty());
+        Assert.assertEquals(false, element.isDirty());
+        
+    }
 	
 	@Test
 	public void rollbackElement() {
@@ -524,6 +538,20 @@ public class TableAMTest {
 
     	tableAM.commitElement(tableAM.getElementAt(2));
     	Assert.assertEquals(false, tableAM.isCellEditable(2,  0));    	
+    }
+    
+    @Test
+    public void insertedElementIsDirty() {
+        tableAM.read();
+        Element element = tableAM.addElement(null);
+        Assert.assertEquals(true, element.isDirty());
+    }
+    
+    @Test
+    public void removedElementIsDirty() {
+        tableAM.read();
+        tableAM.delElement(0);        
+        Assert.assertEquals(true, tableAM.getDeletedElements().get(0).isDirty());
     }
 	
 	public static class Person {

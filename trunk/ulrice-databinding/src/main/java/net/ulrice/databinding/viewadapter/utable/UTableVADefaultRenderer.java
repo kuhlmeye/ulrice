@@ -10,10 +10,7 @@ import javax.swing.JComponent;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableCellRenderer;
 
-import net.ulrice.databinding.bufferedbinding.impl.ColumnDefinition;
 import net.ulrice.databinding.bufferedbinding.impl.Element;
-import net.ulrice.databinding.bufferedbinding.impl.GenericAM;
-import net.ulrice.databinding.bufferedbinding.impl.TableAM;
 import net.ulrice.databinding.ui.BindingUI;
 import net.ulrice.databinding.viewadapter.IFStateMarker;
 import net.ulrice.databinding.viewadapter.IFTooltipHandler;
@@ -23,15 +20,20 @@ import net.ulrice.databinding.viewadapter.IFTooltipHandler;
  */
 public class UTableVADefaultRenderer extends DefaultTableCellRenderer {
 
-
+    private static final long serialVersionUID = -5400969133715647268L;
     private IFStateMarker stateMarker;
     private IFTooltipHandler<Element> tooltipHandler;
 
-    private Color evenNormalBackground = BindingUI.getColor(BindingUI.BACKGROUND_NORMAL_EVEN_TABLE_ROW, new Color(230, 230, 230));
-    private Color oddNormalBackground = BindingUI.getColor(BindingUI.BACKGROUND_NORMAL_ODD_TABLE_ROW, new Color(200, 200, 200));
-    private Color evenReadOnlyBackground = BindingUI.getColor(BindingUI.BACKGROUND_READONLY_EVEN_TABLE_ROW, new Color(200, 230, 200));
-    private Color oddReadOnlyBackground = BindingUI.getColor(BindingUI.BACKGROUND_READONLY_ODD_TABLE_ROW, new Color(170, 200, 170));
-    private Color selectedBackground = BindingUI.getColor(BindingUI.BACKGROUND_SELECTED_TABLE_ROW, new Color(200, 200, 255));
+    private Color evenNormalBackground = BindingUI.getColor(BindingUI.BACKGROUND_NORMAL_EVEN_TABLE_ROW, new Color(
+        230, 230, 230));
+    private Color oddNormalBackground = BindingUI.getColor(BindingUI.BACKGROUND_NORMAL_ODD_TABLE_ROW, new Color(200,
+        200, 200));
+    private Color evenReadOnlyBackground = BindingUI.getColor(BindingUI.BACKGROUND_READONLY_EVEN_TABLE_ROW,
+        new Color(200, 230, 200));
+    private Color oddReadOnlyBackground = BindingUI.getColor(BindingUI.BACKGROUND_READONLY_ODD_TABLE_ROW, new Color(
+        170, 200, 170));
+    private Color selectedBackground = BindingUI.getColor(BindingUI.BACKGROUND_SELECTED_TABLE_ROW, new Color(200,
+        200, 255));
 
     /**
      * @see javax.swing.table.TableCellRenderer#getTableCellRendererComponent(javax.swing.JTable, java.lang.Object,
@@ -44,14 +46,14 @@ public class UTableVADefaultRenderer extends DefaultTableCellRenderer {
         JComponent component =
                 (JComponent) super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
 
-        if(table instanceof UTable) {
+        if (table instanceof UTable) {
 
             boolean dirty = false;
             boolean valid = true;
-            
-            UTableComponent tableComponent = ((UTable)table).getTableComponent();            
+
+            UTableComponent tableComponent = ((UTable) table).getTableComponent();
             boolean readOnly = !tableComponent.isCellEditable(row, column);
-            
+
             if (isSelected) {
                 component.setBackground(selectedBackground);
             }
@@ -64,24 +66,28 @@ public class UTableVADefaultRenderer extends DefaultTableCellRenderer {
 
             String columnId = table.getColumnModel().getColumn(column).getIdentifier().toString();
             // TODO SELECTION BACKGROUND
-            
+
             Element element = tableComponent.getElementAtViewIndex(row);
-            
-            if (stateMarker != null) {
-                dirty |= element.isOriginalValueDirty();
-                valid &= element.isOriginalValueValid();
+            if (element != null) {
+                if (stateMarker != null) {
+                    dirty |= element.isOriginalValueDirty();
+                    valid &= element.isOriginalValueValid();
 
-                dirty |= element.isColumnDirty(columnId);
-                valid &= element.isColumnValid(columnId);
+                    dirty |= element.isInsertedOrRemoved();
 
-                stateMarker.initialize(component);
-                stateMarker.updateState(dirty, valid, component);
+                    dirty |= element.isColumnDirty(columnId);
+                    valid &= element.isColumnValid(columnId);
+
+                    stateMarker.initialize(component);
+                    stateMarker.updateState(dirty, valid, component);
+                }
+
+                if (tooltipHandler != null) {
+                    tooltipHandler.updateTooltip(element, component);
+                }
+
             }
-
-            if (tooltipHandler != null) {
-                tooltipHandler.updateTooltip(element, component);
-            }
-        }        
+        }
 
         return component;
     }
