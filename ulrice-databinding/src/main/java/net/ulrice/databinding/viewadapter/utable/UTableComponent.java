@@ -8,9 +8,11 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import javax.swing.Action;
 import javax.swing.DefaultListSelectionModel;
 import javax.swing.JComponent;
 import javax.swing.JPanel;
+import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.ListSelectionModel;
@@ -65,6 +67,8 @@ public class UTableComponent extends JPanel {
     private UTableModel scrollTableModel;
 
     private TableAM attributeModel;
+    
+    private List<Action> popupMenuActions = new ArrayList<Action>();
 
     public UTableComponent(final int fixedColumns) {
         this.fixedColumns = fixedColumns;
@@ -108,6 +112,9 @@ public class UTableComponent extends JPanel {
                     }
                 }
 
+                if(e.isPopupTrigger()) {
+                    showPopupMenu(e.getX(), e.getY());
+                }
             }
 
             @Override
@@ -119,7 +126,11 @@ public class UTableComponent extends JPanel {
                     }
                 }
 
+                if(e.isPopupTrigger()) {
+                    showPopupMenu(e.getX(), e.getY());
+                }
             }
+
 
             @Override
             public void mouseExited(MouseEvent e) {
@@ -148,6 +159,9 @@ public class UTableComponent extends JPanel {
                     for (MouseListener listener : listeners) {
                         listener.mouseClicked(adaptMouseEvent(e));
                     }
+                }
+                if(e.isPopupTrigger()) {
+                    showPopupMenu(e.getX(), e.getY());
                 }
             }
 
@@ -504,8 +518,14 @@ public class UTableComponent extends JPanel {
 
     public void addRow() {
         checkAttributeModelSet();
-        attributeModel.addElement(null);
+        int modelIdx = getSelectedRowModelIndex();
+        if(modelIdx >= 0) {
+            attributeModel.addElement(modelIdx, null);
+        } else {
+            attributeModel.addElement(null);
+        }
     }
+        
 
     public void delRowWithModelIndex(int modelIndex) {
         checkAttributeModelSet();
@@ -560,14 +580,25 @@ public class UTableComponent extends JPanel {
             throw new IllegalStateException("Component is not bound to an attribute model.");
         }        
     }
+    
+    public Element getElementById(String id) {
+        if(attributeModel == null) {
+            return null;
+        }
+        return attributeModel.getElementById(id);
+    }
 
     public Element getElementAtViewIndex(int viewIndex) {
         if(attributeModel == null) {
             return null;
         }
         int modelRow = getRowSorter().convertRowIndexToModel(viewIndex);
-        return attributeModel.getElementAt(modelRow);
+        return getElementAtModelIndex(modelRow);
     }
+    
+    public Element getElementAtModelIndex(int modelIndex) {
+        return attributeModel.getElementAt(modelIndex);
+    }    
 
 
     public boolean isCellDirty(int row, int col) {
@@ -592,10 +623,44 @@ public class UTableComponent extends JPanel {
         return false;
     }
 
+    public int getColumnCount() {
+        return attributeModel != null ? attributeModel.getColumnCount() : 0;
+    }
+    
+    public int getModelRowCount() {
+        return getRowSorter().getModelRowCount();
+    }
+    
+    public int getViewRowCount() {
+        return getRowSorter().getViewRowCount();
+    }
+
     public ColumnDefinition< ?> getColumnById(String columnId) {
         if(attributeModel != null) {
             return attributeModel.getColumnById(columnId);
         }
         return null;
     }
+
+    public ColumnDefinition getColumnByViewIndex(int viewIndex) {
+        if(attributeModel != null) {
+            int modelIndex = convertColumnIndexToModel(viewIndex);
+            return attributeModel.getColumnByIndex(modelIndex);
+        }
+        return null;
+    }
+    
+    public void addTableAction(Action action) {
+        popupMenuActions.add(action);
+    }    
+
+    private void showPopupMenu(int x, int y) {
+        JPopupMenu popupMenu = new JPopupMenu();
+        for(Action action : popupMenuActions) {
+            popupMenu.add(action);
+        }
+        popupMenu.show(this, x, y);
+    }
+
+    
 }

@@ -50,6 +50,7 @@ public class Element {
 
 	private boolean dirty;
 	private boolean valid;
+	private boolean insertedOrRemoved;
 
 	private TableAM tableAM;
 
@@ -70,7 +71,7 @@ public class Element {
 	 */
 	public Element(TableAM tableAM, String uniqueId,
 			List<ColumnDefinition<? extends Object>> columns,
-			Object valueObject, boolean readOnly, boolean dirty, boolean valid) {
+			Object valueObject, boolean readOnly, boolean dirty, boolean valid, boolean insertedOrRemoved) {
 		this.originalValueDirty = dirty;
 		this.originalValueValid = valid;
 		this.tableAM = tableAM;
@@ -80,10 +81,12 @@ public class Element {
 		this.originalValue = tableAM.cloneObject(valueObject);
 		this.columns = columns;
 		this.readOnly = readOnly;
-
+		
 		this.dirty = false;
 		this.valid = true;
 
+		this.insertedOrRemoved = insertedOrRemoved;
+		
 		readObject();
 	}
 
@@ -384,7 +387,7 @@ public class Element {
 	}
 
 	public boolean isDirty() {
-		return dirty;
+		return dirty || isInsertedOrRemoved();
 	}
 
 	public boolean isValid() {
@@ -480,5 +483,13 @@ public class Element {
 
     public boolean isColumnValid(String columnId) {
         return idModelMap.containsKey(columnId) ? idModelMap.get(columnId).isValid() : true;
+    }
+    
+    public boolean isInsertedOrRemoved() {
+        return insertedOrRemoved;
+    }
+    
+    public void setInsertedOrRemoved(boolean insertedOrRemoved) {
+        this.insertedOrRemoved = insertedOrRemoved;
     }
 }

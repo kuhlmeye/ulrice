@@ -93,10 +93,9 @@ public class TableAM implements IFAttributeModel {
 	 * @param value
 	 * @return
 	 */
-	protected Element createElement(Object value, boolean dirty, boolean valid) {
+	protected Element createElement(Object value, boolean dirty, boolean valid, boolean insertedOrDeleted) {
 		String uniqueId = Long.toHexString(nextUniqueId++);
-		Element elem = new Element(this, uniqueId, columns, value,
-				isReadOnly(), dirty, valid);
+		Element elem = new Element(this, uniqueId, columns, value, isReadOnly(), dirty, valid, insertedOrDeleted);
 		return elem;
 	}
 
@@ -181,7 +180,7 @@ public class TableAM implements IFAttributeModel {
 	 * @see javax.swing.table.TableModel#isCellEditable(int, int)
 	 */
 	public boolean isCellEditable(int rowIndex, int columnIndex) {
-		return !isReadOnly() && !getElementAt(rowIndex).isReadOnly(columnIndex);
+		return !isReadOnly() && getElementAt(rowIndex) != null && !getElementAt(rowIndex).isReadOnly(columnIndex);
 	}
 
 	/**
@@ -233,7 +232,7 @@ public class TableAM implements IFAttributeModel {
 			invElements.add(element);
 		}
 	
-		if (element.isDirty() && elementIdMap.containsKey(element.getUniqueId()) && !newElements.contains(element) && !delElements.contains(element)) {
+		if (element.isDirty() && !element.isInsertedOrRemoved() && elementIdMap.containsKey(element.getUniqueId()) && !newElements.contains(element) && !delElements.contains(element)) {
 			modElements.add(element);
 		}
 		
@@ -456,7 +455,7 @@ public class TableAM implements IFAttributeModel {
 		for (int i = 0; i < numRows; i++) {
 
 			Object value = tableMVA.getValue(i);
-			Element elem = createElement(value, false, true);
+			Element elem = createElement(value, false, true, false);
 			elem.readObject();
 
 			elementIdMap.put(elem.getUniqueId(), elem);
@@ -475,7 +474,7 @@ public class TableAM implements IFAttributeModel {
         for (int i = 0; i < valueList.size(); i++) {
 
             Object value = valueList.get(i);
-            Element elem = createElement(value, false, true);
+            Element elem = createElement(value, false, true, false);
             elem.readObject();
 
             elementIdMap.put(elem.getUniqueId(), elem);
@@ -495,7 +494,7 @@ public class TableAM implements IFAttributeModel {
         for (int i = firstRow; i < tableMVA.getSize(); i++) {
 
             Object value = tableMVA.getValue(i);
-            Element elem = createElement(value, false, true);
+            Element elem = createElement(value, false, true, false);
             elem.readObject();
 
             elementIdMap.put(elem.getUniqueId(), elem);
@@ -547,7 +546,7 @@ public class TableAM implements IFAttributeModel {
 			value = createEmptyElementObject();
 		}
 
-		Element element = createElement(value, dirty, valid);
+		Element element = createElement(value, dirty, valid, true);
 		elementIdMap.put(element.getUniqueId(), element);
 		elements.add(element);
 		newElements.add(element);
@@ -567,7 +566,7 @@ public class TableAM implements IFAttributeModel {
 			value = createEmptyElementObject();
 		}
 
-		Element element = createElement(value, dirty, valid);
+		Element element = createElement(value, dirty, valid, true);
 		elements.add(index, element);
 		elementIdMap.put(element.getUniqueId(), element);
 		newElements.add(element);
@@ -596,6 +595,7 @@ public class TableAM implements IFAttributeModel {
 		newElements.remove(element);
 		modElements.remove(element);
 		elementStateChanged(element);
+		element.setInsertedOrRemoved(true);
 		fireElementDeleted(element);
 		fireUpdateViews();
 
@@ -680,6 +680,7 @@ public class TableAM implements IFAttributeModel {
 		newElements.remove(element);
 		delElements.remove(element);
 		elementStateChanged(element);
+		element.setInsertedOrRemoved(false);
 		fireUpdateViews();
 	}
 
@@ -770,5 +771,9 @@ public class TableAM implements IFAttributeModel {
 
     public ColumnDefinition getColumnById(String key) {
         return columnIdMap.get(key);
+    }
+
+    public ColumnDefinition getColumnByIndex(int index) {
+        return columns.get(index);
     }
 }

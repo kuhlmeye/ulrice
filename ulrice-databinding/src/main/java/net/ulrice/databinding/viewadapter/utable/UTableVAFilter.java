@@ -28,6 +28,7 @@ import javax.swing.table.TableColumnModel;
 import javax.swing.text.BadLocationException;
 
 import net.ulrice.databinding.bufferedbinding.impl.ColumnDefinition;
+import net.ulrice.databinding.bufferedbinding.impl.Element;
 import net.ulrice.databinding.bufferedbinding.impl.FilterMode;
 
 /**
@@ -171,7 +172,14 @@ public class UTableVAFilter extends RowFilter<UTableViewAdapter, String> impleme
 	@Override
 	public boolean include(javax.swing.RowFilter.Entry<? extends UTableViewAdapter, ? extends String> entry) {
 		boolean include = true;
+		Element element = entry.getModel().getComponent().getElementById(entry.getIdentifier());
+		if(element != null) {
+	        if(element.isDirty() || !element.isValid()) {
+	            return true;
+	        }		    
+		}
 		for (int i = 0; i < entry.getValueCount() && include; i++) {
+		    
 			String columnId = columnIdentifiers.get(i);
 			include &= includeValue(columnId, entry.getIdentifier(), entry.getValue(i));
 		}
