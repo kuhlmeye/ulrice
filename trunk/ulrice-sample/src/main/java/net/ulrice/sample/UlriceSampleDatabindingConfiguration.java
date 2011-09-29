@@ -8,7 +8,6 @@ import net.ulrice.databinding.converter.ExtensibleConverterFactory;
 import net.ulrice.databinding.converter.IFConverterFactory;
 import net.ulrice.databinding.converter.IFValueConverter;
 import net.ulrice.databinding.converter.impl.UlriceValueConverterContributer;
-import net.ulrice.databinding.viewadapter.impl.factory.ViewAdapterFactoryCallback;
 
 public class UlriceSampleDatabindingConfiguration implements
 		IFUlriceDatabindingConfiguration {
@@ -40,10 +39,4 @@ public class UlriceSampleDatabindingConfiguration implements
 	public IFConverterFactory getConverterFactory() {
 		return converterFactory;
 	}
-
-    @Override
-    public ViewAdapterFactoryCallback getViewAdapterFactoryCallback() {
-        return null;
-    }
-
 }
