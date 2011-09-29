@@ -95,31 +95,7 @@ public class UTableComponent extends JPanel {
         setLayout(new BorderLayout());
         add(scrollPane, BorderLayout.CENTER);
         
-        scrollTable.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
-            private boolean nested = false;
-
-            @Override
-            public void valueChanged(ListSelectionEvent e) {
-                if (e.getValueIsAdjusting()) {
-                    return;
-                }
-
-                if (nested) {
-                    return;
-                }
-
-                nested = true;
-                try {
-                    for (ListSelectionListener l : listenerList.getListeners(ListSelectionListener.class)) {
-                        l.valueChanged(e);
-                    }
-                }
-                finally {
-                    nested = false;
-                }
-            }
-        });
-        
+       
 
         MouseListener mouseListener = new MouseListener() {
 
@@ -186,7 +162,31 @@ public class UTableComponent extends JPanel {
 	
 	public void init(final UTableViewAdapter viewAdapter) {
 	    rowSelModel = new DefaultListSelectionModel();
-	    
+	    rowSelModel.addListSelectionListener(new ListSelectionListener() {
+            private boolean nested = false;
+
+            @Override
+            public void valueChanged(ListSelectionEvent e) {
+                if (e.getValueIsAdjusting()) {
+                    return;
+                }
+
+                if (nested) {
+                    return;
+                }
+
+                nested = true;
+                try {
+                    for (ListSelectionListener l : listenerList.getListeners(ListSelectionListener.class)) {
+                        l.valueChanged(e);
+                    }
+                }
+                finally {
+                    nested = false;
+                }
+            }
+        });
+        
 	    staticTableModel = new UTableModel(false, UTableComponent.this.fixedColumns, viewAdapter);
 	    staticTable.setModel(staticTableModel);
 	    staticTable.setSelectionModel(rowSelModel);
