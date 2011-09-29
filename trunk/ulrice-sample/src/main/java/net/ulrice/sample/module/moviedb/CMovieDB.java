@@ -93,7 +93,7 @@ public class CMovieDB extends AbstractController implements ListSelectionListene
 				if(selectedRow >= 0) {
 					JTable movieTable = view.getMovieTableAdapter().getComponent().getScrollTable();
 					movieTable.getSelectionModel().removeListSelectionListener(CMovieDB.this);
-					view.getMovieTableAdapter().delRow(selectedRow);
+					view.getMovieTableAdapter().delSelectedRows();
 					movieTable.getSelectionModel().addListSelectionListener(CMovieDB.this);
 				}
 			}
@@ -118,7 +118,7 @@ public class CMovieDB extends AbstractController implements ListSelectionListene
 					// FIXME Static column support
 					JTable actorTable = view.getActorTableVA().getComponent().getScrollTable();
 					actorTable.getSelectionModel().removeListSelectionListener(CMovieDB.this);
-					view.getActorTableVA().delRow(selectedRow);
+					view.getActorTableVA().delSelectedRows();
 					actorTable.getSelectionModel().addListSelectionListener(CMovieDB.this);
 				}
 			}

@@ -325,48 +325,6 @@ public class UTableViewAdapter extends AbstractViewAdapter implements TableModel
 
 
 
-    public void addRow() {
-        getAttributeModel().addElement(null);
-    }
-
-    public void delRow(int index) {
-        getAttributeModel().delElement(getElementAt(index));
-    }
-
-    public void delSelectedRows() {
-        List<Element> elements = getSelectedElements();
-        if (elements != null) {
-            for (Element element : elements) {
-                getAttributeModel().delElement(element);
-            }
-        }
-    }
-
-
-
-    @SuppressWarnings({ "rawtypes", "unchecked" })
-    public List getSelectedObjects() {
-        int[] rowsInModel = table.getSelectedRowsModelIndex();
-        List result = new ArrayList(rowsInModel.length);
-        for (int row : rowsInModel) {
-            result.add(getAttributeModel().getCurrentValueAt(row));
-        }
-        return result;
-    }
-
-    public List<Element> getSelectedElements() {
-        int[] rowsInModel = table.getSelectedRowsModelIndex();
-        List<Element> result = new ArrayList<Element>(rowsInModel.length);
-        for (int row : rowsInModel) {
-            result.add(getAttributeModel().getElementAt(row));
-        }
-        return result;
-    }
-
-    public Object getSelectedObject() {
-        int rowInModel = table.getSelectedRowModelIndex();
-        return getAttributeModel().getCurrentValueAt(rowInModel);
-    }
 
     public boolean isDirty() {
         return getAttributeModel() != null ? getAttributeModel().isDirty() : false;
@@ -377,20 +335,15 @@ public class UTableViewAdapter extends AbstractViewAdapter implements TableModel
     }
 
     public boolean isCellDirty(int row, int col) {
-        int modelRow = getRowSorter().convertRowIndexToModel(row);
-        int modelCol = table.convertColumnIndexToModel(col);
-        return getAttributeModel() != null ? getAttributeModel().isCellDirty(modelRow, modelCol) : false;
+        return table.isCellDirty(row, col);
     }
 
     public boolean isCellValid(int row, int col) {
-        int modelRow = getRowSorter().convertRowIndexToModel(row);
-        int modelCol = table.convertColumnIndexToModel(col);
-        return getAttributeModel() != null ? getAttributeModel().isCellValid(modelRow, modelCol) : true;
+        return table.isCellValid(row, col);
     }
 
     public Element getElementAt(int row) {
-        int modelRow = getRowSorter().convertRowIndexToModel(row);
-        return getAttributeModel() != null ? getAttributeModel().getElementAt(modelRow) : null;
+       return table.getElementAtViewIndex(row);
     }
 
     public boolean stopEditing() {
@@ -439,5 +392,33 @@ public class UTableViewAdapter extends AbstractViewAdapter implements TableModel
   
     public int[] getSelectedRowsModelIndex() {
         return table.getSelectedRowsModelIndex();
+    }
+    
+    public void addRow() {
+        table.addRow();
+    }
+
+    public void delRowWithModelIndex(int modelIndex) {
+        table.delRowWithModelIndex(modelIndex);
+    }
+
+    public void delRowWithViewIndex(int viewIndex) {
+        table.delRowWithViewIndex(viewIndex);
+    }
+
+    public void delSelectedRows() {
+        table.delSelectedRows();
+    }
+
+    public List getSelectedObjects() {
+        return table.getSelectedObjects();
+    }
+
+    public List<Element> getSelectedElements() {
+        return table.getSelectedElements();
+    }
+
+    public Object getSelectedObject() {
+        return table.getSelectedObject();
     }
 }

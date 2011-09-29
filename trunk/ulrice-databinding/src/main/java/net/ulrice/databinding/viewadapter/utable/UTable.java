@@ -9,7 +9,7 @@ import javax.swing.JTextField;
 import javax.swing.table.JTableHeader;
 
 
-class UTable extends JTable {
+public class UTable extends JTable {
     private static final long serialVersionUID = -4005234806899231797L;
 
     private UTableVAHeader uTableHeader;
