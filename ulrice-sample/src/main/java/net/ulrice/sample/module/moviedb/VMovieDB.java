@@ -8,7 +8,6 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 
 import net.ulrice.databinding.viewadapter.impl.JTextComponentViewAdapter;
-import net.ulrice.databinding.viewadapter.impl.factory.ViewAdapterFactory;
 import net.ulrice.databinding.viewadapter.utable.UTableViewAdapter;
 
 public class VMovieDB {
@@ -21,9 +20,12 @@ public class VMovieDB {
 	
 //	private final UTableViewAdapter movieTableVA = ViewAdapterFactory.createUTableViewAdapter(1);
 	private final UTableViewAdapter movieTableVA = new UTableViewAdapter();
-	private final JTextComponentViewAdapter titleVA = ViewAdapterFactory.createTextFieldAdapter();
-	private final JTextComponentViewAdapter yearVA = ViewAdapterFactory.createTextFieldAdapter();
-	private final JTextComponentViewAdapter directorVA = ViewAdapterFactory.createTextFieldAdapter();
+//	private final JTextComponentViewAdapter titleVA = ViewAdapterFactory.createTextFieldAdapter();
+	private final JTextComponentViewAdapter titleVA = new JTextComponentViewAdapter();
+//	private final JTextComponentViewAdapter yearVA = ViewAdapterFactory.createTextFieldAdapter();
+	private final JTextComponentViewAdapter yearVA = new JTextComponentViewAdapter();
+//	private final JTextComponentViewAdapter directorVA = ViewAdapterFactory.createTextFieldAdapter();
+	private final JTextComponentViewAdapter directorVA = new JTextComponentViewAdapter();
 //	private final UTableViewAdapter actorTableVA = ViewAdapterFactory.createUTableViewAdapter(0);
 	private final UTableViewAdapter actorTableVA = new UTableViewAdapter();
 
