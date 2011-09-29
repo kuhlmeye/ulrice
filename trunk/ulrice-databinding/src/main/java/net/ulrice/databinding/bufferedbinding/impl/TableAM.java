@@ -135,7 +135,7 @@ public class TableAM implements IFAttributeModel {
 	}
 
 	public Element getElementAt(int index) {
-	    if(index < elements.size()) {
+	    if(index >= 0 && index < elements.size()) {
 	        return elements.get(index);
 	    }
 	    return null;
@@ -694,7 +694,8 @@ public class TableAM implements IFAttributeModel {
 	}
 
 	public Object getCurrentValueAt(int row) {
-		return getElementAt(row).getCurrentValue();
+		Element element = getElementAt(row);		
+        return element != null ? element.getCurrentValue() : null;
 	}
 
 	public void setUniqueConstraint(String... columnIds) {
