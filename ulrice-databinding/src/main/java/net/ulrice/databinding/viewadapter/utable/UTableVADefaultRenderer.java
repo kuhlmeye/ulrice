@@ -23,7 +23,6 @@ import net.ulrice.databinding.viewadapter.IFTooltipHandler;
  */
 public class UTableVADefaultRenderer extends DefaultTableCellRenderer {
 
-    private UTableViewAdapter tableVA;
 
     private IFStateMarker stateMarker;
     private IFTooltipHandler<Element> tooltipHandler;
@@ -33,10 +32,6 @@ public class UTableVADefaultRenderer extends DefaultTableCellRenderer {
     private Color evenReadOnlyBackground = BindingUI.getColor(BindingUI.BACKGROUND_READONLY_EVEN_TABLE_ROW, new Color(200, 230, 200));
     private Color oddReadOnlyBackground = BindingUI.getColor(BindingUI.BACKGROUND_READONLY_ODD_TABLE_ROW, new Color(170, 200, 170));
     private Color selectedBackground = BindingUI.getColor(BindingUI.BACKGROUND_SELECTED_TABLE_ROW, new Color(200, 200, 255));
-
-    public UTableVADefaultRenderer(UTableViewAdapter tableVA) {
-        this.tableVA = tableVA;
-    }
 
     /**
      * @see javax.swing.table.TableCellRenderer#getTableCellRendererComponent(javax.swing.JTable, java.lang.Object,
@@ -49,40 +44,44 @@ public class UTableVADefaultRenderer extends DefaultTableCellRenderer {
         JComponent component =
                 (JComponent) super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
 
-        boolean readOnly = !getTableVA().isCellEditable(row, column);
-        
+        if(table instanceof UTable) {
 
-        if (isSelected) {
-            component.setBackground(selectedBackground);
-        }
-        else if (readOnly) {
-            component.setBackground(row % 2 == 0 ? evenReadOnlyBackground : oddReadOnlyBackground);
-        }
-        else {
-            component.setBackground(row % 2 == 0 ? evenNormalBackground : oddNormalBackground);
-        }
+            boolean dirty = false;
+            boolean valid = true;
+            
+            UTableComponent tableComponent = ((UTable)table).getTableComponent();            
+            boolean readOnly = !tableComponent.isCellEditable(row, column);
+            
+            if (isSelected) {
+                component.setBackground(selectedBackground);
+            }
+            else if (readOnly) {
+                component.setBackground(row % 2 == 0 ? evenReadOnlyBackground : oddReadOnlyBackground);
+            }
+            else {
+                component.setBackground(row % 2 == 0 ? evenNormalBackground : oddNormalBackground);
+            }
 
-        String columnId = table.getColumnModel().getColumn(column).getIdentifier().toString();
-        // TODO SELECTION BACKGROUND
+            String columnId = table.getColumnModel().getColumn(column).getIdentifier().toString();
+            // TODO SELECTION BACKGROUND
+            
+            Element element = tableComponent.getElementAtViewIndex(row);
+            
+            if (stateMarker != null) {
+                dirty |= element.isOriginalValueDirty();
+                valid &= element.isOriginalValueValid();
 
-        boolean dirty = false;
-        boolean valid = true;
+                dirty |= element.isColumnDirty(columnId);
+                valid &= element.isColumnValid(columnId);
 
-        Element element = getTableVA().getElementAt(row);
-        if (stateMarker != null) {
-            dirty |= element.isOriginalValueDirty();
-            valid &= element.isOriginalValueValid();
+                stateMarker.initialize(component);
+                stateMarker.updateState(dirty, valid, component);
+            }
 
-            dirty |= element.isColumnDirty(columnId);
-            valid &= element.isColumnValid(columnId);
-
-            stateMarker.initialize(component);
-            stateMarker.updateState(dirty, valid, component);
-        }
-
-        if (tooltipHandler != null) {
-            tooltipHandler.updateTooltip(element, component);
-        }
+            if (tooltipHandler != null) {
+                tooltipHandler.updateTooltip(element, component);
+            }
+        }        
 
         return component;
     }
@@ -101,9 +100,5 @@ public class UTableVADefaultRenderer extends DefaultTableCellRenderer {
 
     public void setTooltipHandler(IFTooltipHandler<Element> tooltipHandler) {
         this.tooltipHandler = tooltipHandler;
-    }
-
-    protected UTableViewAdapter getTableVA() {
-        return tableVA;
     }
 }

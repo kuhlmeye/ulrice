@@ -4,6 +4,7 @@ import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -198,9 +199,9 @@ public class UTableComponent extends JPanel {
         staticTable.setRowSorter(sorter.getStaticTableRowSorter());
         scrollTable.setRowSorter(sorter.getScrollTableRowSorter());
         
-        staticTableRenderer = new UTableVADefaultRenderer(viewAdapter);
+        staticTableRenderer = new UTableVADefaultRenderer();
         staticTable.setDefaultRenderer(Object.class, staticTableRenderer);
-        scrollTableRenderer = new UTableVADefaultRenderer(viewAdapter);
+        scrollTableRenderer = new UTableVADefaultRenderer();
         scrollTable.setDefaultRenderer(Object.class, scrollTableRenderer);
         
         filter = new UTableVAFilter(sorter, staticTable.getUTableHeader(), scrollTable.getUTableHeader());
@@ -500,4 +501,101 @@ public class UTableComponent extends JPanel {
         this.attributeModel = attributeModel;
     }
 
+
+    public void addRow() {
+        checkAttributeModelSet();
+        attributeModel.addElement(null);
+    }
+
+    public void delRowWithModelIndex(int modelIndex) {
+        checkAttributeModelSet();
+        attributeModel.delElement(modelIndex);
+    }
+
+    public void delRowWithViewIndex(int viewIndex) {
+        checkAttributeModelSet();
+        attributeModel.delElement(getRowSorter().convertRowIndexToModel(viewIndex));
+    }
+
+    public void delSelectedRows() {
+        checkAttributeModelSet();
+        List<Element> elements = getSelectedElements();
+        if (elements != null) {
+            for (Element element : elements) {
+                attributeModel.delElement(element);
+            }
+        }
+    }
+
+
+    @SuppressWarnings({ "rawtypes", "unchecked" })
+    public List getSelectedObjects() {
+        checkAttributeModelSet();
+        int[] rowsInModel = getSelectedRowsModelIndex();
+        List result = new ArrayList(rowsInModel.length);
+        for (int row : rowsInModel) {
+            result.add(attributeModel.getCurrentValueAt(row));
+        }
+        return result;
+    }
+
+    public List<Element> getSelectedElements() {
+        checkAttributeModelSet();
+        int[] rowsInModel = getSelectedRowsModelIndex();
+        List<Element> result = new ArrayList<Element>(rowsInModel.length);
+        for (int row : rowsInModel) {
+            result.add(attributeModel.getElementAt(row));
+        }
+        return result;
+    }
+
+    public Object getSelectedObject() {
+        checkAttributeModelSet();
+        int rowInModel = getSelectedRowModelIndex();
+        return attributeModel.getCurrentValueAt(rowInModel);
+    }
+    
+    private void checkAttributeModelSet() {
+        if(attributeModel == null) {
+            throw new IllegalStateException("Component is not bound to an attribute model.");
+        }        
+    }
+
+    public Element getElementAtViewIndex(int viewIndex) {
+        if(attributeModel == null) {
+            return null;
+        }
+        int modelRow = getRowSorter().convertRowIndexToModel(viewIndex);
+        return attributeModel.getElementAt(modelRow);
+    }
+
+
+    public boolean isCellDirty(int row, int col) {
+        int modelRow = getRowSorter().convertRowIndexToModel(row);
+        int modelCol = convertColumnIndexToModel(col);
+        return attributeModel != null ? attributeModel.isCellDirty(modelRow, modelCol) : false;
+    }
+
+    public boolean isCellValid(int row, int col) {
+        int modelRow = getRowSorter().convertRowIndexToModel(row);
+        int modelCol = convertColumnIndexToModel(col);
+        return attributeModel != null ? attributeModel.isCellValid(modelRow, modelCol) : true;
+    }
+    
+    public boolean isCellEditable(int row, int col) {
+        int modelRow = getRowSorter().convertRowIndexToModel(row);
+        int modelCol = convertColumnIndexToModel(col);
+        
+        if (attributeModel != null) {
+            return attributeModel.isCellEditable(modelRow, modelCol);
+        }
+        return false;
+    }
+
+    public ColumnDefinition< ?> getColumnById(String columnId) {
+        if(attributeModel != null) {
+            return attributeModel.getColumnById(columnId);
+        }
+        return null;
+    }
 }

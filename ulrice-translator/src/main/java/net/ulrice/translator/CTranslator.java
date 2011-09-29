@@ -157,7 +157,7 @@ public class CTranslator extends AbstractController {
 			public void actionPerformed(ActionEvent e) {
 				UTableViewAdapter viewAdapter = view.getDictionaryVA();
 				if(viewAdapter.getSelectedRowViewIndex() > -1) {
-					viewAdapter.delRow(viewAdapter.getSelectedRowViewIndex());
+					viewAdapter.delSelectedRows();
 				}
 			}
 		};
@@ -176,7 +176,7 @@ public class CTranslator extends AbstractController {
 			public void actionPerformed(ActionEvent e) {
 				UTableViewAdapter viewAdapter = view.getUsagesVA();
 				if(viewAdapter.getSelectedRowViewIndex() > -1) {
-					viewAdapter.delRow(viewAdapter.getSelectedRowViewIndex());
+				    viewAdapter.delSelectedRows();
 				}
 			}
 		};
