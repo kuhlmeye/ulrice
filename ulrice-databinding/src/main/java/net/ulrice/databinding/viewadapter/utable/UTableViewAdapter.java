@@ -3,21 +3,15 @@
  */
 package net.ulrice.databinding.viewadapter.utable;
 
-import java.awt.Component;
-import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.util.ArrayList;
 import java.util.List;
 
 import javax.swing.JComponent;
-import javax.swing.JTable;
 import javax.swing.event.EventListenerList;
-import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
-import javax.swing.table.TableCellRenderer;
-import javax.swing.table.TableColumn;
 import javax.swing.table.TableModel;
 
 import net.ulrice.databinding.IFBinding;
@@ -34,7 +28,6 @@ import net.ulrice.databinding.viewadapter.IFTooltipHandler;
  */
 public class UTableViewAdapter extends AbstractViewAdapter implements TableModelListener, TableModel {
 
-    private static final int RESIZE_MARGIN = 2;
 
     private EventListenerList listenerList = new EventListenerList();
     private TableAM attributeModel;
@@ -45,7 +38,7 @@ public class UTableViewAdapter extends AbstractViewAdapter implements TableModel
 
         @Override
         public void columnValueRangeChanged(TableAM tableAM, ColumnDefinition< ?> colDef) {
-            table.updateColumnModel(tableAM);
+            table.updateColumnModel();
         }
 
         @Override
@@ -57,95 +50,7 @@ public class UTableViewAdapter extends AbstractViewAdapter implements TableModel
     public UTableViewAdapter(final UTableComponent table) {
         super(List.class);
 
-        this.table = table;
-
-        table.getScrollTable().getSelectionModel().addListSelectionListener(new ListSelectionListener() {
-            private boolean nested = false;
-
-            @Override
-            public void valueChanged(ListSelectionEvent e) {
-                if (e.getValueIsAdjusting()) {
-                    return;
-                }
-
-                if (nested) {
-                    return;
-                }
-
-                nested = true;
-                try {
-                    for (ListSelectionListener l : listenerList.getListeners(ListSelectionListener.class)) {
-                        l.valueChanged(e);
-                    }
-                }
-                finally {
-                    nested = false;
-                }
-            }
-        });
-
-        MouseListener mouseListener = new MouseListener() {
-
-            @Override
-            public void mouseReleased(MouseEvent e) {
-                MouseListener[] listeners = listenerList.getListeners(MouseListener.class);
-                if (listeners != null) {
-                    for (MouseListener listener : listeners) {
-                        listener.mouseReleased(adaptMouseEvent(e));
-                    }
-                }
-
-            }
-
-            @Override
-            public void mousePressed(MouseEvent e) {
-                MouseListener[] listeners = listenerList.getListeners(MouseListener.class);
-                if (listeners != null) {
-                    for (MouseListener listener : listeners) {
-                        listener.mousePressed(adaptMouseEvent(e));
-                    }
-                }
-
-            }
-
-            @Override
-            public void mouseExited(MouseEvent e) {
-                MouseListener[] listeners = listenerList.getListeners(MouseListener.class);
-                if (listeners != null) {
-                    for (MouseListener listener : listeners) {
-                        listener.mouseExited(adaptMouseEvent(e));
-                    }
-                }
-            }
-
-            @Override
-            public void mouseEntered(MouseEvent e) {
-                MouseListener[] listeners = listenerList.getListeners(MouseListener.class);
-                if (listeners != null) {
-                    for (MouseListener listener : listeners) {
-                        listener.mouseEntered(adaptMouseEvent(e));
-                    }
-                }
-            }
-
-            @Override
-            public void mouseClicked(MouseEvent e) {
-                MouseListener[] listeners = listenerList.getListeners(MouseListener.class);
-                if (listeners != null) {
-                    for (MouseListener listener : listeners) {
-                        listener.mouseClicked(adaptMouseEvent(e));
-                    }
-                }
-            }
-
-            private MouseEvent adaptMouseEvent(MouseEvent e) {
-                return new MouseEvent(table, e.getID(), e.getWhen(), e.getModifiers(), e.getX(), e.getY(),
-                    e.getXOnScreen(), e.getYOnScreen(), e.getClickCount(), e.isPopupTrigger(), e.getButton());
-            }
-        };
-        table.getStaticTable().addMouseListener(mouseListener);
-        table.getScrollTable().addMouseListener(mouseListener);
-
+        this.table = table;        
     }
 
     public UTableViewAdapter() {
@@ -180,9 +85,9 @@ public class UTableViewAdapter extends AbstractViewAdapter implements TableModel
 
             this.attributeModel = attributeModel;
             this.attributeModel.addTableAMListener(tableAMListener);
-            table.updateColumnModel(attributeModel);
+            table.setAttributeModel(attributeModel);
+            table.updateColumnModel();
             fireAttributeModelBound(this.attributeModel);
-
             fireTableStructureChanged();
         }
     }
@@ -229,22 +134,6 @@ public class UTableViewAdapter extends AbstractViewAdapter implements TableModel
     @Override
     public void removeTableModelListener(TableModelListener l) {
         listenerList.remove(TableModelListener.class, l);
-    }
-
-    public void addListSelectionListener(ListSelectionListener l) {
-        listenerList.add(ListSelectionListener.class, l);
-    }
-
-    public void removeListSelectionListener(ListSelectionListener l) {
-        listenerList.remove(ListSelectionListener.class, l);
-    }
-
-    public void addMouseListener(MouseListener l) {
-        listenerList.add(MouseListener.class, l);
-    }
-
-    public void removeMouseListener(MouseListener l) {
-        listenerList.remove(MouseListener.class, l);
     }
 
     @Override
@@ -434,42 +323,7 @@ public class UTableViewAdapter extends AbstractViewAdapter implements TableModel
     protected void removeComponentListener() {
     }
 
-    public void sizeColumns(boolean includeHeader) {
-        for (int c = 0; c < table.getStaticTable().getColumnCount(); c++) {
-            sizeColumn(table.getStaticTable(), c, RESIZE_MARGIN, includeHeader);
-        }
-        for (int c = 0; c < table.getScrollTable().getColumnCount(); c++) {
-            sizeColumn(table.getScrollTable(), c, RESIZE_MARGIN, includeHeader);
-        }
-    }
 
-    public void sizeColumn(JTable table, int colIndex, int margin, boolean includeHeader) {
-        TableColumn col = table.getColumnModel().getColumn(colIndex);
-        int maxWidth = calcMaxSize(table, colIndex, includeHeader, col);
-        col.setPreferredWidth(maxWidth + 2 * margin);
-    }
-
-    private int calcMaxSize(JTable table, int vColIndex, boolean includeHeader, TableColumn col) {
-        int maxWidth = 0;
-
-        if (includeHeader) {
-            TableCellRenderer renderer = col.getHeaderRenderer();
-            if (renderer == null) {
-                renderer = table.getTableHeader().getDefaultRenderer();
-            }
-            Component comp = renderer.getTableCellRendererComponent(table, col.getHeaderValue(), false, false, 0, 0);
-            maxWidth = comp.getPreferredSize().width;
-        }
-
-        for (int r = 0; r < table.getRowCount(); r++) {
-            TableCellRenderer renderer = table.getCellRenderer(r, vColIndex);
-            Component comp =
-                    renderer.getTableCellRendererComponent(table, table.getValueAt(r, vColIndex), false, false, r,
-                        vColIndex);
-            maxWidth = Math.max(maxWidth, comp.getPreferredSize().width);
-        }
-        return maxWidth;
-    }
 
     public void addRow() {
         getAttributeModel().addElement(null);
@@ -477,18 +331,6 @@ public class UTableViewAdapter extends AbstractViewAdapter implements TableModel
 
     public void delRow(int index) {
         getAttributeModel().delElement(getElementAt(index));
-    }
-
-    public int getSelectedRowViewIndex() {
-        return table.getSelectionModel().getMinSelectionIndex();
-    }
-
-    public int getSelectedRowModelIndex() {
-        int viewIndex = getSelectedRowViewIndex();
-        if (viewIndex >= 0) {
-            return getRowSorter().convertRowIndexToModel(viewIndex);
-        }
-        return -1;
     }
 
     public void delSelectedRows() {
@@ -500,43 +342,11 @@ public class UTableViewAdapter extends AbstractViewAdapter implements TableModel
         }
     }
 
-    public int[] getSelectedRowsViewIndex() {
-        int min = table.getSelectionModel().getMinSelectionIndex();
-        int max = table.getSelectionModel().getMaxSelectionIndex();
 
-        int[] tmpRows = new int[max - min + 1];
-        int idx = 0;
-        for (int i = min; i <= max; i++) {
-            if (table.getSelectionModel().isSelectedIndex(i)) {
-                tmpRows[idx++] = i;
-            }
-        }
-
-        int[] result = new int[idx];
-        System.arraycopy(tmpRows, 0, result, 0, idx);
-        return result;
-    }
-
-    public int[] getSelectedRowsModelIndex() {
-        int min = table.getSelectionModel().getMinSelectionIndex();
-        int max = table.getSelectionModel().getMaxSelectionIndex();
-
-        int[] tmpRows = new int[max - min + 1];
-        int idx = 0;
-        for (int i = min; i <= max; i++) {
-            if (table.getSelectionModel().isSelectedIndex(i)) {
-                tmpRows[idx++] = getRowSorter().convertRowIndexToModel(i);
-            }
-        }
-
-        int[] result = new int[idx];
-        System.arraycopy(tmpRows, 0, result, 0, idx);
-        return result;
-    }
 
     @SuppressWarnings({ "rawtypes", "unchecked" })
     public List getSelectedObjects() {
-        int[] rowsInModel = getSelectedRowsModelIndex();
+        int[] rowsInModel = table.getSelectedRowsModelIndex();
         List result = new ArrayList(rowsInModel.length);
         for (int row : rowsInModel) {
             result.add(getAttributeModel().getCurrentValueAt(row));
@@ -545,7 +355,7 @@ public class UTableViewAdapter extends AbstractViewAdapter implements TableModel
     }
 
     public List<Element> getSelectedElements() {
-        int[] rowsInModel = getSelectedRowsModelIndex();
+        int[] rowsInModel = table.getSelectedRowsModelIndex();
         List<Element> result = new ArrayList<Element>(rowsInModel.length);
         for (int row : rowsInModel) {
             result.add(getAttributeModel().getElementAt(row));
@@ -554,7 +364,7 @@ public class UTableViewAdapter extends AbstractViewAdapter implements TableModel
     }
 
     public Object getSelectedObject() {
-        int rowInModel = getSelectedRowModelIndex();
+        int rowInModel = table.getSelectedRowModelIndex();
         return getAttributeModel().getCurrentValueAt(rowInModel);
     }
 
@@ -593,5 +403,41 @@ public class UTableViewAdapter extends AbstractViewAdapter implements TableModel
 
     public void setLowerInfoArea(JComponent bottomInfoArea) {
         table.setLowerInfoArea(bottomInfoArea);
+    }
+
+    public void addListSelectionListener(ListSelectionListener listSelectionListener) {
+        table.addListSelectionListener(listSelectionListener);
+    }
+
+    public void removeListSelectionListener(ListSelectionListener listSelectionListener) {
+        table.removeListSelectionListener(listSelectionListener);
+    }
+
+    public void sizeColumns(boolean includeHeader) {
+        table.sizeColumns(includeHeader);
+    }
+
+    public void addMouseListener(MouseListener mouseListener) {
+        table.addMouseListener(mouseListener);
+    }
+
+    public void removeMouseListener(MouseListener mouseListener) {
+        table.removeMouseListener(mouseListener);
+    }
+    
+    public int getSelectedRowViewIndex() {
+        return table.getSelectionModel().getMinSelectionIndex();
+    }
+
+    public int getSelectedRowModelIndex() {
+        return table.getSelectedRowModelIndex();
+    }
+    
+    public int[] getSelectedRowsViewIndex() {
+        return table.getSelectedRowsViewIndex();
+    }
+  
+    public int[] getSelectedRowsModelIndex() {
+        return table.getSelectedRowsModelIndex();
     }
 }

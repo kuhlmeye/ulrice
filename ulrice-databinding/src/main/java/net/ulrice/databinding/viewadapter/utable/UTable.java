@@ -6,15 +6,19 @@ import java.util.EventObject;
 import javax.swing.DefaultCellEditor;
 import javax.swing.JTable;
 import javax.swing.JTextField;
+import javax.swing.table.JTableHeader;
 
 
-public class UTable extends JTable {
+class UTable extends JTable {
     private static final long serialVersionUID = -4005234806899231797L;
 
     private UTableVAHeader uTableHeader;
 	private UTable assocTable;
 
-	public UTable() {
+    private UTableComponent tableComponent;
+
+	public UTable(UTableComponent tableComponent) {
+	    this.tableComponent = tableComponent;
 		setAutoCreateColumnsFromModel(false);
 		setAutoResizeMode(AUTO_RESIZE_OFF);
 		setColumnSelectionAllowed(false);
@@ -74,4 +78,8 @@ public class UTable extends JTable {
 	public UTableVAHeader getUTableHeader() {
 		return uTableHeader;
 	}
+	
+	public UTableComponent getTableComponent() {
+        return tableComponent;
+    }
 }

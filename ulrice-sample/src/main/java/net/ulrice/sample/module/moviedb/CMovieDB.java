@@ -65,9 +65,9 @@ public class CMovieDB extends AbstractController implements ListSelectionListene
 
 		overviewGroup.read();
 
-		// FIXME Static column support
-		view.getMovieTableAdapter().addListSelectionListener(this);
-		view.getMovieTableAdapter().sizeColumns(false);
+
+		view.getMovieTableAdapter().getComponent().addListSelectionListener(this);
+		view.getMovieTableAdapter().getComponent().sizeColumns(false);
 
 	}
 
@@ -139,7 +139,7 @@ public class CMovieDB extends AbstractController implements ListSelectionListene
         detailMovieId = selElement.getUniqueId();
         detailModel.setData((Movie) selElement.getCurrentValue());
         detailGroup.read();
-        view.getActorTableVA().sizeColumns(true);
+        view.getActorTableVA().getComponent().sizeColumns(true);
 	}
 	
 	private void clearDetail() {
