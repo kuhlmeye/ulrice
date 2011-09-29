@@ -276,6 +276,11 @@ public class ColumnDefinition<T extends Object> {
     public TableCellRenderer getCellRenderer() {
         return cellRenderer;
     }
+    
+
+    public void setCellRenderer(TableCellRenderer cellRenderer) {
+        this.cellRenderer = cellRenderer;
+    }
 
     public void setAttributeInfo(IFAttributeInfo attributeInfo) {
         this.attributeInfo = attributeInfo;
