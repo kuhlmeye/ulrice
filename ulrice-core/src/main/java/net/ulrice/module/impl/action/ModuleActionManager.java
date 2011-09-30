@@ -351,23 +351,27 @@ public class ModuleActionManager implements IFModuleEventListener, PropertyChang
 
     public void blockAction(IFController controller, UlriceAction action, Object blocker) {
         Map<UlriceAction, ModuleActionState> actionMap = controllerActionStateMap.get(controller);
-        ModuleActionState actionState = actionMap.get(action);
-        boolean wasEnabled = actionState.isEnabled();
-        actionState.addBlocker(blocker);
-        if(actionState.isEnabled() != wasEnabled) {
-            adaptActionStates();
-            fireApplicationActionsChanged();
+        if(actionMap.containsKey(action)) {
+            ModuleActionState actionState = actionMap.get(action);
+            boolean wasEnabled = actionState.isEnabled();
+            actionState.addBlocker(blocker);
+            if(actionState.isEnabled() != wasEnabled) {
+                adaptActionStates();
+                fireApplicationActionsChanged();
+            }
         }
     }
 
     public void unblockAction(IFController controller, UlriceAction action, Object blocker) {
         Map<UlriceAction, ModuleActionState> actionMap = controllerActionStateMap.get(controller);
-        ModuleActionState actionState = actionMap.get(action);
-        boolean wasEnabled = actionState.isEnabled();
-        actionState.removeBlocker(blocker);
-        if(actionState.isEnabled() != wasEnabled) {
-            adaptActionStates();
-            fireApplicationActionsChanged();
+        if(actionMap.containsKey(action)) {
+            ModuleActionState actionState = actionMap.get(action);
+            boolean wasEnabled = actionState.isEnabled();
+            actionState.removeBlocker(blocker);
+            if(actionState.isEnabled() != wasEnabled) {
+                adaptActionStates();
+                fireApplicationActionsChanged();
+            }
         }
     }
 }
