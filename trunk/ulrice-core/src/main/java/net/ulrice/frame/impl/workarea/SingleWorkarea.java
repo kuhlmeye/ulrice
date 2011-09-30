@@ -113,19 +113,27 @@ public class SingleWorkarea implements IFWorkarea, AWTEventListener {
 		
 	}
 
-	@Override
-	public void moduleBlocked(IFController controller) {
-		if(activeController != null && activeController.equals(controller)) {
-			workareaPanel.setBlocked(true);
-			Toolkit.getDefaultToolkit().addAWTEventListener(this, 0xFFF);
-		}
-	}
+    @Override
+    public void moduleBlocked(IFController controller, Object blocker) {
+        moduleBlocked(controller);
+    }
 
-	@Override
-	public void moduleUnblocked(IFController controller) {
-		if(activeController != null && activeController.equals(controller)) {
-			workareaPanel.setBlocked(false);
-			Toolkit.getDefaultToolkit().removeAWTEventListener(this);
-		}
-	}
+    @Override
+    public void moduleUnblocked(IFController controller, Object blocker) {
+        moduleUnblocked(controller);
+    }
+
+    public void moduleBlocked(IFController controller) {
+        if(activeController != null && activeController.equals(controller)) {
+            workareaPanel.setBlocked(true);
+            Toolkit.getDefaultToolkit().addAWTEventListener(this, 0xFFF);
+        }
+    }
+
+    public void moduleUnblocked(IFController controller) {
+        if(activeController != null && activeController.equals(controller)) {
+            workareaPanel.setBlocked(false);
+            Toolkit.getDefaultToolkit().removeAWTEventListener(this);
+        }
+    }
 }

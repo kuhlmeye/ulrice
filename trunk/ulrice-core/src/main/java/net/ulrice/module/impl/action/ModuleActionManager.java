@@ -322,14 +322,52 @@ public class ModuleActionManager implements IFModuleEventListener, PropertyChang
 	}
 	
 	@Override
-	public void moduleBlocked(IFController controller) {
-		// TODO Auto-generated method stub
-		
+	public void moduleBlocked(IFController controller, Object blocker) {
+        Map<UlriceAction, ModuleActionState> actionMap = controllerActionStateMap.get(controller);
+        Collection<ModuleActionState> actions = actionMap.values();
+        if(actions != null) {
+            for(ModuleActionState action : actions) {
+                action.addBlocker(blocker);
+            }
+        }
+
+        adaptActionStates();
+        fireApplicationActionsChanged();
 	}
 
 	@Override
-	public void moduleUnblocked(IFController controller) {
-		// TODO Auto-generated method stub
-		
+	public void moduleUnblocked(IFController controller, Object blocker) {
+        Map<UlriceAction, ModuleActionState> actionMap = controllerActionStateMap.get(controller);
+        Collection<ModuleActionState> actions = actionMap.values();
+        if(actions != null) {
+            for(ModuleActionState action : actions) {
+                action.removeBlocker(blocker);
+            }
+        }
+
+        adaptActionStates();
+        fireApplicationActionsChanged();
 	}
+
+    public void blockAction(IFController controller, UlriceAction action, Object blocker) {
+        Map<UlriceAction, ModuleActionState> actionMap = controllerActionStateMap.get(controller);
+        ModuleActionState actionState = actionMap.get(action);
+        boolean wasEnabled = actionState.isEnabled();
+        actionState.addBlocker(blocker);
+        if(actionState.isEnabled() != wasEnabled) {
+            adaptActionStates();
+            fireApplicationActionsChanged();
+        }
+    }
+
+    public void unblockAction(IFController controller, UlriceAction action, Object blocker) {
+        Map<UlriceAction, ModuleActionState> actionMap = controllerActionStateMap.get(controller);
+        ModuleActionState actionState = actionMap.get(action);
+        boolean wasEnabled = actionState.isEnabled();
+        actionState.removeBlocker(blocker);
+        if(actionState.isEnabled() != wasEnabled) {
+            adaptActionStates();
+            fireApplicationActionsChanged();
+        }
+    }
 }

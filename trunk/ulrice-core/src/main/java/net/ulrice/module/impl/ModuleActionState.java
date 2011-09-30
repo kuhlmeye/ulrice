@@ -1,6 +1,9 @@
 package net.ulrice.module.impl;
 
-import net.ulrice.module.IFController;
+import java.util.HashSet;
+import java.util.IdentityHashMap;
+import java.util.Set;
+
 import net.ulrice.module.impl.action.UlriceAction;
 
 /**
@@ -15,6 +18,8 @@ public class ModuleActionState {
 	
 	/** The reference to a module action. */
 	private UlriceAction action;
+	
+	private IdentityHashMap<Object,Object> blockers = new IdentityHashMap<Object,Object>();
 	
 	/**
 	 * Creates a new module action state.
@@ -33,7 +38,7 @@ public class ModuleActionState {
 	 * @return the enabled
 	 */
 	public boolean isEnabled() {
-		return enabled;
+		return enabled && blockers.isEmpty();
 	}
 
 	/**
@@ -56,4 +61,13 @@ public class ModuleActionState {
 	public void setAction(UlriceAction action) {
 		this.action = action;
 	}
+	
+	public void addBlocker(Object blocker) {
+	    blockers.put(blocker,blocker);
+	}
+	
+	public void removeBlocker(Object blocker) {
+	    blockers.remove(blocker);	    
+	}
+		
 }

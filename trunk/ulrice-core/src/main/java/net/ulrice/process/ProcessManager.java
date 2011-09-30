@@ -22,15 +22,23 @@ public class ProcessManager implements IFProcessListener {
 
     private static final Logger LOG = Logger.getLogger(ProcessManager.class.getName());
 
-    /** Map holding the processes grouped by controller. */
-    private Map<IFController, List<IFBackgroundProcess>> processMap =
-            new HashMap<IFController, List<IFBackgroundProcess>>();
-
+    private Map<IFController, List<IFBackgroundProcess>> processMap = new HashMap<IFController, List<IFBackgroundProcess>>();
+    private Map<String, IFBackgroundProcess> idProcessMap = new HashMap<String, IFBackgroundProcess>();
+    private Map<IFBackgroundProcess, String> processIdMap = new HashMap<IFBackgroundProcess, String>();
     private List<IFBackgroundProcess> globalProcesses = new ArrayList<IFBackgroundProcess>();
 
     private EventListenerList listenerList = new EventListenerList();
 
-    public void registerProcess(IFBackgroundProcess process) {
+    private static long currentId = System.currentTimeMillis();
+    
+    /**
+     * Registers a background process at the process manager of ulrice. 
+     * 
+     * @param process The process.
+     * @return The unique id of the process.
+     */
+    public String registerProcess(IFBackgroundProcess process) {
+        String uniqueId = getNextUniqueId();
         IFController owningController = process.getOwningController();
         if (owningController != null) {
             List<IFBackgroundProcess> processList = processMap.get(owningController);
@@ -43,6 +51,8 @@ public class ProcessManager implements IFProcessListener {
         else {
             globalProcesses.add(process);
         }
+        idProcessMap.put(uniqueId, process);
+        processIdMap.put(process, uniqueId);
         process.addProcessListener(this);
         fireStateChanged(process);
 
@@ -51,6 +61,7 @@ public class ProcessManager implements IFProcessListener {
                 Ulrice.getModuleManager().block(process.getOwningController(), process);
             }
         }
+        return uniqueId;
     }
 
     public List<IFBackgroundProcess> getRunningProcesses(IFController controller) {        
@@ -74,6 +85,8 @@ public class ProcessManager implements IFProcessListener {
                 Ulrice.getModuleManager().unblock(process.getOwningController(), process);
             }
 
+            String uniqueId = processIdMap.get(process);
+            idProcessMap.remove(uniqueId);
             IFController controller = process.getOwningController();
             List<IFBackgroundProcess> list = null;
             list = controller == null ? globalProcesses : processMap.get(process.getOwningController());
@@ -87,6 +100,10 @@ public class ProcessManager implements IFProcessListener {
             }
         }
         fireStateChanged(process);
+    }
+    
+    public IFBackgroundProcess getProcessById(String uniqueId) {
+        return idProcessMap.get(uniqueId);
     }
 
     public void fireStateChanged(IFBackgroundProcess process) {
@@ -114,4 +131,9 @@ public class ProcessManager implements IFProcessListener {
     public void removeProcessListener(IFProcessListener listener) {
         listenerList.remove(IFProcessListener.class, listener);
     }
+
+
+    private synchronized String getNextUniqueId() {
+        return Long.toHexString(currentId++);
+    }      
 }
