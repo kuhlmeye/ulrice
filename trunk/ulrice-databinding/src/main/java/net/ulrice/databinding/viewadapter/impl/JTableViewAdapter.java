@@ -33,10 +33,6 @@ public class JTableViewAdapter extends AbstractViewAdapter implements TableModel
 
 	private JTable table;
 
-	public JTableViewAdapter() {
-		this(new JTable());
-	}
-
 	public JTableViewAdapter(JTable table) {
 		super(List.class);
 		this.table = table;

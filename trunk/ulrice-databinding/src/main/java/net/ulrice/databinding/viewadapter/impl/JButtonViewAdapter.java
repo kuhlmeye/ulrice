@@ -8,10 +8,6 @@ import net.ulrice.databinding.viewadapter.AbstractViewAdapter;
 public class JButtonViewAdapter extends AbstractViewAdapter {
     private final JButton button;
     
-    public JButtonViewAdapter() {
-    	this(new JButton());
-    }
-    
     public JButtonViewAdapter (JButton button) {
         super (String.class);
         this.button = button;

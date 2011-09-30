@@ -17,10 +17,6 @@ public class JSliderViewAdapter extends AbstractViewAdapter implements ChangeLis
 
 	private JSlider slider;
 
-	public JSliderViewAdapter() {
-		this(new JSlider());
-	}
-
 	public JSliderViewAdapter(JSlider slider) {
 		super(Integer.class);
 		this.slider = slider;

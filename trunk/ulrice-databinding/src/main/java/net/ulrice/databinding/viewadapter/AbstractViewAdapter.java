@@ -1,13 +1,8 @@
 package net.ulrice.databinding.viewadapter;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import javax.swing.event.EventListenerList;
 
 import net.ulrice.databinding.IFBinding;
-import net.ulrice.databinding.bufferedbinding.IFAttributeModel;
-import net.ulrice.databinding.bufferedbinding.impl.TableAM;
 import net.ulrice.databinding.converter.IFValueConverter;
 import net.ulrice.databinding.converter.impl.DoNothingConverter;
 

@@ -4,7 +4,6 @@
 package net.ulrice.databinding.viewadapter.utable;
 
 import java.awt.event.MouseListener;
-import java.util.ArrayList;
 import java.util.List;
 
 import javax.swing.JComponent;
@@ -51,10 +50,6 @@ public class UTableViewAdapter extends AbstractViewAdapter implements TableModel
         super(List.class);
 
         this.table = table;        
-    }
-
-    public UTableViewAdapter() {
-        this(new UTableComponent(0));
     }
 
     /**

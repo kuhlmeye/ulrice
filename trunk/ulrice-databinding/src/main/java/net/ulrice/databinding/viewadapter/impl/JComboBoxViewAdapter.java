@@ -13,10 +13,6 @@ public class JComboBoxViewAdapter<M> extends AbstractViewAdapter <M, ObjectWithP
     private final JComboBox comboBox;
     private final PresentationProvider<M> presentationProvider;
 
-    public JComboBoxViewAdapter(PresentationProvider<M> presentationProvider) {
-    	this(new JComboBox(), presentationProvider);
-    }
-    
     public JComboBoxViewAdapter (JComboBox combo, PresentationProvider<M> presentationProvider) {
         super (ObjectWithPresentation.class);
         this.presentationProvider = presentationProvider;

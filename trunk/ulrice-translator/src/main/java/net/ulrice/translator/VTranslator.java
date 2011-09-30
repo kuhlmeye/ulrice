@@ -5,6 +5,7 @@ import javax.swing.JComponent;
 import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
 
+import net.ulrice.databinding.viewadapter.utable.UTableComponent;
 import net.ulrice.databinding.viewadapter.utable.UTableViewAdapter;
 
 public class VTranslator extends JPanel {	
@@ -17,9 +18,9 @@ public class VTranslator extends JPanel {
 	
 	public void initialize(CTranslator Controller) {
 		
-		dictionaryVA = new UTableViewAdapter();
-		usagesVA = new UTableViewAdapter();
-		translationsVA = new UTableViewAdapter();
+		dictionaryVA = new UTableViewAdapter(new UTableComponent(0));
+		usagesVA = new UTableViewAdapter(new UTableComponent(0));
+		translationsVA = new UTableViewAdapter(new UTableComponent(0));
 		
 		JTabbedPane tabbedPane = new JTabbedPane();
 		tabbedPane.addTab("Usage", usagesVA.getComponent());

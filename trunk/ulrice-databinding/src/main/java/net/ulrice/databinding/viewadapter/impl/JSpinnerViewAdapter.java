@@ -1,6 +1,5 @@
 package net.ulrice.databinding.viewadapter.impl;
 
-import javax.swing.JSlider;
 import javax.swing.JSpinner;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
@@ -17,10 +16,6 @@ import net.ulrice.databinding.viewadapter.AbstractViewAdapter;
 public class JSpinnerViewAdapter extends AbstractViewAdapter implements ChangeListener {
 
 	private JSpinner spinner;
-
-	public JSpinnerViewAdapter() {
-		this(new JSpinner());
-	}
 
 	public JSpinnerViewAdapter(JSpinner spinner) {
 		super(Integer.class);
