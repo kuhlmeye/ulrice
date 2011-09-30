@@ -28,7 +28,13 @@ public class JCheckBoxViewAdapter extends AbstractViewAdapter implements ActionL
 
 	@Override
 	protected void setValue(Object value) {
-		checkBox.setSelected((Boolean)modelToView(value));
+		Boolean modelBoolean = (Boolean)modelToView(value);
+		if(modelBoolean != null) {
+		    checkBox.setSelected(modelBoolean);
+		} else {
+		    // Default handling. Checkbox is not selected, if model not filled.
+		    checkBox.setSelected(false);
+		}
 	}
 
     public void setEnabled (boolean enabled) {
