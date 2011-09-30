@@ -113,7 +113,7 @@ public class UTableComponent extends JPanel {
                 }
 
                 if(e.isPopupTrigger()) {
-                    showPopupMenu(e.getX(), e.getY());
+                    showPopupMenu(e.getComponent(), e.getX(), e.getY());
                 }
             }
 
@@ -127,7 +127,7 @@ public class UTableComponent extends JPanel {
                 }
 
                 if(e.isPopupTrigger()) {
-                    showPopupMenu(e.getX(), e.getY());
+                    showPopupMenu(e.getComponent(), e.getX(), e.getY());
                 }
             }
 
@@ -161,7 +161,7 @@ public class UTableComponent extends JPanel {
                     }
                 }
                 if(e.isPopupTrigger()) {
-                    showPopupMenu(e.getX(), e.getY());
+                    showPopupMenu(e.getComponent(), e.getX(), e.getY());
                 }
             }
 
@@ -654,12 +654,12 @@ public class UTableComponent extends JPanel {
         popupMenuActions.add(action);
     }    
 
-    private void showPopupMenu(int x, int y) {
+    private void showPopupMenu(Component component, int x, int y) {
         JPopupMenu popupMenu = new JPopupMenu();
         for(Action action : popupMenuActions) {
             popupMenu.add(action);
         }
-        popupMenu.show(this, x, y);
+        popupMenu.show(component, x, y);
     }
 
     

@@ -67,6 +67,7 @@ public abstract class AbstractViewAdapter<M, V> implements IFViewAdapter<M, V> {
     @Override
     public void bind(IFBinding binding) {
         fireAttributeModelBound(binding);
+        updateFromBinding(binding);
     }
     
     @Override
@@ -79,6 +80,14 @@ public abstract class AbstractViewAdapter<M, V> implements IFViewAdapter<M, V> {
         if (!isInNotification()) {
             removeComponentListener();
             setValue((M) binding.getCurrentValue());
+            
+            if(binding.isReadOnly() && isEnabled()) {
+                setEnabled(false);
+            }
+            if(!binding.isReadOnly() && !isEnabled()) {
+                setEnabled(true);
+            }
+            
             addComponentListener();
         }
         if (getTooltipHandler() != null) {

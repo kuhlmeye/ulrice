@@ -512,6 +512,7 @@ public class TableAM implements IFAttributeModel {
         elementIdMap.clear();
         newElements.clear();
         modElements.clear();
+        delElements.clear();
         invElements.clear();
 		elements.clear();
 
