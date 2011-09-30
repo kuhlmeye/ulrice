@@ -152,8 +152,7 @@ public class TabbedWorkarea extends JTabbedPane implements IFWorkarea, MouseList
 		// Get the component of the controller.
 		final JComponent controllerComponent = getControllerComponent(activeController);
 		final GlassPanel glassPanel = new GlassPanel();
-		glassPanel.setLayout(new BorderLayout());
-		glassPanel.add(controllerComponent, BorderLayout.CENTER);
+		glassPanel.addModuleView(controllerComponent);
 		
 		glassPanelMap.put(controllerComponent, glassPanel);
 

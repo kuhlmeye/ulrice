@@ -492,7 +492,7 @@ public class ModuleManager implements IFModuleManager, IFModuleStructureManager 
                 throw new IllegalStateException("BUG: attempting to block twice with the same object: " + blocker);
             }
             m.put(blocker, blocker);
-            if (wasBlocked) {
+            if (!wasBlocked) {
                 fireControllerBlocked(controller);
             }
         }
