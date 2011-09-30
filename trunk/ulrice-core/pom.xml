@@ -53,6 +53,7 @@
 					<target>1.6</target>
 				</configuration>
 			</plugin>
+<!--
 			<plugin>
 				<groupId>org.riedelcastro</groupId>
 				<artifactId>gcupload-maven-plugin</artifactId>
@@ -68,6 +69,7 @@
 					</uploads>
 				</configuration>
 			</plugin>
+-->
 		</plugins>
 	</build>
 </project>
