@@ -465,15 +465,15 @@ public class ModuleManager implements IFModuleManager, IFModuleStructureManager 
 		listenerList.remove(IFModuleStructureEventListener.class, listener);
 	}
 
-	private void fireControllerBlocked(IFController controller) {
+	private void fireControllerBlocked(IFController controller, Object blocker) {
         for (final IFModuleEventListener listener : listenerList.getListeners(IFModuleEventListener.class)) {
-            listener.moduleBlocked(openControllers.getActive());
+            listener.moduleBlocked(openControllers.getActive(), blocker);
         }
 	}
 
-	private void fireControllerUnblocked(IFController controller) {
+	private void fireControllerUnblocked(IFController controller, Object blocker) {
 	    for (final IFModuleEventListener listener : listenerList.getListeners(IFModuleEventListener.class)) {
-            listener.moduleUnblocked(openControllers.getActive());
+            listener.moduleUnblocked(openControllers.getActive(), blocker);
         }
 	}
 
@@ -483,7 +483,7 @@ public class ModuleManager implements IFModuleManager, IFModuleStructureManager 
             final IdentityHashMap<Object, Object> m = new IdentityHashMap<Object, Object>();
             m.put(blocker, blocker);
             blockers.put(controller, m);
-            fireControllerBlocked(controller);
+            fireControllerBlocked(controller, this);
         }
         else {
             final boolean wasBlocked = isBlocked(controller);
@@ -493,19 +493,20 @@ public class ModuleManager implements IFModuleManager, IFModuleStructureManager 
             }
             m.put(blocker, blocker);
             if (!wasBlocked) {
-                fireControllerBlocked(controller);
+                fireControllerBlocked(controller, this);
             }
         }
     }
 
     @Override
     public void unblock(IFController controller, Object blocker) {
+        boolean wasBlocked = isBlocked(controller);
         final IdentityHashMap<Object, Object> m = blockers.get(controller);
         if (m == null || m.remove(blocker) == null) {
             throw new IllegalStateException ("BUG: attempting to unblock with a blocker for which there was no block: " + blocker);
         }
-        if (! isBlocked(controller)) {
-            fireControllerUnblocked(controller);
+        if (wasBlocked && !isBlocked(controller)) {
+            fireControllerUnblocked(controller, this);
         }
     }
 
