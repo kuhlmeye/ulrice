@@ -21,10 +21,6 @@ public class JTextComponentViewAdapter extends AbstractViewAdapter implements Do
 	private JTextComponent textComponent;
 	private boolean convertEmptyToNull = true;
 
-	public JTextComponentViewAdapter() {
-		this(new JTextField());
-	}
-
 	public JTextComponentViewAdapter(JTextComponent textComponent) {
 		super(String.class);
 		this.textComponent = textComponent;

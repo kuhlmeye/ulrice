@@ -6,8 +6,10 @@ import java.awt.GridLayout;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JTextField;
 
 import net.ulrice.databinding.viewadapter.impl.JTextComponentViewAdapter;
+import net.ulrice.databinding.viewadapter.utable.UTableComponent;
 import net.ulrice.databinding.viewadapter.utable.UTableViewAdapter;
 
 public class VMovieDB {
@@ -19,15 +21,15 @@ public class VMovieDB {
 	// TODO repair example
 	
 //	private final UTableViewAdapter movieTableVA = ViewAdapterFactory.createUTableViewAdapter(1);
-	private final UTableViewAdapter movieTableVA = new UTableViewAdapter();
+	private final UTableViewAdapter movieTableVA = new UTableViewAdapter(new UTableComponent(0));
 //	private final JTextComponentViewAdapter titleVA = ViewAdapterFactory.createTextFieldAdapter();
-	private final JTextComponentViewAdapter titleVA = new JTextComponentViewAdapter();
+	private final JTextComponentViewAdapter titleVA = new JTextComponentViewAdapter(new JTextField());
 //	private final JTextComponentViewAdapter yearVA = ViewAdapterFactory.createTextFieldAdapter();
-	private final JTextComponentViewAdapter yearVA = new JTextComponentViewAdapter();
+	private final JTextComponentViewAdapter yearVA = new JTextComponentViewAdapter(new JTextField());
 //	private final JTextComponentViewAdapter directorVA = ViewAdapterFactory.createTextFieldAdapter();
-	private final JTextComponentViewAdapter directorVA = new JTextComponentViewAdapter();
+	private final JTextComponentViewAdapter directorVA = new JTextComponentViewAdapter(new JTextField());
 //	private final UTableViewAdapter actorTableVA = ViewAdapterFactory.createUTableViewAdapter(0);
-	private final UTableViewAdapter actorTableVA = new UTableViewAdapter();
+	private final UTableViewAdapter actorTableVA = new UTableViewAdapter(new UTableComponent(0));
 
 	public VMovieDB() {					
 		overviewPanel.setLayout(new BorderLayout());

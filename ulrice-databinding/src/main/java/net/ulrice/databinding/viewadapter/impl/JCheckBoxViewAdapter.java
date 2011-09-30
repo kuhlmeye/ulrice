@@ -11,10 +11,6 @@ import net.ulrice.databinding.viewadapter.AbstractViewAdapter;
 public class JCheckBoxViewAdapter extends AbstractViewAdapter implements ActionListener {
     private final JCheckBox checkBox;
     
-    public JCheckBoxViewAdapter() {
-    	this(new JCheckBox());
-    }
-    
     public JCheckBoxViewAdapter (JCheckBox checkBox) {
         super (Boolean.class);        
         this.checkBox = checkBox;        
