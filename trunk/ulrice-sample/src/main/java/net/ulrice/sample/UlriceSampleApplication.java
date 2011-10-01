@@ -130,6 +130,7 @@ public class UlriceSampleApplication {
 		moduleStructureManager.addModule(dataBindingSample);
 		moduleStructureManager.addModule(translator);
 
+		moduleStructureManager.fireModuleStructureChanged();
 		
 
 		// Add the application actions.
@@ -144,7 +145,7 @@ public class UlriceSampleApplication {
 		Ulrice.getActionManager().addApplicationAction(
 				new ModuleDelegationAction("TEST2", "TEST2", false, null));
 		Ulrice.getActionManager().addApplicationAction(
-				new ModuleDelegationAction("TEST3", "TEST3", false, null));
+				new ModuleDelegationAction("TEST3", "TEST3", false, null));		
 
 		// Show main frame.
 		JFrame mainFrame = Ulrice.getMainFrame().getFrame();
