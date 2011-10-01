@@ -265,7 +265,10 @@ public class UTableViewAdapter extends AbstractViewAdapter implements TableModel
     @Override
     public void updateFromBinding(IFBinding binding) {
         if (!isInNotification()) {
-            int selRow = table.getSelectionModel().getMinSelectionIndex();
+        	int selRow = -1;
+        	if(table != null && table.getSelectionModel() != null) {
+        		selRow = table.getSelectionModel().getMinSelectionIndex();
+        	}
             int selColumn = table.getSelectedColumn();
             fireTableChanged(new TableModelEvent(this));
             if (selColumn >= 0) {
