@@ -2,6 +2,7 @@ package net.ulrice.databinding.viewadapter.utable;
 
 import java.awt.Component;
 
+import javax.swing.JCheckBox;
 import javax.swing.JLabel;
 import javax.swing.JTable;
 import javax.swing.SwingConstants;
@@ -12,24 +13,27 @@ import javax.swing.SwingConstants;
  * @author apunahassaphemapetilon
  *
  */
-public class UTableVANumericCellRenderer extends UTableVADefaultRenderer {
+public class UTableVANumericCellRenderer extends AbstractUTableRenderer {
 	
 	
-	public UTableVANumericCellRenderer() {
+	private JLabel renderer;
+
+    public UTableVANumericCellRenderer() {
 		super();
-	}
+        this.renderer = new JLabel();
+        this.renderer.setOpaque(true);
+        renderer.setHorizontalAlignment(SwingConstants.RIGHT);
+    }
+
 
 	@Override
-	public Component getTableCellRendererComponent(JTable table, Object value,
-			boolean isSelected, boolean hasFocus, int row, int column) {
-		JLabel renderer = (JLabel)super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
-		renderer.setHorizontalAlignment(SwingConstants.RIGHT);
+	public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
     	if(value == null) {
     		renderer.setText("");
     	} else {
     		renderer.setText(value.toString());
     	}
-    	return renderer;
+    	return adaptComponent(table, isSelected, row, column, renderer);
 	}
 
 	
