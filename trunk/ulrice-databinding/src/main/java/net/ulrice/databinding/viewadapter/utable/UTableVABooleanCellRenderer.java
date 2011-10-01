@@ -1,5 +1,6 @@
 package net.ulrice.databinding.viewadapter.utable;
 
+import java.awt.Color;
 import java.awt.Component;
 
 import javax.swing.JCheckBox;
@@ -14,14 +15,15 @@ import javax.swing.table.TableCellRenderer;
  * @author apunahassaphemapetilon
  *
  */
-public class UTableVABooleanCellRenderer extends UTableVACellRenderer implements
-		TableCellRenderer {
+public class UTableVABooleanCellRenderer extends UTableVADefaultRenderer {
 
 	private JCheckBox renderer;
 
 	public UTableVABooleanCellRenderer() {
 		super();
 		this.renderer = new JCheckBox();
+		this.renderer.setOpaque(true);
+		
 	}
 
 	@Override
@@ -37,7 +39,7 @@ public class UTableVABooleanCellRenderer extends UTableVACellRenderer implements
 			renderer.setSelected(false);
 			renderer.setEnabled(table.isCellEditable(row, column));
 		}
-		return renderer;
+		return adaptComponent(table, isSelected, row, column, renderer);
 	}
 
 }
