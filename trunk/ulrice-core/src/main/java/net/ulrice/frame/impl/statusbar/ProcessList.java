@@ -45,7 +45,8 @@ public class ProcessList extends JList implements IFProcessListener {
 		case Initialized:
 			model.addProcess(process);
 			break;
-		case Done:
+        case Cancelled:
+        case Done:
 			model.delProcess(process);
 			break;
 		}
@@ -135,7 +136,7 @@ public class ProcessList extends JList implements IFProcessListener {
 			progressBar.setValue(progress);
 			messageLabel.setText(process.getProcessProgressMessage());
 			progressBar.setString(String.format("%03d%%", progress));
-			nameLabel.setText(process.getProcessName());
+			nameLabel.setText(process.getProcessProgressMessage());
 			return processPanel;
 		}		
 	}

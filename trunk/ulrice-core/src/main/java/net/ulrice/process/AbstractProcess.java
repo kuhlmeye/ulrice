@@ -1,6 +1,7 @@
 package net.ulrice.process;
 
 import java.util.List;
+import java.util.concurrent.CancellationException;
 import java.util.concurrent.ExecutionException;
 
 import javax.swing.SwingWorker;
@@ -20,10 +21,10 @@ import net.ulrice.module.IFController;
 public abstract class AbstractProcess<T,V> extends SwingWorker<T, V> implements IFBackgroundProcess {
 
 	private IFController owner;
-	private String name;
 	private ProcessState state;
 	private EventListenerList listenerList;
 	private boolean blocksWorkarea = false;
+    private String progressMessage;
 
 	public AbstractProcess(IFController owner) {
 		this(owner, false);
@@ -54,14 +55,12 @@ public abstract class AbstractProcess<T,V> extends SwingWorker<T, V> implements 
 
 	@Override
 	public String getProcessProgressMessage() {
-		// TODO Auto-generated method stub
-		return null;
+		return progressMessage;
 	}
-
-	@Override
-	public String getProcessName() {
-		return name;
-	}
+	
+	public void setProgressMessage(String progressMessage) {
+        this.progressMessage = progressMessage;
+    }
 
 	@Override
 	public IFController getOwningController() {
@@ -86,8 +85,10 @@ public abstract class AbstractProcess<T,V> extends SwingWorker<T, V> implements 
 		
 		try {
 			finished(get());
-		} catch (InterruptedException e) {
-		    Ulrice.getMessageHandler().handleException(e);
+        } catch (CancellationException e) {
+            this.state = ProcessState.Cancelled;
+        } catch (InterruptedException e) {
+            Ulrice.getMessageHandler().handleException(e);
 		} catch (ExecutionException e) {
             Ulrice.getMessageHandler().handleException(e);
 		} finally {
@@ -147,9 +148,6 @@ public abstract class AbstractProcess<T,V> extends SwingWorker<T, V> implements 
 	public boolean blocksWorkarea() {
 		return blocksWorkarea;		
 	}
-	
-	public void setProcessName(String name) {
-        this.name = name;
-    }
 }
+
 

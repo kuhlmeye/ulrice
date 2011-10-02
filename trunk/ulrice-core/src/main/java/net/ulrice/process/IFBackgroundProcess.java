@@ -7,16 +7,17 @@ public interface IFBackgroundProcess extends Runnable {
 	static enum ProcessState {
 		Initialized,
 		Started,
-		Done				
+		Done, 
+		Cancelled				
 	}
+	
+	public boolean hasProgressInformation();
 	
 	public ProcessState getProcessState();
 	
 	public double getProcessProgress();
 
 	public String getProcessProgressMessage();
-	
-	public String getProcessName();
 	
 	public IFController getOwningController();
 	
@@ -25,4 +26,8 @@ public interface IFBackgroundProcess extends Runnable {
 	public void removeProcessListener(IFProcessListener listener);
 	
 	public boolean blocksWorkarea();
+	
+	public boolean supportsCancel();
+	
+	public void cancelProcess();
 }

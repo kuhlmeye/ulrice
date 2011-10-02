@@ -21,7 +21,7 @@ public class PGenerateProperties extends AbstractProcess<Void, Void> {
 
 	public PGenerateProperties(IFController owner, String name, MTranslator model, Locale... locales) {		
 		super(owner);
-		setProcessName(name);
+		setProgressMessage(name);
 		this.model = model;
 		this.locales = locales;
 		model.getTranslationsAM().write();
@@ -74,4 +74,18 @@ public class PGenerateProperties extends AbstractProcess<Void, Void> {
 		
 	}
 
+    @Override
+    public boolean hasProgressInformation() {
+        return false;
+    }
+    
+    @Override
+    public boolean supportsCancel() {
+        return true;
+    }
+    
+    @Override
+    public void cancelProcess() {
+        cancel(true);
+    }
 }
