@@ -31,8 +31,9 @@ public class AbstractUTableRenderer extends DefaultTableCellRenderer {
             boolean dirty = false;
             boolean valid = true;
     
-            UTableComponent tableComponent = ((UTable) table).getTableComponent();
-            boolean readOnly = !tableComponent.isCellEditable(row, column);
+            UTable uTable = (UTable) table;
+            UTableComponent tableComponent = uTable.getTableComponent();
+            boolean readOnly = !uTable.isCellEditable(row, column);
     
             if (isSelected) {
                 component.setBackground(selectedBackground);
