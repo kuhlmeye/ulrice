@@ -1,6 +1,7 @@
 package net.ulrice.databinding.bufferedbinding.impl;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -292,6 +293,20 @@ public class TableAM implements IFAttributeModel {
         });
 		columns.add(columnDefinition);	
 		columnIdMap.put(columnDefinition.getId(), columnDefinition);
+		fireColumnAdded(columnDefinition);
+	}
+	
+	public void delColumn(ColumnDefinition<?> columnDefinition) {
+	    columns.remove(columnDefinition);
+	    columnIdMap.remove(columnDefinition.getId());
+	    fireColumnRemoved(columnDefinition);
+	}
+	
+	public void delAllColumns() {
+	    List<ColumnDefinition<? extends Object>> list = new ArrayList<ColumnDefinition<?>>(columns);
+	    for(ColumnDefinition<?> colDef : list) {
+	        delColumn(colDef);
+	    }
 	}
 	
 	public void addTableAMListener(TableAMListener listener) {
@@ -301,7 +316,7 @@ public class TableAM implements IFAttributeModel {
 	public void removeTableAMListener(TableAMListener listener) {
 	    listenerList.add(TableAMListener.class, listener);
 	}
-	
+    
     private void fireColumnValueRangeChanged(ColumnDefinition<?> colDef) {
         TableAMListener[] listeners = listenerList.getListeners(TableAMListener.class);
         if(listeners != null) {
@@ -310,6 +325,25 @@ public class TableAM implements IFAttributeModel {
             }
         }
     }
+    
+    private void fireColumnAdded(ColumnDefinition<?> colDef) {
+        TableAMListener[] listeners = listenerList.getListeners(TableAMListener.class);
+        if(listeners != null) {
+            for(TableAMListener listener : listeners) {
+                listener.columnAdded(this, colDef);
+            }
+        }
+    }
+    
+    private void fireColumnRemoved(ColumnDefinition<?> colDef) {
+        TableAMListener[] listeners = listenerList.getListeners(TableAMListener.class);
+        if(listeners != null) {
+            for(TableAMListener listener : listeners) {
+                listener.columnRemoved(this, colDef);
+            }
+        }
+    }
+    
     private void fireColumnFilterModeChanged(ColumnDefinition<?> colDef) {
         TableAMListener[] listeners = listenerList.getListeners(TableAMListener.class);
         if(listeners != null) {
