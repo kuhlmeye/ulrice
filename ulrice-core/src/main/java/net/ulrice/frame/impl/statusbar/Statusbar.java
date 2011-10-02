@@ -308,4 +308,10 @@ public class Statusbar extends JPanel implements IFMainFrameComponent, IFMessage
 		// TODO Auto-generated method stub
 		
 	}
+
+    @Override
+    public void messagesChanged() {
+        // TODO Auto-generated method stub
+        
+    }
 }

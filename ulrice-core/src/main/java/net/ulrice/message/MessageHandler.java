@@ -1,6 +1,11 @@
 package net.ulrice.message;
 
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.lang.Thread.UncaughtExceptionHandler;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -8,6 +13,7 @@ import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import javax.swing.Timer;
 import javax.swing.event.EventListenerList;
 
 import net.ulrice.Ulrice;
@@ -43,9 +49,43 @@ public class MessageHandler implements UncaughtExceptionHandler, IFModuleEventLi
 		
 		Ulrice.getModuleManager().addModuleEventListener(this);
 
+		
 		this.listenerList = new EventListenerList();
 		this.globalMessages = new LinkedList<Message>();
 		this.moduleMessages = new HashMap<IFController, List<Message>>();
+		
+		Timer cleanupTimer = new Timer(5000, new ActionListener() {
+            
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                long cTime = System.currentTimeMillis();
+                
+                boolean needsFireEvent = false;
+                needsFireEvent = cleanupMessages(cTime, globalMessages);
+                
+                for(List<Message> messageList : moduleMessages.values()) {
+                    needsFireEvent |= cleanupMessages(cTime, messageList);
+                }
+                
+                if(needsFireEvent) {
+                    fireMessagesChanged();
+                }
+                
+            }
+
+            private boolean cleanupMessages(long cTime, List<Message> messageList) {
+                List<Message> delMessages = new ArrayList<Message>();
+                for(Message message : messageList) {
+                    if(cTime - message.getCreationTimestamp() > 5000) {
+                        delMessages.add(message);
+                    }
+                }
+                messageList.removeAll(delMessages);
+                return !delMessages.isEmpty();
+            }
+		});
+		cleanupTimer.setRepeats(true);
+		cleanupTimer.start();
 	}
 
 	/**
@@ -54,27 +94,33 @@ public class MessageHandler implements UncaughtExceptionHandler, IFModuleEventLi
 	 * @return The list of global messages;
 	 */
 	public List<Message> getGlobalMessages() {
-		return getMessages(null);
+		return globalMessages;
 	}
 
-	/**
-	 * Return the list of messages for a controller or the global message list.
-	 * 
-	 * @param controller
-	 *            The controller or null if the global message list should be
-	 *            returned.
-	 * 
-	 * @return The list of messages.
-	 */
 	public List<Message> getMessages(IFController controller) {
-		if (controller == null) {
-			return globalMessages;
-		}
-
-		if (!moduleMessages.containsKey(controller)) {
-			return null;
+		if (controller == null || !moduleMessages.containsKey(controller)) {
+			return new ArrayList<Message>();
 		}
 		return moduleMessages.get(controller);
+	}
+	
+	public List<Message> getSortedMessages(IFController controller) {
+	    List<Message> globalMessages = getGlobalMessages();
+        List<Message> controllerMessages = getMessages(controller);
+        
+        List<Message> result = new ArrayList<Message>(globalMessages.size() + controllerMessages.size());
+        result.addAll(globalMessages);
+        result.addAll(controllerMessages);
+        
+        Collections.sort(result, new Comparator<Message>() {
+
+            @Override
+            public int compare(Message o1, Message o2) {
+                return (int)(o1.getCreationTimestamp() - o2.getCreationTimestamp());
+            }
+        });
+        
+        return result;
 	}
 
 	/**
@@ -197,17 +243,29 @@ public class MessageHandler implements UncaughtExceptionHandler, IFModuleEventLi
 		listenerList.remove(IFMessageEventListener.class, listener);
 	}
 
-	/**
-	 * Fire a newly handled message
-	 */
-	private void fireMessageHandled(Message message) {
-		IFMessageEventListener[] listeners = listenerList.getListeners(IFMessageEventListener.class);
-		if (listeners != null) {
-			for (IFMessageEventListener listener : listeners) {
-				listener.messageOccurred(message);
-			}
-		}
-	}
+    /**
+     * Fire a newly handled message
+     */
+    private void fireMessageHandled(Message message) {
+        IFMessageEventListener[] listeners = listenerList.getListeners(IFMessageEventListener.class);
+        if (listeners != null) {
+            for (IFMessageEventListener listener : listeners) {
+                listener.messageOccurred(message);
+            }
+        }
+    }
+
+    /**
+     * Fire a newly handled message
+     */
+    private void fireMessagesChanged() {
+        IFMessageEventListener[] listeners = listenerList.getListeners(IFMessageEventListener.class);
+        if (listeners != null) {
+            for (IFMessageEventListener listener : listeners) {
+                listener.messagesChanged();
+            }
+        }
+    }
 
 	/**
 	 * @see java.lang.Thread.UncaughtExceptionHandler#uncaughtException(java.lang.Thread,

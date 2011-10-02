@@ -14,5 +14,7 @@ public interface IFMessageEventListener extends EventListener {
 	 * 
 	 * @param message The message object.
 	 */
-	void messageOccurred(Message message);	
+	void messageOccurred(Message message);
+
+    void messagesChanged();	
 }
