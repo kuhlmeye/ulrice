@@ -25,6 +25,7 @@ public class ColumnDefinition<T extends Object> {
     private IFValidator validator;
     private IFAttributeInfo attributeInfo;
     private String columnName;
+    private String columnTooltip;
 	private boolean useAutoValueConverter = true;
 	private boolean useValueRange = false;
 	private List<T> valueRange;
@@ -288,5 +289,13 @@ public class ColumnDefinition<T extends Object> {
     
     public IFAttributeInfo getAttributeInfo() {
         return attributeInfo;
+    }
+    
+    public void setColumnTooltip(String columnTooltip) {
+        this.columnTooltip = columnTooltip;
+    }
+    
+    public String getColumnTooltip() {
+        return columnTooltip;
     }
 }

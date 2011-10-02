@@ -43,6 +43,7 @@ public class UTableVAHeader extends JTableHeader {
 
         // Set the alignment of the label renderer to the top.
         TableCellRenderer renderer = getDefaultRenderer();
+        setDefaultRenderer(new UTableVAHeaderRenderer(renderer));
         if (renderer instanceof JLabel) {
             ((JLabel) renderer).setVerticalAlignment(SwingConstants.TOP);
         }
