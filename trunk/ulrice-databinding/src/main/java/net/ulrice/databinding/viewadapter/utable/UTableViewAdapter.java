@@ -44,6 +44,16 @@ public class UTableViewAdapter extends AbstractViewAdapter implements TableModel
         public void columnFilterModeChanged(TableAM tableAM, ColumnDefinition< ?> colDef) {
             getFilter().rebuildFilter();
         }
+
+        @Override
+        public void columnRemoved(TableAM tableAM, ColumnDefinition< ?> colDef) {
+            table.updateColumnModel();
+        }
+
+        @Override
+        public void columnAdded(TableAM tableAM, ColumnDefinition< ?> colDef) {
+            table.updateColumnModel();
+        }
     };
 
     public UTableViewAdapter(final UTableComponent table) {
