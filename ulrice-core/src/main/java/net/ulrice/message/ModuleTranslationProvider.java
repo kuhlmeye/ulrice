@@ -11,4 +11,6 @@ import java.util.Locale;
 public interface ModuleTranslationProvider {
     String getTranslation (TranslationUsage usage, String key, Object... params);
     String getTranslation (Locale locale, TranslationUsage usage, String key, Object... params);
+    boolean isTranslationAvailable(TranslationUsage usage, String key);
+    boolean isTranslationAvailable (Locale locale, TranslationUsage usage, String key);
 }

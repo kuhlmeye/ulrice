@@ -5,6 +5,7 @@ package net.ulrice.databinding.viewadapter.utable;
 
 import java.awt.Component;
 
+import javax.swing.JComponent;
 import javax.swing.JTable;
 import javax.swing.table.TableCellRenderer;
 
@@ -23,7 +24,7 @@ public class UTableVAHeaderRenderer implements TableCellRenderer {
      * @param tableGA
      * @param labelRenderer
      */
-    public UTableVAHeaderRenderer(JTableViewAdapter tableGA, TableCellRenderer labelRenderer) {
+    public UTableVAHeaderRenderer(TableCellRenderer labelRenderer) {
         this.labelRenderer = labelRenderer;
     }
 
@@ -36,10 +37,18 @@ public class UTableVAHeaderRenderer implements TableCellRenderer {
             int row, int column) {
 
         Object renderValue = value;
+        String tooltipText = null;
         if (value instanceof ColumnDefinition<?>) {
-            renderValue = ((ColumnDefinition<?>) value).getColumnName();
+            ColumnDefinition< ?> columnDefinition = (ColumnDefinition<?>) value;
+            renderValue = columnDefinition.getColumnName();
+            tooltipText = columnDefinition.getColumnTooltip();
         }
-
-        return labelRenderer.getTableCellRendererComponent(table, renderValue, isSelected, hasFocus, row, column);
+        
+        
+        Component component = labelRenderer.getTableCellRendererComponent(table, renderValue, isSelected, hasFocus, row, column);
+        if(JComponent.class.isAssignableFrom(JComponent.class)) {
+            ((JComponent)component).setToolTipText(tooltipText);
+        }
+        return component;
     }
 }
