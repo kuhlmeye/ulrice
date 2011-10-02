@@ -217,7 +217,7 @@ public class TabbedWorkarea extends JTabbedPane implements IFWorkarea, MouseList
 			final ImageIcon icon = Ulrice.getModuleManager().getModule(controller).getIcon(ModuleIconSize.Size_16x16);
 
 			// Create the button for closing the controller.
-			final JButton closeButton = new JButton(new CloseModuleAction("X", closeIcon));
+			final JButton closeButton = new JButton(new CloseModuleAction("X", closeIcon, controller));
 			closeButton.setOpaque(false);
 			closeButton.setBorderPainted(false);
 			closeButton.setContentAreaFilled(false);

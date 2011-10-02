@@ -22,17 +22,28 @@ public class CloseModuleAction extends UlriceAction {
 	
 	public static final String ACTION_ID = "CLOSE";
 
-	public CloseModuleAction(String name, Icon icon) {
-		super(ACTION_ID, name, true, ActionType.SystemAction, icon);
-	}
+    private IFController controller;
+
+    public CloseModuleAction(String name, Icon icon) {
+        super(ACTION_ID, name, true, ActionType.SystemAction, icon);
+    }
+
+    public CloseModuleAction(String name, Icon icon, IFController controller) {
+        super(ACTION_ID, name, true, ActionType.SystemAction, icon);
+        this.controller = controller;
+    }
 	
 	@Override
 	public void actionPerformed(ActionEvent e) {
-	    
-		final IFController currentModule = Ulrice.getModuleManager().getCurrentController();
+	    IFController controllerToClose = null;
+	    if(controller == null) {
+	        controllerToClose = Ulrice.getModuleManager().getCurrentController();
+	    } else {
+	        controllerToClose = controller;
+	    }
 		
-		if(currentModule != null) {
-		    Ulrice.getModuleManager().closeController(currentModule, null);
+		if(controllerToClose != null) {
+		    Ulrice.getModuleManager().closeController(controllerToClose, null);
 		}
 	}
 }
