@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.logging.Logger;
 
+import javax.swing.SwingUtilities;
 import javax.swing.event.EventListenerList;
 
 import net.ulrice.Ulrice;
@@ -93,7 +94,7 @@ public class ProcessManager implements IFProcessListener {
 
             if (!list.remove(process)) {
                 LOG.warning("Process "
-                    + process.getProcessName()
+                    + process
                     + " not found in list of controller "
                         + Ulrice.getModuleManager().getModule(process.getOwningController())
                             .getModuleTitle(Usage.Default) + ".");
@@ -106,22 +107,34 @@ public class ProcessManager implements IFProcessListener {
         return idProcessMap.get(uniqueId);
     }
 
-    public void fireStateChanged(IFBackgroundProcess process) {
-        IFProcessListener[] listeners = listenerList.getListeners(IFProcessListener.class);
-        if (listeners != null) {
-            for (IFProcessListener listener : listeners) {
-                listener.stateChanged(process);
+    public void fireStateChanged(final IFBackgroundProcess process) {
+        SwingUtilities.invokeLater(new Runnable() {
+            
+            @Override
+            public void run() {
+                IFProcessListener[] listeners = listenerList.getListeners(IFProcessListener.class);
+                if (listeners != null) {
+                    for (IFProcessListener listener : listeners) {
+                        listener.stateChanged(process);
+                    }
+                }
             }
-        }
+        });
     }
 
-    public void fireProgressChanged(IFBackgroundProcess process) {
-        IFProcessListener[] listeners = listenerList.getListeners(IFProcessListener.class);
-        if (listeners != null) {
-            for (IFProcessListener listener : listeners) {
-                listener.progressChanged(process);
+    public void fireProgressChanged(final IFBackgroundProcess process) {
+        SwingUtilities.invokeLater(new Runnable() {
+            
+            @Override
+            public void run() {    
+                IFProcessListener[] listeners = listenerList.getListeners(IFProcessListener.class);
+                if (listeners != null) {
+                    for (IFProcessListener listener : listeners) {
+                        listener.progressChanged(process);
+                    }
+                }
             }
-        }
+        });    
     }
 
     public void addProcessListener(IFProcessListener listener) {

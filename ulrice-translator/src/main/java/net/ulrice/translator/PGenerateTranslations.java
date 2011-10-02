@@ -20,7 +20,7 @@ public class PGenerateTranslations extends AbstractProcess<List<TranslationDTO>,
 
 	public PGenerateTranslations(IFController owner, String name, MTranslator model, Locale... locales) {
 		super(owner);
-		setProcessName(name);
+		setProgressMessage(name);
 		this.model = model;
 		this.locales = locales;
 		model.getDictionaryAM().write();
@@ -110,4 +110,18 @@ public class PGenerateTranslations extends AbstractProcess<List<TranslationDTO>,
 		model.getTranslationsAM().read();
 	}
 
+    @Override
+    public boolean hasProgressInformation() {
+        return false;
+    }
+    
+    @Override
+    public boolean supportsCancel() {
+        return true;
+    }
+    
+    @Override
+    public void cancelProcess() {
+        cancel(true);
+    }
 }

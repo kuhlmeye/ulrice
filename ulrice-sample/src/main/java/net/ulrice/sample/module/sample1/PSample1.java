@@ -11,7 +11,7 @@ public class PSample1 extends AbstractProcess<Void, Void>  {
 
 	public PSample1(IFController controller) {
 		super(controller, true);
-        setProcessName("Sample Process");
+        setProgressMessage("Sample Process");
 	}
 
 	@Override
@@ -36,4 +36,19 @@ public class PSample1 extends AbstractProcess<Void, Void>  {
 	protected void finished(Void result) {
 		// Nothing to do.	
 	}
+
+    @Override
+    public boolean hasProgressInformation() {
+        return false;
+    }
+    
+    @Override
+    public boolean supportsCancel() {
+        return true;
+    }
+    
+    @Override
+    public void cancelProcess() {
+        cancel(true);
+    }
 }

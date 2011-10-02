@@ -43,7 +43,7 @@ public class IncrementalLoader<T> extends AbstractProcess<T, Object>{
         totalNumRows = provider.getNumRows();
         final int max = Math.min (upperBound, totalNumRows);
         
-        while (numLoaded < max) {
+        while (numLoaded < max && !isCancelled()) {
             final List<T> chunk = provider.getData (numLoaded, chunkSize);
             provider.onChunkLoaded (chunk, numLoaded);
             numLoaded += chunk.size();
@@ -61,6 +61,21 @@ public class IncrementalLoader<T> extends AbstractProcess<T, Object>{
     @Override
     protected void finished(T result) {
         //TODO cleanup?
+    }
+
+    @Override
+    public boolean hasProgressInformation() {
+        return true;
+    }
+    
+    @Override
+    public boolean supportsCancel() {
+        return true;
+    }
+    
+    @Override
+    public void cancelProcess() {
+        cancel(true);
     }
 }
 

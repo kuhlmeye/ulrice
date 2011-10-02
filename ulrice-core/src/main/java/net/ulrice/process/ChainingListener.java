@@ -21,6 +21,7 @@ public class ChainingListener implements IFProcessListener {
 	@Override
 	public void stateChanged(IFBackgroundProcess finishedProcess) {
 		switch (finishedProcess.getProcessState()) {
+	    case Cancelled:
 		case Done:
 			finishedProcess.removeProcessListener(this);
 			processExecutor.executeProcess(process);			

@@ -15,7 +15,7 @@ public class PSaveData extends AbstractProcess<Void, Void> {
 
 	public PSaveData(IFController owner, String name, MTranslator model, IFTranslationService service) {
         super(owner);
-        setProcessName(name);
+        setProgressMessage(name);
 		this.model = model;
 		this.service = service;
 	}
@@ -68,4 +68,18 @@ public class PSaveData extends AbstractProcess<Void, Void> {
 	protected void finished(Void result) {		
 	}
 
+    @Override
+    public boolean hasProgressInformation() {
+        return false;
+    }
+    
+    @Override
+    public boolean supportsCancel() {
+        return true;
+    }
+    
+    @Override
+    public void cancelProcess() {
+        cancel(true);
+    }
 }
