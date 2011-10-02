@@ -55,19 +55,4 @@ public interface IFController {
 	 * This method is called when a controller is closed by the user or an other controller. 
 	 */
 	void onClose(IFClosing closing);
-		
-//	/**
-//	 * Block the controller.
-//	 */
-//	void block(Object blocker);
-//	
-//	/**
-//	 * Unblock the controller.
-//	 */
-//	void unblock(Object blocker);
-//	
-//	/**
-//	 * Returns, if the controller is currently blocked.
-//	 */
-//	boolean isBlocked();
 }
