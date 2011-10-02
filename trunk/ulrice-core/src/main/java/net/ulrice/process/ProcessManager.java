@@ -10,6 +10,7 @@ import javax.swing.SwingUtilities;
 import javax.swing.event.EventListenerList;
 
 import net.ulrice.Ulrice;
+import net.ulrice.message.MessageSeverity;
 import net.ulrice.module.IFController;
 import net.ulrice.module.IFModuleTitleProvider.Usage;
 import net.ulrice.process.IFBackgroundProcess.ProcessState;
@@ -76,9 +77,10 @@ public class ProcessManager implements IFProcessListener {
 
     @Override
     public void stateChanged(IFBackgroundProcess process) {
+        Ulrice.getMessageHandler().handleMessage(process.getOwningController(), MessageSeverity.Status, process.getProcessProgressMessage() + " (" + process.getProcessState() + ")");
         if (ProcessState.Started.equals(process.getProcessState())) {
             if (process.getOwningController() != null && process.blocksWorkarea()) {
-                Ulrice.getModuleManager().block(process.getOwningController(), process);
+                Ulrice.getModuleManager().block(process.getOwningController(), process);                
             }
         }
         if (ProcessState.Done.equals(process.getProcessState())) {
