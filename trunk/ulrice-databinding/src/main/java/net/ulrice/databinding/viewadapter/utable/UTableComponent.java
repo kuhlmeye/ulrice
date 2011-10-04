@@ -569,6 +569,13 @@ public class UTableComponent extends JPanel {
         return result;
     }
 
+
+    public Element getSelectedElement() {
+        checkAttributeModelSet();
+        int rowInModel = getSelectedRowModelIndex();
+        return attributeModel.getElementAt(rowInModel);
+    }
+
     public Object getSelectedObject() {
         checkAttributeModelSet();
         int rowInModel = getSelectedRowModelIndex();
@@ -660,7 +667,5 @@ public class UTableComponent extends JPanel {
             popupMenu.add(action);
         }
         popupMenu.show(component, x, y);
-    }
-
-    
+    }   
 }
