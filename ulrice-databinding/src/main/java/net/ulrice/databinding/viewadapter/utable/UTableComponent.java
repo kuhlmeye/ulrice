@@ -537,6 +537,17 @@ public class UTableComponent extends JPanel {
         attributeModel.delElement(getRowSorter().convertRowIndexToModel(viewIndex));
     }
 
+
+    public void copySelectedRows() {
+        checkAttributeModelSet();
+        List<Object> values = getSelectedObjects();
+        if (values != null) {
+            for (Object value : values) {
+                attributeModel.addElement(value);
+            }
+        }
+    }   
+    
     public void delSelectedRows() {
         checkAttributeModelSet();
         List<Element> elements = getSelectedElements();
@@ -667,5 +678,6 @@ public class UTableComponent extends JPanel {
             popupMenu.add(action);
         }
         popupMenu.show(component, x, y);
-    }   
+    }
+
 }
