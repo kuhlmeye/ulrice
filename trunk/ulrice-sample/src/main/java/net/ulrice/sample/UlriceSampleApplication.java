@@ -83,6 +83,11 @@ public class UlriceSampleApplication {
 				new SimpleModuleTitleRenderer("Data Binding Sample"));
 		dataBindingSample.setAuthorization(new Authorization(SampleSecurityCallback.TYPE_MODULE_REGISTER, "DATABINDING"));
 		
+		AuthReflectionModule radioModule = new AuthReflectionModule("radio", ModuleType.NormalModule,
+				"net.ulrice.sample.module.databinding.radiobutton.CRadioButtonSample", "net/ulrice/sample/module/sample1/moduleicon.png",
+				new SimpleModuleTitleRenderer("Radio Button Sample"));
+		radioModule.setAuthorization(new Authorization(SampleSecurityCallback.TYPE_MODULE_REGISTER, "RADIOBUTTON"));
+		
 		IFModule translator = new IFModule() {
 		    final IFTranslationService translatorService = new XMLInMemoryTranslationService();
 		    
@@ -120,6 +125,7 @@ public class UlriceSampleApplication {
 		moduleManager.registerModule(lafListModule);
 		moduleManager.registerModule(dataBindingSample);
 		moduleManager.registerModule(translator);
+		moduleManager.registerModule(radioModule);
 
 		// Add the modules to the structure.
 		IFModuleStructureManager moduleStructureManager = Ulrice.getModuleStructureManager();
@@ -129,6 +135,7 @@ public class UlriceSampleApplication {
 		moduleStructureManager.addModule(lafListModule);
 		moduleStructureManager.addModule(dataBindingSample);
 		moduleStructureManager.addModule(translator);
+		moduleStructureManager.addModule(radioModule);
 
 		moduleStructureManager.fireModuleStructureChanged();
 		
