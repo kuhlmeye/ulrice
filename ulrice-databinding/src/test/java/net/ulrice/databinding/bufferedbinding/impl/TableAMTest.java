@@ -34,7 +34,7 @@ public class TableAMTest {
 		tableAM.addColumn(new ColumnDefinition<String>(new DynamicReflectionMVA(Person.class, "name"), String.class, ColumnType.NewEditable));
 		tableAM.addColumn(new ColumnDefinition<Integer>(new DynamicReflectionMVA(Person.class, "age"), Integer.class));
 		
-		tableAM.addElementLifecycleListener(new UniqueConstraint("Person.name"));
+		tableAM.setUniqueConstraint("Person.name");
 		
 		list = new LinkedList<Person>();
 
@@ -553,6 +553,56 @@ public class TableAMTest {
         tableAM.delElement(0);        
         Assert.assertEquals(true, tableAM.getDeletedElements().get(0).isDirty());
     }
+    
+    @Test
+    public void removeAndAddElementWithSameUniqueKey() {
+    	tableAM.read();
+    	Element element = tableAM.getElementAt(1);
+    	tableAM.delElement(element);
+    	
+    	Person samePerson = new Person();
+    	samePerson.name = "Petra Musterfrau";
+    	samePerson.age = 20;
+    	tableAM.addElement(samePerson);
+    	
+    	Assert.assertEquals(0, tableAM.getDeletedCount());
+    	Assert.assertEquals(false, tableAM.isDirty());
+    }
+    
+    @Test
+    public void removeAndAddElementWithSameUniqueKeyButDifferentData() {
+    	tableAM.read();
+    	tableAM.delElement(1);
+    	
+    	Person samePerson = new Person();
+    	samePerson.name = "Petra Musterfrau";
+    	samePerson.age = 21;
+    	tableAM.addElement(samePerson);
+    	
+    	Assert.assertEquals(0, tableAM.getDeletedCount());
+    	Assert.assertEquals(true, tableAM.isDirty());
+    	
+    	Person p = (Person) tableAM.getCurrentValueAt(1);
+    	Assert.assertEquals(21, p.age);
+    }
+    
+    @Test
+    public void removeAndChangeElementToDeletedData() {
+    	tableAM.read();
+    	Object currentValue1 = tableAM.getElementAt(1).getCurrentValue();
+    	tableAM.delElement(1);
+    	
+    	tableAM.getElementAt(0).setCurrentValue(currentValue1);
+    	
+    	Assert.assertEquals(true, tableAM.isDirty());
+    	Assert.assertEquals(0, tableAM.getDeletedCount());
+    	Assert.assertEquals(true, tableAM.isDirty());
+    	
+    	Person p = (Person) tableAM.getCurrentValueAt(1);
+    	Assert.assertEquals(21, p.age);
+    }
+    
+    
 	
 	public static class Person {
 		public String name;
