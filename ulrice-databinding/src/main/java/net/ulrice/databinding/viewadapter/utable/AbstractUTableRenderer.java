@@ -54,7 +54,15 @@ public abstract class AbstractUTableRenderer extends DefaultTableCellRenderer {
     
             Element element = tableComponent.getElementAtViewIndex(row);
             if (element != null) {
-                if (stateMarker != null) {
+                IFStateMarker sm = stateMarker;
+                if(sm == null) {
+                    sm = AbstractUTableRenderer.defaultStateMarker;
+                }
+                IFTooltipHandler tth = tooltipHandler;
+                if(tth == null) {
+                    tth = AbstractUTableRenderer.defaultTooltipHandler;
+                }
+                if (sm != null) {
                     dirty |= element.isOriginalValueDirty();
                     valid &= element.isOriginalValueValid();
     
@@ -63,12 +71,12 @@ public abstract class AbstractUTableRenderer extends DefaultTableCellRenderer {
                     dirty |= element.isColumnDirty(columnId);
                     valid &= element.isColumnValid(columnId);
     
-                    stateMarker.initialize(component);
-                    stateMarker.updateState(dirty, valid, component);
+                    sm.initialize(component);
+                    sm.updateState(dirty, valid, component);
                 }
     
-                if (tooltipHandler != null) {
-                    tooltipHandler.updateTooltip(element, component);
+                if (tth != null) {
+                    tth.updateTooltip(element, component);
                 }
     
             }
@@ -81,7 +89,7 @@ public abstract class AbstractUTableRenderer extends DefaultTableCellRenderer {
     }
 
     public void setStateMarker(IFStateMarker stateMarker) {
-        this.stateMarker = stateMarker;
+        this.stateMarker = stateMarker;        
     }
 
     public IFTooltipHandler<Element> getTooltipHandler() {
