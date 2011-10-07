@@ -14,6 +14,8 @@ import net.ulrice.databinding.viewadapter.IFTooltipHandler;
 public abstract class AbstractUTableRenderer extends DefaultTableCellRenderer {
     IFStateMarker stateMarker;
     IFTooltipHandler<Element> tooltipHandler;
+    static IFStateMarker defaultStateMarker;
+    static IFTooltipHandler<Element> defaultTooltipHandler;
 
     Color evenNormalBackground = BindingUI.getColor(BindingUI.BACKGROUND_NORMAL_EVEN_TABLE_ROW, new Color(230, 230, 230));
     Color oddNormalBackground = BindingUI.getColor(BindingUI.BACKGROUND_NORMAL_ODD_TABLE_ROW, new Color(200,200, 200));
@@ -21,8 +23,10 @@ public abstract class AbstractUTableRenderer extends DefaultTableCellRenderer {
     Color oddReadOnlyBackground = BindingUI.getColor(BindingUI.BACKGROUND_READONLY_ODD_TABLE_ROW, new Color(170, 200, 170));
     Color selectedBackground = BindingUI.getColor(BindingUI.BACKGROUND_SELECTED_TABLE_ROW, new Color(200, 200, 255));
     
-    public AbstractUTableRenderer() {
-        super();
+    public AbstractUTableRenderer() {        
+        super();        
+        stateMarker = defaultStateMarker;
+        tooltipHandler = defaultTooltipHandler;
     }
 
     public JComponent adaptComponent(JTable table, boolean isSelected, int row, int column, JComponent component) {
@@ -86,5 +90,21 @@ public abstract class AbstractUTableRenderer extends DefaultTableCellRenderer {
 
     public void setTooltipHandler(IFTooltipHandler<Element> tooltipHandler) {
         this.tooltipHandler = tooltipHandler;
+    }
+    
+    public static void setDefaultStateMarker(IFStateMarker defaultStateMarker) {
+        AbstractUTableRenderer.defaultStateMarker = defaultStateMarker;
+    }
+    
+    public static void setDefaultTooltipHandler(IFTooltipHandler<Element> defaultTooltipHandler) {
+        AbstractUTableRenderer.defaultTooltipHandler = defaultTooltipHandler;
+    }
+    
+    public static IFStateMarker getDefaultStateMarker() {
+        return defaultStateMarker;
+    }
+    
+    public static IFTooltipHandler<Element> getDefaultTooltipHandler() {
+        return defaultTooltipHandler;
     }
 }

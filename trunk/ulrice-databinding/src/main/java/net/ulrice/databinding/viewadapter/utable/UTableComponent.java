@@ -55,10 +55,6 @@ public class UTableComponent extends JPanel {
 
 	private UTableRowSorter sorter;
 
-	private UTableVADefaultRenderer staticTableRenderer;
-
-	private UTableVADefaultRenderer scrollTableRenderer;
-
 	private IFTooltipHandler<Element> tooltipHandler;
 
 	private IFStateMarker stateMarker;
@@ -214,10 +210,8 @@ public class UTableComponent extends JPanel {
         staticTable.setRowSorter(sorter.getStaticTableRowSorter());
         scrollTable.setRowSorter(sorter.getScrollTableRowSorter());
         
-        staticTableRenderer = new UTableVADefaultRenderer();
-        staticTable.setDefaultRenderer(Object.class, staticTableRenderer);
-        scrollTableRenderer = new UTableVADefaultRenderer();
-        scrollTable.setDefaultRenderer(Object.class, scrollTableRenderer);
+        staticTable.setDefaultRenderer(Object.class, new UTableVADefaultRenderer());
+        scrollTable.setDefaultRenderer(Object.class, new UTableVADefaultRenderer());
         
         filter = new UTableVAFilter(sorter, staticTable.getUTableHeader(), scrollTable.getUTableHeader());
         sorter.setRowFilter(filter);
@@ -296,15 +290,13 @@ public class UTableComponent extends JPanel {
 
 	public void setCellTooltipHandler(IFTooltipHandler<Element> tooltipHandler) {
 		this.tooltipHandler = tooltipHandler;
-		staticTableRenderer.setTooltipHandler(tooltipHandler);
-		scrollTableRenderer.setTooltipHandler(tooltipHandler);
+		AbstractUTableRenderer.setDefaultTooltipHandler(tooltipHandler);
 	}
 
 
 	public void setCellStateMarker(IFStateMarker stateMarker) {
 		this.stateMarker = stateMarker;
-		staticTableRenderer.setStateMarker(stateMarker);
-		scrollTableRenderer.setStateMarker(stateMarker);
+		AbstractUTableRenderer.setDefaultStateMarker(stateMarker);
 	}
 
 	public IFTooltipHandler<Element> getCellTooltipHandler() {
