@@ -53,6 +53,12 @@ public class GenericAM<T> implements IFAttributeModel<T>, IFViewChangeListener {
 
 	private String id;
 
+	public GenericAM(String id, IFModelValueAccessor modelAccessor, IFAttributeInfo attributeInfo) {
+	    this.modelAccessor = modelAccessor;
+        this.attributeInfo = attributeInfo;
+        this.id = modelAccessor.getAttributeId();
+	}
+	
 	/**
 	 * Creates a new generic attribute model.
 	 * 
@@ -62,9 +68,7 @@ public class GenericAM<T> implements IFAttributeModel<T>, IFViewChangeListener {
 	 *            The data accessor.
 	 */
 	public GenericAM(IFModelValueAccessor modelAccessor, IFAttributeInfo attributeInfo) {
-		this.modelAccessor = modelAccessor;
-		this.attributeInfo = attributeInfo;
-		this.id = modelAccessor.getAttributeId();
+	    this(modelAccessor.getAttributeId(), modelAccessor, attributeInfo);
 	}
 
 	/**

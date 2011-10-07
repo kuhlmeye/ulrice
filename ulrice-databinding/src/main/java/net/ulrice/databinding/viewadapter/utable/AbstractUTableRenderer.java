@@ -11,7 +11,7 @@ import net.ulrice.databinding.ui.BindingUI;
 import net.ulrice.databinding.viewadapter.IFStateMarker;
 import net.ulrice.databinding.viewadapter.IFTooltipHandler;
 
-public class AbstractUTableRenderer extends DefaultTableCellRenderer {
+public abstract class AbstractUTableRenderer extends DefaultTableCellRenderer {
     IFStateMarker stateMarker;
     IFTooltipHandler<Element> tooltipHandler;
 
