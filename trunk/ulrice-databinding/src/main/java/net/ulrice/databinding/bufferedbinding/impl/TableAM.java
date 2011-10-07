@@ -4,9 +4,11 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.Map.Entry;
 
 import javax.swing.event.EventListenerList;
 
@@ -29,7 +31,7 @@ public class TableAM implements IFAttributeModel {
 	private IFIndexedModelValueAccessor tableMVA;
 
 	
-	private ElementLifecycleListener uniqueConstraint = null;
+//	private ElementLifecycleListener uniqueConstraint = null;
 
     private List<ColumnDefinition<? extends Object>> columns = new ArrayList<ColumnDefinition<? extends Object>>();
     private Map<String, ColumnDefinition> columnIdMap = new HashMap<String, ColumnDefinition>();
@@ -57,7 +59,109 @@ public class TableAM implements IFAttributeModel {
 	private boolean initialized = false;
 	private boolean dirty = false;
 	private boolean valid = true;
+	
+	// unique constraint handling
+	private String[] columnIds;
+	private Map<List<?>, Set<String>> uniqueMap = new HashMap<List<?>, Set<String>>();
+	private Map<List<?>, Set<String>> uniqueDeleteMap = new HashMap<List<?>, Set<String>>();
+	private Map<String, List<?>> keyMap = new HashMap<String, List<?>>();
+	private Map<String, List<?>> keyDeleteMap = new HashMap<String, List<?>>();
+	private Map<List<?>, ValidationError> currentErrorMap = new HashMap<List<?>, ValidationError>();
 
+	private void checkUniqueConstraint(Element element) {
+		if (columnIds == null) {
+			return;
+		}
+
+		List<?> key = buildKey(element);
+		if (handleKey(element.getUniqueId(), key)) {
+			if (uniqueMap.containsKey(key)) {
+				Set<String> uniqueIdSet = uniqueMap.get(key);
+				uniqueIdSet.add(element.getUniqueId());
+				if (uniqueIdSet.size() > 1) {
+					ValidationError uniqueConstraintError = new ValidationError(
+							this, "Unique key constraint error", null);
+					currentErrorMap.put(key, uniqueConstraintError);
+					for (String uniqueId : uniqueIdSet) {
+						getElementById(uniqueId)
+								.addElementValidationError(
+										uniqueConstraintError);
+					}
+				}
+			} else {
+				Set<String> uniqueIdSet = new HashSet<String>();
+				uniqueIdSet.add(element.getUniqueId());
+				uniqueMap.put(key, uniqueIdSet);
+			}
+		}
+	}
+
+	private boolean handleKey(String uniqueId, List<?> key) {
+		List<?> oldKey = keyMap.get(uniqueId);
+		if (oldKey == null && key != null) {
+//			String oldUniqueId = checkForOldUniqueId(key, uniqueId);
+			keyMap.put(uniqueId, key);
+			return true;
+		}
+
+		if (key == null || !oldKey.equals(key)) {
+			if (oldKey != null) {
+				Set<String> uniqueKeySet = uniqueMap.get(oldKey);
+				uniqueKeySet.remove(uniqueId);
+				// should not happen
+				if (uniqueDeleteMap.containsKey(oldKey)) {
+					Set<String> uniqueDeleteKeySet = uniqueDeleteMap.get(oldKey);
+					uniqueDeleteKeySet.add(uniqueId);
+				}
+				else {
+					Set<String> uniqueIdSet = new HashSet<String>();
+					uniqueIdSet.add(uniqueId);
+					uniqueDeleteMap.put(oldKey, uniqueIdSet);
+				}
+				if (uniqueKeySet.size() <= 1
+						&& currentErrorMap.containsKey(oldKey)) {
+					ValidationError validationError = currentErrorMap
+							.remove(oldKey);
+					getElementById(uniqueId)
+							.removeElementValidationError(validationError);
+					for (String uniqueElementId : uniqueKeySet) {
+						getElementById(uniqueElementId)
+								.removeElementValidationError(validationError);
+					}
+
+				}
+				keyDeleteMap.put(uniqueId, oldKey);
+				keyMap.put(uniqueId, key);
+			}
+			return true;
+		}
+		return false;
+	}
+
+	private List<?> buildKey(Element element) {
+	    List<Object> key = new ArrayList<Object>(columnIds.length);
+	    for (String columnId : columnIds) {
+	        key.add(element.getValueAt(columnId));
+		}
+	    return key;
+	}
+	
+	private String checkForOldUniqueId(List<?> key, String newUniqueId) {
+		String oldUniqueId = null;
+		if (keyDeleteMap.containsValue(key)) {
+			for (Entry<String, List<?>> entry : keyDeleteMap.entrySet()) {
+				if (key.equals(entry.getValue())) {
+					oldUniqueId = entry.getKey();
+					// remove Element from new Elements and replace it with the former deleted one
+//					newElements.remove(getElementById(newUniqueId));
+					keyDeleteMap.remove(key);
+				}
+			}
+		}
+		return oldUniqueId;
+	}
+	
+	// end of unique constraint handling
 
 
 	public TableAM(IFIndexedModelValueAccessor tableMVA, IFAttributeInfo attributeInfo, boolean readOnly) {
@@ -213,8 +317,8 @@ public class TableAM implements IFAttributeModel {
 	protected void elementDataChanged(Element element, String columnId) {
 		fireUpdateViews();
 
-		if(uniqueConstraint != null) {
-		    uniqueConstraint.elementChanged(this, element, columnId);
+		if(columnIds != null) {
+			checkUniqueConstraint(element);
 		}
 
 		ElementLifecycleListener[] listeners = listenerList.getListeners(ElementLifecycleListener.class);
@@ -577,18 +681,7 @@ public class TableAM implements IFAttributeModel {
 	}
 
 	public Element addElement(Object value, boolean dirty, boolean valid) {
-		if (value == null) {
-			value = createEmptyElementObject();
-		}
-
-		Element element = createElement(value, dirty, valid, true);
-		elementIdMap.put(element.getUniqueId(), element);
-		elements.add(element);
-		newElements.add(element);
-		fireElementAdded(element);
-		elementStateChanged(element);
-		fireUpdateViews();
-		return element;
+		return addElement(-1, value, dirty, valid);
 	}
 
 	public Element addElement(int index, Object value) {
@@ -602,12 +695,43 @@ public class TableAM implements IFAttributeModel {
 		}
 
 		Element element = createElement(value, dirty, valid, true);
-		elements.add(index, element);
-		elementIdMap.put(element.getUniqueId(), element);
-		newElements.add(element);
-		elementStateChanged(element);
+		
+		//unique constraint handling
+		Element oldElement = element;
+		String oldUniqueId = checkForOldUniqueId(buildKey(element), element.getUniqueId());
+		if (oldUniqueId == null) {
+			registerNewElement(element);
+		}
+		else {
+			// delete old element from delElements
+			// how to find old element?
+			Iterator<Element> iter = delElements.iterator();
+			while (iter.hasNext()) {
+				Element el = iter.next();
+				if (oldUniqueId.equals(el.getUniqueId())) {
+					oldElement = el;
+					oldElement.setInsertedOrRemoved(false);
+					iter.remove();
+					break;
+				}
+			}
+			oldElement.setCurrentValue(element.getCurrentValue());
+			
+			elementIdMap.put(oldUniqueId, oldElement);
+		}
+		// end of unique constraint handling
+		
+		if (index >= 0) {
+			elements.add(index, oldElement);
+		}
+		else {
+			elements.add(oldElement);
+		}
+		
+		fireElementAdded(oldElement);
+		elementStateChanged(oldElement);
 		fireUpdateViews();
-		return element;
+		return oldElement;
 	}
 
 	public boolean delElement(int index) {
@@ -735,7 +859,8 @@ public class TableAM implements IFAttributeModel {
 	}
 
 	public void setUniqueConstraint(String... columnIds) {
-	    this.uniqueConstraint = new UniqueConstraint(columnIds);
+//	    this.uniqueConstraint = new UniqueConstraint(columnIds);
+		this.columnIds = columnIds;
     }
 	
 	public void addElementLifecycleListener(ElementLifecycleListener constraint) {
@@ -747,9 +872,10 @@ public class TableAM implements IFAttributeModel {
 	}
 
 	private void fireElementAdded(Element element) {
-	    if(uniqueConstraint != null) {
-	        uniqueConstraint.elementAdded(this, element);
+	    if(columnIds != null) {
+			checkUniqueConstraint(element);
 	    }
+
 
         ElementLifecycleListener[] listeners = listenerList.getListeners(ElementLifecycleListener.class);
         if(listeners != null) {
@@ -758,10 +884,16 @@ public class TableAM implements IFAttributeModel {
     		}
     	}
 	}
+	
+	private void registerNewElement(Element element) {
+		elementIdMap.put(element.getUniqueId(), element);
+		newElements.add(element);
+	}
 
 	private void fireElementDeleted(Element element) {
-        if(uniqueConstraint != null) {
-            uniqueConstraint.elementRemoved(this, element);
+        if(columnIds != null) {
+        	handleKey(element.getUniqueId(), null);
+//            uniqueConstraint.elementRemoved(this, element);
         }
 
         ElementLifecycleListener[] listeners = listenerList.getListeners(ElementLifecycleListener.class);
@@ -773,8 +905,11 @@ public class TableAM implements IFAttributeModel {
 	}
 
 	private void fireTableCleared() {
-        if(uniqueConstraint != null) {
-            uniqueConstraint.tableCleared(this);
+        if(columnIds != null) {
+        	uniqueMap.clear();
+    		keyMap.clear();
+    		uniqueDeleteMap.clear();
+    		keyDeleteMap.clear();
         }
 
 	    ElementLifecycleListener[] listeners = listenerList.getListeners(ElementLifecycleListener.class);
@@ -787,8 +922,8 @@ public class TableAM implements IFAttributeModel {
 	
 
     private void fireElementStatusChanged(Element element) {
-        if(uniqueConstraint != null) {
-            uniqueConstraint.elementStateChanged(this, element);
+        if(columnIds != null) {
+//            uniqueConstraint.elementStateChanged(this, element);
         }
 
         ElementLifecycleListener[] listeners = listenerList.getListeners(ElementLifecycleListener.class);
