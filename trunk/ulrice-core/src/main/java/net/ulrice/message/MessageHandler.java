@@ -76,8 +76,10 @@ public class MessageHandler implements UncaughtExceptionHandler, IFModuleEventLi
             private boolean cleanupMessages(long cTime, List<Message> messageList) {
                 List<Message> delMessages = new ArrayList<Message>();
                 for(Message message : messageList) {
-                    if(cTime - message.getCreationTimestamp() > 5000) {
-                        delMessages.add(message);
+                    if(message != null) {
+                        if(cTime - message.getCreationTimestamp() > 5000) {
+                            delMessages.add(message);
+                        }
                     }
                 }
                 messageList.removeAll(delMessages);
