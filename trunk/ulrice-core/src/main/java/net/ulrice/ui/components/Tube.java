@@ -3,6 +3,7 @@ package net.ulrice.ui.components;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.Font;
 import java.awt.Insets;
 import java.awt.Rectangle;
 import java.awt.event.MouseAdapter;
@@ -13,6 +14,7 @@ import java.util.List;
 import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.JComponent;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.UIManager;
@@ -117,6 +119,12 @@ public class Tube extends JPanel {
 		contentBox.add(panel);
 	}
 	
+
+
+    public void addTitle(String name) {
+        tabBox.add(new TubeTitle(name));
+    }
+	
 	@Override
 	public void updateUI() {
 		super.updateUI();
@@ -126,6 +134,19 @@ public class Tube extends JPanel {
 		border = UIManager.get("Tube.panelBorder") != null ? UIManager.getBorder("Tube.panelBorder") : new EmptyBorder(0, 0, 0, 0);
 		tabPanelBackground = UIManager.get("Tube.tabPanelBackground") != null ? UIManager.getColor("Tube.tabPanelBackground") : UIManager.getColor("Panel.background");
 		contentPanelBackground = UIManager.get("Tube.contentPanelBackground") != null ? UIManager.getColor("Tube.contentPanelBackground") : UIManager.getColor("Panel.background");
+	}
+	
+	private class TubeTitle extends JPanel {
+	    
+	    public TubeTitle(String name) {
+	        JLabel label = new JLabel(name);
+	        label.setFont(label.getFont().deriveFont(Font.BOLD));
+	        
+	        setLayout(new BorderLayout());
+	        add(Box.createVerticalStrut(10), BorderLayout.NORTH);
+	        add(label, BorderLayout.CENTER);
+	    }
+	    
 	}
 
 	private class TubeTab extends JComponent {
