@@ -555,6 +555,14 @@ public class TableAMTest {
     }
     
     @Test
+    public void removedElementIsInIdMap() {
+        tableAM.read();
+        Element element = tableAM.getElementAt(0);
+        tableAM.delElement(0);        
+        Assert.assertNotNull(tableAM.getElementById(element.getUniqueId()));
+    }       
+    
+    @Test
     public void removeAndAddElementWithSameUniqueKey() {
     	tableAM.read();
     	Element element = tableAM.getElementAt(1);

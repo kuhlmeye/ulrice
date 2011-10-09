@@ -24,345 +24,338 @@ import net.ulrice.databinding.viewadapter.IFViewAdapter;
 
 /**
  * @author christof
- * 
  */
 public class TableAM implements IFAttributeModel {
 
-	private IFIndexedModelValueAccessor tableMVA;
+    private IFIndexedModelValueAccessor tableMVA;
 
-	
-//	private ElementLifecycleListener uniqueConstraint = null;
+    // private ElementLifecycleListener uniqueConstraint = null;
 
-    private List<ColumnDefinition<? extends Object>> columns = new ArrayList<ColumnDefinition<? extends Object>>();
+    private List<ColumnDefinition< ? extends Object>> columns = new ArrayList<ColumnDefinition< ? extends Object>>();
     private Map<String, ColumnDefinition> columnIdMap = new HashMap<String, ColumnDefinition>();
 
-	protected List<Element> elements = new ArrayList<Element>();
-	protected Map<String, Element> elementIdMap = new HashMap<String, Element>();
+    protected List<Element> elements = new ArrayList<Element>();
+    protected Map<String, Element> elementIdMap = new HashMap<String, Element>();
 
-	private List<IFValidator> validators = new ArrayList<IFValidator>();
-	private EventListenerList listenerList;
-	private String id;
-	private boolean readOnly;
-	private long nextUniqueId;
-	
-	private Set<Element> newElements = new HashSet<Element>();
-	private Set<Element> modElements = new HashSet<Element>();
-	private Set<Element> delElements = new HashSet<Element>();
-	private Set<Element> invElements = new HashSet<Element>();
+    private List<IFValidator> validators = new ArrayList<IFValidator>();
+    private EventListenerList listenerList;
+    private String id;
+    private boolean readOnly;
+    private long nextUniqueId;
 
-	private List<IFViewAdapter> viewAdapterList = new ArrayList<IFViewAdapter>();
+    private Set<Element> newElements = new HashSet<Element>();
+    private Set<Element> modElements = new HashSet<Element>();
+    private Set<Element> delElements = new HashSet<Element>();
+    private Set<Element> invElements = new HashSet<Element>();
 
-	private IFValueConverter valueConverter;
-	
-	private IFAttributeInfo attributeInfo;
-	
-	private boolean initialized = false;
-	private boolean dirty = false;
-	private boolean valid = true;
-	
-	// unique constraint handling
-	private String[] columnIds;
-	private Map<List<?>, Set<String>> uniqueMap = new HashMap<List<?>, Set<String>>();
-	private Map<List<?>, Set<String>> uniqueDeleteMap = new HashMap<List<?>, Set<String>>();
-	private Map<String, List<?>> keyMap = new HashMap<String, List<?>>();
-	private Map<String, List<?>> keyDeleteMap = new HashMap<String, List<?>>();
-	private Map<List<?>, ValidationError> currentErrorMap = new HashMap<List<?>, ValidationError>();
+    private List<IFViewAdapter> viewAdapterList = new ArrayList<IFViewAdapter>();
 
-	private void checkUniqueConstraint(Element element) {
-		if (columnIds == null) {
-			return;
-		}
+    private IFValueConverter valueConverter;
 
-		List<?> key = buildKey(element);
-		if (handleKey(element.getUniqueId(), key)) {
-			if (uniqueMap.containsKey(key)) {
-				Set<String> uniqueIdSet = uniqueMap.get(key);
-				uniqueIdSet.add(element.getUniqueId());
-				if (uniqueIdSet.size() > 1) {
-					ValidationError uniqueConstraintError = new ValidationError(
-							this, "Unique key constraint error", null);
-					currentErrorMap.put(key, uniqueConstraintError);
-					for (String uniqueId : uniqueIdSet) {
-						getElementById(uniqueId)
-								.addElementValidationError(
-										uniqueConstraintError);
-					}
-				}
-			} else {
-				Set<String> uniqueIdSet = new HashSet<String>();
-				uniqueIdSet.add(element.getUniqueId());
-				uniqueMap.put(key, uniqueIdSet);
-			}
-		}
-	}
+    private IFAttributeInfo attributeInfo;
 
-	private boolean handleKey(String uniqueId, List<?> key) {
-		List<?> oldKey = keyMap.get(uniqueId);
-		if (oldKey == null && key != null) {
-//			String oldUniqueId = checkForOldUniqueId(key, uniqueId);
-			keyMap.put(uniqueId, key);
-			return true;
-		}
+    private boolean initialized = false;
+    private boolean dirty = false;
+    private boolean valid = true;
 
-		if (key == null || !oldKey.equals(key)) {
-			if (oldKey != null) {
-				Set<String> uniqueKeySet = uniqueMap.get(oldKey);
-				uniqueKeySet.remove(uniqueId);
-				// should not happen
-				if (uniqueDeleteMap.containsKey(oldKey)) {
-					Set<String> uniqueDeleteKeySet = uniqueDeleteMap.get(oldKey);
-					uniqueDeleteKeySet.add(uniqueId);
-				}
-				else {
-					Set<String> uniqueIdSet = new HashSet<String>();
-					uniqueIdSet.add(uniqueId);
-					uniqueDeleteMap.put(oldKey, uniqueIdSet);
-				}
-				if (uniqueKeySet.size() <= 1
-						&& currentErrorMap.containsKey(oldKey)) {
-					ValidationError validationError = currentErrorMap
-							.remove(oldKey);
-					getElementById(uniqueId)
-							.removeElementValidationError(validationError);
-					for (String uniqueElementId : uniqueKeySet) {
-						getElementById(uniqueElementId)
-								.removeElementValidationError(validationError);
-					}
+    // unique constraint handling
+    private String[] columnIds = null;
+    private Map<List< ?>, Set<String>> uniqueMap = new HashMap<List< ?>, Set<String>>();
+    private Map<List< ?>, Set<String>> uniqueDeleteMap = new HashMap<List< ?>, Set<String>>();
+    private Map<String, List< ?>> keyMap = new HashMap<String, List< ?>>();
+    private Map<String, List< ?>> keyDeleteMap = new HashMap<String, List< ?>>();
+    private Map<List< ?>, ValidationError> currentErrorMap = new HashMap<List< ?>, ValidationError>();
 
-				}
-				keyDeleteMap.put(uniqueId, oldKey);
-				keyMap.put(uniqueId, key);
-			}
-			return true;
-		}
-		return false;
-	}
+    private void checkUniqueConstraint(Element element) {
+        if (columnIds == null) {
+            return;
+        }
 
-	private List<?> buildKey(Element element) {
-	    List<Object> key = new ArrayList<Object>(columnIds.length);
-	    for (String columnId : columnIds) {
-	        key.add(element.getValueAt(columnId));
-		}
-	    return key;
-	}
-	
-	private String checkForOldUniqueId(List<?> key, String newUniqueId) {
-		String oldUniqueId = null;
-		if (keyDeleteMap.containsValue(key)) {
-			for (Entry<String, List<?>> entry : keyDeleteMap.entrySet()) {
-				if (key.equals(entry.getValue())) {
-					oldUniqueId = entry.getKey();
-					// remove Element from new Elements and replace it with the former deleted one
-//					newElements.remove(getElementById(newUniqueId));
-					keyDeleteMap.remove(key);
-				}
-			}
-		}
-		return oldUniqueId;
-	}
-	
-	// end of unique constraint handling
+        List< ?> key = buildKey(element);
+        if (handleKey(element.getUniqueId(), key)) {
+            if (uniqueMap.containsKey(key)) {
+                Set<String> uniqueIdSet = uniqueMap.get(key);
+                uniqueIdSet.add(element.getUniqueId());
+                if (uniqueIdSet.size() > 1) {
+                    ValidationError uniqueConstraintError =
+                            new ValidationError(this, "Unique key constraint error", null);
+                    currentErrorMap.put(key, uniqueConstraintError);
+                    for (String uniqueId : uniqueIdSet) {
+                        Element elementById = getElementById(uniqueId);
+                        elementById.addElementValidationError(uniqueConstraintError);
+                    }
+                }
+            }
+            else {
+                Set<String> uniqueIdSet = new HashSet<String>();
+                uniqueIdSet.add(element.getUniqueId());
+                uniqueMap.put(key, uniqueIdSet);
+            }
+        }
+    }
 
+    private boolean handleKey(String uniqueId, List< ?> key) {
+        List< ?> oldKey = keyMap.get(uniqueId);
+        if (oldKey == null && key != null) {
+            // String oldUniqueId = checkForOldUniqueId(key, uniqueId);
+            keyMap.put(uniqueId, key);
+            return true;
+        }
 
-	public TableAM(IFIndexedModelValueAccessor tableMVA, IFAttributeInfo attributeInfo, boolean readOnly) {
-		this.tableMVA = tableMVA;
+        if (key == null || !oldKey.equals(key)) {
+            if (oldKey != null) {
+                Set<String> uniqueKeySet = uniqueMap.get(oldKey);
+                uniqueKeySet.remove(uniqueId);
+                // should not happen
+                if (uniqueDeleteMap.containsKey(oldKey)) {
+                    Set<String> uniqueDeleteKeySet = uniqueDeleteMap.get(oldKey);
+                    uniqueDeleteKeySet.add(uniqueId);
+                }
+                else {
+                    Set<String> uniqueIdSet = new HashSet<String>();
+                    uniqueIdSet.add(uniqueId);
+                    uniqueDeleteMap.put(oldKey, uniqueIdSet);
+                }
+                if (uniqueKeySet.size() <= 1 && currentErrorMap.containsKey(oldKey)) {
+                    ValidationError validationError = currentErrorMap.remove(oldKey);
+                    getElementById(uniqueId).removeElementValidationError(validationError);
+                    for (String uniqueElementId : uniqueKeySet) {
+                        getElementById(uniqueElementId).removeElementValidationError(validationError);
+                    }
 
-		nextUniqueId = System.currentTimeMillis();
+                }
+                keyDeleteMap.put(uniqueId, oldKey);
+                keyMap.put(uniqueId, key);
+            }
+            return true;
+        }
+        return false;
+    }
 
-		this.id = tableMVA.getAttributeId();
-		this.listenerList = new EventListenerList();
-		this.readOnly = readOnly;
-	}
+    private List< ?> buildKey(Element element) {
+        List<Object> key = new ArrayList<Object>(columnIds != null ? columnIds.length : 0);
+        if(columnIds != null) {
+            for (String columnId : columnIds) {
+                key.add(element.getValueAt(columnId));
+            }
+        }
+        return key;
+    }
 
-	public TableAM(IFIndexedModelValueAccessor tableMVA, IFAttributeInfo attributeInfo) {
-		this(tableMVA, attributeInfo, false);
-	}
+    private String checkForOldUniqueId(List< ?> key, String newUniqueId) {
+        String oldUniqueId = null;
+        if (keyDeleteMap.containsValue(key)) {
+            for (Entry<String, List< ?>> entry : keyDeleteMap.entrySet()) {
+                if (key.equals(entry.getValue())) {
+                    oldUniqueId = entry.getKey();
+                    // remove Element from new Elements and replace it with the former deleted one
+                    // newElements.remove(getElementById(newUniqueId));
+                    keyDeleteMap.remove(key);
+                }
+            }
+        }
+        return oldUniqueId;
+    }
 
-	/**
-	 * @see net.ulrice.databinding.bufferedbinding.IFAttributeModel#getId()
-	 */
-	@Override
-	public String getId() {
-		return id;
-	}
+    // end of unique constraint handling
 
-	public boolean isCellValid(int row, int column) {
-		return getElementAt(row).isColumnValid(column);
-	}
+    public TableAM(IFIndexedModelValueAccessor tableMVA, IFAttributeInfo attributeInfo, boolean readOnly) {
+        this.tableMVA = tableMVA;
 
-	public boolean isCellDirty(int row, int column) {
-		return getElementAt(row).isColumnDirty(column);
-	}
+        nextUniqueId = System.currentTimeMillis();
 
-	/**
-	 * @param value
-	 * @return
-	 */
-	protected Element createElement(Object value, boolean dirty, boolean valid, boolean insertedOrDeleted) {
-		String uniqueId = Long.toHexString(nextUniqueId++);
-		Element elem = new Element(this, uniqueId, columns, value, isReadOnly(), dirty, valid, insertedOrDeleted);
-		return elem;
-	}
+        this.id = tableMVA.getAttributeId();
+        this.listenerList = new EventListenerList();
+        this.readOnly = readOnly;
+    }
 
-	/**
-	 * @see net.ulrice.databinding.bufferedbinding.IFAttributeModel#addAttributeModelEventListener(net.ulrice.databinding.bufferedbinding.IFAttributeModelEventListener)
-	 */
-	@Override
-	public void addAttributeModelEventListener(
-			IFAttributeModelEventListener listener) {
-		listenerList.add(IFAttributeModelEventListener.class, listener);
-	}
+    public TableAM(IFIndexedModelValueAccessor tableMVA, IFAttributeInfo attributeInfo) {
+        this(tableMVA, attributeInfo, false);
+    }
 
-	/**
-	 * @see net.ulrice.databinding.bufferedbinding.IFAttributeModel#removeAttributeModelEventListener(net.ulrice.databinding.bufferedbinding.IFAttributeModelEventListener)
-	 */
-	@Override
-	public void removeAttributeModelEventListener(
-			IFAttributeModelEventListener listener) {
-		listenerList.remove(IFAttributeModelEventListener.class, listener);
-	}
+    /**
+     * @see net.ulrice.databinding.bufferedbinding.IFAttributeModel#getId()
+     */
+    @Override
+    public String getId() {
+        return id;
+    }
 
-	/**
-	 * @see net.ulrice.databinding.bufferedbinding.IFAttributeModel#setValidator(net.ulrice.databinding.validation.IFValidator)
-	 */
-	@Override
-	public void addValidator(IFValidator validator) {
-		this.validators.add(validator);
-	}
+    public boolean isCellValid(int row, int column) {
+        return getElementAt(row).isColumnValid(column);
+    }
 
-	/**
-	 * @see net.ulrice.databinding.bufferedbinding.IFAttributeModel#getValidator()
-	 */
-	@Override
-	public List<IFValidator> getValidators() {
-		return validators;
-	}
+    public boolean isCellDirty(int row, int column) {
+        return getElementAt(row).isColumnDirty(column);
+    }
 
-	public Element getElementAt(int index) {
-	    if(index >= 0 && index < elements.size()) {
-	        return elements.get(index);
-	    }
-	    return null;
-	}
+    /**
+     * @param value
+     * @return
+     */
+    protected Element createElement(Object value, boolean dirty, boolean valid, boolean insertedOrDeleted) {
+        String uniqueId = Long.toHexString(nextUniqueId++);
+        Element elem = new Element(this, uniqueId, columns, value, isReadOnly(), dirty, valid, insertedOrDeleted);
+        return elem;
+    }
 
-	/**
-	 * @see javax.swing.table.TableModel#getColumnCount()
-	 */
-	public int getColumnCount() {
-		return columns == null ? 0 : columns.size();
-	}
+    /**
+     * @see net.ulrice.databinding.bufferedbinding.IFAttributeModel#addAttributeModelEventListener(net.ulrice.databinding.bufferedbinding.IFAttributeModelEventListener)
+     */
+    @Override
+    public void addAttributeModelEventListener(IFAttributeModelEventListener listener) {
+        listenerList.add(IFAttributeModelEventListener.class, listener);
+    }
 
-	/**
-	 * @see javax.swing.table.TableModel#getColumnClass(int)
-	 */
-	public Class<?> getColumnClass(int columnIndex) {
-		return columns.get(columnIndex).getColumnClass();
-	}
+    /**
+     * @see net.ulrice.databinding.bufferedbinding.IFAttributeModel#removeAttributeModelEventListener(net.ulrice.databinding.bufferedbinding.IFAttributeModelEventListener)
+     */
+    @Override
+    public void removeAttributeModelEventListener(IFAttributeModelEventListener listener) {
+        listenerList.remove(IFAttributeModelEventListener.class, listener);
+    }
 
-	/**
-	 * @see javax.swing.table.TableModel#getColumnName(int)
-	 */
-	public String getColumnName(int columnIndex) {
-		return columns.get(columnIndex).getColumnName();
-	}
+    /**
+     * @see net.ulrice.databinding.bufferedbinding.IFAttributeModel#setValidator(net.ulrice.databinding.validation.IFValidator)
+     */
+    @Override
+    public void addValidator(IFValidator validator) {
+        this.validators.add(validator);
+    }
 
-	/**
-	 * @see javax.swing.table.TableModel#getRowCount()
-	 */
-	public int getRowCount() {
-		return elements == null ? 0 : elements.size();
-	}
+    /**
+     * @see net.ulrice.databinding.bufferedbinding.IFAttributeModel#getValidator()
+     */
+    @Override
+    public List<IFValidator> getValidators() {
+        return validators;
+    }
 
-	public boolean isNew(Element element) {
-		return newElements.contains(element);
-	}
+    public Element getElementAt(int index) {
+        if (index >= 0 && index < elements.size()) {
+            return elements.get(index);
+        }
+        return null;
+    }
 
-	public boolean isRemoved(Element element) {
-		return delElements.contains(element);
-	}
+    /**
+     * @see javax.swing.table.TableModel#getColumnCount()
+     */
+    public int getColumnCount() {
+        return columns == null ? 0 : columns.size();
+    }
 
-	/**
-	 * @see javax.swing.table.TableModel#isCellEditable(int, int)
-	 */
-	public boolean isCellEditable(int rowIndex, int columnIndex) {
-		return !isReadOnly() && getElementAt(rowIndex) != null && !getElementAt(rowIndex).isReadOnly(columnIndex);
-	}
+    /**
+     * @see javax.swing.table.TableModel#getColumnClass(int)
+     */
+    public Class< ?> getColumnClass(int columnIndex) {
+        return columns.get(columnIndex).getColumnClass();
+    }
 
-	/**
-	 * @see javax.swing.table.TableModel#getValueAt(int, int)
-	 */
-	public Object getValueAt(int rowIndex, int columnIndex) {
-		Element element = getElementAt(rowIndex);
-		if(element != null) {
-		    return element.getValueAt(columnIndex);
-		} 
-		return null;
-	}
+    /**
+     * @see javax.swing.table.TableModel#getColumnName(int)
+     */
+    public String getColumnName(int columnIndex) {
+        return columns.get(columnIndex).getColumnName();
+    }
 
-	/**
-	 * @see javax.swing.table.TableModel#setValueAt(java.lang.Object, int, int)
-	 */
-	public void setValueAt(Object aValue, int rowIndex, int columnIndex) {
-		getElementAt(rowIndex).setValueAt(columnIndex, aValue);
-	}
+    /**
+     * @see javax.swing.table.TableModel#getRowCount()
+     */
+    public int getRowCount() {
+        return elements == null ? 0 : elements.size();
+    }
 
-	/**
-	 * @see net.ulrice.databinding.bufferedbinding.IFAttributeModel#isReadOnly()
-	 */
-	@Override
-	public boolean isReadOnly() {
-		return readOnly;
-	}
+    public boolean isNew(Element element) {
+        return newElements.contains(element);
+    }
 
-	protected void elementDataChanged(Element element, String columnId) {
-		fireUpdateViews();
+    public boolean isRemoved(Element element) {
+        return delElements.contains(element);
+    }
 
-		if(columnIds != null) {
-			checkUniqueConstraint(element);
-		}
+    /**
+     * @see javax.swing.table.TableModel#isCellEditable(int, int)
+     */
+    public boolean isCellEditable(int rowIndex, int columnIndex) {
+        return !isReadOnly() && getElementAt(rowIndex) != null && !getElementAt(rowIndex).isReadOnly(columnIndex);
+    }
 
-		ElementLifecycleListener[] listeners = listenerList.getListeners(ElementLifecycleListener.class);
-		if(listeners != null) {
-    		for (ElementLifecycleListener constraint : listeners) {
-    			constraint.elementChanged(this, element, columnId);
-    		}
-		}
-		fireDataChanged();
-	}
+    /**
+     * @see javax.swing.table.TableModel#getValueAt(int, int)
+     */
+    public Object getValueAt(int rowIndex, int columnIndex) {
+        Element element = getElementAt(rowIndex);
+        if (element != null) {
+            return element.getValueAt(columnIndex);
+        }
+        return null;
+    }
 
-	protected void elementStateChanged(Element element) {
-		if (element.isValid()) {
-			invElements.remove(element);
-		} else {
-			invElements.add(element);
-		}
-	
-		if (element.isDirty() && !element.isInsertedOrRemoved() && elementIdMap.containsKey(element.getUniqueId()) && !newElements.contains(element) && !delElements.contains(element)) {
-			modElements.add(element);
-		}
-		
-		if (!element.isDirty() && elementIdMap.containsKey(element.getUniqueId())) {
-			modElements.remove(element);
-		}
+    /**
+     * @see javax.swing.table.TableModel#setValueAt(java.lang.Object, int, int)
+     */
+    public void setValueAt(Object aValue, int rowIndex, int columnIndex) {
+        getElementAt(rowIndex).setValueAt(columnIndex, aValue);
+    }
 
-		boolean oldValid = valid;
-		boolean oldDirty = dirty;
+    /**
+     * @see net.ulrice.databinding.bufferedbinding.IFAttributeModel#isReadOnly()
+     */
+    @Override
+    public boolean isReadOnly() {
+        return readOnly;
+    }
 
-		valid = invElements.isEmpty();
-		dirty = !modElements.isEmpty() || !delElements.isEmpty() || !newElements.isEmpty();
+    protected void elementDataChanged(Element element, String columnId) {
+        fireUpdateViews();
 
-		fireElementStatusChanged(element);
-		
-		if (oldValid != valid || oldDirty != dirty) {
-			fireStateChanged();			
-		}				
+        if (columnIds != null) {
+            checkUniqueConstraint(element);
+        }
 
-	}
+        ElementLifecycleListener[] listeners = listenerList.getListeners(ElementLifecycleListener.class);
+        if (listeners != null) {
+            for (ElementLifecycleListener constraint : listeners) {
+                constraint.elementChanged(this, element, columnId);
+            }
+        }
+        fireDataChanged();
+    }
 
+    protected void elementStateChanged(Element element) {
+        if (element.isValid()) {
+            invElements.remove(element);
+        }
+        else {
+            invElements.add(element);
+        }
+
+        if (element.isDirty() && !element.isInsertedOrRemoved() && elementIdMap.containsKey(element.getUniqueId())
+            && !newElements.contains(element) && !delElements.contains(element)) {
+            modElements.add(element);
+        }
+
+        if (!element.isDirty() && elementIdMap.containsKey(element.getUniqueId())) {
+            modElements.remove(element);
+        }
+
+        boolean oldValid = valid;
+        boolean oldDirty = dirty;
+
+        valid = invElements.isEmpty();
+        dirty = !modElements.isEmpty() || !delElements.isEmpty() || !newElements.isEmpty();
+
+        fireElementStatusChanged(element);
+
+        if (oldValid != valid || oldDirty != dirty) {
+            fireStateChanged();
+        }
+
+    }
 
     private void fireDataChanged() {
-        IFAttributeModelEventListener[] listeners = listenerList
-                .getListeners(IFAttributeModelEventListener.class);
+        IFAttributeModelEventListener[] listeners = listenerList.getListeners(IFAttributeModelEventListener.class);
         if (listeners != null) {
             for (IFAttributeModelEventListener listener : listeners) {
                 listener.dataChanged(null, this);
@@ -371,8 +364,7 @@ public class TableAM implements IFAttributeModel {
     }
 
     private void fireStateChanged() {
-        IFAttributeModelEventListener[] listeners = listenerList
-                .getListeners(IFAttributeModelEventListener.class);
+        IFAttributeModelEventListener[] listeners = listenerList.getListeners(IFAttributeModelEventListener.class);
         if (listeners != null) {
             for (IFAttributeModelEventListener listener : listeners) {
                 listener.stateChanged(null, this);
@@ -380,13 +372,13 @@ public class TableAM implements IFAttributeModel {
         }
     }
 
-	/**
-	 * @param columnDefinition
-	 */
-	public void addColumn(ColumnDefinition<?> columnDefinition) {
-	    columnDefinition.addChangeListener(new ColumnDefinitionChangedListener() {            
+    /**
+     * @param columnDefinition
+     */
+    public void addColumn(ColumnDefinition< ?> columnDefinition) {
+        columnDefinition.addChangeListener(new ColumnDefinitionChangedListener() {
             @Override
-            public void valueRangeChanged(ColumnDefinition<?> colDef) {
+            public void valueRangeChanged(ColumnDefinition< ?> colDef) {
                 fireColumnValueRangeChanged(colDef);
             }
 
@@ -395,215 +387,213 @@ public class TableAM implements IFAttributeModel {
                 fireColumnFilterModeChanged(colDef);
             }
         });
-		columns.add(columnDefinition);	
-		columnIdMap.put(columnDefinition.getId(), columnDefinition);
-		fireColumnAdded(columnDefinition);
-	}
-	
-	public void delColumn(ColumnDefinition<?> columnDefinition) {
-	    columns.remove(columnDefinition);
-	    columnIdMap.remove(columnDefinition.getId());
-	    fireColumnRemoved(columnDefinition);
-	}
-	
-	public void delAllColumns() {
-	    List<ColumnDefinition<? extends Object>> list = new ArrayList<ColumnDefinition<?>>(columns);
-	    for(ColumnDefinition<?> colDef : list) {
-	        delColumn(colDef);
-	    }
-	}
-	
-	public void addTableAMListener(TableAMListener listener) {
-	    listenerList.add(TableAMListener.class, listener);
-	}
-	
-	public void removeTableAMListener(TableAMListener listener) {
-	    listenerList.add(TableAMListener.class, listener);
-	}
-    
-    private void fireColumnValueRangeChanged(ColumnDefinition<?> colDef) {
+        columns.add(columnDefinition);
+        columnIdMap.put(columnDefinition.getId(), columnDefinition);
+        fireColumnAdded(columnDefinition);
+    }
+
+    public void delColumn(ColumnDefinition< ?> columnDefinition) {
+        columns.remove(columnDefinition);
+        columnIdMap.remove(columnDefinition.getId());
+        fireColumnRemoved(columnDefinition);
+    }
+
+    public void delAllColumns() {
+        List<ColumnDefinition< ? extends Object>> list = new ArrayList<ColumnDefinition< ?>>(columns);
+        for (ColumnDefinition< ?> colDef : list) {
+            delColumn(colDef);
+        }
+    }
+
+    public void addTableAMListener(TableAMListener listener) {
+        listenerList.add(TableAMListener.class, listener);
+    }
+
+    public void removeTableAMListener(TableAMListener listener) {
+        listenerList.add(TableAMListener.class, listener);
+    }
+
+    private void fireColumnValueRangeChanged(ColumnDefinition< ?> colDef) {
         TableAMListener[] listeners = listenerList.getListeners(TableAMListener.class);
-        if(listeners != null) {
-            for(TableAMListener listener : listeners) {
+        if (listeners != null) {
+            for (TableAMListener listener : listeners) {
                 listener.columnValueRangeChanged(this, colDef);
             }
         }
     }
-    
-    private void fireColumnAdded(ColumnDefinition<?> colDef) {
+
+    private void fireColumnAdded(ColumnDefinition< ?> colDef) {
         TableAMListener[] listeners = listenerList.getListeners(TableAMListener.class);
-        if(listeners != null) {
-            for(TableAMListener listener : listeners) {
+        if (listeners != null) {
+            for (TableAMListener listener : listeners) {
                 listener.columnAdded(this, colDef);
             }
         }
     }
-    
-    private void fireColumnRemoved(ColumnDefinition<?> colDef) {
+
+    private void fireColumnRemoved(ColumnDefinition< ?> colDef) {
         TableAMListener[] listeners = listenerList.getListeners(TableAMListener.class);
-        if(listeners != null) {
-            for(TableAMListener listener : listeners) {
+        if (listeners != null) {
+            for (TableAMListener listener : listeners) {
                 listener.columnRemoved(this, colDef);
             }
         }
     }
-    
-    private void fireColumnFilterModeChanged(ColumnDefinition<?> colDef) {
+
+    private void fireColumnFilterModeChanged(ColumnDefinition< ?> colDef) {
         TableAMListener[] listeners = listenerList.getListeners(TableAMListener.class);
-        if(listeners != null) {
-            for(TableAMListener listener : listeners) {
+        if (listeners != null) {
+            for (TableAMListener listener : listeners) {
                 listener.columnFilterModeChanged(this, colDef);
             }
         }
     }
 
-	/**
-	 * @return the columns
-	 */
-	public List<ColumnDefinition<? extends Object>> getColumns() {
-		return columns;
-	}
+    /**
+     * @return the columns
+     */
+    public List<ColumnDefinition< ? extends Object>> getColumns() {
+        return columns;
+    }
 
-	/**
-	 * @see net.ulrice.databinding.bufferedbinding.IFAttributeModel#gaChanged(net.ulrice.databinding.IFGuiAccessor,
-	 *      java.lang.Object)
-	 */
-	@Override
-	public void gaChanged(IFViewAdapter viewAdapter, Object value) {
-		fireUpdateViews();
-	}
+    /**
+     * @see net.ulrice.databinding.bufferedbinding.IFAttributeModel#gaChanged(net.ulrice.databinding.IFGuiAccessor,
+     *      java.lang.Object)
+     */
+    @Override
+    public void gaChanged(IFViewAdapter viewAdapter, Object value) {
+        fireUpdateViews();
+    }
 
-	public void fireUpdateViews() {
-		if (viewAdapterList != null) {
-			for (IFViewAdapter viewAdapter : viewAdapterList) {
-				viewAdapter.updateFromBinding(this);
-			}
-		}
-	}
+    public void fireUpdateViews() {
+        if (viewAdapterList != null) {
+            for (IFViewAdapter viewAdapter : viewAdapterList) {
+                viewAdapter.updateFromBinding(this);
+            }
+        }
+    }
 
-	@Override
-	public void addViewAdapter(IFViewAdapter viewAdapter) {
-		viewAdapterList.add(viewAdapter);
-	    viewAdapter.bind(this);
-		viewAdapter.updateFromBinding(this);	
-	}
-	
+    @Override
+    public void addViewAdapter(IFViewAdapter viewAdapter) {
+        viewAdapterList.add(viewAdapter);
+        viewAdapter.bind(this);
+        viewAdapter.updateFromBinding(this);
+    }
+
     public void removeViewAdapter(IFViewAdapter viewAdapter) {
         viewAdapterList.remove(viewAdapter);
         viewAdapter.detach(this);
     }
 
-	public int getIndexOfElement(Element element) {
-		return elements.indexOf(element);
-	}
+    public int getIndexOfElement(Element element) {
+        return elements.indexOf(element);
+    }
 
-	public IFValueConverter getValueConverter() {
-		return valueConverter;
-	}
+    public IFValueConverter getValueConverter() {
+        return valueConverter;
+    }
 
-	@Override
-	public void setValueConverter(IFValueConverter valueConverter) {
-		this.valueConverter = valueConverter;
-	}
+    @Override
+    public void setValueConverter(IFValueConverter valueConverter) {
+        this.valueConverter = valueConverter;
+    }
 
-	@Override
-	public boolean isInitialized() {
-		return initialized;
-	}
+    @Override
+    public boolean isInitialized() {
+        return initialized;
+    }
 
-	protected void setInitialized(boolean initialized) {
-		this.initialized = initialized;
-	}
+    protected void setInitialized(boolean initialized) {
+        this.initialized = initialized;
+    }
 
-	@Override
-	public boolean isDirty() {
-		return dirty;
-	}
+    @Override
+    public boolean isDirty() {
+        return dirty;
+    }
 
-	protected void setDirty(boolean dirty) {
-		this.dirty = dirty;
-	}
+    protected void setDirty(boolean dirty) {
+        this.dirty = dirty;
+    }
 
-	@Override
-	public boolean isValid() {
-		return valid;
-	}
+    @Override
+    public boolean isValid() {
+        return valid;
+    }
 
-	protected void setValid(boolean valid) {
-		this.valid = valid;
-	}
+    protected void setValid(boolean valid) {
+        this.valid = valid;
+    }
 
-	@Override
-	public ValidationResult getValidationResult() {
-		ValidationResult result = new ValidationResult();
-		if (invElements != null) {
-			for (Element element : invElements) {
-				result.addValidationErrors(element.getValidationErrors());
-			}
-		}
+    @Override
+    public ValidationResult getValidationResult() {
+        ValidationResult result = new ValidationResult();
+        if (invElements != null) {
+            for (Element element : invElements) {
+                result.addValidationErrors(element.getValidationErrors());
+            }
+        }
 
-		return result;
-	}
+        return result;
+    }
 
-	@Override
-	public List<String> getValidationFailures() {
-		List<String> result = new ArrayList<String>();
-		if (invElements != null) {
-			for (Element element : invElements) {
-				result.addAll(element.getValidationFailures());
-			}
-		}
+    @Override
+    public List<String> getValidationFailures() {
+        List<String> result = new ArrayList<String>();
+        if (invElements != null) {
+            for (Element element : invElements) {
+                result.addAll(element.getValidationFailures());
+            }
+        }
 
-		return result;
-	}
+        return result;
+    }
 
-	@Override
-	public Object getCurrentValue() {
-		List<Object> result = new ArrayList<Object>(elements == null ? 0
-				: elements.size());
+    @Override
+    public Object getCurrentValue() {
+        List<Object> result = new ArrayList<Object>(elements == null ? 0 : elements.size());
 
-		for (Element element : elements) {
-			result.add(element.getCurrentValue());
-		}
+        for (Element element : elements) {
+            result.add(element.getCurrentValue());
+        }
 
-		return result;
-	}
+        return result;
+    }
 
-	@Override
-	public Object getOriginalValue() {
-		List<Object> result = new ArrayList<Object>(elements == null ? 0
-				: elements.size());
+    @Override
+    public Object getOriginalValue() {
+        List<Object> result = new ArrayList<Object>(elements == null ? 0 : elements.size());
 
-		for (Element element : elements) {
-			result.add(element.getOriginalValue());
-		}
+        for (Element element : elements) {
+            result.add(element.getOriginalValue());
+        }
 
-		return result;
-	}
+        return result;
+    }
 
-	/**
-	 * @see net.ulrice.databinding.bufferedbinding.IFAttributeModel#read()
-	 */
-	@Override
-	public void read() {
-		clear();
-		initialized = true;
+    /**
+     * @see net.ulrice.databinding.bufferedbinding.IFAttributeModel#read()
+     */
+    @Override
+    public void read() {
+        clear();
+        initialized = true;
 
-		int numRows = tableMVA.getSize();
-		for (int i = 0; i < numRows; i++) {
+        int numRows = tableMVA.getSize();
+        for (int i = 0; i < numRows; i++) {
 
-			Object value = tableMVA.getValue(i);
-			Element elem = createElement(value, false, true, false);
-			elem.readObject();
+            Object value = tableMVA.getValue(i);
+            Element elem = createElement(value, false, true, false);
+            elem.readObject();
 
-			elementIdMap.put(elem.getUniqueId(), elem);
-			elements.add(elem);
-			fireElementAdded(elem);
-		}
-		fireUpdateViews();
-	}
+            elementIdMap.put(elem.getUniqueId(), elem);
+            elements.add(elem);
+            fireElementAdded(elem);
+        }
+        fireUpdateViews();
+    }
 
-	public void read(List<?> valueList, boolean append) {	    
+    public void read(List< ?> valueList, boolean append) {
         if (!append) {
             clear();
         }
@@ -620,9 +610,9 @@ public class TableAM implements IFAttributeModel {
             fireElementAdded(elem);
         }
         fireUpdateViews();
-	}
-	
-	public void read(boolean append, int firstRow) {
+    }
+
+    public void read(boolean append, int firstRow) {
 
         if (!append) {
             clear();
@@ -640,294 +630,291 @@ public class TableAM implements IFAttributeModel {
             fireElementAdded(elem);
         }
         fireUpdateViews();
-	}
+    }
 
-	public void clear() {
-		initialized = false;
-		dirty = false;
-		valid = true;
+    public void clear() {
+        initialized = false;
+        dirty = false;
+        valid = true;
 
         elementIdMap.clear();
         newElements.clear();
         modElements.clear();
         delElements.clear();
         invElements.clear();
-		elements.clear();
+        elements.clear();
 
-		fireTableCleared();
-	}
-
-	/**
-	 * @see net.ulrice.databinding.bufferedbinding.IFAttributeModel#write()
-	 */
-	@Override
-	public void write() {
-	    final List<Object> values = new ArrayList<Object>();
-	    
-	    for (Element elem: elements) {
-	        elem.writeObject();
-	        values.add (elem.getOriginalValue());
-	    }
-	    
-	    tableMVA.setValues (values);
-	}
-
-	protected Object createEmptyElementObject() {
-		return tableMVA.newObjectInstance();
-	}
-
-	public Element addElement(Object value) {
-		return addElement(value, false, true);
-	}
-
-	public Element addElement(Object value, boolean dirty, boolean valid) {
-		return addElement(-1, value, dirty, valid);
-	}
-
-	public Element addElement(int index, Object value) {
-		return addElement(index, value, false, true);
-	}
-
-	public Element addElement(int index, Object value, boolean dirty,
-			boolean valid) {
-		if (value == null) {
-			value = createEmptyElementObject();
-		}
-
-		Element element = createElement(value, dirty, valid, true);
-		
-		//unique constraint handling
-		Element oldElement = element;
-		String oldUniqueId = checkForOldUniqueId(buildKey(element), element.getUniqueId());
-		if (oldUniqueId == null) {
-			registerNewElement(element);
-		}
-		else {
-			// delete old element from delElements
-			// how to find old element?
-			Iterator<Element> iter = delElements.iterator();
-			while (iter.hasNext()) {
-				Element el = iter.next();
-				if (oldUniqueId.equals(el.getUniqueId())) {
-					oldElement = el;
-					oldElement.setInsertedOrRemoved(false);
-					iter.remove();
-					break;
-				}
-			}
-			oldElement.setCurrentValue(element.getCurrentValue());
-			
-			elementIdMap.put(oldUniqueId, oldElement);
-		}
-		// end of unique constraint handling
-		
-		if (index >= 0) {
-			elements.add(index, oldElement);
-		}
-		else {
-			elements.add(oldElement);
-		}
-		
-		fireElementAdded(oldElement);
-		elementStateChanged(oldElement);
-		fireUpdateViews();
-		return oldElement;
-	}
-
-	public boolean delElement(int index) {
-		return delElement(elements.get(index));
-	}
-
-	public boolean delElement(Element element) {
-		if(element == null) {
-			return false;
-		}
-		
-		boolean removed = elements.remove(element);
-		if (!removed) {
-			return false;
-		}
-		if(!newElements.contains(element)) {
-		    delElements.add(element);
-		}
-		invElements.remove(element);
-		newElements.remove(element);
-		modElements.remove(element);
-		elementStateChanged(element);
-		element.setInsertedOrRemoved(true);
-		fireElementDeleted(element);
-		fireUpdateViews();
-
-		return true;
-	}
-
-	public List getDeletedObjects() {
-		List result = new ArrayList();
-		for (Element element : delElements) {
-			result.add(element.getCurrentValue());
-		}
-		return result;
-	}
-
-	public List getCreatedObjects() {
-		List result = new ArrayList();
-		for (Element element : newElements) {
-			result.add(element.getCurrentValue());
-		}
-		return result;
-	}
-
-	public List getModifiedObjects() {
-		List result = new ArrayList();
-		for (Element element : modElements) {
-			result.add(element.getCurrentValue());
-		}
-		return result;
-	}
-
-	public List getInvalidObjects() {
-		List result = new ArrayList();
-		for (Element element : invElements) {
-			result.add(element.getCurrentValue());
-		}
-		return result;
-	}
-	
-	public int getCreatedCount() {
-	    return newElements.size();
-	}
-	
-	public int getModifiedCount() {
-	    return modElements.size();
-	}
-	
-	public int getDeletedCount() {
-	    return delElements.size();
-	}
-	
-	public int getInvalidCount() {
-	    return invElements.size();
-	}
-
-	public Element getElementById(String uniqueId) {
-		return elementIdMap.get(uniqueId);
-	}
-
-	protected Object cloneObject(Object value) {
-		return tableMVA.cloneObject(value);
-	}
-
-	public void setReadOnly(boolean readOnly) {
-		this.readOnly = readOnly;
-	}
-
-	public List<Element> getCreatedElements() {
-		return new ArrayList<Element>(newElements);
-	}
-
-	public List<Element> getModifiedElements() {
-		return new ArrayList<Element>(modElements);
-	}
-
-	public List<Element> getDeletedElements() {
-		return new ArrayList<Element>(delElements);
-	}
-
-	public void commitElement(Element element) {
-		element.writeObject();
-		element.readObject();
-		newElements.remove(element);
-		delElements.remove(element);
-		elementStateChanged(element);
-		element.setInsertedOrRemoved(false);
-		fireUpdateViews();
-	}
-
-	public void rollbackElement(Element element) {
-		element.readObject();
-		elementStateChanged(element);
-		fireUpdateViews();
-	}
-
-	public void markAsFaulty(Element element, String message, Throwable th) {
-		element.addElementValidationError(new ValidationError(null, message, th));
-	}
-
-	public Object getCurrentValueAt(int row) {
-		Element element = getElementAt(row);		
-        return element != null ? element.getCurrentValue() : null;
-	}
-
-	public void setUniqueConstraint(String... columnIds) {
-//	    this.uniqueConstraint = new UniqueConstraint(columnIds);
-		this.columnIds = columnIds;
+        fireTableCleared();
     }
-	
-	public void addElementLifecycleListener(ElementLifecycleListener constraint) {
-		listenerList.add(ElementLifecycleListener.class, constraint);
-	}
 
-	public void removeElementLifecycleListener(ElementLifecycleListener constraint) {
-		listenerList.remove(ElementLifecycleListener.class, constraint);
-	}
+    /**
+     * @see net.ulrice.databinding.bufferedbinding.IFAttributeModel#write()
+     */
+    @Override
+    public void write() {
+        final List<Object> values = new ArrayList<Object>();
 
-	private void fireElementAdded(Element element) {
-	    if(columnIds != null) {
-			checkUniqueConstraint(element);
-	    }
+        for (Element elem : elements) {
+            elem.writeObject();
+            values.add(elem.getOriginalValue());
+        }
 
+        tableMVA.setValues(values);
+    }
 
-        ElementLifecycleListener[] listeners = listenerList.getListeners(ElementLifecycleListener.class);
-        if(listeners != null) {
-            for (ElementLifecycleListener constraint : listeners) {
-    			constraint.elementAdded(this, element);
-    		}
-    	}
-	}
-	
-	private void registerNewElement(Element element) {
-		elementIdMap.put(element.getUniqueId(), element);
-		newElements.add(element);
-	}
+    protected Object createEmptyElementObject() {
+        return tableMVA.newObjectInstance();
+    }
 
-	private void fireElementDeleted(Element element) {
-        if(columnIds != null) {
-        	handleKey(element.getUniqueId(), null);
-//            uniqueConstraint.elementRemoved(this, element);
+    public Element addElement(Object value) {
+        return addElement(value, false, true);
+    }
+
+    public Element addElement(Object value, boolean dirty, boolean valid) {
+        return addElement(-1, value, dirty, valid);
+    }
+
+    public Element addElement(int index, Object value) {
+        return addElement(index, value, false, true);
+    }
+
+    public Element addElement(int index, Object value, boolean dirty, boolean valid) {
+        if (value == null) {
+            value = createEmptyElementObject();
+        }
+
+        Element element = createElement(value, dirty, valid, true);
+
+        // unique constraint handling
+        Element oldElement = element;
+        String oldUniqueId = checkForOldUniqueId(buildKey(element), element.getUniqueId());
+
+        if (oldUniqueId == null) {
+            registerNewElement(element);
+        }
+        else {
+            // delete old element from delElements
+            // how to find old element?
+            Iterator<Element> iter = delElements.iterator();
+            while (iter.hasNext()) {
+                Element el = iter.next();
+                if (oldUniqueId.equals(el.getUniqueId())) {
+                    oldElement = el;
+                    oldElement.setInsertedOrRemoved(false);
+                    iter.remove();
+                    break;
+                }
+            }
+            oldElement.setCurrentValue(element.getCurrentValue());
+
+            elementIdMap.put(oldUniqueId, oldElement);
+        }
+        // end of unique constraint handling
+
+        if (index >= 0) {
+            elements.add(index, oldElement);
+        }
+        else {
+            elements.add(oldElement);
+        }
+
+        fireElementAdded(oldElement);
+        elementStateChanged(oldElement);
+        fireUpdateViews();
+        return oldElement;
+    }
+
+    public boolean delElement(int index) {
+        return delElement(elements.get(index));
+    }
+
+    public boolean delElement(Element element) {
+        if (element == null) {
+            return false;
+        }
+
+        boolean removed = elements.remove(element);
+        if (!removed) {
+            return false;
+        }
+        if (!newElements.contains(element)) {
+            delElements.add(element);
+        }
+        invElements.remove(element);
+        newElements.remove(element);
+        modElements.remove(element);
+        elementStateChanged(element);
+        element.setInsertedOrRemoved(true);
+        fireElementDeleted(element);
+        fireUpdateViews();
+        return true;
+    }
+
+    public List getDeletedObjects() {
+        List result = new ArrayList();
+        for (Element element : delElements) {
+            result.add(element.getCurrentValue());
+        }
+        return result;
+    }
+
+    public List getCreatedObjects() {
+        List result = new ArrayList();
+        for (Element element : newElements) {
+            result.add(element.getCurrentValue());
+        }
+        return result;
+    }
+
+    public List getModifiedObjects() {
+        List result = new ArrayList();
+        for (Element element : modElements) {
+            result.add(element.getCurrentValue());
+        }
+        return result;
+    }
+
+    public List getInvalidObjects() {
+        List result = new ArrayList();
+        for (Element element : invElements) {
+            result.add(element.getCurrentValue());
+        }
+        return result;
+    }
+
+    public int getCreatedCount() {
+        return newElements.size();
+    }
+
+    public int getModifiedCount() {
+        return modElements.size();
+    }
+
+    public int getDeletedCount() {
+        return delElements.size();
+    }
+
+    public int getInvalidCount() {
+        return invElements.size();
+    }
+
+    public Element getElementById(String uniqueId) {
+        return elementIdMap.get(uniqueId);
+    }
+
+    protected Object cloneObject(Object value) {
+        return tableMVA.cloneObject(value);
+    }
+
+    public void setReadOnly(boolean readOnly) {
+        this.readOnly = readOnly;
+    }
+
+    public List<Element> getCreatedElements() {
+        return new ArrayList<Element>(newElements);
+    }
+
+    public List<Element> getModifiedElements() {
+        return new ArrayList<Element>(modElements);
+    }
+
+    public List<Element> getDeletedElements() {
+        return new ArrayList<Element>(delElements);
+    }
+
+    public void commitElement(Element element) {
+        element.writeObject();
+        element.readObject();
+        newElements.remove(element);
+        delElements.remove(element);
+        elementStateChanged(element);
+        element.setInsertedOrRemoved(false);
+        fireUpdateViews();
+    }
+
+    public void rollbackElement(Element element) {
+        element.readObject();
+        elementStateChanged(element);
+        fireUpdateViews();
+    }
+
+    public void markAsFaulty(Element element, String message, Throwable th) {
+        element.addElementValidationError(new ValidationError(null, message, th));
+    }
+
+    public Object getCurrentValueAt(int row) {
+        Element element = getElementAt(row);
+        return element != null ? element.getCurrentValue() : null;
+    }
+
+    public void setUniqueConstraint(String... columnIds) {
+        // this.uniqueConstraint = new UniqueConstraint(columnIds);
+        this.columnIds = columnIds;
+    }
+
+    public void addElementLifecycleListener(ElementLifecycleListener constraint) {
+        listenerList.add(ElementLifecycleListener.class, constraint);
+    }
+
+    public void removeElementLifecycleListener(ElementLifecycleListener constraint) {
+        listenerList.remove(ElementLifecycleListener.class, constraint);
+    }
+
+    private void fireElementAdded(Element element) {
+        if (columnIds != null) {
+            checkUniqueConstraint(element);
         }
 
         ElementLifecycleListener[] listeners = listenerList.getListeners(ElementLifecycleListener.class);
-        if(listeners != null) {
+        if (listeners != null) {
+            for (ElementLifecycleListener constraint : listeners) {
+                constraint.elementAdded(this, element);
+            }
+        }
+    }
+
+    private void registerNewElement(Element element) {
+        elementIdMap.put(element.getUniqueId(), element);
+        newElements.add(element);
+    }
+
+    private void fireElementDeleted(Element element) {
+        if (columnIds != null) {
+            handleKey(element.getUniqueId(), null);
+            // uniqueConstraint.elementRemoved(this, element);
+        }
+
+        ElementLifecycleListener[] listeners = listenerList.getListeners(ElementLifecycleListener.class);
+        if (listeners != null) {
             for (ElementLifecycleListener constraint : listeners) {
                 constraint.elementRemoved(this, element);
-    		}
+            }
         }
-	}
+    }
 
-	private void fireTableCleared() {
-        if(columnIds != null) {
-        	uniqueMap.clear();
-    		keyMap.clear();
-    		uniqueDeleteMap.clear();
-    		keyDeleteMap.clear();
-        }
-
-	    ElementLifecycleListener[] listeners = listenerList.getListeners(ElementLifecycleListener.class);
-	    if(listeners != null) {
-    		for (ElementLifecycleListener constraint : listeners) {
-    			constraint.tableCleared(this);
-    		}
-	    }
-	}
-	
-
-    private void fireElementStatusChanged(Element element) {
-        if(columnIds != null) {
-//            uniqueConstraint.elementStateChanged(this, element);
+    private void fireTableCleared() {
+        if (columnIds != null) {
+            uniqueMap.clear();
+            keyMap.clear();
+            uniqueDeleteMap.clear();
+            keyDeleteMap.clear();
         }
 
         ElementLifecycleListener[] listeners = listenerList.getListeners(ElementLifecycleListener.class);
-        if(listeners != null) {
+        if (listeners != null) {
+            for (ElementLifecycleListener constraint : listeners) {
+                constraint.tableCleared(this);
+            }
+        }
+    }
+
+    private void fireElementStatusChanged(Element element) {
+        if (columnIds != null) {
+            // uniqueConstraint.elementStateChanged(this, element);
+        }
+
+        ElementLifecycleListener[] listeners = listenerList.getListeners(ElementLifecycleListener.class);
+        if (listeners != null) {
             for (ElementLifecycleListener constraint : listeners) {
                 constraint.elementStateChanged(this, element);
             }
