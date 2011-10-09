@@ -7,6 +7,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.swing.JComponent;
 import javax.swing.JDialog;
 
 import net.ulrice.Ulrice;
@@ -77,6 +78,7 @@ public class DialogManager {
 		list.add(dlgInfo);
 
 		if(Ulrice.getModuleManager().getCurrentController() == controller) {
+            dialog.setLocationRelativeTo(Ulrice.getMainFrame().getWorkarea().getView());
 		    dialog.setVisible(true);
 		}
 		
