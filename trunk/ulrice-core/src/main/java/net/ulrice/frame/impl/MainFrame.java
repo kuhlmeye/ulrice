@@ -70,7 +70,7 @@ public class MainFrame extends JFrame implements IFMainFrame {
 	/**
 	 * @return the activeWorkarea
 	 */
-	public IFWorkarea getActiveWorkarea() {
+	public IFWorkarea getWorkarea() {
 		return activeWorkarea;
 	}
 }

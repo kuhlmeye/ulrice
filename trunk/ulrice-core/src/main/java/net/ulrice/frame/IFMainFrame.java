@@ -16,6 +16,8 @@ public interface IFMainFrame {
 	 */
 	JFrame getFrame();
 
+	IFWorkarea getWorkarea();
+	
 	/**
 	 * Initialize the main frame after setting up the configuration is finished. This is called by the ulrice class.
 	 */
