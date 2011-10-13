@@ -87,4 +87,6 @@ public interface IFAttributeModel<T> extends IFBinding {
 	boolean isInitialized();
 	
 	IFAttributeInfo getAttributeInfo();
+	
+	void setReadOnly(boolean readOnly);
 }
