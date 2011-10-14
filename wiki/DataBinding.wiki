@@ -2,33 +2,40 @@
 
 = Introduction =
 
+
 Databinding is used to bind the values of attributes of your business object to gui components. This means that all values are displayed automatically in the gui and user inputs are automatically synchronized with the business objects.
 
-= GUI Accessor =
-A gui accessor is a class that is able to handle a java gui component. The main task of this class is to receive values from attribtue models and display them in the gui component.
+[https://ulrice.googlecode.com/svn/wiki/img/Overview.png]
 
-== TextFieldGA ==
-The text field gui accessor is synchronizing the attribute model with a JTextField. 
+= View Adapter =
+A view adapter is a class that is able to handle a java gui component. The main task of this class is to receive values from attribute models and display them in the gui component.
+
+The following adapters are currently available:
+  * JButtonViewAdapter
+  * JCheckBoxViewAdapter
+  * JComboBoxViewAdapter
+  * JListViewAdapter
+  * JRadioButtonViewAdapter
+  * JSliderViewAdapter
+  * JSpinnerViewAdapter
+  * JTextComponentViewAdapter
+  * JTableViewAdapter
+  * UTableViewAdapter 
+
 
 = Attribute Models =
-An attribute model is a class that is able to store an attribute value and detect changes on it. One or more gui accessors could be connected to an attribute model. The value maintained by the attribute model is then displayed in the gui components of the accessors.
+An attribute model is a class that is able to store an attribute value and detect changes on it. One or more view accessors could be connected to an attribute model. The value maintained by the attribute model is then displayed in the gui components of the accessors.
 
-== Data State ==
-  * NotInitialized
-  * NotChanged
-  * Changed
-  * Invalid
+Currently, two attribute models exist in the framework:
 
-== Data Validation ==
-Attribute models including a validation mechanism for the maintained value. 
+== GenericAM ==
+A generic attribute model is the model for a single object (String, Integer, Long, ...).
 
-== Included Models ==
+== TableAM ==
+The table attribute model is used as a model for all list types presented in UTableComponents or a JTable. It contains list-specific functions like methods for getting all created/updated/removed objects.
 
-=== GenericAM ===
-Attribute model that can be used with each simple java type. 
+= Data Validation = 
+The ulrice binding framework offers a simple way to add your own object and attribute validators to the attribute models. You can add validations to an attribute model by calling the addValidator-Method.
 
-=== ListAM ===
-This model is managing lists. It is used as a model for tables and list gui elements.
-
-= !DataGroup =
-A data group is a set of attribute models with connected gui accessors. 
+= Binding Group =
+A binding groups manages a set of attribute bindings. 
