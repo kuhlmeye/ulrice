@@ -308,7 +308,7 @@ public class GenericAM<T> implements IFAttributeModel<T>, IFViewChangeListener {
 	 */
 	@Override
 	public boolean isReadOnly() {
-		return (modelAccessor == null && readOnly) || (modelAccessor != null && modelAccessor.isReadOnly());
+		return (modelAccessor != null && modelAccessor.isReadOnly() || readOnly);
 	}
 
 	public void setReadOnly(boolean readOnly) {
