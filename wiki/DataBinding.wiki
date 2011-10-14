@@ -25,8 +25,8 @@ The following adapters are currently available:
 
 = Attribute Models =
 Javadoc: 
-  * [IFBinding http://ulrice.googlecode.com/svn/trunk/ulrice-javadoc/ulrice-databinding/net/ulrice/databinding/IFBinding.html]
-  * [IFAttributeModel http://ulrice.googlecode.com/svn/trunk/ulrice-javadoc/ulrice-databinding/net/ulrice/databinding/bufferedbinding/IFAttributeModel.html]
+  * [http://ulrice.googlecode.com/svn/trunk/ulrice-javadoc/ulrice-databinding/net/ulrice/databinding/IFBinding.html IFBinding]
+  * [http://ulrice.googlecode.com/svn/trunk/ulrice-javadoc/ulrice-databinding/net/ulrice/databinding/bufferedbinding/IFAttributeModel.html IFAttributeModel]
 
 An attribute model is a class that is able to store an attribute value and detect changes on it. One or more view accessors could be connected to an attribute model. The value maintained by the attribute model is then displayed in the gui components of the accessors.
 
