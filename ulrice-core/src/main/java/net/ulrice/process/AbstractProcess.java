@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.concurrent.CancellationException;
 import java.util.concurrent.ExecutionException;
 
+import javax.swing.SwingUtilities;
 import javax.swing.SwingWorker;
 import javax.swing.event.EventListenerList;
 
@@ -98,26 +99,37 @@ public abstract class AbstractProcess<T,V> extends SwingWorker<T, V> implements 
 
 	@Override
 	protected void process(List<V> arg0) {
-		// TODO Auto-generated method stub
 		super.process(arg0);
 	}
 
 	public void fireStateChanged() {
-		IFProcessListener[] listeners = listenerList.getListeners(IFProcessListener.class);
-		if(listeners != null)  {
-			for(IFProcessListener listener : listeners) {
-				listener.stateChanged(this);
-			}
-		}
+	    SwingUtilities.invokeLater(new Runnable() {
+
+            @Override
+            public void run() {
+                IFProcessListener[] listeners = listenerList.getListeners(IFProcessListener.class);
+                if(listeners != null)  {
+                    for(IFProcessListener listener : listeners) {
+                        listener.stateChanged(AbstractProcess.this);
+                    }
+                }   
+            }
+	    });
 	}
 	
 	public void fireProgressChanged() {
-		IFProcessListener[] listeners = listenerList.getListeners(IFProcessListener.class);
-		if(listeners != null)  {
-			for(IFProcessListener listener : listeners) {
-				listener.progressChanged(this);
-			}
-		}
+        SwingUtilities.invokeLater(new Runnable() {
+
+            @Override
+            public void run() {
+                IFProcessListener[] listeners = listenerList.getListeners(IFProcessListener.class);
+                if(listeners != null)  {
+                    for(IFProcessListener listener : listeners) {
+                        listener.progressChanged(AbstractProcess.this);
+                    }
+                } 
+            }
+        });	   
 	}
 	
 	@Override
