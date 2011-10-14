@@ -313,6 +313,7 @@ public class GenericAM<T> implements IFAttributeModel<T>, IFViewChangeListener {
 
 	public void setReadOnly(boolean readOnly) {
 		this.readOnly = readOnly;
+		fireUpdateViews();
 	}
 
 	@Override
