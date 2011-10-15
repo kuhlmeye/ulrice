@@ -97,9 +97,7 @@ public class ProcessManager implements IFProcessListener {
             if (!list.remove(process)) {
                 LOG.warning("Process "
                     + process
-                    + " not found in list of controller "
-                        + Ulrice.getModuleManager().getModule(process.getOwningController())
-                            .getModuleTitle(Usage.Default) + ".");
+                    + " not found in list of controller " + process.getOwningController().getClass().getSimpleName() + ".");
             }
         }
         fireStateChanged(process);
