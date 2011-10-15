@@ -118,7 +118,6 @@ public class GlassPanel extends JLayeredPane implements AWTEventListener,
 			super.paintComponent(g);
 			g.setColor(getBackground());
 			g.fillRect(0, 0, getWidth(), getHeight());
-			System.out.println("PAINT!");
 		}
 	};
 }
