@@ -70,7 +70,7 @@ public class DialogManager {
 			Ulrice.getModuleManager().block (controller, dialog);
 			break;
 		case ModuleModal:
-			//dialog.setAlwaysOnTop(true);
+			dialog.setFocusableWindowState(false);
 			Ulrice.getModuleManager().block (controller, dialog);
 			break;
 		case NonModal:
