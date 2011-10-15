@@ -112,7 +112,6 @@ public class DialogManager {
 
 		@Override
 		public void openModule(IFController controller) {
-			System.out.println("Open");
 			ctrlDialogMap.put(controller, new ArrayList<DialogInformation>());
 		}
 
@@ -130,7 +129,6 @@ public class DialogManager {
 
 		@Override
 		public void activateModule(IFController controller) {
-			System.out.println("Activate: " + controller);
 			showAllDialogs(controller);
 		}
 
@@ -147,6 +145,26 @@ public class DialogManager {
 
 		@Override
 		public void windowActivated(WindowEvent e) {
+			super.windowActivated(e);
+			if(isInEventHandling) {
+				return;
+			}
+			isInEventHandling = true;
+			
+			if(isMainFrameEvent(e)) {				
+				List<DialogInformation> list = ctrlDialogMap.get(Ulrice.getModuleManager().getCurrentController());				
+				if(list != null) {
+					for(DialogInformation item : list) {
+						item.dialog.toFront();
+					}
+				}
+			}
+			isInEventHandling = false;
+		}
+		
+		@Override
+		public void windowDeactivated(WindowEvent e) {
+			super.windowDeactivated(e);
 			if(isInEventHandling) {
 				return;
 			}
@@ -170,7 +188,6 @@ public class DialogManager {
 
 		@Override
 		public void windowClosed(WindowEvent e) {
-			System.err.println("DlgMgr: windowClosed");
 			if (e.getSource() instanceof JDialog) {
 				JDialog dialog = (JDialog) e.getSource();
 				DialogInformation dlgInfo = dlgInfoDialogMap.remove(dialog);
