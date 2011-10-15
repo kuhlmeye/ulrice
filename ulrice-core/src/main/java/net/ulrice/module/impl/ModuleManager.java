@@ -485,7 +485,7 @@ public class ModuleManager implements IFModuleManager, IFModuleStructureManager 
 	}
 
     @Override
-    public void block(IFController controller, Object blocker) {
+    public void addBlocker(IFController controller, Object blocker) {
         if (blockers.get(controller) == null) {
             final IdentityHashMap<Object, Object> m = new IdentityHashMap<Object, Object>();
             m.put(blocker, blocker);
@@ -506,7 +506,7 @@ public class ModuleManager implements IFModuleManager, IFModuleStructureManager 
     }
 
     @Override
-    public void unblock(IFController controller, Object blocker) {
+    public void removeBlocker(IFController controller, Object blocker) {
         boolean wasBlocked = isBlocked(controller);
         final IdentityHashMap<Object, Object> m = blockers.get(controller);
         if (m == null || m.remove(blocker) == null) {

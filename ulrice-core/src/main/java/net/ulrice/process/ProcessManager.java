@@ -60,7 +60,7 @@ public class ProcessManager implements IFProcessListener {
 
         if (ProcessState.Started.equals(process.getProcessState())) {
             if (process.getOwningController() != null && process.blocksWorkarea()) {
-                Ulrice.getModuleManager().block(process.getOwningController(), process);
+                Ulrice.getModuleManager().addBlocker(process.getOwningController(), process);
             }
         }
         return uniqueId;
@@ -80,12 +80,12 @@ public class ProcessManager implements IFProcessListener {
         Ulrice.getMessageHandler().handleMessage(process.getOwningController(), MessageSeverity.Status, process.getProcessProgressMessage() + " (" + process.getProcessState() + ")");
         if (ProcessState.Started.equals(process.getProcessState())) {
             if (process.getOwningController() != null && process.blocksWorkarea()) {
-                Ulrice.getModuleManager().block(process.getOwningController(), process);                
+                Ulrice.getModuleManager().addBlocker(process.getOwningController(), process);                
             }
         }
         if (ProcessState.Done.equals(process.getProcessState())) {
             if (process.getOwningController() != null && process.blocksWorkarea()) {
-                Ulrice.getModuleManager().unblock(process.getOwningController(), process);
+                Ulrice.getModuleManager().removeBlocker(process.getOwningController(), process);
             }
 
             String uniqueId = processIdMap.get(process);
