@@ -1,7 +1,9 @@
 package net.ulrice.sample.module.sample1;
 
 import java.awt.BorderLayout;
+import java.awt.event.ActionEvent;
 
+import javax.swing.AbstractAction;
 import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
@@ -19,7 +21,13 @@ public class VSample1 {
 	public VSample1() {
 	    view.setLayout(new BorderLayout());
 	    view.add(new JLabel("Sample 1 module."), BorderLayout.CENTER);
-	    view.add(new JButton("Hallo"), BorderLayout.SOUTH);
+	    view.add(new JButton(new AbstractAction("Say hello!") {
+			
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				System.out.println("Hello!");
+			}
+		}), BorderLayout.SOUTH);
 	}
 
 	/**

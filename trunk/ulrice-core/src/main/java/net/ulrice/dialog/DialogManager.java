@@ -7,9 +7,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.swing.JComponent;
 import javax.swing.JDialog;
 
+import net.ulrice.ConfigurationListener;
 import net.ulrice.Ulrice;
 import net.ulrice.module.IFController;
 import net.ulrice.module.event.AbstractModuleEventAdapter;
@@ -21,8 +21,8 @@ import net.ulrice.module.event.AbstractModuleEventAdapter;
  */
 public class DialogManager {
 
-	private Map<IFController, List<DialogInformation>> ctrlDialogMap;
-	private Map<JDialog, DialogInformation> dlgInfoDialogMap;
+	private Map<IFController, List<DialogInformation>> ctrlDialogMap = new HashMap<IFController, List<DialogInformation>>();
+	private Map<JDialog, DialogInformation> dlgInfoDialogMap = new HashMap<JDialog, DialogManager.DialogInformation>();
 
 	public enum DialogMode {
 		/** Dialog is blocking the whole application. */
@@ -34,13 +34,16 @@ public class DialogManager {
 		/** Dialog is not modal. */
 		NonModal
 	}
+	private MainFrameWindowListener windowListener = new MainFrameWindowListener();
 
-	public DialogManager() {
-		Ulrice.getModuleManager().addModuleEventListener(
-				new ModuleEventListener());
-
-		ctrlDialogMap = new HashMap<IFController, List<DialogInformation>>();
-		dlgInfoDialogMap = new HashMap<JDialog, DialogManager.DialogInformation>();
+	public DialogManager() {		
+		Ulrice.addConfigurationListener(new ConfigurationListener() {			
+			@Override
+			public void initializationFinished() {
+				Ulrice.getModuleManager().addModuleEventListener(new ModuleEventListener());
+				Ulrice.getMainFrame().getFrame().addWindowListener(windowListener);
+			}
+		});
 	}
 
 	/**
@@ -53,14 +56,13 @@ public class DialogManager {
 	 * @param mode
 	 *            The mode in which the dialog should be shown.
 	 */
-	public void showDialog(IFController controller, JDialog dialog,
-			DialogMode mode) {
+	public void showDialog(IFController controller, JDialog dialog, DialogMode mode) {
 		DialogInformation dlgInfo = new DialogInformation();
 		dlgInfo.dialog = dialog;
 		dlgInfo.mode = mode;
 		dlgInfo.ctrl = controller;
 
-		dialog.addWindowListener(new DialogWindowListener());
+		dialog.addWindowListener(windowListener);
 
 		switch (mode) {
 		case ApplicationModal:
@@ -68,7 +70,7 @@ public class DialogManager {
 			Ulrice.getModuleManager().block (controller, dialog);
 			break;
 		case ModuleModal:
-			dialog.setAlwaysOnTop(true);
+			//dialog.setAlwaysOnTop(true);
 			Ulrice.getModuleManager().block (controller, dialog);
 			break;
 		case NonModal:
@@ -76,15 +78,30 @@ public class DialogManager {
 		}
 		List<DialogInformation> list = ctrlDialogMap.get(controller);
 		list.add(dlgInfo);
+		dlgInfoDialogMap.put(dialog, dlgInfo);
 
 		if(Ulrice.getModuleManager().getCurrentController() == controller) {
             dialog.setLocationRelativeTo(Ulrice.getMainFrame().getWorkarea().getView());
-		    dialog.setVisible(true);
+    		dialog.setVisible(true);
 		}
-		
-		dlgInfoDialogMap.put(dialog, dlgInfo);
 	}
 
+	private void showAllDialogs(IFController controller) {
+		List<DialogInformation> dialogs = ctrlDialogMap.get(controller);
+		for (DialogInformation dialogInfo : dialogs) {
+			dialogInfo.dialog.setVisible(true);
+		}
+	}
+
+	private void hideAllDialogs(IFController controller) {
+		List<DialogInformation> dialogs = ctrlDialogMap.get(controller);
+		if (dialogs != null) {
+			for (DialogInformation dialogInfo : dialogs) {
+				dialogInfo.dialog.setVisible(false);
+			}
+		}
+	}
+	
 	private class DialogInformation {
 		private DialogMode mode;
 		private JDialog dialog;
@@ -95,6 +112,7 @@ public class DialogManager {
 
 		@Override
 		public void openModule(IFController controller) {
+			System.out.println("Open");
 			ctrlDialogMap.put(controller, new ArrayList<DialogInformation>());
 		}
 
@@ -112,27 +130,47 @@ public class DialogManager {
 
 		@Override
 		public void activateModule(IFController controller) {
-			List<DialogInformation> dialogs = ctrlDialogMap.get(controller);
-			for (DialogInformation dialogInfo : dialogs) {
-				dialogInfo.dialog.setVisible(true);
-			}
+			System.out.println("Activate: " + controller);
+			showAllDialogs(controller);
 		}
 
 		@Override
 		public void deactivateModule(IFController controller) {
-			List<DialogInformation> dialogs = ctrlDialogMap.get(controller);
-			if (dialogs != null) {
-				for (DialogInformation dialogInfo : dialogs) {
-					dialogInfo.dialog.setVisible(false);
+			hideAllDialogs(controller);
+		}
+
+	}
+	
+	private class MainFrameWindowListener extends WindowAdapter {
+
+		private boolean isInEventHandling = false;
+
+		@Override
+		public void windowActivated(WindowEvent e) {
+			if(isInEventHandling) {
+				return;
+			}
+			isInEventHandling = true;
+			
+			if(isMainFrameEvent(e)) {				
+				List<DialogInformation> list = ctrlDialogMap.get(Ulrice.getModuleManager().getCurrentController());				
+				if(list != null) {
+					for(DialogInformation item : list) {
+						item.dialog.toFront();
+					}
 				}
 			}
+			isInEventHandling = false;
 		}
-	}
 
-	private class DialogWindowListener extends WindowAdapter {
+		@Override
+		public void windowClosing(WindowEvent e) {
+			e.getWindow().dispose();
+		}
 
 		@Override
 		public void windowClosed(WindowEvent e) {
+			System.err.println("DlgMgr: windowClosed");
 			if (e.getSource() instanceof JDialog) {
 				JDialog dialog = (JDialog) e.getSource();
 				DialogInformation dlgInfo = dlgInfoDialogMap.remove(dialog);
@@ -148,7 +186,11 @@ public class DialogManager {
 					}
 					ctrlDialogMap.get(dlgInfo.ctrl).remove(dlgInfo);
 				}
-			}
+			}			
+		}
+
+		private boolean isMainFrameEvent(WindowEvent e) {
+			return e.getSource() == Ulrice.getMainFrame().getFrame();
 		}
 	}
 }

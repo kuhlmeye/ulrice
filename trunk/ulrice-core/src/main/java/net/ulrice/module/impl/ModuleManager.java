@@ -89,6 +89,13 @@ public class ModuleManager implements IFModuleManager, IFModuleStructureManager 
                         return;
                     }
                     
+            		// Inform event listeners.
+            		if (openControllers.getActive() != null) {
+                        for (IFModuleEventListener listener : listenerList.getListeners(IFModuleEventListener.class)) {
+        					listener.deactivateModule (openControllers.getActive());
+        				}
+            		}
+                    
                     openControllers.addController (controller, parent, module);
                     
                     for (IFModuleEventListener listener : listenerList.getListeners(IFModuleEventListener.class)) {

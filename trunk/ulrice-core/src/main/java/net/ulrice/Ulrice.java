@@ -2,6 +2,8 @@ package net.ulrice;
 
 import java.util.Properties;
 
+import javax.swing.event.EventListenerList;
+
 import net.ulrice.configuration.ConfigurationException;
 import net.ulrice.configuration.IFUlriceConfiguration;
 import net.ulrice.dialog.DialogManager;
@@ -51,6 +53,7 @@ public class Ulrice {
 	
 	private static DialogManager dialogManager;
 	
+	private static EventListenerList listenerList = new EventListenerList();
 
 
 	/** 
@@ -79,6 +82,13 @@ public class Ulrice {
 		Ulrice.mainFrame = configuration.getMainFrame();
 		if(Ulrice.mainFrame != null) {
 			Ulrice.mainFrame.inializeLayout();
+		}
+		
+		ConfigurationListener[] listeners = listenerList.getListeners(ConfigurationListener.class);
+		if(listeners != null) {
+			for(ConfigurationListener listener : listeners) {
+				listener.initializationFinished();
+			}
 		}
 	}
 
@@ -167,5 +177,13 @@ public class Ulrice {
 	 */
 	public static IFAuthCallback getSecurityManager() {
 		return securityManager;
+	}
+	
+	public static void addConfigurationListener(ConfigurationListener listener) {
+		listenerList.add(ConfigurationListener.class, listener);
+	}
+	
+	public static void removeConfigurationListener(ConfigurationListener listener) {
+		listenerList.remove(ConfigurationListener.class, listener);
 	}
 }

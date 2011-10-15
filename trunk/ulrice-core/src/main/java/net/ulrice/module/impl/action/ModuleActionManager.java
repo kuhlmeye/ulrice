@@ -323,16 +323,18 @@ public class ModuleActionManager implements IFModuleEventListener, PropertyChang
 	
 	@Override
 	public void moduleBlocked(IFController controller, Object blocker) {
-        Map<UlriceAction, ModuleActionState> actionMap = controllerActionStateMap.get(controller);
-        Collection<ModuleActionState> actions = actionMap.values();
-        if(actions != null) {
-            for(ModuleActionState action : actions) {
-                action.addBlocker(blocker);
-            }
+        Map<UlriceAction, ModuleActionState> actionMap = controllerActionStateMap.get(controller);        
+        if(actionMap != null) {
+	        Collection<ModuleActionState> actions = actionMap.values();
+	        if(actions != null) {
+	            for(ModuleActionState action : actions) {
+	                action.addBlocker(blocker);
+	            }
+	        }
+	
+	        adaptActionStates();
+	        fireApplicationActionsChanged();
         }
-
-        adaptActionStates();
-        fireApplicationActionsChanged();
 	}
 
 	@Override
