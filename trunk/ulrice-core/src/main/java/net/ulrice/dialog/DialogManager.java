@@ -67,11 +67,11 @@ public class DialogManager {
 		switch (mode) {
 		case ApplicationModal:
 			dialog.setModal(true);
-			Ulrice.getModuleManager().block (controller, dialog);
+			Ulrice.getModuleManager().addBlocker (controller, dialog);
 			break;
 		case ModuleModal:
 			dialog.setFocusableWindowState(false);
-			Ulrice.getModuleManager().block (controller, dialog);
+			Ulrice.getModuleManager().addBlocker (controller, dialog);
 			break;
 		case NonModal:
 			break;
@@ -196,7 +196,7 @@ public class DialogManager {
 					switch (dlgInfo.mode) {
 					case ApplicationModal:
 					case ModuleModal:
-					    Ulrice.getModuleManager().unblock(dlgInfo.ctrl, dialog);
+					    Ulrice.getModuleManager().removeBlocker(dlgInfo.ctrl, dialog);
 						break;
 					default:
 						break;
