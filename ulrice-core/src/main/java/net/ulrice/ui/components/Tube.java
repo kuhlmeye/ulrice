@@ -138,7 +138,9 @@ public class Tube extends JPanel {
 	
 	private class TubeTitle extends JPanel {
 	    
-	    public TubeTitle(String name) {
+		private static final long serialVersionUID = -8533723191100922857L;
+
+		public TubeTitle(String name) {
 	        JLabel label = new JLabel(name);
 	        label.setFont(label.getFont().deriveFont(Font.BOLD));
 	        
