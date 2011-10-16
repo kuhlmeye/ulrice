@@ -405,7 +405,7 @@ public class UTableComponent extends JPanel {
 	    if(col < fixedColumns) {
 	        modelCol = staticTable.convertColumnIndexToModel(col);
 	    } else {
-	        modelCol = scrollTable.convertColumnIndexToModel(col) + fixedColumns;
+	        modelCol = scrollTable.convertColumnIndexToModel(col - fixedColumns) + fixedColumns;
 	    }
 	    return modelCol;
 	}
