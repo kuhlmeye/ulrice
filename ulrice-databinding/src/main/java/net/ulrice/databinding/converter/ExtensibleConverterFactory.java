@@ -7,7 +7,6 @@ import java.util.List;
 import net.ulrice.databinding.ObjectWithPresentation;
 import net.ulrice.databinding.converter.impl.DoNothingConverter;
 import net.ulrice.databinding.converter.impl.GenericStringToNumberConverter;
-import net.ulrice.databinding.converter.impl.Reverser;
 /**
  * 
  * @author apunahassaphemapetilon@hotmail.com
@@ -16,7 +15,8 @@ import net.ulrice.databinding.converter.impl.Reverser;
 public class ExtensibleConverterFactory implements IFConverterFactory {
 	private static final List<? extends IFValueConverter<?, ?>> builtin = Arrays.asList (
 			GenericStringToNumberConverter.INT,
-			GenericStringToNumberConverter.LONG
+			GenericStringToNumberConverter.LONG,
+			GenericStringToNumberConverter.DOUBLE
 			);
 	
 	
