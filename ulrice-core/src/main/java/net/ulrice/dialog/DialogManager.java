@@ -88,9 +88,11 @@ public class DialogManager {
 
 	private void showAllDialogs(IFController controller) {
 		List<DialogInformation> dialogs = ctrlDialogMap.get(controller);
-		for (DialogInformation dialogInfo : dialogs) {
-			dialogInfo.dialog.setVisible(true);
-		}
+        if (dialogs != null) {
+    		for (DialogInformation dialogInfo : dialogs) {
+    			dialogInfo.dialog.setVisible(true);
+    		}
+    	}
 	}
 
 	private void hideAllDialogs(IFController controller) {
