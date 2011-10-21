@@ -38,10 +38,6 @@
 		<relativePath>../ulrice</relativePath>
 	</parent>
 
-	<properties>
-		<ulrice.tags>-t ~@SKIP</ulrice.tags>
-	</properties>
-	
 	<dependencies>
 		<dependency>
 			<groupId>net.ulrice</groupId>
@@ -64,13 +60,23 @@
 			<artifactId>ulrice-webstarter-maven-plugin</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>org.picocontainer</groupId>
-			<artifactId>picocontainer</artifactId>
+			<groupId>info.cukes</groupId>
+			<artifactId>cucumber-core</artifactId>
 			<scope>test</scope>
 		</dependency>
 		<dependency>
-			<groupId>cuke4duke</groupId>
-			<artifactId>cuke4duke</artifactId>
+			<groupId>info.cukes</groupId>
+			<artifactId>cucumber-picocontainer</artifactId>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>info.cukes</groupId>
+			<artifactId>cucumber-junit</artifactId>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.picocontainer</groupId>
+			<artifactId>picocontainer</artifactId>
 			<scope>test</scope>
 		</dependency>
 	</dependencies>
@@ -158,47 +164,24 @@
 				</plugins>
 			</build>
 		</profile>
-
+		
 		<profile>
-			<id>cuke4duke</id>
+			<id>cucumber</id>
 			<activation>
 				<property>
-					<name>cuke4duke</name>
+					<name>cucumber</name>
 				</property>
 			</activation>
 			<build>
 				<plugins>
 					<plugin>
-						<groupId>cuke4duke</groupId>
-						<artifactId>cuke4duke-maven-plugin</artifactId>
-						<version>0.4.3</version>
-						<configuration>
-							<jvmArgs>
-								<jvmArg>
-									-Dcuke4duke.objectFactory=cuke4duke.internal.jvmclass.PicoFactory
-								</jvmArg>
-								<jvmArg>-Dfile.encoding=UTF-8</jvmArg>
-							</jvmArgs>
-							<!-- You may not need all of these arguments in your own project. We have a lot here for testing purposes... -->
-							<cucumberArgs>
-								<cucumberArg>${ulrice.tags}</cucumberArg>
-								<cucumberArg>-f pretty</cucumberArg>
-								<cucumberArg>-f html -o ${project.build.directory}/features_result.html</cucumberArg>
-								<cucumberArg>-f pdf -o ${project.build.directory}/features_result.pdf</cucumberArg>
-								<cucumberArg>-r</cucumberArg>
-								<cucumberArg>${basedir}/target/test-classes</cucumberArg>
-							</cucumberArgs>
-							<gems>
-								<gem>install cuke4duke --version 0.4.3</gem>
-								<gem>install prawn --version 0.8.4</gem>
-							</gems>
-						</configuration>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-failsafe-plugin</artifactId>
 						<executions>
 							<execution>
-								<id>run-features</id>
-								<phase>integration-test</phase>
 								<goals>
-									<goal>cucumber</goal>
+									<goal>integration-test</goal>
+									<goal>verify</goal>
 								</goals>
 							</execution>
 						</executions>
@@ -207,5 +190,12 @@
 			</build>
 		</profile>
 	</profiles>
-
+	
+	<repositories>
+		<repository>
+			<id>sonatype-snapshots</id>
+			<url>https://oss.sonatype.org/content/repositories/snapshots</url>
+		</repository>
+	</repositories>
+	
 </project>
