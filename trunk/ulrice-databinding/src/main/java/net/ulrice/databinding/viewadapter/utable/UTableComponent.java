@@ -394,6 +394,10 @@ public class UTableComponent extends JPanel {
         }
     }
 	
+    public int getFixedColumns() {
+    	return fixedColumns;
+    }
+    
 	private void setFixedColumns(int fixedColumns) {
         this.fixedColumns = fixedColumns;
         this.scrollTableModel.setOffset(fixedColumns);

@@ -88,6 +88,9 @@ public class UlriceSampleApplication {
 				new SimpleModuleTitleRenderer("Radio Button Sample"));
 		radioModule.setAuthorization(new Authorization(SampleSecurityCallback.TYPE_MODULE_REGISTER, "RADIOBUTTON"));
 		
+		AuthReflectionModule behaviorModule = new AuthReflectionModule("behavior", ModuleType.SingleModule, "net.ulrice.sample.module.behavior.CBehavior", "net/ulrice/sample/module/sample1/moduleicon.png",
+			new SimpleModuleTitleRenderer("Behavior Driven Development"));
+		
 		IFModule translator = new IFModule() {
 		    final IFTranslationService translatorService = new XMLInMemoryTranslationService();
 		    
@@ -126,6 +129,7 @@ public class UlriceSampleApplication {
 		moduleManager.registerModule(dataBindingSample);
 		moduleManager.registerModule(translator);
 		moduleManager.registerModule(radioModule);
+		moduleManager.registerModule(behaviorModule);
 
 		// Add the modules to the structure.
 		IFModuleStructureManager moduleStructureManager = Ulrice.getModuleStructureManager();
@@ -136,6 +140,7 @@ public class UlriceSampleApplication {
 		moduleStructureManager.addModule(dataBindingSample);
 		moduleStructureManager.addModule(translator);
 		moduleStructureManager.addModule(radioModule);
+		moduleStructureManager.addModule(behaviorModule);
 
 		moduleStructureManager.fireModuleStructureChanged();
 		

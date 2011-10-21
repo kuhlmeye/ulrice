@@ -1,0 +1,77 @@
+##############################
+# Cucumber + Cuke4Duke HowTo #
+##############################
+
+How to run acceptance tests:
+============================
+
+1. Prepare Maven
+----------------
+
+Execute
+
+mvn -P cuke4duke integration-test -Dcucumber.installGems=true
+
+to install the cucumber gems for ruby. 
+
+You may need the following repositories:
+
+<repositories>
+	<repository>
+    	<id>codehaus</id>
+		<url>http://repository.codehaus.org</url>
+	</repository>
+	<repository>
+		<id>cukes</id>
+		<url>http://cukes.info/maven</url>
+	</repository>
+</repositories>
+
+<pluginRepositories>
+	<pluginRepository>
+		<id>cukes</id>
+		<url>http://cukes.info/maven</url>
+	</pluginRepository>
+</pluginRepositories>
+
+ If you are behind a proxy, you should setup the proxy connection in your ~/.m2/settings.xml
+
+<proxies>
+	<proxy>
+		<id>blue</id>
+		<active>true</active>
+		<protocol>http</protocol>
+		<host>some-proxy</host>
+		<port>some-port</port>
+		<username>xxx</username>
+		<password>xxx</password>
+		<nonProxyHosts>...</nonProxyHosts>
+	</proxy>
+</proxies>
+ 
+2. Execute the test
+-------------------
+
+Execute:
+
+mvn -P cuke4duke compile integration-test
+
+You may do this in the ulrice module or the ulrice-sample module.
+
+After this have a look at: ulrice-sample/target/features_result.html or ulrice-sample/target/features_result.pdf
+
+3. Understand it
+----------------
+
+Have a look at the feature file:
+
+ulrice-sample/features/behavior/behavior.feature
+
+And then the step definitions:
+
+net.ulrice.sample.module.behavior.BehaviorSteps
+
+
+ 
+
+

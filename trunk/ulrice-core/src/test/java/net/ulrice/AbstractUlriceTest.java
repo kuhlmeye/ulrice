@@ -16,7 +16,9 @@ import net.ulrice.security.GrantAllAuthCallback;
 import net.ulrice.security.IFAuthCallback;
 
 import org.junit.Before;
+import org.junit.Ignore;
 
+@Ignore("Base-Class")
 public class AbstractUlriceTest implements IFUlriceConfiguration {
 
 	protected static final String NORMAL_MODULE_ID = "normalModule";
