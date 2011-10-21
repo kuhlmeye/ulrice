@@ -21,13 +21,11 @@ import net.ulrice.remotecontrol.ControllerMatcher;
 import net.ulrice.remotecontrol.ModuleMatcher;
 import net.ulrice.remotecontrol.RemoteControlException;
 import net.ulrice.sample.UlriceSampleApplication;
-import cuke4duke.Table;
-import cuke4duke.annotation.I18n.EN.Given;
-import cuke4duke.annotation.I18n.EN.Then;
-import cuke4duke.annotation.I18n.EN.When;
-import cuke4duke.spring.StepDefinitions;
+import cucumber.annotation.en.Given;
+import cucumber.annotation.en.Then;
+import cucumber.annotation.en.When;
+import cucumber.table.Table;
 
-@StepDefinitions
 public class BehaviorSteps {
 
     @Given("^the sample application is running$")
@@ -82,7 +80,7 @@ public class BehaviorSteps {
 
     @When("^I enter following data into the table:$")
     public void enterTableData(Table table) throws RemoteControlException {
-        for (List<String> input : table.rows()) {
+        for (List<String> input : table.raw()) {
             clickButton("Add");
 
             ComponentState state = componentRC().stateOf(ofType(UTableComponent.class));
@@ -120,7 +118,7 @@ public class BehaviorSteps {
 
             assertTrue("Missing data: " + content.get(0), pattern.matcher(state.getText()).find());
         }
-        
+
         componentRC().interact(invoke("setVisible(false)"), withId(dialog.getId()));
     }
 
