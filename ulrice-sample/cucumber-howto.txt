@@ -10,7 +10,7 @@ How to run acceptance tests:
 
 Execute
 
-mvn -P cuke4duke integration-test -Dcucumber.installGems=true
+mvn -Dcucumber.installGems=true -P cuke4duke integration-test 
 
 to install the cucumber gems for ruby. 
 
