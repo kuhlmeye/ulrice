@@ -44,7 +44,7 @@ public class BehaviorSteps {
             // ignore;
         }
 
-        launchApplication(UlriceSampleApplication.class);
+        launchApplication(null, UlriceSampleApplication.class, null);
         connectClient("localhost", 2103, 60);
         pause(1);
     }

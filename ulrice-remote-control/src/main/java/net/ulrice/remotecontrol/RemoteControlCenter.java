@@ -60,11 +60,14 @@ public class RemoteControlCenter {
      * Launches and watches an application with the specified main class and parameters, if it is not already running
      * 
      * @return true if launched, false otherwise
+     * @param vmArguments arguments for the VM, may be null
      * @param mainClass the main class
+     * @param programArguments arguments for the application, may be null
      * @throws RemoteControlException on occasion
      */
     // TODO add parameters
-    public static boolean launchApplication(Class< ?> mainClass) throws RemoteControlException {
+    public static boolean launchApplication(List<String> vmArguments, Class< ?> mainClass,
+        List<String> programArguments) throws RemoteControlException {
         synchronized (RemoteControlCenter.class) {
             if (process == null) {
                 Runtime.getRuntime().addShutdownHook(new Thread(new Runnable() {
@@ -80,8 +83,20 @@ public class RemoteControlCenter {
                 command.add(System.getProperty("java.home") + "\\bin\\java.exe");
                 command.add("-classpath");
                 command.add(System.getProperty("java.class.path"));
-                // command.add("-Djava.awt.headless=true");
+
+                if (vmArguments != null) {
+                    for (String vmArgument : vmArguments) {
+                        command.add(vmArgument);
+                    }
+                }
+
                 command.add(mainClass.getName());
+
+                if (programArguments != null) {
+                    for (String programArgument : programArguments) {
+                        command.add(programArgument);
+                    }
+                }
 
                 ProcessBuilder builder = new ProcessBuilder(command);
 
