@@ -226,4 +226,13 @@
 		<module>../ulrice-webstarter</module>
 		<module>../ulrice-webstarter-maven-plugin</module>
 	</modules>
+
+	<!-- ...until cucumber-java is released -->
+	<repositories>
+		<repository>
+			<id>sonatype-snapshots</id>
+			<url>http://oss.sonatype.org/content/repositories/snapshots</url>
+		</repository>
+	</repositories>
+
 </project>

@@ -10,14 +10,25 @@ import java.util.LinkedHashSet;
 import java.util.regex.Pattern;
 
 import net.ulrice.remotecontrol.impl.ComponentRegistry;
-import net.ulrice.remotecontrol.impl.ComponentUtils;
 import net.ulrice.remotecontrol.impl.helper.ComponentHelper;
 import net.ulrice.remotecontrol.impl.helper.ComponentHelperRegistry;
+import net.ulrice.remotecontrol.util.ComponentUtils;
+import net.ulrice.remotecontrol.util.RemoteControlUtils;
 
+/**
+ * Matchers for the {@link ComponentRemoteControl}.
+ * 
+ * @author Manfred HANTSCHEL
+ */
 public abstract class ComponentMatcher implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
+    /**
+     * Matches all components.
+     * 
+     * @return the matcher
+     */
     public static ComponentMatcher all() {
         return new ComponentMatcher() {
 
@@ -36,11 +47,17 @@ public abstract class ComponentMatcher implements Serializable {
         };
     }
 
+    /**
+     * Each component must match each matcher. The result is the intersection of the result of all specified matchers.
+     * 
+     * @param matchers the matchers
+     * @return the matcher
+     */
     public static ComponentMatcher and(final ComponentMatcher... matchers) {
         if ((matchers == null) || (matchers.length == 0)) {
             return all();
         }
-        
+
         if (matchers.length == 1) {
             return matchers[0];
         }
@@ -68,11 +85,18 @@ public abstract class ComponentMatcher implements Serializable {
         };
     }
 
+    /**
+     * Each component matches at least one of the specified matchers. The result is the union of the results of all
+     * specified matchers.
+     * 
+     * @param matchers the matchers
+     * @return the matcher
+     */
     public static ComponentMatcher or(final ComponentMatcher... matchers) {
         if ((matchers == null) || (matchers.length == 0)) {
             return all();
         }
-        
+
         if (matchers.length == 1) {
             return matchers[0];
         }
@@ -100,6 +124,13 @@ public abstract class ComponentMatcher implements Serializable {
         };
     }
 
+    /**
+     * Keeps those components, that do not match the specified matcher. The result is the inversion of the result of
+     * the specified matcher.
+     * 
+     * @param matcher the matcher
+     * @return the matcher
+     */
     public static ComponentMatcher not(final ComponentMatcher matcher) {
         return new ComponentMatcher() {
 
@@ -120,6 +151,12 @@ public abstract class ComponentMatcher implements Serializable {
         };
     }
 
+    /**
+     * Matches components with the specified id. The unique id is generated when a {@link ComponentState} is created.
+     * 
+     * @param uniqueId the unique id
+     * @return the matcher
+     */
     public static ComponentMatcher withId(final Long uniqueId) {
         return new ComponentMatcher() {
 
@@ -146,6 +183,12 @@ public abstract class ComponentMatcher implements Serializable {
         };
     }
 
+    /**
+     * Matches all components of the specified type
+     * 
+     * @param type the type
+     * @return the matcher
+     */
     public static ComponentMatcher ofType(final Class< ? extends Component> type) {
         return new ComponentMatcher() {
 
@@ -172,14 +215,22 @@ public abstract class ComponentMatcher implements Serializable {
         };
     }
 
-    public static ComponentMatcher like(final String regex) {
+    /**
+     * Matches all components with a name, text or title that matches the regular expression.
+     * 
+     * @param regex the regular expression
+     * @return the matcher
+     * @throws RemoteControlException on occasion
+     */
+    public static ComponentMatcher like(final String regex) throws RemoteControlException {
+        final Pattern pattern = RemoteControlUtils.toPattern(regex);
+
         return new ComponentMatcher() {
 
             private static final long serialVersionUID = -1328715034660944023L;
 
             @Override
             public Collection<Component> match(Collection<Component> components) throws RemoteControlException {
-                Pattern pattern = ComponentUtils.toPattern(regex);
                 Iterator<Component> it = components.iterator();
 
                 while (it.hasNext()) {
@@ -217,14 +268,22 @@ public abstract class ComponentMatcher implements Serializable {
         };
     }
 
-    public static ComponentMatcher named(final String regex) {
+    /**
+     * Matches all components with a name that matches the regular expression
+     * 
+     * @param regex the regular expression
+     * @return the matcher
+     * @throws RemoteControlException on occasion
+     */
+    public static ComponentMatcher named(final String regex) throws RemoteControlException {
+        final Pattern pattern = RemoteControlUtils.toPattern(regex);
+
         return new ComponentMatcher() {
 
             private static final long serialVersionUID = -8552962762441427284L;
 
             @Override
             public Collection<Component> match(Collection<Component> components) throws RemoteControlException {
-                Pattern pattern = ComponentUtils.toPattern(regex);
                 Iterator<Component> it = components.iterator();
 
                 while (it.hasNext()) {
@@ -249,14 +308,23 @@ public abstract class ComponentMatcher implements Serializable {
         };
     }
 
-    public static ComponentMatcher titeled(final String regex) {
+    /**
+     * Matches all components with a title that matches the regular expression. If the component has no title, it, of
+     * course, does not match.
+     * 
+     * @param regex the regular expression
+     * @return the matcher
+     * @throws RemoteControlException on occasion
+     */
+    public static ComponentMatcher titeled(final String regex) throws RemoteControlException {
+        final Pattern pattern = RemoteControlUtils.toPattern(regex);
+
         return new ComponentMatcher() {
 
             private static final long serialVersionUID = 3323697224579645088L;
 
             @Override
             public Collection<Component> match(Collection<Component> components) throws RemoteControlException {
-                Pattern pattern = ComponentUtils.toPattern(regex);
                 Iterator<Component> it = components.iterator();
 
                 while (it.hasNext()) {
@@ -282,14 +350,23 @@ public abstract class ComponentMatcher implements Serializable {
         };
     }
 
-    public static ComponentMatcher texted(final String regex) {
+    /**
+     * Matches all components with a text, that matches the specified regular expression. If the component has no
+     * text, it never matches this matcher.
+     * 
+     * @param regex the regular expression
+     * @return the matcher
+     * @throws RemoteControlException on occasion
+     */
+    public static ComponentMatcher texted(final String regex) throws RemoteControlException {
+        final Pattern pattern = RemoteControlUtils.toPattern(regex);
+
         return new ComponentMatcher() {
 
             private static final long serialVersionUID = 3323697224579645088L;
 
             @Override
             public Collection<Component> match(Collection<Component> components) throws RemoteControlException {
-                Pattern pattern = ComponentUtils.toPattern(regex);
                 Iterator<Component> it = components.iterator();
 
                 while (it.hasNext()) {
@@ -315,7 +392,18 @@ public abstract class ComponentMatcher implements Serializable {
         };
     }
 
-    public static ComponentMatcher labeled(final String regex) {
+    /**
+     * Matches a component, that is referenced by a label with the specified name or text as label-for. E.g. if you
+     * have a text field and a label with the text "Name". The property labelFor of the label is set to text field. If
+     * you call this matcher with "Name", then it matches the text field.
+     * 
+     * @param regex the regurlar expression
+     * @return the matcher
+     * @throws RemoteControlException on occasion
+     */
+    public static ComponentMatcher labeled(final String regex) throws RemoteControlException {
+        final Pattern pattern = RemoteControlUtils.toPattern(regex);
+
         return new ComponentMatcher() {
 
             private static final long serialVersionUID = -8552962762441427284L;
@@ -323,7 +411,6 @@ public abstract class ComponentMatcher implements Serializable {
             @Override
             public Collection<Component> match(Collection<Component> components) throws RemoteControlException {
                 Collection<Component> results = new LinkedHashSet<Component>();
-                Pattern pattern = ComponentUtils.toPattern(regex);
 
                 for (Component component : components) {
                     ComponentHelper<Component> helper = ComponentHelperRegistry.get(component.getClass());
@@ -366,6 +453,11 @@ public abstract class ComponentMatcher implements Serializable {
         };
     }
 
+    /**
+     * Matches all components that are enabled
+     * 
+     * @return the matcher
+     */
     public static ComponentMatcher enabled() {
         return new ComponentMatcher() {
 
@@ -394,6 +486,11 @@ public abstract class ComponentMatcher implements Serializable {
         };
     }
 
+    /**
+     * Matches the one component that is the focus owner
+     * 
+     * @return the matcher
+     */
     public static ComponentMatcher focusOwner() {
         return new ComponentMatcher() {
 
@@ -422,6 +519,12 @@ public abstract class ComponentMatcher implements Serializable {
         };
     }
 
+    /**
+     * Matches all components which are childs of components that match the specified matchers.
+     * 
+     * @param matchers the matchers, concatinated by and
+     * @return the matcher
+     */
     public static ComponentMatcher within(final ComponentMatcher... matchers) {
         final ComponentMatcher matcher = and(matchers);
 
@@ -457,8 +560,19 @@ public abstract class ComponentMatcher implements Serializable {
         super();
     }
 
+    /**
+     * Returns a collection that contains all the components that match. The returned collection may or may not be the
+     * components parameters, as well as the actions parameter may or may not be altered.
+     * 
+     * @param components the components
+     * @return the matching components
+     * @throws RemoteControlException on occasion
+     */
     public abstract Collection<Component> match(Collection<Component> components) throws RemoteControlException;
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public abstract String toString();
 

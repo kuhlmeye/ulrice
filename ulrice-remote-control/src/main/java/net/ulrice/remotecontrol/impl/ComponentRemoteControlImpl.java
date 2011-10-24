@@ -12,6 +12,8 @@ import net.ulrice.remotecontrol.ComponentMatcher;
 import net.ulrice.remotecontrol.ComponentRemoteControl;
 import net.ulrice.remotecontrol.ComponentState;
 import net.ulrice.remotecontrol.RemoteControlException;
+import net.ulrice.remotecontrol.util.ComponentUtils;
+import net.ulrice.remotecontrol.util.RemoteControlUtils;
 import net.ulrice.remotecontrol.util.Result;
 
 public class ComponentRemoteControlImpl implements ComponentRemoteControl {
@@ -43,7 +45,7 @@ public class ComponentRemoteControlImpl implements ComponentRemoteControl {
             throw new RemoteControlException("Multiple components match " + matchers);
         }
 
-        return ComponentRegistry.register(states.iterator().next());
+        return states.iterator().next();
     }
 
     /**
@@ -53,8 +55,15 @@ public class ComponentRemoteControlImpl implements ComponentRemoteControl {
      */
     @Override
     public Collection<ComponentState> statesOf(ComponentMatcher... matchers) throws RemoteControlException {
-        return ComponentRegistry.register(ComponentState.inspect(ComponentUtils.find(and(matchers),
-            Window.getWindows())));
+        return ComponentState.inspect(ComponentUtils.find(and(matchers), Window.getWindows()));
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public boolean contains(ComponentMatcher... matchers) throws RemoteControlException {
+        return statesOf(matchers).size() > 0;
     }
 
     /**
@@ -74,12 +83,12 @@ public class ComponentRemoteControlImpl implements ComponentRemoteControl {
 
         final Result<Boolean> result = new Result<Boolean>(interaction.duration() + 10);
 
-        ComponentUtils.invokeInThread(new Runnable() {
+        RemoteControlUtils.invokeInThread(new Runnable() {
             @Override
             public void run() {
                 Robot robot;
                 try {
-                    robot = ComponentUtils.createRobot();
+                    robot = RemoteControlUtils.createRobot();
                 }
                 catch (RemoteControlException e) {
                     result.fireException(e);
@@ -117,7 +126,7 @@ public class ComponentRemoteControlImpl implements ComponentRemoteControl {
         throws RemoteControlException {
         final Result<Collection<ComponentState>> result = new Result<Collection<ComponentState>>(seconds);
 
-        ComponentUtils.invokeInThread(new Runnable() {
+        RemoteControlUtils.invokeInThread(new Runnable() {
             @Override
             public void run() {
                 long start = System.currentTimeMillis();

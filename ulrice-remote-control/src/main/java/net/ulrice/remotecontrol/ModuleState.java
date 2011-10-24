@@ -9,10 +9,21 @@ import java.util.Map;
 import net.ulrice.module.IFModule;
 import net.ulrice.module.IFModuleTitleProvider;
 
+/**
+ * Represents the state of a module
+ * 
+ * @author Manfred HANTSCHEL
+ */
 public class ModuleState implements Serializable {
 
     private static final long serialVersionUID = -7582126644063949125L;
 
+    /**
+     * Creates a module state, null if specified module is null
+     * 
+     * @param module the module
+     * @return the state
+     */
     public static ModuleState inspect(IFModule module) {
         if (module == null) {
             return null;
@@ -21,6 +32,12 @@ public class ModuleState implements Serializable {
         return new ModuleState(module);
     }
 
+    /**
+     * Returns a collection of states of all specified modules. Null entries are ignored.
+     * 
+     * @param modules the modules
+     * @return a collection of module states
+     */
     public static Collection<ModuleState> inspect(Collection<IFModule> modules) {
         Collection<ModuleState> results = new ArrayList<ModuleState>();
 

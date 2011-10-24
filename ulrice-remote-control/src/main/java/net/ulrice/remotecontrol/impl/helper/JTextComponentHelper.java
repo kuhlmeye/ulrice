@@ -5,7 +5,7 @@ import java.awt.Robot;
 import javax.swing.text.JTextComponent;
 
 import net.ulrice.remotecontrol.RemoteControlException;
-import net.ulrice.remotecontrol.impl.ComponentUtils;
+import net.ulrice.remotecontrol.util.RemoteControlUtils;
 
 public class JTextComponentHelper extends AbstractJComponentHelper<JTextComponent> {
 
@@ -23,7 +23,7 @@ public class JTextComponentHelper extends AbstractJComponentHelper<JTextComponen
     @Override
     public boolean enter(Robot robot, final JTextComponent component, final String text)
         throws RemoteControlException {
-        ComponentUtils.invokeInSwing(new Runnable() {
+        RemoteControlUtils.invokeInSwing(new Runnable() {
 
             @Override
             public void run() {

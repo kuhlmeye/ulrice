@@ -20,8 +20,14 @@ import net.ulrice.remotecontrol.ControllerRemoteControl;
 import net.ulrice.remotecontrol.ControllerState;
 import net.ulrice.remotecontrol.RemoteControlCenter;
 import net.ulrice.remotecontrol.RemoteControlException;
+import net.ulrice.remotecontrol.util.RemoteControlUtils;
 import net.ulrice.remotecontrol.util.Result;
 
+/**
+ * Implementation of the {@link ControllerRemoteControl}.
+ * 
+ * @author Manfred HANTSCHEL
+ */
 public class ControllerRemoteControlImpl implements ControllerRemoteControl {
 
     /**
@@ -98,7 +104,7 @@ public class ControllerRemoteControlImpl implements ControllerRemoteControl {
         for (final ControllerState state : states) {
             final Result<Boolean> result = new Result<Boolean>(2);
 
-            ComponentUtils.invokeInSwing(new Runnable() {
+            RemoteControlUtils.invokeInSwing(new Runnable() {
 
                 @Override
                 public void run() {

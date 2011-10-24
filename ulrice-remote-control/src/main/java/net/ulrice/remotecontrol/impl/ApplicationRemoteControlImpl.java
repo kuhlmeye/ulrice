@@ -2,6 +2,11 @@ package net.ulrice.remotecontrol.impl;
 
 import net.ulrice.remotecontrol.ApplicationRemoteControl;
 
+/**
+ * Implementation of the {@link ApplicationRemoteControl}
+ * 
+ * @author Manfred HANTSCHEL
+ */
 public class ApplicationRemoteControlImpl implements ApplicationRemoteControl {
 
     /**

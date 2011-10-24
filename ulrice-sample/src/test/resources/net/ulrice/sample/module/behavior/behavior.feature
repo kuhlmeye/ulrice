@@ -12,7 +12,7 @@ Scenario:
 	And I enter "Doe" into "Lastname"
 	And I click the radio button "Female"
 	And I select "Other" in "Occupation"
-	And I enter following data into the table:
+	And I enter following knowledge into the table:
 		| Knowledge   | Stars   | Comment         |
 		| Java        | *****   | Half of my life |
 		| Ruby        |         | Don't know yet  |
@@ -27,5 +27,3 @@ Scenario:
 		| Don't know yet  |
 
 
-Scenario:
-	Given Shutdown

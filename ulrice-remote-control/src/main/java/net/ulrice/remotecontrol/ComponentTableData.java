@@ -5,8 +5,13 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Pattern;
 
-import net.ulrice.remotecontrol.impl.ComponentUtils;
+import net.ulrice.remotecontrol.util.RemoteControlUtils;
 
+/**
+ * Represents data of the application in form of a table, like a JTable
+ * 
+ * @author Manfred HANTSCHEL
+ */
 public class ComponentTableData implements Serializable {
 
     private static final long serialVersionUID = -113729012728921740L;
@@ -49,7 +54,7 @@ public class ComponentTableData implements Serializable {
     }
 
     public int findHeader(String regex) throws RemoteControlException {
-        Pattern pattern = ComponentUtils.toPattern(regex);
+        Pattern pattern = RemoteControlUtils.toPattern(regex);
         
         for (int column=0; column<getColumnCount(); column+=1) {
             String header = getHeader(column);

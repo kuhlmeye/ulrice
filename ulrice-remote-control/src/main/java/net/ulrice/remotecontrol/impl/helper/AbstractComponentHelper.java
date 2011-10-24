@@ -11,9 +11,10 @@ import javax.swing.JComponent;
 import javax.swing.SwingUtilities;
 
 import net.ulrice.remotecontrol.RemoteControlException;
-import net.ulrice.remotecontrol.impl.ComponentUtils;
 import net.ulrice.remotecontrol.impl.keyboard.RemoteKeyboardDE;
 import net.ulrice.remotecontrol.impl.keyboard.RemoteKeyboardInstruction;
+import net.ulrice.remotecontrol.util.ComponentUtils;
+import net.ulrice.remotecontrol.util.RemoteControlUtils;
 
 public abstract class AbstractComponentHelper<TYPE extends Component> implements ComponentHelper<TYPE> {
 
@@ -149,7 +150,7 @@ public abstract class AbstractComponentHelper<TYPE extends Component> implements
         // Point mousePosition = MouseInfo.getPointerInfo().getLocation();
         robot.mouseMove(location.x, location.y);
         robot.mousePress(InputEvent.BUTTON1_MASK);
-        ComponentUtils.pause(0.1);
+        RemoteControlUtils.pause(0.1);
         robot.mouseRelease(InputEvent.BUTTON1_MASK);
         // robot.mouseMove(mousePosition.x, mousePosition.y);
 
@@ -187,7 +188,7 @@ public abstract class AbstractComponentHelper<TYPE extends Component> implements
             return false;
         }
 
-        ComponentUtils.pause(0.05);
+        RemoteControlUtils.pause(0.05);
 
         if (click(robot, component, row, column)) {
             return false;

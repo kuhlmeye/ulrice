@@ -7,6 +7,9 @@ import cucumber.junit.Feature;
 
 @RunWith(Cucumber.class)
 @Feature(value = "net/ulrice/sample/module/behavior/behavior.feature")
-public class BehaviorIT {
+public class BehaviorIT
+{
+
+	// intentionally left blank
 
 }

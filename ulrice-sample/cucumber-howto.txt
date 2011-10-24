@@ -2,5 +2,13 @@ Just type:
 
 mvn -P cucumber integration-test
 
+Until cucumber-jvm is finally released, this is needed:
+
+<repository>
+	<id>sonatype-snapshots</id>
+	<url>https://oss.sonatype.org/content/repositories/snapshots</url>
+</repository>
+
+
 
 
