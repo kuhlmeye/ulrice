@@ -12,8 +12,14 @@ import net.ulrice.remotecontrol.ModuleMatcher;
 import net.ulrice.remotecontrol.ModuleRemoteControl;
 import net.ulrice.remotecontrol.ModuleState;
 import net.ulrice.remotecontrol.RemoteControlException;
+import net.ulrice.remotecontrol.util.RemoteControlUtils;
 import net.ulrice.remotecontrol.util.Result;
 
+/**
+ * Implementation of the {@link ModuleRemoteControl}
+ * 
+ * @author Manfred HANTSCHEL
+ */
 public class ModuleRemoteControlImpl implements ModuleRemoteControl {
 
     /**
@@ -66,6 +72,11 @@ public class ModuleRemoteControlImpl implements ModuleRemoteControl {
         return statesOf(matchers).size() > 0;
     }
 
+    /**
+     * {@inheritDoc}
+     * 
+     * @see net.ulrice.remotecontrol.ModuleRemoteControl#open(net.ulrice.remotecontrol.ModuleMatcher[])
+     */
     @Override
     public boolean open(ModuleMatcher... matchers) throws RemoteControlException {
         Collection<ModuleState> states = statesOf(matchers);
@@ -80,7 +91,7 @@ public class ModuleRemoteControlImpl implements ModuleRemoteControl {
 
             final Result<Boolean> result = new Result<Boolean>(5);
 
-            ComponentUtils.invokeInSwing(new Runnable() {
+            RemoteControlUtils.invokeInSwing(new Runnable() {
                 @Override
                 public void run() {
                     try {

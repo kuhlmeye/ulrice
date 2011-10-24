@@ -12,13 +12,25 @@ import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.Map;
 
+import net.ulrice.remotecontrol.impl.ComponentRegistry;
 import net.ulrice.remotecontrol.impl.helper.ComponentHelper;
 import net.ulrice.remotecontrol.impl.helper.ComponentHelperRegistry;
 
+/**
+ * Represents the state of a component
+ * 
+ * @author Manfred HANTSCHEL
+ */
 public class ComponentState implements Serializable, Iterable<ComponentState> {
 
     private static final long serialVersionUID = 716896171060420478L;
 
+    /**
+     * Creates the state for the specified component. Returns null if the component is null.
+     * 
+     * @param component the component
+     * @return the state
+     */
     public static ComponentState inspect(Component component) {
         if (component == null) {
             return null;
@@ -27,6 +39,11 @@ public class ComponentState implements Serializable, Iterable<ComponentState> {
         return new ComponentState(component);
     }
 
+    /**
+     * Creates states for all specified components. Null values are ignored
+     * @param components the component
+     * @return a collection of all states
+     */
     public static Collection<ComponentState> inspect(Collection<Component> components) {
         Collection<ComponentState> results = new ArrayList<ComponentState>();
 
@@ -41,7 +58,7 @@ public class ComponentState implements Serializable, Iterable<ComponentState> {
         return results;
     }
 
-    private Long id;
+    private Long uniqueId;
 
     private transient Component component;
 
@@ -65,6 +82,8 @@ public class ComponentState implements Serializable, Iterable<ComponentState> {
 
         this.component = component;
 
+        uniqueId = ComponentRegistry.register(component);
+        
         ComponentHelper<Component> helper = ComponentHelperRegistry.get(component.getClass());
 
         className = component.getClass().getName();
@@ -92,12 +111,12 @@ public class ComponentState implements Serializable, Iterable<ComponentState> {
         setData(helper.getData(component));
     }
 
-    public Long getId() {
-        return id;
+    public Long getUniqueId() {
+        return uniqueId;
     }
 
-    public void setId(Long id) {
-        this.id = id;
+    public void setUnqiueId(Long uniqueId) {
+        this.uniqueId = uniqueId;
     }
 
     public Component getComponent() {
@@ -193,8 +212,8 @@ public class ComponentState implements Serializable, Iterable<ComponentState> {
 
         builder.append(className).append(" {");
 
-        if (id != null) {
-            builder.append("\n\t").append("id:     ").append(Long.toHexString(id.longValue()));
+        if (uniqueId != null) {
+            builder.append("\n\t").append("id:     ").append(Long.toHexString(uniqueId.longValue()));
         }
 
         if ((name != null) && (name.length() > 0)) {

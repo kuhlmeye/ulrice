@@ -2,6 +2,13 @@ package net.ulrice.remotecontrol;
 
 import java.util.Collection;
 
+import net.ulrice.module.impl.action.ModuleActionManager;
+
+/**
+ * Remote control for Ulrices {@link ModuleActionManager}.
+ * 
+ * @author Manfred HANTSCHEL
+ */
 public interface ActionRemoteControl {
 
     boolean ping();

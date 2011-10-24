@@ -10,12 +10,22 @@ import java.util.regex.Pattern;
 
 import net.ulrice.module.IFModule;
 import net.ulrice.module.IFModuleTitleProvider;
-import net.ulrice.remotecontrol.impl.ComponentUtils;
+import net.ulrice.remotecontrol.util.RemoteControlUtils;
 
+/**
+ * Matcher for the {@link ModuleRemoteControl}
+ * 
+ * @author Manfred HANTSCHEL
+ */
 public abstract class ModuleMatcher implements Serializable {
 
     private static final long serialVersionUID = 848205798323514220L;
 
+    /**
+     * Matches all modules
+     * 
+     * @return the matcher
+     */
     public static ModuleMatcher all() {
         return new ModuleMatcher() {
 
@@ -34,6 +44,12 @@ public abstract class ModuleMatcher implements Serializable {
         };
     }
 
+    /**
+     * The result of the matcher is the intersection of the results of all specified matchers.
+     * 
+     * @param matchers the matchers
+     * @return the matcher
+     */
     public static ModuleMatcher and(final ModuleMatcher... matchers) {
         if ((matchers == null) || (matchers.length == 0)) {
             return all();
@@ -66,6 +82,12 @@ public abstract class ModuleMatcher implements Serializable {
         };
     }
 
+    /**
+     * The result is the union of the results of all specified matchers.
+     * 
+     * @param matchers the matchers
+     * @return the matcher
+     */
     public static ModuleMatcher or(final ModuleMatcher... matchers) {
         if ((matchers == null) || (matchers.length == 0)) {
             return all();
@@ -98,6 +120,12 @@ public abstract class ModuleMatcher implements Serializable {
         };
     }
 
+    /**
+     * The result is the inversion of the result of the specified matcher.
+     * 
+     * @param matcher the matcher
+     * @return the matcher
+     */
     public static ModuleMatcher not(final ModuleMatcher matcher) {
         return new ModuleMatcher() {
 
@@ -117,8 +145,15 @@ public abstract class ModuleMatcher implements Serializable {
         };
     }
 
+    /**
+     * The result of the matcher are all modules if a unique id, that matches the specified regular expression.
+     * 
+     * @param regex the regular expression
+     * @return the matcher
+     * @throws RemoteControlException on occasion
+     */
     public static ModuleMatcher withId(final String regex) throws RemoteControlException {
-        final Pattern pattern = ComponentUtils.toPattern(regex);
+        final Pattern pattern = RemoteControlUtils.toPattern(regex);
 
         return new ModuleMatcher() {
 
@@ -146,8 +181,16 @@ public abstract class ModuleMatcher implements Serializable {
         };
     }
 
+    /**
+     * The result of the matcher are all modules with a title (of any usage) that matches the specified reguar
+     * expression.
+     * 
+     * @param regex the regular expression
+     * @return the matcher
+     * @throws RemoteControlException on occasion
+     */
     public static ModuleMatcher titeled(final String regex) throws RemoteControlException {
-        final Pattern pattern = ComponentUtils.toPattern(regex);
+        final Pattern pattern = RemoteControlUtils.toPattern(regex);
 
         return new ModuleMatcher() {
 
@@ -181,8 +224,16 @@ public abstract class ModuleMatcher implements Serializable {
         };
     }
 
+    /**
+     * The result of the matcher are all modules, with an unique id or a title (of any usage) that matches the
+     * specified reguar expression
+     * 
+     * @param regex the regular expression
+     * @return the matcher
+     * @throws RemoteControlException on occasion
+     */
     public static ModuleMatcher like(final String regex) throws RemoteControlException {
-        final Pattern pattern = ComponentUtils.toPattern(regex);
+        final Pattern pattern = RemoteControlUtils.toPattern(regex);
 
         return new ModuleMatcher() {
 
@@ -220,8 +271,19 @@ public abstract class ModuleMatcher implements Serializable {
         };
     }
 
+    /**
+     * Returns a collection that contains all the modules that match. The returned collection may or may not be the
+     * module parameters, as well as the modules parameter may or may not be altered.
+     * 
+     * @param modules the modules
+     * @return the matching modules
+     * @throws RemoteControlException on occasion
+     */
     public abstract Collection<IFModule> match(Collection<IFModule> modules) throws RemoteControlException;
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public abstract String toString();
 

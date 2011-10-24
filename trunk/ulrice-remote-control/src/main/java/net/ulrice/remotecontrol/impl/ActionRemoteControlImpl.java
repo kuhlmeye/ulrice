@@ -13,7 +13,13 @@ import net.ulrice.remotecontrol.ActionMatcher;
 import net.ulrice.remotecontrol.ActionRemoteControl;
 import net.ulrice.remotecontrol.ActionState;
 import net.ulrice.remotecontrol.RemoteControlException;
+import net.ulrice.remotecontrol.util.RemoteControlUtils;
 
+/**
+ * Implementation of the {@link ActionRemoteControl}
+ * 
+ * @author Manfred HANTSCHEL
+ */
 public class ActionRemoteControlImpl implements ActionRemoteControl {
 
     /**
@@ -97,7 +103,7 @@ public class ActionRemoteControlImpl implements ActionRemoteControl {
 
         for (final ModuleActionState actionState : list) {
             if (actionState.isEnabled()) {
-                ComponentUtils.invokeInSwing(new Runnable() {
+                RemoteControlUtils.invokeInSwing(new Runnable() {
                     @Override
                     public void run() {
                         Ulrice.getActionManager().performAction(actionState.getAction(), null);

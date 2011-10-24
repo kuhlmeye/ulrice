@@ -9,10 +9,20 @@ import java.util.LinkedHashSet;
 
 import net.ulrice.module.impl.ModuleActionState;
 
+/**
+ * Matcher class for the {@link ActionRemoteControl}
+ * 
+ * @author Manfred HANTSCHEL
+ */
 public abstract class ActionMatcher implements Serializable {
 
     private static final long serialVersionUID = 6678911828580548107L;
 
+    /**
+     * Matches all actions
+     * 
+     * @return the matcher
+     */
     public static ActionMatcher all() {
         return new ActionMatcher() {
 
@@ -32,11 +42,18 @@ public abstract class ActionMatcher implements Serializable {
         };
     }
 
+    /**
+     * The action must match all the specified matchers. The result of the matcher is the intersection of the results
+     * of all matchers.
+     * 
+     * @param matchers the matchers
+     * @return the matcher
+     */
     public static ActionMatcher and(final ActionMatcher... matchers) {
         if ((matchers == null) || (matchers.length == 0)) {
             return all();
         }
-        
+
         if (matchers.length == 1) {
             return matchers[0];
         }
@@ -65,11 +82,18 @@ public abstract class ActionMatcher implements Serializable {
         };
     }
 
+    /**
+     * The action must match at least on of the specified matchers. The result of the matcher is the union of the
+     * results of all matchers.
+     * 
+     * @param matchers the matchers
+     * @return the matcher
+     */
     public static ActionMatcher or(final ActionMatcher... matchers) {
         if ((matchers == null) || (matchers.length == 0)) {
             return all();
         }
-        
+
         if (matchers.length == 1) {
             return matchers[0];
         }
@@ -98,6 +122,12 @@ public abstract class ActionMatcher implements Serializable {
         };
     }
 
+    /**
+     * The action must not match the specified matcher. The result is the inversion of the result of the specified matcher.
+     * 
+     * @param matcher the matcher
+     * @return the matcher
+     */
     public static ActionMatcher not(final ActionMatcher matcher) {
         return new ActionMatcher() {
 
@@ -118,6 +148,12 @@ public abstract class ActionMatcher implements Serializable {
         };
     }
 
+    /**
+     * The unique id of the action must match the specified one
+     * 
+     * @param uniqueId the unique id
+     * @return the matcher
+     */
     public static ActionMatcher withId(final String uniqueId) {
         return new ActionMatcher() {
 
@@ -144,6 +180,11 @@ public abstract class ActionMatcher implements Serializable {
         };
     }
 
+    /**
+     * The action must be enabled
+     * 
+     * @return the matcher
+     */
     public static ActionMatcher enabled() {
         return new ActionMatcher() {
 
@@ -170,9 +211,20 @@ public abstract class ActionMatcher implements Serializable {
         };
     }
 
+    /**
+     * Returns a collection that contains all the actions that match. The returned collection may or may not be the
+     * actions parameters, as well as the actions parameter may or may not be altered.
+     * 
+     * @param actions the actions
+     * @return the matching actions
+     * @throws RemoteControlException on occasion
+     */
     public abstract Collection<ModuleActionState> match(Collection<ModuleActionState> actions)
         throws RemoteControlException;
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public abstract String toString();
 

@@ -4,26 +4,32 @@ import java.awt.Component;
 import java.awt.Robot;
 import java.awt.event.KeyEvent;
 import java.io.Serializable;
+import java.util.Arrays;
 import java.util.List;
 
-import net.ulrice.remotecontrol.impl.ComponentUtils;
 import net.ulrice.remotecontrol.impl.helper.ComponentHelperRegistry;
 import net.ulrice.remotecontrol.impl.keyboard.RemoteKeyboardDE;
 import net.ulrice.remotecontrol.impl.keyboard.RemoteKeyboardInstruction;
+import net.ulrice.remotecontrol.util.RemoteControlUtils;
 import ognl.Ognl;
 import ognl.OgnlException;
 
+/**
+ * Interactions class for the {@link ComponentRemoteControl}. Specified user interactions with the application.
+ * 
+ * @author Manfred HANTSCHEL
+ */
 public abstract class ComponentInteraction implements Serializable {
 
     private static final long serialVersionUID = 6700185186190253028L;
 
     /**
-     * Performs all interaction is sequential order.
+     * Performs all interaction in sequential order.
      * 
      * @param interactions the interactions
      * @return the interaction
      */
-    public static ComponentInteraction and(final ComponentInteraction... interactions) {
+    public static ComponentInteraction sequence(final ComponentInteraction... interactions) {
         if (interactions.length == 1) {
             return interactions[0];
         }
@@ -56,6 +62,58 @@ public abstract class ComponentInteraction implements Serializable {
                 return totalDuration;
             }
 
+            @Override
+            public String toString() {
+                return "sequence" + Arrays.toString(interactions);
+            }
+
+        };
+    }
+
+    /**
+     * Performs the interaction in sequential order for the number of times.
+     * 
+     * @param times the number of times to repeat the interactions
+     * @param pause the pause between the interactions; <= 0 for no pause
+     * @param interaction the interaction
+     * @return the interaction
+     */
+    public static ComponentInteraction repeat(final int times, final double pause,
+        final ComponentInteraction interaction) {
+
+        return new ComponentInteraction() {
+
+            private static final long serialVersionUID = 1129901624193430542L;
+
+            @Override
+            public boolean interact(Component component, Robot robot) throws RemoteControlException {
+                for (int i = 0; i < times; i += 1) {
+                    if (i > 0) {
+                        RemoteControlUtils.pause(pause);
+                    }
+
+                    if (!interaction.interact(component, robot)) {
+                        return false;
+                    }
+                }
+
+                return true;
+            }
+
+            @Override
+            public double duration() {
+                return duration() * pause * times;
+            }
+
+            @Override
+            public String toString() {
+                if (pause > 0) {
+                    return String.format("repeat[%d times (%,.3fs pause) %s]", times, pause, interaction.toString());
+                }
+
+                return String.format("repeat[%d times %s]", times, interaction.toString());
+            }
+
         };
     }
 
@@ -76,7 +134,7 @@ public abstract class ComponentInteraction implements Serializable {
 
             @Override
             public boolean interact(Component component, Robot robot) throws RemoteControlException {
-                ComponentUtils.pause(seconds);
+                RemoteControlUtils.pause(seconds);
 
                 return true;
             }
@@ -84,6 +142,11 @@ public abstract class ComponentInteraction implements Serializable {
             @Override
             public double duration() {
                 return seconds;
+            }
+
+            @Override
+            public String toString() {
+                return String.format("pause[%,.3fs]", seconds);
             }
 
         };
@@ -103,6 +166,12 @@ public abstract class ComponentInteraction implements Serializable {
             public boolean interact(Component component, Robot robot) throws RemoteControlException {
                 return ComponentHelperRegistry.get(component.getClass()).click(robot, component);
             }
+
+            @Override
+            public String toString() {
+                return "click";
+            }
+
         };
     }
 
@@ -122,6 +191,12 @@ public abstract class ComponentInteraction implements Serializable {
             public boolean interact(Component component, Robot robot) throws RemoteControlException {
                 return ComponentHelperRegistry.get(component.getClass()).click(robot, component, index);
             }
+
+            @Override
+            public String toString() {
+                return String.format("click[%d]", index);
+            }
+
         };
     }
 
@@ -140,6 +215,11 @@ public abstract class ComponentInteraction implements Serializable {
             @Override
             public boolean interact(Component component, Robot robot) throws RemoteControlException {
                 return ComponentHelperRegistry.get(component.getClass()).click(robot, component, text);
+            }
+
+            @Override
+            public String toString() {
+                return String.format("click[%s]", text);
             }
         };
     }
@@ -161,6 +241,11 @@ public abstract class ComponentInteraction implements Serializable {
             public boolean interact(Component component, Robot robot) throws RemoteControlException {
                 return ComponentHelperRegistry.get(component.getClass()).click(robot, component, row, column);
             }
+
+            @Override
+            public String toString() {
+                return String.format("click[%d, %d]", row, column);
+            }
         };
     }
 
@@ -170,7 +255,7 @@ public abstract class ComponentInteraction implements Serializable {
      * @return the interaction
      */
     public static ComponentInteraction doubleClick() {
-        return and(click(), pause(0.05), click());
+        return repeat(2, 0.05, click());
     }
 
     /**
@@ -181,7 +266,7 @@ public abstract class ComponentInteraction implements Serializable {
      * @return the interaction
      */
     public static ComponentInteraction doubleClick(final int index) {
-        return and(click(index), pause(0.05), click(index));
+        return repeat(2, 0.05, click(index));
     }
 
     /**
@@ -192,7 +277,7 @@ public abstract class ComponentInteraction implements Serializable {
      * @return the interaction
      */
     public static ComponentInteraction doubleClick(final String text) {
-        return and(click(text), pause(0.05), click(text));
+        return repeat(2, 0.05, click(text));
     }
 
     /**
@@ -204,7 +289,7 @@ public abstract class ComponentInteraction implements Serializable {
      * @return the interaction
      */
     public static ComponentInteraction doubleClick(final int row, final int column) {
-        return and(click(row, column), pause(0.05), click(row, column));
+        return repeat(2, 0.05, click(row, column));
     }
 
     /**
@@ -220,6 +305,11 @@ public abstract class ComponentInteraction implements Serializable {
             @Override
             public boolean interact(Component component, Robot robot) throws RemoteControlException {
                 return ComponentHelperRegistry.get(component.getClass()).focus(robot, component);
+            }
+
+            @Override
+            public String toString() {
+                return "focus";
             }
 
         };
@@ -240,6 +330,11 @@ public abstract class ComponentInteraction implements Serializable {
                 return ComponentHelperRegistry.get(component.getClass()).selectAll(robot, component);
             }
 
+            @Override
+            public String toString() {
+                return "selectAll";
+            }
+
         };
     }
 
@@ -258,6 +353,11 @@ public abstract class ComponentInteraction implements Serializable {
             @Override
             public boolean interact(Component component, Robot robot) throws RemoteControlException {
                 return ComponentHelperRegistry.get(component.getClass()).enter(robot, component, text);
+            }
+
+            @Override
+            public String toString() {
+                return String.format("enter[%s]", text);
             }
 
         };
@@ -284,6 +384,11 @@ public abstract class ComponentInteraction implements Serializable {
                 return ComponentHelperRegistry.get(component.getClass()).enter(robot, component, text, index);
             }
 
+            @Override
+            public String toString() {
+                return String.format("enter[%s, %d]", text, index);
+            }
+
         };
     }
 
@@ -304,6 +409,11 @@ public abstract class ComponentInteraction implements Serializable {
             @Override
             public boolean interact(Component component, Robot robot) throws RemoteControlException {
                 return ComponentHelperRegistry.get(component.getClass()).enter(robot, component, text, row, column);
+            }
+
+            @Override
+            public String toString() {
+                return String.format("enter[%s, %d, %d]", text, row, column);
             }
 
         };
@@ -351,6 +461,11 @@ public abstract class ComponentInteraction implements Serializable {
                 return totalDuration;
             }
 
+            @Override
+            public String toString() {
+                return String.format("type[%s]", text);
+            }
+
         };
     }
 
@@ -385,7 +500,7 @@ public abstract class ComponentInteraction implements Serializable {
     }
 
     private static ComponentInteraction holdKey(final int keyCode, ComponentInteraction... interactions) {
-        final ComponentInteraction interaction = and(interactions);
+        final ComponentInteraction interaction = sequence(interactions);
 
         return new ComponentInteraction() {
 
@@ -401,6 +516,13 @@ public abstract class ComponentInteraction implements Serializable {
                     robot.keyRelease(keyCode);
                 }
             }
+
+            @Override
+            public String toString() {
+                return String.format("holdKey[%s for %s]", RemoteKeyboardInstruction.getKeyCodeConstant(keyCode),
+                    interaction);
+            }
+
         };
     }
 
@@ -431,6 +553,12 @@ public abstract class ComponentInteraction implements Serializable {
 
                 return true;
             }
+
+            @Override
+            public String toString() {
+                return String.format("invoke[%s]", expression);
+            }
+
         };
     }
 
@@ -438,10 +566,31 @@ public abstract class ComponentInteraction implements Serializable {
         super();
     }
 
+    /**
+     * Executes the interaction on the specified component using the specified robot
+     * 
+     * @param component the component
+     * @param robot the robot
+     * @return true for success
+     * @throws RemoteControlException on occasion
+     */
     public abstract boolean interact(Component component, Robot robot) throws RemoteControlException;
 
+    /**
+     * An estimation of the duration
+     * 
+     * @return an estimation of the duration
+     */
     public double duration() {
         return 0.1;
     }
+
+    /**
+     * {@inheritDoc}
+     * 
+     * @see java.lang.Object#toString()
+     */
+    @Override
+    public abstract String toString();
 
 }

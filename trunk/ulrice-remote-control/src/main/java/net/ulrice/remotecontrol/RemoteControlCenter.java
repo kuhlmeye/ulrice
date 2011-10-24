@@ -33,6 +33,11 @@ import net.ulrice.remotecontrol.impl.ControllerRemoteControlImpl;
 import net.ulrice.remotecontrol.impl.ModuleRemoteControlImpl;
 import net.ulrice.remotecontrol.util.StreamConsumer;
 
+/**
+ * The main class for the remote control feature of Ulrice.
+ * 
+ * @author Manfred HANTSCHEL
+ */
 public class RemoteControlCenter {
 
     public static final String OBJECT_NAME_PREFIX = "net.ulrice.mbeans:type=";

@@ -21,6 +21,7 @@ import net.ulrice.remotecontrol.ControllerMatcher;
 import net.ulrice.remotecontrol.ModuleMatcher;
 import net.ulrice.remotecontrol.RemoteControlException;
 import net.ulrice.sample.UlriceSampleApplication;
+import cucumber.annotation.After;
 import cucumber.annotation.en.Given;
 import cucumber.annotation.en.Then;
 import cucumber.annotation.en.When;
@@ -28,6 +29,12 @@ import cucumber.table.Table;
 
 public class BehaviorSteps {
 
+	public static class Knowledge {
+		public String knowledge;
+		public String stars;
+		public String comment;
+	}
+	
     @Given("^the sample application is running$")
     public void ensureApplicationIsRunning() throws InterruptedException, RemoteControlException {
         if (isClientConnected()) {
@@ -47,7 +54,7 @@ public class BehaviorSteps {
         pause(1);
     }
 
-    @Given("^Shutdown$")
+	@After
     public void shutdown() {
         killApplication();
     }
@@ -60,7 +67,7 @@ public class BehaviorSteps {
 
     @When("^I enter \"([^\"]*)\" into \"([^\"]*)\"$")
     public void enterData(String value, String into) throws RemoteControlException {
-        assertTrue(componentRC().interact(and(click(), selectAll(), type(value)), labeled(into)));
+        assertTrue(componentRC().interact(sequence(click(), selectAll(), type(value)), labeled(into)));
     }
 
     @When("^I click the radio button \"([^\"]*)\"$")
@@ -78,9 +85,9 @@ public class BehaviorSteps {
         assertTrue(componentRC().interact(click(), like(name), ofType(JButton.class)));
     }
 
-    @When("^I enter following data into the table:$")
-    public void enterTableData(Table table) throws RemoteControlException {
-        for (List<String> input : table.raw()) {
+    @When("^I enter following knowledge into the table:$")
+    public void enterTableData(List<Knowledge> list) throws RemoteControlException {
+        for (Knowledge input : list) {
             clickButton("Add");
 
             ComponentState state = componentRC().stateOf(ofType(UTableComponent.class));
@@ -93,9 +100,9 @@ public class BehaviorSteps {
 
             assertTrue(row >= 0);
 
-            assertTrue(componentRC().interact(enter(input.get(0), row, 0), withId(state.getId())));
-            assertTrue(componentRC().interact(enter(input.get(1), row, 1), withId(state.getId())));
-            assertTrue(componentRC().interact(enter(input.get(2), row, 2), withId(state.getId())));
+            assertTrue(componentRC().interact(enter(input.knowledge, row, 0), withId(state.getUniqueId())));
+            assertTrue(componentRC().interact(enter(input.stars, row, 1), withId(state.getUniqueId())));
+            assertTrue(componentRC().interact(enter(input.comment, row, 2), withId(state.getUniqueId())));
         }
     }
 
@@ -107,7 +114,7 @@ public class BehaviorSteps {
     @Then("^a dialog should appear containing following data:$")
     public void checkDialog(Table table) throws RemoteControlException {
         ComponentState dialog = componentRC().stateOf(ofType(JDialog.class));
-        ComponentState state = componentRC().stateOf(ofType(JTextArea.class), within(withId(dialog.getId())));
+        ComponentState state = componentRC().stateOf(ofType(JTextArea.class), within(withId(dialog.getUniqueId())));
 
         assertNotNull(state);
 
@@ -119,7 +126,7 @@ public class BehaviorSteps {
             assertTrue("Missing data: " + content.get(0), pattern.matcher(state.getText()).find());
         }
 
-        componentRC().interact(invoke("setVisible(false)"), withId(dialog.getId()));
+        componentRC().interact(invoke("setVisible(false)"), withId(dialog.getUniqueId()));
     }
 
     private static void pause(double seconds) {
