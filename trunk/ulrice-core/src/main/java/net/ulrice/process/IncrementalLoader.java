@@ -2,6 +2,9 @@ package net.ulrice.process;
 
 import java.util.List;
 
+import javax.swing.SwingUtilities;
+
+import net.ulrice.Ulrice;
 import net.ulrice.module.IFController;
 
 
@@ -17,7 +20,7 @@ import net.ulrice.module.IFController;
  * 
  * @author ehaasec
  */
-public class IncrementalLoader<T> extends AbstractProcess<T, Object>{
+public class IncrementalLoader<T> extends AbstractProcess<T, List<T>>{
 
     //TODO cancellation support?
     private final int chunkSize;
@@ -25,6 +28,7 @@ public class IncrementalLoader<T> extends AbstractProcess<T, Object>{
     private final IncrementalDataProvider<T> provider;
     
     private int totalNumRows;
+    private int numPublished = 0;
     private int numLoaded = 0;
     
     public IncrementalLoader (IFController owner, boolean blockController, IncrementalDataProvider<T> provider) {
@@ -45,7 +49,7 @@ public class IncrementalLoader<T> extends AbstractProcess<T, Object>{
         
         while (numLoaded < max && !isCancelled()) {
             final List<T> chunk = provider.getData (numLoaded, chunkSize);
-            provider.onChunkLoaded (chunk, numLoaded);
+            publish(chunk);
             numLoaded += chunk.size();
             setProgress(Math.round(100.0f / totalNumRows * numLoaded));
             fireProgressChanged();
@@ -54,13 +58,35 @@ public class IncrementalLoader<T> extends AbstractProcess<T, Object>{
                 break;
             }
         }
-        provider.onFinished();
         return null;
+    }
+    
+    @Override
+    protected void process(List<List<T>> chunkList) {        
+        super.process(chunkList);        
+        if(chunkList != null)  {
+            for(List<T> chunk : chunkList) { 
+                if(chunk != null) {
+                    try {
+                        provider.onChunkLoaded(chunk, numPublished);
+                    }
+                    catch (Exception e) {
+                        Ulrice.getMessageHandler().handleException(getOwningController(), e);
+                    }
+                    numPublished += chunk.size();
+                }
+            }
+        }
     }
 
     @Override
     protected void finished(T result) {
-        //TODO cleanup?
+        try {
+            provider.onFinished();
+        }
+        catch (Exception e) {
+            Ulrice.getMessageHandler().handleException(getOwningController(), e);
+        }
     }
 
     @Override

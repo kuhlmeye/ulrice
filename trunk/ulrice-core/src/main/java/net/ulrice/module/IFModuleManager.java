@@ -76,6 +76,15 @@ public interface IFModuleManager {
 	 * @return The title provider able to render the title of the controller.
 	 */
 	IFModuleTitleProvider getTitleProvider(IFController controller);
+	
+	/**
+	 * Returns the title of a module
+	 * 
+	 * @param controller The controller of the module
+	 * @param usage The usage of the title
+	 * @return
+	 */
+	String getModuleTitle(IFController controller, IFModuleTitleProvider.Usage usage);
 
 	/**
 	 * Returns the controller of the current active module.
