@@ -1,7 +1,6 @@
 package net.ulrice.sample.module.behavior;
 
 import java.awt.BorderLayout;
-import java.awt.Dialog.ModalityType;
 import java.awt.event.ActionEvent;
 import java.util.Arrays;
 import java.util.List;
@@ -10,6 +9,7 @@ import javax.swing.ImageIcon;
 import javax.swing.JComponent;
 import javax.swing.JDialog;
 import javax.swing.JTextArea;
+import javax.swing.SwingUtilities;
 
 import net.ulrice.Ulrice;
 import net.ulrice.databinding.bufferedbinding.impl.BindingGroup;
@@ -83,19 +83,26 @@ public class CBehavior extends AbstractController {
         if ("Save".equals(actionId)) {
             bindingGroup.write();
 
-            BehaviorDTO data = behaviorModel.getData();
+            SwingUtilities.invokeLater(new Runnable() {
 
-            System.out.println("Saved data: " + data);
+				@Override
+				public void run() {
+		            BehaviorDTO data = behaviorModel.getData();
 
-            JDialog dialog = new JDialog(Ulrice.getMainFrame().getFrame(), "Saved");
+		            System.out.println("Saved data: " + data);
 
-            dialog.setLayout(new BorderLayout());
-            dialog.add(new JTextArea("If I'd have a database, I'd have saved:\n\n" + data.toString(), 12, 40),
-                BorderLayout.CENTER);
-            dialog.pack();
-            dialog.setLocationRelativeTo(Ulrice.getMainFrame().getFrame());
-            dialog.setVisible(true);
+		            JDialog dialog = new JDialog(Ulrice.getMainFrame().getFrame(), "Saved");
 
+		            dialog.setLayout(new BorderLayout());
+		            dialog.add(new JTextArea("If I'd have a database, I'd have saved:\n\n" + data.toString(), 12, 40),
+		                BorderLayout.CENTER);
+		            dialog.pack();
+		            dialog.setLocationRelativeTo(Ulrice.getMainFrame().getFrame());
+		            dialog.setVisible(true);
+				}
+            	
+            });
+            
             return true;
         }
 

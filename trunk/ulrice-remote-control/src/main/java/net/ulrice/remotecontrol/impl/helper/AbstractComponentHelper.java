@@ -150,7 +150,6 @@ public abstract class AbstractComponentHelper<TYPE extends Component> implements
         // Point mousePosition = MouseInfo.getPointerInfo().getLocation();
         robot.mouseMove(location.x, location.y);
         robot.mousePress(InputEvent.BUTTON1_MASK);
-        RemoteControlUtils.pause(0.1);
         robot.mouseRelease(InputEvent.BUTTON1_MASK);
         // robot.mouseMove(mousePosition.x, mousePosition.y);
 
@@ -188,7 +187,7 @@ public abstract class AbstractComponentHelper<TYPE extends Component> implements
             return false;
         }
 
-        RemoteControlUtils.pause(0.05);
+        RemoteControlUtils.constantPause(0.05);
 
         if (click(robot, component, row, column)) {
             return false;

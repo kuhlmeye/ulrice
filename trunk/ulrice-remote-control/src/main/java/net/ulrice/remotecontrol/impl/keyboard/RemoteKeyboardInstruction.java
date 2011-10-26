@@ -6,6 +6,8 @@ import java.io.Serializable;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 
+import net.ulrice.remotecontrol.util.RemoteControlUtils;
+
 public abstract class RemoteKeyboardInstruction implements Serializable
 {
 
@@ -39,7 +41,7 @@ public abstract class RemoteKeyboardInstruction implements Serializable
 			@Override
 			public double duration()
 			{
-				return 0.1;
+				return RemoteControlUtils.getRobotDelay();
 			}
 
 			/**
@@ -81,7 +83,7 @@ public abstract class RemoteKeyboardInstruction implements Serializable
 			@Override
 			public double duration()
 			{
-				return 0.1;
+				return RemoteControlUtils.getRobotDelay();
 			}
 
 			/**
@@ -119,14 +121,7 @@ public abstract class RemoteKeyboardInstruction implements Serializable
 			@Override
 			public void execute(Robot robot)
 			{
-				try
-				{
-					Thread.sleep((long) (seconds * 1000));
-				}
-				catch (InterruptedException e)
-				{
-					// ignore
-				}
+				RemoteControlUtils.pause(seconds);
 			}
 
 			/**
@@ -135,7 +130,7 @@ public abstract class RemoteKeyboardInstruction implements Serializable
 			@Override
 			public double duration()
 			{
-				return seconds;
+				return seconds * RemoteControlUtils.speedFactor();
 			}
 
 			/**
