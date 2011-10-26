@@ -3,6 +3,7 @@ package net.ulrice;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Properties;
 
+import javax.swing.SwingUtilities;
 import javax.swing.event.EventListenerList;
 
 import net.ulrice.configuration.ConfigurationException;
@@ -84,7 +85,21 @@ public class Ulrice {
 
         Ulrice.mainFrame = configuration.getMainFrame();
         if (Ulrice.mainFrame != null) {
-            Ulrice.mainFrame.inializeLayout();
+            try {
+                SwingUtilities.invokeAndWait(new Runnable() {
+                    
+                    @Override
+                    public void run() {
+                        Ulrice.mainFrame.inializeLayout(); 
+                    }
+                });
+            }
+            catch (InterruptedException e) {
+                Ulrice.getMessageHandler().handleException(e);
+            }
+            catch (InvocationTargetException e) {
+                Ulrice.getMessageHandler().handleException(e);
+            }
         }
 
         ConfigurationListener[] listeners = listenerList.getListeners(ConfigurationListener.class);

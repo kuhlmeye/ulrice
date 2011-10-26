@@ -43,6 +43,7 @@ public abstract class UlriceAction extends AbstractAction {
 		
 		putValue(SMALL_ICON, icon);
 		putValue(NAME, name);
+		putValue(SHORT_DESCRIPTION, name);
 	}
 	
 	/**
