@@ -31,6 +31,7 @@ import net.ulrice.remotecontrol.impl.ApplicationRemoteControlImpl;
 import net.ulrice.remotecontrol.impl.ComponentRemoteControlImpl;
 import net.ulrice.remotecontrol.impl.ControllerRemoteControlImpl;
 import net.ulrice.remotecontrol.impl.ModuleRemoteControlImpl;
+import net.ulrice.remotecontrol.util.RemoteControlUtils;
 import net.ulrice.remotecontrol.util.StreamConsumer;
 
 /**
@@ -89,6 +90,10 @@ public class RemoteControlCenter {
                 }
                 else {
                 	command.add(System.getProperty("java.home") + "\\bin\\java.exe");
+                }
+                
+                if (RemoteControlUtils.speedFactor() != 1) {
+                	command.add("-D" + RemoteControlUtils.SPEED_FACTOR_PROPERTY + "=" + RemoteControlUtils.speedFactor());
                 }
                 
                 command.add("-classpath");

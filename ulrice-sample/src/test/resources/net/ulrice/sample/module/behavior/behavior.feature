@@ -22,7 +22,6 @@ Scenario:
 		| Jane            |
 		| Doe             |
 		| FEMALE          |
-		| Other           |
 		| Java            |
 		| Don't know yet  |
 

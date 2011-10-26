@@ -19,6 +19,14 @@ import net.ulrice.remotecontrol.RemoteControlException;
  */
 public class RemoteControlUtils {
 
+	public static final String SPEED_FACTOR_PROPERTY = "RCSpeedFactor";
+	
+	public static final double ROBOT_DELAY = 0.01;
+	
+	public static final double PAUSE_DELAY = 0.1;
+	
+	private static Double speedFactor;
+	
     /**
      * Creates a pattern from the specified regular expression
      * 
@@ -80,6 +88,21 @@ public class RemoteControlUtils {
     }
 
     /**
+     * Returns the default robot delay multiplied by the speed factor
+     * 
+     * @return the default robot delay
+     */
+    public static double getRobotDelay() {
+    	double delay = ROBOT_DELAY * speedFactor();
+    	
+    	if (delay > 0.25) {
+    		delay = 0.25;
+    	}
+    	
+		return delay;
+    }
+    
+    /**
      * Creates a robot
      * 
      * @return the robot
@@ -91,7 +114,7 @@ public class RemoteControlUtils {
         try {
             robot = new Robot();
 
-            robot.setAutoDelay(2);
+            robot.setAutoDelay((int) (1000 * getRobotDelay()));
             robot.setAutoWaitForIdle(true);
         }
         catch (AWTException e) {
@@ -100,13 +123,43 @@ public class RemoteControlUtils {
 
         return robot;
     }
+    
+    /**
+     * Returns the speed multiplier for interactions. The default value is 1. The value can
+     * be modified by using a system property: 
+     * <ul>
+     * <li>-DRCSpeedFactor=0.1 for ten times the speed</li>
+     * <li>-DRCSpeedFactor=10 for a tenth the speed</li>
+     * </ul>
+     *  
+     * @return the default speed multiplier
+     */
+    public static double speedFactor() {
+    	if (speedFactor == null) {
+    		speedFactor = Double.valueOf(1);
+    		
+    		String s = System.getProperty(SPEED_FACTOR_PROPERTY);
+    		
+    		if (s != null) {
+    			try {
+    				speedFactor = Double.valueOf(s);
+    			}
+    			catch (NumberFormatException e) {
+    				System.err.println("Failed to parse the " + SPEED_FACTOR_PROPERTY + " property: " + e.getMessage());
+    			}
+    		}
+    	}
+    	
+    	return speedFactor.doubleValue();
+    }
 
     /**
-     * Pauses the current thread for the specified amount of seconds
+     * Pauses the current thread for the specified amount of seconds. The value is constant and not
+     * multiplied by the speed factor. 
      * 
      * @param seconds seconds to sleep
      */
-    public static void pause(double seconds) {
+    public static void constantPause(double seconds) {
         if (seconds <= 0) {
             return;
         }
@@ -119,4 +172,29 @@ public class RemoteControlUtils {
         }
     }
 
+    /**
+     * Pauses the current thread for the specified amount of seconds. The value is multiplied by the speed 
+     * settings.
+     * 
+     * @param seconds seconds to sleep
+     */
+    public static void pause(double seconds) {
+    	constantPause(seconds * speedFactor());
+    }
+
+    /**
+     * Returns the default pause multiplied by the speed factor
+     * 
+     * @return the pause
+     */
+    public static double getPauseDelay() {
+    	return PAUSE_DELAY * speedFactor();
+    }
+    
+    /**
+     * Pauses the current thread for a short period.
+     */
+    public static void pause() {
+    	pause(PAUSE_DELAY);
+    }
 }

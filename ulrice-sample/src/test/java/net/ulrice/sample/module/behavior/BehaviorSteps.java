@@ -53,7 +53,7 @@ public class BehaviorSteps {
 
         launchApplication(null, UlriceSampleApplication.class, null);
         connectClient("localhost", 2103, 60);
-        RemoteControlUtils.pause(1);
+        RemoteControlUtils.pause(0.25);
     }
 
 	@After
