@@ -3,7 +3,9 @@ package net.ulrice.remotecontrol.util;
 import java.awt.Component;
 import java.awt.Container;
 import java.awt.Dialog;
+import java.awt.Dimension;
 import java.awt.Frame;
+import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.Window;
 import java.awt.event.FocusAdapter;
@@ -207,8 +209,35 @@ public class ComponentUtils {
     }
 
     /**
+     * Tries to move the specified point of the specified component to the visible part of the viewport of the
+     * parents.
+     * 
+     * @param component the component
+     * @param point the point
+     */
+    public static void scrollPointToVisible(Component component, Point point) {
+    	scrollPointToVisible(component, point, 2);
+    }
+
+    /**
+     * Tries to move the specified point of the specified component to the visible part of the viewport of the
+     * parents. If the size is < 2, it is interpreted as 2.
+     * 
+     * @param component the component
+     * @param point the point
+     * @param size creates a rectangle out of the point with the specified size as width and height
+     */
+    public static void scrollPointToVisible(Component component, Point point, int size) {
+    	if (size < 2) {
+    		size = 2;
+    	}
+    	
+    	scrollRectToVisible(component, new Rectangle(point.x - size / 2, point.y - size / 2, size, size));
+    }
+    
+    /**
      * Tries to move the specified rectangle of the specified component to the visible part of the viewport of the
-     * parents
+     * parents.
      * 
      * @param component the component
      * @param rectangle the rectangle

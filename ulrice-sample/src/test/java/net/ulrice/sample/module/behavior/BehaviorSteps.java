@@ -20,6 +20,8 @@ import net.ulrice.remotecontrol.ComponentTableData;
 import net.ulrice.remotecontrol.ControllerMatcher;
 import net.ulrice.remotecontrol.ModuleMatcher;
 import net.ulrice.remotecontrol.RemoteControlException;
+import net.ulrice.remotecontrol.util.ComponentUtils;
+import net.ulrice.remotecontrol.util.RemoteControlUtils;
 import net.ulrice.sample.UlriceSampleApplication;
 import cucumber.annotation.After;
 import cucumber.annotation.en.Given;
@@ -51,7 +53,7 @@ public class BehaviorSteps {
 
         launchApplication(null, UlriceSampleApplication.class, null);
         connectClient("localhost", 2103, 60);
-        pause(1);
+        RemoteControlUtils.pause(1);
     }
 
 	@After
@@ -127,15 +129,6 @@ public class BehaviorSteps {
         }
 
         componentRC().interact(invoke("setVisible(false)"), withId(dialog.getUniqueId()));
-    }
-
-    private static void pause(double seconds) {
-        try {
-            Thread.sleep((long) (seconds * 1000));
-        }
-        catch (InterruptedException e) {
-            // ignore
-        }
     }
 
 }

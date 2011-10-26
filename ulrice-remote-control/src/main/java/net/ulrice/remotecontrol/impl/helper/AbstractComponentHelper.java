@@ -142,7 +142,7 @@ public abstract class AbstractComponentHelper<TYPE extends Component> implements
      */
     @Override
     public boolean click(Robot robot, TYPE component, final Point location) throws RemoteControlException {
-        ComponentUtils.scrollRectToVisible(component, new Rectangle(location));
+        ComponentUtils.scrollPointToVisible(component, location);
 
         ComponentUtils.toFront(component);
         SwingUtilities.convertPointToScreen(location, component);
