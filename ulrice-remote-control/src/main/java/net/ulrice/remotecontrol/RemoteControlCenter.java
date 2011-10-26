@@ -70,7 +70,6 @@ public class RemoteControlCenter {
      * @param programArguments arguments for the application, may be null
      * @throws RemoteControlException on occasion
      */
-    // TODO add parameters
     public static boolean launchApplication(List<String> vmArguments, Class< ?> mainClass,
         List<String> programArguments) throws RemoteControlException {
         synchronized (RemoteControlCenter.class) {
@@ -82,27 +81,33 @@ public class RemoteControlCenter {
                     }
                 }));
 
+                String osName = System.getProperty("os.name").toLowerCase();
                 List<String> command = new ArrayList<String>();
-
-                // FIXME handle unix
-                command.add(System.getProperty("java.home") + "\\bin\\java.exe");
+                
+                if (osName.contains("linux")) {
+                	command.add(System.getProperty("java.home") + "/bin/java");
+                }
+                else {
+                	command.add(System.getProperty("java.home") + "\\bin\\java.exe");
+                }
+                
                 command.add("-classpath");
-                command.add(System.getProperty("java.class.path"));
+            	command.add(System.getProperty("java.class.path"));
 
-                if (vmArguments != null) {
-                    for (String vmArgument : vmArguments) {
-                        command.add(vmArgument);
-                    }
-                }
+            	if (vmArguments != null) {
+            		for (String vmArgument : vmArguments) {
+            			command.add(vmArgument);
+            		}
+            	}
 
-                command.add(mainClass.getName());
+            	command.add(mainClass.getName());
 
-                if (programArguments != null) {
-                    for (String programArgument : programArguments) {
-                        command.add(programArgument);
-                    }
-                }
-
+            	if (programArguments != null) {
+            		for (String programArgument : programArguments) {
+            			command.add(programArgument);
+            		}
+            	}	
+                
                 ProcessBuilder builder = new ProcessBuilder(command);
 
                 try {
