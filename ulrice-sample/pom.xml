@@ -79,6 +79,11 @@
 			<artifactId>picocontainer</artifactId>
 			<scope>test</scope>
 		</dependency>
+		<dependency>
+			<groupId>org.jbehave</groupId>
+			<artifactId>jbehave-core</artifactId>
+			<scope>test</scope>
+		</dependency>
 	</dependencies>
 
 	<build>
@@ -86,12 +91,10 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-release-plugin</artifactId>
-				<version>2.1</version>
 			</plugin>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-compiler-plugin</artifactId>
-				<version>2.3.2</version>
 				<configuration>
 					<source>1.6</source>
 					<target>1.6</target>
@@ -164,12 +167,12 @@
 				</plugins>
 			</build>
 		</profile>
-		
+
 		<profile>
-			<id>cucumber</id>
+			<id>acceptance</id>
 			<activation>
 				<property>
-					<name>cucumber</name>
+					<name>acceptance</name>
 				</property>
 			</activation>
 			<build>
@@ -190,5 +193,5 @@
 			</build>
 		</profile>
 	</profiles>
-	
+
 </project>
