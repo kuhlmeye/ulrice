@@ -21,6 +21,7 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JViewport;
+import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 import javax.swing.border.Border;
 import javax.swing.border.EmptyBorder;
@@ -46,6 +47,8 @@ public class Tube extends JPanel {
 
     private JViewport viewPort;
 
+    private JScrollPane tabPanelScroller;
+
     public Tube() {
         this(true);
     }
@@ -66,7 +69,7 @@ public class Tube extends JPanel {
 
         setLayout(new BorderLayout(hGap, 0));
 
-        JScrollPane tabPanelScroller = new JScrollPane(tabPanel);
+        tabPanelScroller = new JScrollPane(tabPanel);
         tabPanelScroller.setOpaque(opaquePanels);
         tabPanelScroller.getViewport().setOpaque(opaquePanels);
         tabPanelScroller.setBorder(BorderFactory.createCompoundBorder(border, new EmptyBorder(tabPanelInsets)));
@@ -150,6 +153,21 @@ public class Tube extends JPanel {
         tabList.add(tab);
         tabBox.add(tab);
         contentBox.add(panel);
+    }
+        
+    
+    public void removeTab(JComponent panel) {
+        if(tabList != null) {
+            for(TubeTab tab : tabList) {
+                if(tab.contentPanel.equals(panel)) {
+                    contentBox.remove(panel);
+                    contentBox.revalidate();
+                    tabBox.remove(tab);
+                    tabList.remove(tab);
+                    break;
+                }
+            }
+        }
     }
 
     public void addTitle(String name) {
