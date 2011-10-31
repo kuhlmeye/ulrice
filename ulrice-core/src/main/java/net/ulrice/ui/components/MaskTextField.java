@@ -34,7 +34,7 @@ public class MaskTextField extends JTextField {
 
 	private static final long serialVersionUID = 5133016182441447477L;
 
-	public static final char PLACEHOLDER_CHAR = '.';
+	public static final char PLACEHOLDER_CHAR = '_';
 	public static final char ALL_MASK_CHAR = '*';
 	public static final char NUM_MASK_CHAR = '#';
 	public static final char CHARACTER_MASK_CHAR = '?';
