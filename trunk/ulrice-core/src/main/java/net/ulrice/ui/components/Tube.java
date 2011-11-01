@@ -21,7 +21,6 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JViewport;
-import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 import javax.swing.border.Border;
 import javax.swing.border.EmptyBorder;
@@ -154,7 +153,59 @@ public class Tube extends JPanel {
         tabBox.add(tab);
         contentBox.add(panel);
     }
-        
+    
+    public void addTab(TubeTabRenderer renderer, JComponent panel, int index) {
+        if (tabList != null && index >= 0 && index <= tabList.size()) {
+            TubeTab tab = new TubeTab(renderer, panel);
+            tabList.add(index, tab);
+            tabBox.add(tab, index);
+            contentBox.add(panel, index);
+        }
+    }
+    
+    public void hideComponent(int index) {
+        if (index < 0) {
+            return;
+        }
+        if (tabList != null && index < tabList.size()) {
+            tabList.get(index).setVisible(false);
+            contentBox.getComponent(index).setVisible(false);
+        }
+    }
+    
+    public void hideComponent(JComponent component) {
+        if (tabList != null) {
+            for (TubeTab tab : tabList) {
+                if (tab.contentPanel.equals(component)) {
+                    tab.contentPanel.setVisible(false);
+                    tab.setVisible(false);
+                    break;
+                }
+            }
+        }
+    }
+    
+    public void showComponent(int index) {
+        if (index < 0) {
+            return;
+        }
+        if (tabList != null && index < tabList.size()) {
+            tabList.get(index).setVisible(true);
+            contentBox.getComponent(index).setVisible(true);
+        }
+    }
+    
+    public void showComponent(JComponent component) {
+        if (tabList != null) {
+            for (TubeTab tab : tabList) {
+                if (tab.contentPanel.equals(component)) {
+                    tab.contentPanel.setVisible(true);
+                    tab.setVisible(true);
+                    break;
+                }
+            }
+        }
+    }
     
     public void removeTab(JComponent panel) {
         if(tabList != null) {
