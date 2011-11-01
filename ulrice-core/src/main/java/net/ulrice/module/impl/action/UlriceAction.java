@@ -23,7 +23,9 @@ public abstract class UlriceAction extends AbstractAction {
 
 	private ActionType type;
 
+	private Icon icon;
 	
+	private String name;
 
 
 	/**
@@ -38,7 +40,9 @@ public abstract class UlriceAction extends AbstractAction {
 		this.type = type;
 		this.initiallyEnabled = enabled;
 		this.uniqueId = uniqueId;
-
+		this.icon = icon;
+		this.name = name;
+		
 		setEnabled(enabled);
 		
 		putValue(SMALL_ICON, icon);
@@ -71,6 +75,20 @@ public abstract class UlriceAction extends AbstractAction {
 	 */
 	public ActionType getType() {
 		return type;
+	}
+	
+	/**
+	 * @return the icon
+	 */
+	public Icon getIcon() {
+	    return icon;
+	}
+	
+	/**
+	 * @return the name
+	 */
+	public String getName()  {
+	    return name;
 	}
 
 }
