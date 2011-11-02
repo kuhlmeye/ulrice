@@ -30,7 +30,9 @@ public class JSliderViewAdapter extends AbstractViewAdapter implements ChangeLis
 
 	@Override
 	protected void setValue(Object value) {
-		slider.setValue((Integer) modelToView(value));
+	    if(value != null) {
+	        slider.setValue((Integer) modelToView(value));
+	    }
 	}
 
 	@Override

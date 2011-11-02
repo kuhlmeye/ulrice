@@ -1,5 +1,6 @@
 package net.ulrice.databinding.bufferedbinding.impl;
 
+import java.util.Comparator;
 import java.util.List;
 
 import javax.swing.event.EventListenerList;
@@ -29,6 +30,7 @@ public class ColumnDefinition<T extends Object> {
 	private boolean useAutoValueConverter = true;
 	private boolean useValueRange = false;
 	private List<T> valueRange;
+	private Comparator<T> comparator;
 	
 	private TableCellEditor cellEditor;
 	private TableCellRenderer cellRenderer;
@@ -88,7 +90,7 @@ public class ColumnDefinition<T extends Object> {
         this.dataAccessor = dataAccessor;
         this.columnClass = columnClass;
         this.filterMode = filterMode;
-        this.columnType = columnType;
+        this.columnType = columnType;        
     }
 
     public GenericAM<T> createAM() {
@@ -297,5 +299,13 @@ public class ColumnDefinition<T extends Object> {
     
     public String getColumnTooltip() {
         return columnTooltip;
+    }
+    
+    public Comparator<T> getComparator() {
+        return comparator;
+    }
+    
+    public void setComparator(Comparator<T> comparator) {
+        this.comparator = comparator;
     }
 }
