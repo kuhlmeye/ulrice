@@ -66,8 +66,7 @@ public class TableAMBuilder {
     public TableAMBuilder addColumn(String path, Class<?> typeAfterConversion) {
         final ColumnDefinition<?> newColumn = new ColumnDefinition (new DynamicReflectionMVA (modelRowClass, path), typeAfterConversion);
         columnDefs.add (newColumn);
-        columnDefsByPath.put(path, newColumn);
-        
+        columnDefsByPath.put(path, newColumn);        
         return this;
     }
     
