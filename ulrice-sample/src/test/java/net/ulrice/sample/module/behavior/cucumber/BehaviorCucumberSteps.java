@@ -25,7 +25,7 @@ import net.ulrice.sample.UlriceSampleApplication;
 import cucumber.annotation.en.Given;
 import cucumber.annotation.en.Then;
 import cucumber.annotation.en.When;
-import cucumber.table.Table;
+import cucumber.table.DataTable;
 
 public class BehaviorCucumberSteps {
 
@@ -107,7 +107,7 @@ public class BehaviorCucumberSteps {
     }
 
     @Then("^a dialog should appear containing following data:$")
-    public void checkDialog(Table table) throws RemoteControlException {
+    public void checkDialog(DataTable table) throws RemoteControlException {
         ComponentState dialog = componentRC().waitFor(2, ofType(JDialog.class));
 
         assertNotNull(dialog);
