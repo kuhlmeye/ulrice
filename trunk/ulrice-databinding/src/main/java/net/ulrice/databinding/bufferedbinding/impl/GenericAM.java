@@ -204,9 +204,11 @@ public class GenericAM<T> implements IFAttributeModel<T>, IFViewChangeListener {
 			throw new IllegalStateException("No data accessor is available.");
 		}
 
-		T value = directWrite();
-		Object converted = (getValueConverter() != null ? getValueConverter().viewToModel(value) : value);
-		modelAccessor.setValue(converted);
+		if(!modelAccessor.isReadOnly()) {
+		    T value = directWrite();
+		    Object converted = (getValueConverter() != null ? getValueConverter().viewToModel(value) : value);
+		    modelAccessor.setValue(converted);
+		}
 	}
 
 	/**
@@ -318,7 +320,14 @@ public class GenericAM<T> implements IFAttributeModel<T>, IFViewChangeListener {
 
 	@Override
 	public void addViewAdapter(IFViewAdapter viewAdapter) {
-		Class<?> modelType = modelAccessor != null ? modelAccessor.getModelType() : null;
+		Class<?> modelType = null;
+		
+		if(getValueConverter() != null) {
+		    modelType = getValueConverter().getViewType(modelType);
+		} else {		
+		    modelType = modelAccessor != null ? modelAccessor.getModelType() : null;
+		}
+		
 		if (modelType != null && viewAdapter.isUseAutoValueConverter() && (viewAdapter.getValueConverter() == null || viewAdapter.getValueConverter().equals(DoNothingConverter.INSTANCE))) {
 			viewAdapter.setValueConverter(UlriceDatabinding.getConverterFactory().createConverter(viewAdapter.getViewType(), modelType));
 		}

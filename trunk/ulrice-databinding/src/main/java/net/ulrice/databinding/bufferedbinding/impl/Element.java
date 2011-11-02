@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.swing.SwingUtilities;
 import javax.swing.event.EventListenerList;
 
 import net.ulrice.databinding.IFBinding;
@@ -222,7 +223,16 @@ public class Element {
 		valid &= originalValueValid;
 
 		if (oldDirty != dirty || oldValid != valid) {
-			fireStateChanged();
+	         if(!SwingUtilities.isEventDispatchThread()) {
+	                SwingUtilities.invokeLater(new Runnable() {                    
+	                    @Override
+	                    public void run() {
+	                        fireStateChanged();
+	                    }
+	                });
+	            } else {
+	                fireStateChanged();
+	            }
 		}
 	}
 
@@ -294,7 +304,16 @@ public class Element {
 				model.setValue(converted);
 			}
 			// TODO Do we need this? Or is it only because of the change of the original value
-			fireValueChanged(null);
+			if(!SwingUtilities.isEventDispatchThread()) {
+			    SwingUtilities.invokeLater(new Runnable() {                    
+                    @Override
+                    public void run() {
+                        fireValueChanged(null);
+                    }
+                });
+			} else {
+                fireValueChanged(null);
+			}
 			updateState();
 		}
 	}

@@ -10,7 +10,7 @@ import java.util.List;
 
 import javax.swing.JTextField;
 import javax.swing.event.DocumentEvent;
-import javax.swing.plaf.basic.BasicTextFieldUI;
+import javax.swing.plaf.metal.MetalTextFieldUI;
 import javax.swing.text.AttributeSet;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.Document;
@@ -195,7 +195,7 @@ public class MaskTextField extends JTextField {
 		}
 	}
 
-	private class MaskTextFieldUI extends BasicTextFieldUI {
+	private class MaskTextFieldUI extends MetalTextFieldUI {
 
 		@Override
 		public View create(Element elem) {

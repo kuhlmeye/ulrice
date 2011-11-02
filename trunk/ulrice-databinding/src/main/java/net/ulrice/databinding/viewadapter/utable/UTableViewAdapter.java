@@ -93,7 +93,7 @@ public class UTableViewAdapter extends AbstractViewAdapter implements TableModel
             table.setAttributeModel(attributeModel);
             table.updateColumnModel();
             fireAttributeModelBound(this.attributeModel);
-            fireTableStructureChanged();
+            //fireTableStructureChanged();
         }
     }
 
