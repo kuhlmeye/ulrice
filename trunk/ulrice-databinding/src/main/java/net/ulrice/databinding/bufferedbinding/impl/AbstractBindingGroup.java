@@ -28,7 +28,7 @@ public abstract class AbstractBindingGroup<T> implements IFBindingGroup,
     	IFBindingGroupEventListener[] listeners = listenerList.getListeners(IFBindingGroupEventListener.class);
     	if (listeners != null) {
     		for (IFBindingGroupEventListener l : listeners) {
-    			l.bindingGroupChanged();
+    			l.bindingGroupChanged(this);
     		}
     	}
     }
