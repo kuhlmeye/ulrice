@@ -2,7 +2,9 @@ package net.ulrice.remotecontrol;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.regex.Pattern;
 
 import net.ulrice.remotecontrol.util.RemoteControlUtils;
@@ -55,22 +57,22 @@ public class ComponentTableData implements Serializable {
 
     public int findHeader(String regex) throws RemoteControlException {
         Pattern pattern = RemoteControlUtils.toPattern(regex);
-        
-        for (int column=0; column<getColumnCount(); column+=1) {
+
+        for (int column = 0; column < getColumnCount(); column += 1) {
             String header = getHeader(column);
-            
+
             if (header == null) {
                 continue;
             }
-            
+
             if (pattern.matcher(header).matches()) {
                 return column;
             }
         }
-        
+
         return -1;
     }
-    
+
     public ComponentTableDataEntry getEntry(int row, int column) {
         if (row >= entries.size()) {
             return null;
@@ -162,6 +164,16 @@ public class ComponentTableData implements Serializable {
         }
 
         return true;
+    }
+
+    public Map<String, Object> getRowAsMap(int row) {
+        Map<String, Object> result = new HashMap<String, Object>();
+
+        for (int column = 0; column < getColumnCount(); column += 1) {
+            result.put(getHeader(column), getValue(row, column));
+        }
+
+        return result;
     }
 
     public String toString(int row, int column) {
