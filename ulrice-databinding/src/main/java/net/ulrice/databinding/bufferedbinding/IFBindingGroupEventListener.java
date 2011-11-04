@@ -9,6 +9,6 @@ import java.util.EventListener;
  */
 public interface IFBindingGroupEventListener extends EventListener {
 	
-	void bindingGroupChanged();
+	void bindingGroupChanged(IFBindingGroup bindingGroup);
 
 }

@@ -8,6 +8,7 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 
+import net.ulrice.databinding.bufferedbinding.IFBindingGroup;
 import net.ulrice.databinding.bufferedbinding.IFBindingGroupEventListener;
 import net.ulrice.databinding.bufferedbinding.impl.BindingGroup;
 import net.ulrice.databinding.viewadapter.impl.JRadioButtonViewAdapter;
@@ -81,7 +82,7 @@ public class CRadioButtonSample extends AbstractController implements IFBindingG
 	}
 
 	@Override
-	public void bindingGroupChanged() {
+	public void bindingGroupChanged(IFBindingGroup bindingGroup) {
 		System.out.println("Color was set to : " + model.getData().getC());
 	}
 
