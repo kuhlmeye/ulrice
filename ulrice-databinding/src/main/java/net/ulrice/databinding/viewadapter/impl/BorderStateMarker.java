@@ -32,14 +32,25 @@ public class BorderStateMarker implements Border, ImageObserver, IFStateMarker {
     
     private boolean dirty = false;
 
+    private boolean iconOnly;
+
     /**
      * Creates a new border state marker.
      */
     public BorderStateMarker() {
+        this(false);
+        
+    }
+        /**
+         * Creates a new border state marker.
+         * @param iconOnly true, if only the icon should be shown. 
+         */
+    public BorderStateMarker(boolean iconOnly) {
         // TODO Add to uimanager
         attentionImage = new ImageIcon(getClass().getResource("attention.png"));
         // TODO Add to uimanager
         crossImage = new ImageIcon(getClass().getResource("cross.png"));
+        this.iconOnly = iconOnly;
     }
 
     /**
@@ -86,12 +97,14 @@ public class BorderStateMarker implements Border, ImageObserver, IFStateMarker {
      * @param height The height of the component.
      */
     private void drawNormal(Graphics g, int x, int y, int width, int height) {
-        // TODO Add colors to uimanager
-        g.setColor(Color.LIGHT_GRAY);
-        g.drawRect(x, y, width - 1, height - 1);
-        // TODO Add colors to uimanager
-        g.setColor(Color.DARK_GRAY);
-        g.drawRect(x + 1, y + 1, width - 3, height - 3);
+        if(!iconOnly) {
+            // TODO Add colors to uimanager
+            g.setColor(Color.LIGHT_GRAY);
+            g.drawRect(x, y, width - 1, height - 1);
+            // TODO Add colors to uimanager
+            g.setColor(Color.DARK_GRAY);
+            g.drawRect(x + 1, y + 1, width - 3, height - 3);
+        }
     }
 
     /**
@@ -104,13 +117,15 @@ public class BorderStateMarker implements Border, ImageObserver, IFStateMarker {
      * @param height The height of the component.
      */
     private void drawChanged(Graphics g, int x, int y, int width, int height) {
-        // TODO Add colors to uimanager
-        g.setColor(Color.LIGHT_GRAY);
-        g.drawRect(x, y, width - 1, height - 1);
-        // TODO Add colors to uimanager
-        g.setColor(new Color(130, 130, 30));
-        g.drawRect(x + 1, y + 1, width - 3, height - 3);
-
+        if(!iconOnly) {
+            // TODO Add colors to uimanager
+            g.setColor(Color.LIGHT_GRAY);
+            g.drawRect(x, y, width - 1, height - 1);
+            // TODO Add colors to uimanager
+            g.setColor(new Color(130, 130, 30));
+            g.drawRect(x + 1, y + 1, width - 3, height - 3);
+    
+        }
         g.drawImage(attentionImage.getImage(), x + width - 10, 0, 10, 10, this);
     }
 
@@ -124,13 +139,14 @@ public class BorderStateMarker implements Border, ImageObserver, IFStateMarker {
      * @param height The height of the component.
      */
     private void drawInvalid(Graphics g, int x, int y, int width, int height) {
-        // TODO Add colors to uimanager
-        g.setColor(Color.LIGHT_GRAY);
-        g.drawRect(x, y, width - 1, height - 1);
-        // TODO Add colors to uimanager
-        g.setColor(new Color(100, 30, 30));
-        g.drawRect(x + 1, y + 1, width - 3, height - 3);
-
+        if(!iconOnly) {
+            // TODO Add colors to uimanager
+            g.setColor(Color.LIGHT_GRAY);
+            g.drawRect(x, y, width - 1, height - 1);
+            // TODO Add colors to uimanager
+            g.setColor(new Color(100, 30, 30));
+            g.drawRect(x + 1, y + 1, width - 3, height - 3);
+        }
         g.drawImage(crossImage.getImage(), x + width - 10, 0, 10, 10, this);
     }
 
