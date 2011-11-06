@@ -40,6 +40,7 @@ public class ProcessManager implements IFProcessListener {
      * @return The unique id of the process.
      */
     public String registerProcess(IFBackgroundProcess process) {
+        process.addProcessListener(this);
         String uniqueId = getNextUniqueId();
         IFController owningController = process.getOwningController();
         if (owningController != null) {
@@ -55,7 +56,6 @@ public class ProcessManager implements IFProcessListener {
         }
         idProcessMap.put(uniqueId, process);
         processIdMap.put(process, uniqueId);
-        process.addProcessListener(this);
         fireStateChanged(process);
 
         if (ProcessState.Started.equals(process.getProcessState())) {
@@ -77,6 +77,7 @@ public class ProcessManager implements IFProcessListener {
 
     @Override
     public void stateChanged(IFBackgroundProcess process) {
+
         Ulrice.getMessageHandler().handleMessage(process.getOwningController(), MessageSeverity.Status, process.getProcessProgressMessage() + " (" + process.getProcessState() + ")");
         if (ProcessState.Started.equals(process.getProcessState())) {
             if (process.getOwningController() != null && process.blocksWorkarea()) {
