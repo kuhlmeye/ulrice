@@ -645,6 +645,7 @@ public class TableAM implements IFAttributeModel {
         elements.clear();
 
         fireTableCleared();
+        fireDataChanged();
     }
 
     /**
