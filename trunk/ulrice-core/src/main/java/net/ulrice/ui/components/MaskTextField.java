@@ -9,6 +9,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.swing.JTextField;
+import javax.swing.UIDefaults;
+import javax.swing.UIManager;
 import javax.swing.event.DocumentEvent;
 import javax.swing.plaf.metal.MetalTextFieldUI;
 import javax.swing.text.AttributeSet;
@@ -104,7 +106,10 @@ public class MaskTextField extends JTextField {
 		setUI(new MaskTextFieldUI());
 		int fontSize = getFont().getSize();
 		int fontStyle = getFont().getStyle();
-		setFont(new Font("monospaced", fontStyle, fontSize));
+		setFont(new Font("monospaced", fontStyle, fontSize));		
+        setSelectedTextColor(UIManager.getColor("nimbusSelectedText"));
+        setSelectionColor(UIManager.getColor("nimbusSelectionBackground"));
+        setDisabledTextColor(UIManager.getColor("nimbusDisabledText"));
 	}
 
 	@Override
