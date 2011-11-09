@@ -60,6 +60,27 @@ public class TabbedWorkarea extends JTabbedPane implements IFWorkarea, MouseList
         if (closeIconUrl != null) {
             closeIcon = new ImageIcon(closeIconUrl);
         }
+        
+       addChangeListener(new ChangeListener() {
+            
+
+            @Override
+            public void stateChanged(ChangeEvent e) {
+                if(!ignoreStateChangedEvents) {
+                    int selIdx = getSelectedIndex();
+                    if (selIdx >= 0) {
+                        Component tabComponent = getTabComponentAt(getSelectedIndex());
+                        if (tabComponent instanceof TabControllerPanel) {
+                            final TabControllerPanel tabCtrlPanel = (TabControllerPanel) tabComponent;
+                            ignoreStateChangedEvents = true;
+                            Ulrice.getModuleManager().activateModule(tabCtrlPanel.getController());
+                            ignoreStateChangedEvents = false;
+                        }
+                    }
+                }
+            }
+
+        });
     }
 
     /**
@@ -88,26 +109,7 @@ public class TabbedWorkarea extends JTabbedPane implements IFWorkarea, MouseList
      */
     public void activateModule(IFController activeController) {
 
-        addChangeListener(new ChangeListener() {
-            
-
-            @Override
-            public void stateChanged(ChangeEvent e) {
-                if(!ignoreStateChangedEvents) {
-                    int selIdx = getSelectedIndex();
-                    if (selIdx >= 0) {
-                        Component tabComponent = getTabComponentAt(getSelectedIndex());
-                        if (tabComponent instanceof TabControllerPanel) {
-                            final TabControllerPanel tabCtrlPanel = (TabControllerPanel) tabComponent;
-                            ignoreStateChangedEvents = true;
-                            Ulrice.getModuleManager().activateModule(tabCtrlPanel.getController());
-                            ignoreStateChangedEvents = false;
-                        }
-                    }
-                }
-            }
-
-        });
+ 
 
         // Get the component of the controller.
         final int idx = getTabIndex(activeController);
