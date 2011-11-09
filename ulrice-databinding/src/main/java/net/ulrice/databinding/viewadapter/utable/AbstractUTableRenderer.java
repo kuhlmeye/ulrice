@@ -65,7 +65,7 @@ public abstract class AbstractUTableRenderer extends DefaultTableCellRenderer {
                     valid &= element.isColumnValid(columnId);
     
                     sm.initialize(component);
-                    sm.updateState(dirty, valid, component);
+                    sm.updateState(readOnly, dirty, valid, component);
                 }
 
                 IFTooltipHandler tth = getTooltipHandler();

@@ -10,7 +10,8 @@ public class JButtonViewAdapter extends AbstractViewAdapter {
     
     public JButtonViewAdapter (JButton button) {
         super (String.class);
-        this.button = button;
+        this.button = button;        
+        setEditable(isComponentEnabled());
     }
 
 	@Override
@@ -23,12 +24,12 @@ public class JButtonViewAdapter extends AbstractViewAdapter {
 		button.setText((String)modelToView(value));
 	}
 	
-	public void setEnabled (boolean enabled) {
+	public void setComponentEnabled (boolean enabled) {
         button.setEnabled (enabled);
     }
 
 	@Override
-	public boolean isEnabled() {
+	public boolean isComponentEnabled() {
 		return button.isEnabled();
 	}
 

@@ -3,11 +3,11 @@
  */
 package net.ulrice.databinding.viewadapter.impl;
 
-import javax.swing.JTextField;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.text.JTextComponent;
 
+import net.ulrice.databinding.ui.BindingUI;
 import net.ulrice.databinding.viewadapter.AbstractViewAdapter;
 
 /**
@@ -20,11 +20,18 @@ public class JTextComponentViewAdapter extends AbstractViewAdapter implements Do
 	
 	private JTextComponent textComponent;
 	private boolean convertEmptyToNull = true;
+	private boolean enableSelectionIfComponentDisabled = false;
 
 	public JTextComponentViewAdapter(JTextComponent textComponent) {
+	    
 		super(String.class);
+		
+		this.enableSelectionIfComponentDisabled = BindingUI.getBoolean(BindingUI.MARKABLE_DURING_DISABLED_STATE, Boolean.FALSE);
+
 		this.textComponent = textComponent;
-		textComponent.getDocument().addDocumentListener(this);
+        setEditable(isComponentEnabled());
+        textComponent.getDocument().addDocumentListener(this);
+        setEditable(isComponentEnabled());
 	}
 	
 	@Override
@@ -45,10 +52,32 @@ public class JTextComponentViewAdapter extends AbstractViewAdapter implements Do
 	public JTextComponent getComponent() {
 		return textComponent;
 	}
+	
+	public void setEnableSelectionIfComponentDisabled(boolean enableSelectionIfComponentDisabled) {
+        this.enableSelectionIfComponentDisabled = enableSelectionIfComponentDisabled;
+    }
+	
+	public boolean isEnableSelectionIfComponentDisabled() {
+        return enableSelectionIfComponentDisabled;
+    }
 
 	@Override
-	public void setEnabled(boolean enabled) {
-		textComponent.setEnabled(enabled);
+	public void setComponentEnabled(boolean enabled) {
+            if(isEnableSelectionIfComponentDisabled()) {
+    	        textComponent.setEditable(enabled);
+    	        textComponent.setEnabled(true);
+            } else {
+                textComponent.setEnabled(enabled);
+            }
+	}
+	
+	@Override
+	public boolean isComponentEnabled() {
+        if(isEnableSelectionIfComponentDisabled()) {
+            return textComponent.isEditable();
+        } else {
+            return textComponent.isEnabled();
+        }
 	}
 
 
@@ -66,11 +95,6 @@ public class JTextComponentViewAdapter extends AbstractViewAdapter implements Do
     public void removeUpdate(DocumentEvent e) {
     	fireViewChange();
     }
-
-	@Override
-	public boolean isEnabled() {
-		return textComponent.isEnabled();
-	}
 
 	@Override
 	protected void addComponentListener() {

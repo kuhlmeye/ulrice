@@ -18,6 +18,7 @@ public class JComboBoxViewAdapter<M> extends AbstractViewAdapter <M, ObjectWithP
         this.presentationProvider = presentationProvider;
         comboBox = combo;        
         comboBox.addItemListener(this);
+        setEditable(isComponentEnabled());
     }
 
     @SuppressWarnings("unchecked")
@@ -32,7 +33,7 @@ public class JComboBoxViewAdapter<M> extends AbstractViewAdapter <M, ObjectWithP
 	}
 
 	@Override
-    public void setEnabled (boolean enabled) {
+    public void setComponentEnabled (boolean enabled) {
         comboBox.setEnabled (enabled);
     }
 
@@ -42,7 +43,7 @@ public class JComboBoxViewAdapter<M> extends AbstractViewAdapter <M, ObjectWithP
 	}
 
 	@Override
-	public boolean isEnabled() {
+	public boolean isComponentEnabled() {
 		return comboBox.isEnabled();
 	}
 

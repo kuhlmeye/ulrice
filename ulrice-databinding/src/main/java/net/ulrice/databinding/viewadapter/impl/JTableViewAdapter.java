@@ -39,7 +39,7 @@ public class JTableViewAdapter extends AbstractViewAdapter implements TableModel
 
 		table.setModel(this);
 		table.setAutoCreateColumnsFromModel(false);
-
+        setEditable(isComponentEnabled());
 	}
 
 	/**
@@ -237,7 +237,7 @@ public class JTableViewAdapter extends AbstractViewAdapter implements TableModel
 			getTooltipHandler().updateTooltip(binding, table);
 		}
 		if (getStateMarker() != null) {
-			getStateMarker().updateState(binding.isDirty(), binding.isValid(), table);
+			getStateMarker().updateState(isEditable(), binding.isDirty(), binding.isValid(), table);
 		}
 	}
 
@@ -249,13 +249,8 @@ public class JTableViewAdapter extends AbstractViewAdapter implements TableModel
 	}
 
 	@Override
-	public void setEnabled(boolean enabled) {
+	public void setComponentEnabled(boolean enabled) {
 		table.setEnabled(enabled);
-	}
-
-	@Override
-	public boolean isEnabled() {
-		return table.isEnabled();
 	}
 
 	@Override
@@ -314,4 +309,9 @@ public class JTableViewAdapter extends AbstractViewAdapter implements TableModel
 	public void delRow(int index) {
 		getAttributeModel().delElement(index);
 	}
+
+    @Override
+    public boolean isComponentEnabled() {
+        return table.isEnabled();
+    }
 }

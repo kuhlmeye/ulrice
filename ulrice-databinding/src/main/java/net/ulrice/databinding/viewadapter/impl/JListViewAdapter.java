@@ -21,6 +21,7 @@ public class JListViewAdapter extends AbstractViewAdapter implements ListModel {
     public JListViewAdapter(JList list) {
     	super(List.class);
     	this.list = list;
+        setEditable(isComponentEnabled());
     }
     
 	@Override
@@ -35,7 +36,7 @@ public class JListViewAdapter extends AbstractViewAdapter implements ListModel {
 			getTooltipHandler().updateTooltip(binding, list);
 		}
 		if(getStateMarker() != null) {
-			getStateMarker().updateState(binding.isDirty(), binding.isValid(), list);
+			getStateMarker().updateState(isEditable(), binding.isDirty(), binding.isValid(), list);
 		}
 	}
 	
@@ -53,12 +54,12 @@ public class JListViewAdapter extends AbstractViewAdapter implements ListModel {
 	}
 
 	@Override
-	public void setEnabled(boolean enabled) {
+	public void setComponentEnabled(boolean enabled) {
 		list.setEnabled(true);
 	}
 
 	@Override
-	public boolean isEnabled() {
+	public boolean isComponentEnabled() {
 		return list.isEnabled();
 	}
 
