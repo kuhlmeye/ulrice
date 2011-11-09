@@ -207,7 +207,7 @@ public class ModelBinding {
             b.setValidationFailures(raw != null ? raw : new ArrayList<String> ());
             calculateState(b);
             b.getViewAdapter ().updateFromBinding(b);
-            b.getViewAdapter ().setEnabled (b.isWidgetEnabled (validationResult.isValid (), _model));
+            b.getViewAdapter ().setComponentEnabled (b.isWidgetEnabled (validationResult.isValid (), _model));
         }
     }
 
@@ -254,7 +254,7 @@ public class ModelBinding {
         final IFViewAdapter va = HeuristicViewAdapterFactory.createAdapter (viewElement);
         final Predicate enabledPredicate = mva.isReadOnly () ? Predicate.FALSE : Predicate.TRUE;
 
-        return register (va, mva, enabledPredicate, Arrays.asList (validators), mva.isReadOnly () || !va.isEnabled());
+        return register (va, mva, enabledPredicate, Arrays.asList (validators), mva.isReadOnly () || !va.isEditable());
     }
 
     public Binding register (Object viewElement, String modelPath, Class<?> modelType, boolean enabled, IFValidator<?>... validators) { 
@@ -262,7 +262,7 @@ public class ModelBinding {
         final IFViewAdapter va = HeuristicViewAdapterFactory.createAdapter (viewElement);
         final Predicate enabledPredicate = enabled ? Predicate.FALSE : Predicate.TRUE;
 
-        return register (va, mva, enabledPredicate, Arrays.asList (validators), mva.isReadOnly () || va.isEnabled());
+        return register (va, mva, enabledPredicate, Arrays.asList (validators), mva.isReadOnly () || va.isEditable());
     }
 
     public Binding register (Object viewElement, String modelPath, Class<?> modelType, String enabledExpression, IFValidator<?>... validators) {

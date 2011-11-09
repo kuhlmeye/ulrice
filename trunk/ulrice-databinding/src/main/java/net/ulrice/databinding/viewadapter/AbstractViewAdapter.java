@@ -1,5 +1,6 @@
 package net.ulrice.databinding.viewadapter;
 
+import javax.swing.SwingUtilities;
 import javax.swing.event.EventListenerList;
 
 import net.ulrice.databinding.IFBinding;
@@ -20,6 +21,8 @@ public abstract class AbstractViewAdapter<M, V> implements IFViewAdapter<M, V> {
     private boolean bindWithoutValue;
     private boolean useAutoValueConverter = true;
 
+    private boolean editable = true;
+
     @SuppressWarnings({ "rawtypes", "unchecked" })
     public AbstractViewAdapter(Class viewType) {
         this.viewType = viewType;
@@ -28,15 +31,30 @@ public abstract class AbstractViewAdapter<M, V> implements IFViewAdapter<M, V> {
 
     protected void fireViewChange() {
         inNotification = true;
-        if (isEnabled()) {
-            IFViewChangeListener[] listeners = listenerList.getListeners(IFViewChangeListener.class);
-            if(listeners != null) {
-                for (IFViewChangeListener l : listeners) {
-                    l.viewValueChanged(this);
-                }
+        if (isEditable()) {
+            
+            if(SwingUtilities.isEventDispatchThread()) {
+                fireViewChangeInternal();
+            } else {
+                SwingUtilities.invokeLater(new Runnable() {
+                    
+                    @Override
+                    public void run() {
+                        fireViewChangeInternal();
+                    }
+                });
             }
         }
         inNotification = false;
+    }
+
+    private void fireViewChangeInternal() {
+        IFViewChangeListener[] listeners = listenerList.getListeners(IFViewChangeListener.class);
+        if(listeners != null) {
+            for (IFViewChangeListener l : listeners) {
+                l.viewValueChanged(this);
+            }
+        }
     }
 
     public void addBindingListener(ViewAdapterBindingListener l) {
@@ -80,12 +98,12 @@ public abstract class AbstractViewAdapter<M, V> implements IFViewAdapter<M, V> {
         if (!isInNotification()) {
             removeComponentListener();
             setValue((M) binding.getCurrentValue());
-            
-            if(binding.isReadOnly() && isEnabled()) {
-                setEnabled(false);
+
+            if(binding.isReadOnly() && isComponentEnabled()) {
+                setComponentEnabled(false);
             }
-            if(!binding.isReadOnly() && !isEnabled()) {
-                setEnabled(true);
+            if(!binding.isReadOnly() && !isComponentEnabled()) {
+                setComponentEnabled(true);
             }
             
             addComponentListener();
@@ -94,10 +112,23 @@ public abstract class AbstractViewAdapter<M, V> implements IFViewAdapter<M, V> {
             getTooltipHandler().updateTooltip(binding, getComponent());
         }
         if (getStateMarker() != null) {
-            getStateMarker().updateState(binding.isDirty(), binding.isValid(), getComponent());
+            getStateMarker().updateState(binding.isReadOnly() && isEditable(), binding.isDirty(), binding.isValid(), getComponent());
         }
     }
 
+    @Override
+    public final boolean isEditable() {
+        return editable;
+    }
+    
+    @Override
+    public final void setEditable(boolean editable) {
+        this.editable = editable;        
+        fireViewChange();
+    }
+    
+    
+    
     protected abstract void addComponentListener();
 
     protected abstract void setValue(M value);

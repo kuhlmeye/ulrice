@@ -60,6 +60,7 @@ public class UTableViewAdapter extends AbstractViewAdapter implements TableModel
         super(List.class);
 
         this.table = table;        
+        setEditable(isComponentEnabled());
     }
 
     /**
@@ -293,7 +294,7 @@ public class UTableViewAdapter extends AbstractViewAdapter implements TableModel
             getTooltipHandler().updateTooltip(binding, table);
         }
         if (getStateMarker() != null) {
-            getStateMarker().updateState(isDirty(), isValid(), table);
+            getStateMarker().updateState(binding.isReadOnly() && isEditable(), isDirty(), isValid(), table);
         }
     }
 
@@ -305,12 +306,12 @@ public class UTableViewAdapter extends AbstractViewAdapter implements TableModel
     }
 
     @Override
-    public void setEnabled(boolean enabled) {
+    public void setComponentEnabled(boolean enabled) {
         table.setEnabled(enabled);
     }
 
     @Override
-    public boolean isEnabled() {
+    public boolean isComponentEnabled() {
         return table.isEnabled();
     }
 

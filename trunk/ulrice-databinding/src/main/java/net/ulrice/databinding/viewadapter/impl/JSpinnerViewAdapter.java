@@ -21,6 +21,7 @@ public class JSpinnerViewAdapter extends AbstractViewAdapter implements ChangeLi
 		super(Integer.class);
 		this.spinner = spinner;
 		this.spinner.addChangeListener(this);
+        setEditable(isComponentEnabled());
 	}
 
 	@Override
@@ -39,12 +40,12 @@ public class JSpinnerViewAdapter extends AbstractViewAdapter implements ChangeLi
 	}
 
 	@Override
-	public void setEnabled(boolean enabled) {
+	public void setComponentEnabled(boolean enabled) {
 	    spinner.setEnabled(enabled);
 	}
 
 	@Override
-	public boolean isEnabled() {
+	public boolean isComponentEnabled() {
 		return spinner.isEnabled();
 	}
 

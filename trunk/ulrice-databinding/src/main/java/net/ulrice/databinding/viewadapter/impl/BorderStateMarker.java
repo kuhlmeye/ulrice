@@ -163,10 +163,9 @@ public class BorderStateMarker implements Border, ImageObserver, IFStateMarker {
      * @see net.ulrice.databinding.viewadapter.IFStateMarker#paintState(net.ulrice.databinding.DataState)
      */
     @Override
-    public void updateState(boolean dirty, boolean valid, JComponent c) {
+    public void updateState(boolean enabled, boolean dirty, boolean valid, JComponent c) {
     	this.valid = valid;
     	this.dirty = dirty;
-
         c.revalidate();
     }
 

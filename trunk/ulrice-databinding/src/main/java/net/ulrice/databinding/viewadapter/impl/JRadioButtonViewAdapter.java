@@ -19,6 +19,7 @@ public class JRadioButtonViewAdapter<M> extends AbstractViewAdapter<M, Boolean> 
 		this.radioButton = radioButton;
 		this.value = value;
 		radioButton.addItemListener(this);
+        setEditable(isComponentEnabled());
 	}
 	
 	@Override
@@ -47,12 +48,12 @@ public class JRadioButtonViewAdapter<M> extends AbstractViewAdapter<M, Boolean> 
 	}
 
 	@Override
-	public void setEnabled(boolean enabled) {
+	public void setComponentEnabled(boolean enabled) {
 		radioButton.setEnabled(enabled);
 	}
 
 	@Override
-	public boolean isEnabled() {
+	public boolean isComponentEnabled() {
 		return radioButton.isEnabled();
 	}
 

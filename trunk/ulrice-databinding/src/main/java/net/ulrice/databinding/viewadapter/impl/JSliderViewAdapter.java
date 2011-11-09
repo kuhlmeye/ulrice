@@ -21,6 +21,7 @@ public class JSliderViewAdapter extends AbstractViewAdapter implements ChangeLis
 		super(Integer.class);
 		this.slider = slider;
 		this.slider.addChangeListener(this);
+        setEditable(isComponentEnabled());
 	}
 
 	@Override
@@ -41,12 +42,12 @@ public class JSliderViewAdapter extends AbstractViewAdapter implements ChangeLis
 	}
 
 	@Override
-	public void setEnabled(boolean enabled) {
+	public void setComponentEnabled(boolean enabled) {
 		slider.setEnabled(enabled);
 	}
 
 	@Override
-	public boolean isEnabled() {
+	public boolean isComponentEnabled() {
 		return slider.isEnabled();
 	}
 

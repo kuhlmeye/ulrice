@@ -25,8 +25,11 @@ public interface IFViewAdapter <M, V> {
 	Class<V> getViewType();
 	void setBindWithoutValue(boolean withoutData);
     
-    void setEnabled (boolean enabled);
-    boolean isEnabled();
+    void setComponentEnabled (boolean enabled);
+    boolean isComponentEnabled();
+    
+    void setEditable(boolean editable);
+    boolean isEditable();
     
 	void setTooltipHandler(IFTooltipHandler<IFBinding> tooltipHandler);
 	void setStateMarker(IFStateMarker stateMarker);
