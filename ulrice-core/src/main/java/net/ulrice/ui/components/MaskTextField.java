@@ -101,15 +101,14 @@ public class MaskTextField extends JTextField {
 				|| chr == CHARACTER_UPPERCASE_MASK_CHAR || chr == CHARACTER_OR_NUMBER_LOWERCASE_MASK_CHAR || chr == CHARACTER_OR_NUMBER_UPPERCASE_MASK_CHAR;
 	}
 
+	
+	
 	@Override
-	public void updateUI() {
+	public void updateUI() {	    	    
 		setUI(new MaskTextFieldUI());
 		int fontSize = getFont().getSize();
 		int fontStyle = getFont().getStyle();
 		setFont(new Font("monospaced", fontStyle, fontSize));		
-        setSelectedTextColor(UIManager.getColor("nimbusSelectedText"));
-        setSelectionColor(UIManager.getColor("nimbusSelectionBackground"));
-        setDisabledTextColor(UIManager.getColor("nimbusDisabledText"));
 	}
 
 	@Override
@@ -204,7 +203,11 @@ public class MaskTextField extends JTextField {
 
 		@Override
 		public View create(Element elem) {
-			return new MaskFieldView(elem);
+		    if(mask != null) {
+		        return new MaskFieldView(elem);
+		    } else {
+	            return super.create(elem);		        
+		    }
 		}
 	}
 
