@@ -26,12 +26,14 @@ public class JSpinnerViewAdapter extends AbstractViewAdapter implements ChangeLi
 
 	@Override
 	public Object getValue() {
-		return viewToModel(spinner.getValue());
+	    final Integer spinnerValue = (Integer) spinner.getValue();
+		return viewToModel(spinnerValue == null ? 0 : spinnerValue);
 	}
 
 	@Override
 	protected void setValue(Object value) {
-		spinner.setValue((Integer) modelToView(value));
+	    final Integer spinnerValue = (value == null ? 0 : (Integer) value);
+		spinner.setValue(modelToView(spinnerValue));
 	}
 
 	@Override
