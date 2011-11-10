@@ -90,6 +90,21 @@ public class Element {
 		
 		readObject();
 	}
+	
+	public void setReadOnly(String columnId, boolean readOnly) {
+        if (!idModelMap.containsKey(columnId)) {
+            throw new IllegalStateException("Unknown column id: " + columnId);
+        }
+        idModelMap.get(columnId).setReadOnly(readOnly);	    
+	}
+	
+	public void setReadOnly(int columnIndex, boolean readOnly) {
+	    if (columnIndex < 0 || columnIndex >= modelList.size()) {
+	        throw new IndexOutOfBoundsException("ColumnIndex: " + columnIndex
+	                 + ", Size: " + modelList.size());
+	    }
+	    modelList.get(columnIndex).setReadOnly(readOnly);
+	}
 
 	/**
 	 * Returns, if a cell is readonly.
