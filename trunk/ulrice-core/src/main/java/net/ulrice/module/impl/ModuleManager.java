@@ -52,17 +52,16 @@ public class ModuleManager implements IFModuleManager, IFModuleStructureManager 
     private final IdentityHashMap<IFController, IdentityHashMap<Object, Object>> blockers =
             new IdentityHashMap<IFController, IdentityHashMap<Object, Object>>();
 
-    public void openModule(final String moduleId, final ControllerProviderCallback callback)
-        throws ModuleInstantiationException {
+    public void openModule(final String moduleId, final ControllerProviderCallback callback) {
         openModule(moduleId, null, callback);
     }
 
-    public void openModule(final String moduleId, final IFController parent, final ControllerProviderCallback callback)
-        throws ModuleInstantiationException {
+    public void openModule(final String moduleId, final IFController parent, final ControllerProviderCallback callback) {
         final IFModule module = moduleMap.get(moduleId);
 
         if (module == null) {
-            throw new ModuleInstantiationException("Module with id (" + moduleId + ") could not be found.", null);
+            callback.onFailure(new ModuleInstantiationException("Module with id (" + moduleId + ") could not be found.", null));
+            return;
         }
 
         final boolean isSingleModule = ModuleType.SingleModule.equals(module.getModuleInstanceType());

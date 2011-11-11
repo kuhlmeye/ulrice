@@ -75,21 +75,16 @@ public class ModuleTree extends JTree implements IFMainFrameComponent, MouseList
             if (pathComponent instanceof ModuleTreeNode) {
                 ModuleTreeNode node = (ModuleTreeNode) pathComponent;
                 if (!node.isGroup()) {
-                    try {
-                        Ulrice.getModuleManager().openModule(node.getModule().getUniqueId(), new ControllerProviderCallback() {
-                            @Override
-                            public void onFailure(ModuleInstantiationException exc) {
-                                Ulrice.getMessageHandler().handleException(exc);
-                            }
+                    Ulrice.getModuleManager().openModule(node.getModule().getUniqueId(), new ControllerProviderCallback() {
+                        @Override
+                        public void onFailure(ModuleInstantiationException exc) {
+                            Ulrice.getMessageHandler().handleException(exc);
+                        }
 
-                            @Override
-                            public void onControllerReady(IFController controller) {
-                            }
-                        });
-                    }
-                    catch (ModuleInstantiationException e1) {
-                        Ulrice.getMessageHandler().handleException(e1);
-                    }
+                        @Override
+                        public void onControllerReady(IFController controller) {
+                        }
+                    });
                 }
             }
         }
