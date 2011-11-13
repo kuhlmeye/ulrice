@@ -303,9 +303,13 @@ public class TabbedWorkarea extends JTabbedPane implements IFWorkarea, MouseList
         
         if (e.getComponent() instanceof TabControllerPanel) {
             final TabControllerPanel tabCtrlPanel = (TabControllerPanel) e.getComponent();
-            Ulrice.getModuleManager().activateModule(tabCtrlPanel.getController());
-            if (e.isPopupTrigger()) {
-                showPopup(tabCtrlPanel, e.getPoint());
+            IFController tabCtrl = tabCtrlPanel.getController();
+            IFController currentCtrl = Ulrice.getModuleManager().getCurrentController();
+            if(tabCtrl != null && !tabCtrl.equals(currentCtrl)) {            
+                Ulrice.getModuleManager().activateModule(tabCtrl);
+                if (e.isPopupTrigger()) {
+                    showPopup(tabCtrlPanel, e.getPoint());
+                }
             }
         }
     }

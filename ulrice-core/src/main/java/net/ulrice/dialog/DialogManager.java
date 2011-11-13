@@ -1,5 +1,8 @@
 package net.ulrice.dialog;
 
+import java.awt.event.ComponentEvent;
+import java.awt.event.FocusAdapter;
+import java.awt.event.FocusEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.util.ArrayList;
@@ -40,6 +43,8 @@ public class DialogManager {
 
     private final MainFrameWindowListener windowListener = new MainFrameWindowListener();
 
+    private final MainFrameFocusListener focusListener = new MainFrameFocusListener();
+
     public DialogManager() {
         Ulrice.addConfigurationListener(new ConfigurationListener() {
             @Override
@@ -68,6 +73,7 @@ public class DialogManager {
         dlgInfo.ctrl = controller;
 
         dialog.addWindowListener(windowListener);
+        dialog.addFocusListener(focusListener);
 
         switch (mode) {
             case ApplicationModal:
@@ -75,7 +81,7 @@ public class DialogManager {
                 Ulrice.getModuleManager().addBlocker(controller, dialog);
                 break;
             case ModuleModal:
-                dialog.setFocusableWindowState(false);
+                dialog.setFocusableWindowState(true);
                 Ulrice.getModuleManager().addBlocker(controller, dialog);
                 break;
             case NonModal:
@@ -146,6 +152,31 @@ public class DialogManager {
 
     }
 
+    private class MainFrameFocusListener extends FocusAdapter {
+
+        private boolean isInEventHandling = false;
+        
+        @Override
+        public void focusLost(FocusEvent e) {
+            super.focusLost(e);
+            if (isInEventHandling) {
+                return;
+            }
+            isInEventHandling = true;
+
+            if (isMainFrameEvent(e)) {
+                List<DialogInformation> list = ctrlDialogMap.get(Ulrice.getModuleManager().getCurrentController());
+                if (list != null) {
+                    for (DialogInformation item : list) {
+                        item.dialog.toFront();
+                    }
+                }
+            }
+            isInEventHandling = false;
+        }
+        
+    }
+        
     private class MainFrameWindowListener extends WindowAdapter {
 
         private boolean isInEventHandling = false;
@@ -212,9 +243,9 @@ public class DialogManager {
                 }
             }
         }
+    }
 
-        private boolean isMainFrameEvent(WindowEvent e) {
-            return e.getSource() == Ulrice.getMainFrame().getFrame();
-        }
+    private boolean isMainFrameEvent(ComponentEvent e) {
+        return e.getSource() == Ulrice.getMainFrame().getFrame();
     }
 }
