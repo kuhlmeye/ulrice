@@ -338,9 +338,15 @@ public class UTableComponent extends JPanel {
 	 */
 	protected void updateColumnModel() {
 	    
+	    if(fixedColumns < originalFixedColumns) {
+	        setFixedColumns(originalFixedColumns);
+	    }
+	    
 	    if(originalFixedColumns >= attributeModel.getColumnCount()) {
 	        setFixedColumns(attributeModel.getColumnCount() > 0 ? attributeModel.getColumnCount() - 1 : 0);
 	    }
+	    
+	    
 	    
 		TableColumnModel columnModel = null;
 		List<ColumnDefinition<? extends Object>> columnDefinitions = attributeModel.getColumns();
@@ -501,7 +507,19 @@ public class UTableComponent extends JPanel {
         System.arraycopy(tmpRows, 0, result, 0, idx);
         return result;
     }
+        
 
+    public boolean isSingleRowSelected() {
+        ListSelectionModel sm = getSelectionModel();
+        return !sm.isSelectionEmpty() && sm.getMinSelectionIndex() == sm.getMaxSelectionIndex(); 
+    }
+    
+    public boolean areRowsSelected() {
+        ListSelectionModel sm = getSelectionModel();
+        return !sm.isSelectionEmpty();         
+    }
+
+   
     public int[] getSelectedRowsModelIndex() {
         int min = getSelectionModel().getMinSelectionIndex();
         int max = getSelectionModel().getMaxSelectionIndex();
@@ -687,5 +705,4 @@ public class UTableComponent extends JPanel {
         }
         popupMenu.show(component, x, y);
     }
-
 }
