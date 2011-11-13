@@ -86,7 +86,7 @@ public class MaskTextField extends JTextField {
 			this.cleanedMask = builderMask.toString();
 			this.maskLen = cleanedMask.length();
 
-			((MaskTextFieldDocument) getDocument()).setMaxLen(numMaskChars);
+			((MaskTextFieldDocument) getDocument()).setMaxLen(numMaskChars == 0 ? Integer.MAX_VALUE : numMaskChars);
 			displayedMask = builderDisplay.toString();
 			updateUI();
 		}
@@ -119,7 +119,7 @@ public class MaskTextField extends JTextField {
 	private class MaskTextFieldDocument extends PlainDocument {
 
 		private static final long serialVersionUID = -832649015081183062L;
-		private int maxLen = 0;
+		private int maxLen = Integer.MAX_VALUE;
 
 		
 		public void setMaxLen(int maxLen) {
@@ -133,7 +133,7 @@ public class MaskTextField extends JTextField {
 			}
 
 			// Check input..
-			if (cleanedMask != null) {
+			if (cleanedMask != null && !"".equals(cleanedMask)) {
 				StringBuilder resultStr = new StringBuilder();
 				char[] maskArr = cleanedMask.toCharArray();
 				int idxMask = 0;
