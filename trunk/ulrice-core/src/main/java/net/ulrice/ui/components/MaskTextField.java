@@ -3,6 +3,7 @@ package net.ulrice.ui.components;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics;
+import java.awt.Insets;
 import java.awt.Rectangle;
 import java.awt.Shape;
 import java.util.ArrayList;
@@ -11,6 +12,7 @@ import java.util.List;
 import javax.swing.JTextField;
 import javax.swing.UIDefaults;
 import javax.swing.UIManager;
+import javax.swing.border.LineBorder;
 import javax.swing.event.DocumentEvent;
 import javax.swing.plaf.metal.MetalTextFieldUI;
 import javax.swing.text.AttributeSet;
@@ -85,6 +87,7 @@ public class MaskTextField extends JTextField {
 			this.mask = mask;
 			this.cleanedMask = builderMask.toString();
 			this.maskLen = cleanedMask.length();
+			setColumns(maskLen);
 
 			((MaskTextFieldDocument) getDocument()).setMaxLen(numMaskChars == 0 ? Integer.MAX_VALUE : numMaskChars);
 			displayedMask = builderDisplay.toString();
@@ -108,7 +111,7 @@ public class MaskTextField extends JTextField {
 		setUI(new MaskTextFieldUI());
 		int fontSize = getFont().getSize();
 		int fontStyle = getFont().getStyle();
-		setFont(new Font("monospaced", fontStyle, fontSize));		
+		setFont(new Font("monospaced", fontStyle, fontSize));	        
 	}
 
 	@Override
@@ -169,7 +172,7 @@ public class MaskTextField extends JTextField {
 				int lenAfterInsert = maxLen - str.length() + 1;
 				String text = resultStr.toString();
 				if (lenAfterInsert < 0) {
-					text = text.substring(0, -(lenAfterInsert + 1));
+					text = str.substring(0, -(lenAfterInsert + 1));
 				}
 				if(offs < getLength()) {
 					super.remove(offs, text.length());
@@ -201,6 +204,8 @@ public class MaskTextField extends JTextField {
 
 	private class MaskTextFieldUI extends MetalTextFieldUI {
 
+	    
+	    
 		@Override
 		public View create(Element elem) {
 		    if(mask != null) {

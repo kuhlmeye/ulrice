@@ -59,7 +59,7 @@ public class BorderStateMarker implements Border, ImageObserver, IFStateMarker {
     @Override
     public Insets getBorderInsets(Component c) {
         // TODO Add to uimanager
-        return new Insets(2, 2, 2, 2);
+        return new Insets(2, 3, 2, 3);
     }
 
     /**
