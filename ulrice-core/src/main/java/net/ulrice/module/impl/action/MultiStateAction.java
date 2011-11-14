@@ -50,7 +50,7 @@ public class MultiStateAction extends ModuleDelegationAction  {
     
     public void setCurrentActionId(String id) {
         for(int i = 0; i < actions.size(); i++) {
-            if (actions.get(i).equals(id)) {
+            if (actions.get(i).getUniqueId().equals(id)) {
                 actionState = i;
                 updateAction();
                 break;
