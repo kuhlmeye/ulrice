@@ -10,6 +10,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.Map.Entry;
 
+import javax.swing.SwingUtilities;
 import javax.swing.event.EventListenerList;
 
 import net.ulrice.databinding.bufferedbinding.IFAttributeInfo;
@@ -150,11 +151,38 @@ public class TableAM implements IFAttributeModel {
                     oldUniqueId = entry.getKey();
                     // remove Element from new Elements and replace it with the former deleted one
                     // newElements.remove(getElementById(newUniqueId));
-                    keyDeleteMap.remove(key);
+                    keyDeleteMap.remove(oldUniqueId);
                 }
             }
         }
         return oldUniqueId;
+    }
+    
+    private Element checkAgainstDeletedElements(Element element) {
+    	Element oldElement = null;
+    	String oldUniqueId = checkForOldUniqueId(buildKey(element), element.getUniqueId());
+
+        if (oldUniqueId == null) {
+            return element;
+        }
+        else {
+            // delete old element from delElements
+            // how to find old element?
+            Iterator<Element> iter = delElements.iterator();
+            while (iter.hasNext()) {
+                Element el = iter.next();
+                if (oldUniqueId.equals(el.getUniqueId())) {
+                    oldElement = el;
+                    oldElement.setInsertedOrRemoved(false);
+                    iter.remove();
+                    break;
+                }
+            }
+            oldElement.setCurrentValue(element.getCurrentValue());
+
+            elementIdMap.put(oldUniqueId, oldElement);
+            return oldElement;
+        }
     }
 
     // end of unique constraint handling
@@ -307,23 +335,57 @@ public class TableAM implements IFAttributeModel {
         return readOnly;
     }
 
-    protected void elementDataChanged(Element element, String columnId) {
-        fireUpdateViews();
+    protected void elementDataChanged(final Element element, final String columnId) {
+    	if(!SwingUtilities.isEventDispatchThread()) {
+		    SwingUtilities.invokeLater(new Runnable() {                    
+                @Override
+                public void run() {
+                    fireUpdateViews();
+                }
+            });
+		} else {
+    		fireUpdateViews();
+    	}
 
         if (columnIds != null) {
             checkUniqueConstraint(element);
+            if (keyDeleteMap.containsValue(buildKey(element))) {
+            	checkAgainstDeletedElements(element);
+            }
+            checkAgainstDeletedElements(element);
         }
 
-        ElementLifecycleListener[] listeners = listenerList.getListeners(ElementLifecycleListener.class);
-        if (listeners != null) {
-            for (ElementLifecycleListener constraint : listeners) {
-                constraint.elementChanged(this, element, columnId);
-            }
-        }
-        fireDataChanged();
+        if(!SwingUtilities.isEventDispatchThread()) {
+		    SwingUtilities.invokeLater(new Runnable() {                    
+                @Override
+                public void run() {
+                	fireElementChanged(element, columnId);
+                }
+            });
+		} else {
+			fireElementChanged(element, columnId);
+    	}
+        
+//        ElementLifecycleListener[] listeners = listenerList.getListeners(ElementLifecycleListener.class);
+//        if (listeners != null) {
+//            for (ElementLifecycleListener constraint : listeners) {
+//                constraint.elementChanged(TableAM.this, element, columnId);
+//            }
+//        }
+        
+        if(!SwingUtilities.isEventDispatchThread()) {
+		    SwingUtilities.invokeLater(new Runnable() {                    
+                @Override
+                public void run() {
+                	fireDataChanged();
+                }
+            });
+		} else {
+			fireDataChanged();
+    	}
     }
 
-    protected void elementStateChanged(Element element) {
+    protected void elementStateChanged(final Element element) {
         if (element.isValid()) {
             invElements.remove(element);
         }
@@ -346,12 +408,39 @@ public class TableAM implements IFAttributeModel {
         valid = invElements.isEmpty();
         dirty = !modElements.isEmpty() || !delElements.isEmpty() || !newElements.isEmpty();
 
-        fireElementStatusChanged(element);
-
-        if (oldValid != valid || oldDirty != dirty) {
-            fireStateChanged();
+        if(!SwingUtilities.isEventDispatchThread()) {
+            SwingUtilities.invokeLater(new Runnable() {                    
+                @Override
+                public void run() {
+                    fireElementStatusChanged(element);
+                }
+            });
+        } else {
+        	fireElementStatusChanged(element);
         }
 
+        if (oldValid != valid || oldDirty != dirty) {
+        	if(!SwingUtilities.isEventDispatchThread()) {
+                SwingUtilities.invokeLater(new Runnable() {                    
+                    @Override
+                    public void run() {
+                        fireStateChanged();
+                    }
+                });
+            } else {
+        		fireStateChanged();
+        	}
+        }
+
+    }
+    
+    private void fireElementChanged(final Element element, final String columnId) {
+    	ElementLifecycleListener[] listeners = listenerList.getListeners(ElementLifecycleListener.class);
+        if (listeners != null) {
+            for (ElementLifecycleListener constraint : listeners) {
+                constraint.elementChanged(TableAM.this, element, columnId);
+            }
+        }
     }
 
     private void fireDataChanged() {
@@ -688,28 +777,13 @@ public class TableAM implements IFAttributeModel {
 
         // unique constraint handling
         Element oldElement = element;
-        String oldUniqueId = checkForOldUniqueId(buildKey(element), element.getUniqueId());
-
-        if (oldUniqueId == null) {
-            registerNewElement(element);
+        if (keyDeleteMap.containsValue(buildKey(element))) {
+        	oldElement = checkAgainstDeletedElements(element);
         }
         else {
-            // delete old element from delElements
-            // how to find old element?
-            Iterator<Element> iter = delElements.iterator();
-            while (iter.hasNext()) {
-                Element el = iter.next();
-                if (oldUniqueId.equals(el.getUniqueId())) {
-                    oldElement = el;
-                    oldElement.setInsertedOrRemoved(false);
-                    iter.remove();
-                    break;
-                }
-            }
-            oldElement.setCurrentValue(element.getCurrentValue());
-
-            elementIdMap.put(oldUniqueId, oldElement);
+        	registerNewElement(element);
         }
+        
         // end of unique constraint handling
 
         if (index >= 0) {

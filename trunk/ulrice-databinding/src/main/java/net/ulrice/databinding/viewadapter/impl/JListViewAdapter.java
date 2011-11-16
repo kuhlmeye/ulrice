@@ -36,7 +36,7 @@ public class JListViewAdapter extends AbstractViewAdapter implements ListModel {
 			getTooltipHandler().updateTooltip(binding, list);
 		}
 		if(getStateMarker() != null) {
-			getStateMarker().updateState(isEditable(), binding.isDirty(), binding.isValid(), list);
+			getStateMarker().updateState(binding, isEditable(), binding.isDirty(), binding.isValid(), list);
 		}
 	}
 	

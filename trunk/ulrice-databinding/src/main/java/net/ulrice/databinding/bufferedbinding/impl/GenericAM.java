@@ -300,7 +300,7 @@ public class GenericAM<T> implements IFAttributeModel<T>, IFViewChangeListener {
 
 	public void fireUpdateViews() {
 		if (viewAdapterList != null) {
-			for (IFViewAdapter viewAdapter : viewAdapterList) {
+			for (final IFViewAdapter viewAdapter : viewAdapterList) {
 				viewAdapter.updateFromBinding(this);
 			}
 		}
