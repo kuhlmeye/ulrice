@@ -16,7 +16,7 @@ public class BackgroundStateMarker implements IFStateMarker {
 
 	
 	@Override
-	public void updateState(boolean editable, boolean dirty, boolean valid, JComponent component) {
+	public void updateState(Object value, boolean editable, boolean dirty, boolean valid, JComponent component) {
 		if(!valid) {
 			component.setBackground(INVALID_BG_COLOR);
 		} else {

@@ -237,7 +237,7 @@ public class JTableViewAdapter extends AbstractViewAdapter implements TableModel
 			getTooltipHandler().updateTooltip(binding, table);
 		}
 		if (getStateMarker() != null) {
-			getStateMarker().updateState(isEditable(), binding.isDirty(), binding.isValid(), table);
+			getStateMarker().updateState(binding, isEditable(), binding.isDirty(), binding.isValid(), table);
 		}
 	}
 

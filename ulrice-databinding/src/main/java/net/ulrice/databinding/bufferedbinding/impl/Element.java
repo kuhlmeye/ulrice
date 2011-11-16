@@ -238,16 +238,7 @@ public class Element {
 		valid &= originalValueValid;
 
 		if (oldDirty != dirty || oldValid != valid) {
-	         if(!SwingUtilities.isEventDispatchThread()) {
-	                SwingUtilities.invokeLater(new Runnable() {                    
-	                    @Override
-	                    public void run() {
-	                        fireStateChanged();
-	                    }
-	                });
-	            } else {
-	                fireStateChanged();
-	            }
+	        fireStateChanged();
 		}
 	}
 
@@ -318,17 +309,7 @@ public class Element {
 						.getValueConverter().modelToView(value) : value);
 				model.setValue(converted);
 			}
-			// TODO Do we need this? Or is it only because of the change of the original value
-			if(!SwingUtilities.isEventDispatchThread()) {
-			    SwingUtilities.invokeLater(new Runnable() {                    
-                    @Override
-                    public void run() {
-                        fireValueChanged(null);
-                    }
-                });
-			} else {
-                fireValueChanged(null);
-			}
+            fireValueChanged(null);
 			updateState();
 		}
 	}

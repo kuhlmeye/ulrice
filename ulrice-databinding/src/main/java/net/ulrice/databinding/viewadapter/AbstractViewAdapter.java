@@ -112,7 +112,7 @@ public abstract class AbstractViewAdapter<M, V> implements IFViewAdapter<M, V> {
             getTooltipHandler().updateTooltip(binding, getComponent());
         }
         if (getStateMarker() != null) {
-            getStateMarker().updateState(binding.isReadOnly() && isEditable(), binding.isDirty(), binding.isValid(), getComponent());
+            getStateMarker().updateState(binding, binding.isReadOnly() && isEditable(), binding.isDirty(), binding.isValid(), getComponent());
         }
     }
 
