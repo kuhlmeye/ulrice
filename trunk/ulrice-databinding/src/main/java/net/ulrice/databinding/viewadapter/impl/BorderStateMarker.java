@@ -169,9 +169,4 @@ public class BorderStateMarker implements Border, ImageObserver, IFStateMarker {
 		component.setBorder(this);
 	}
 	
-	public enum BorderStateMarkerStrategy {
-		ICON_ONLY,
-		BORDER_ONLY,
-		ALL;
-	}
 }
