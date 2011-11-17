@@ -3,6 +3,7 @@ package net.ulrice.databinding.ui;
 import java.awt.Color;
 import java.awt.Insets;
 
+import javax.swing.ImageIcon;
 import javax.swing.UIManager;
 
 import net.ulrice.databinding.viewadapter.impl.BorderStateMarker;
@@ -17,8 +18,8 @@ public class BindingUI implements BindingUIConstants {
 		UIManager.put(BORDER_STATE_MARKER_CHANGED_OUTER_BORDER, Color.LIGHT_GRAY);
 		UIManager.put(BORDER_STATE_MARKER_INVALID_INNER_BORDER, new Color(100, 30, 30));
 		UIManager.put(BORDER_STATE_MARKER_INVALID_OUTER_BORDER, Color.LIGHT_GRAY);
-		UIManager.put(BORDER_STATE_MARKER_CHANGED_IMAGE, BorderStateMarker.class.getResource("attention.png"));
-		UIManager.put(BORDER_STATE_MARKER_INVALID_IMAGE, BorderStateMarker.class.getResource("cross.png"));
+		UIManager.put(BORDER_STATE_MARKER_CHANGED_IMAGE, new ImageIcon(BorderStateMarker.class.getResource("attention.png")));
+		UIManager.put(BORDER_STATE_MARKER_INVALID_IMAGE, new ImageIcon(BorderStateMarker.class.getResource("cross.png")));
 	}
 	
 	public static Color getColor(String key, Color defaultColor) {
