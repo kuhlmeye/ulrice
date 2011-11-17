@@ -1,17 +1,17 @@
 package net.ulrice.databinding.viewadapter.impl;
 
-import java.awt.Color;
 import java.awt.Component;
 import java.awt.Graphics;
 import java.awt.Image;
 import java.awt.Insets;
 import java.awt.image.ImageObserver;
 
-import javax.swing.ImageIcon;
+import javax.swing.Icon;
 import javax.swing.JComponent;
+import javax.swing.UIManager;
 import javax.swing.border.Border;
 
-import net.ulrice.databinding.IFBinding;
+import net.ulrice.databinding.ui.BindingUI;
 import net.ulrice.databinding.viewadapter.IFStateMarker;
 
 /**
@@ -23,34 +23,32 @@ import net.ulrice.databinding.viewadapter.IFStateMarker;
 public class BorderStateMarker implements Border, ImageObserver, IFStateMarker {
 
     /** The attention image drawn, if the data is changed. */
-    private ImageIcon attentionImage;
+    private Icon changedIcon;
     
     /** The cross image draw, if the data is not valid. */
-    private ImageIcon crossImage;
+    private Icon invalidIcon;
     
     private boolean valid = true;
     
     private boolean dirty = false;
 
-    private boolean iconOnly;
+    private BorderStateMarkerStrategy strategy;
 
     /**
      * Creates a new border state marker.
      */
     public BorderStateMarker() {
-        this(false);
+        this(BorderStateMarkerStrategy.BORDER_ONLY);
         
     }
         /**
          * Creates a new border state marker.
          * @param iconOnly true, if only the icon should be shown. 
          */
-    public BorderStateMarker(boolean iconOnly) {
-        // TODO Add to uimanager
-        attentionImage = new ImageIcon(getClass().getResource("attention.png"));
-        // TODO Add to uimanager
-        crossImage = new ImageIcon(getClass().getResource("cross.png"));
-        this.iconOnly = iconOnly;
+    public BorderStateMarker(BorderStateMarkerStrategy strategy) {
+        changedIcon = UIManager.getIcon(BindingUI.BORDER_STATE_MARKER_CHANGED_IMAGE);
+        invalidIcon = UIManager.getIcon(BindingUI.BORDER_STATE_MARKER_INVALID_IMAGE);
+        this.strategy = strategy;
     }
 
     /**
@@ -58,8 +56,7 @@ public class BorderStateMarker implements Border, ImageObserver, IFStateMarker {
      */
     @Override
     public Insets getBorderInsets(Component c) {
-        // TODO Add to uimanager
-        return new Insets(2, 3, 2, 3);
+        return UIManager.get(BindingUI.BORDER_STATE_MARKER_INSETS) != null ? UIManager.getInsets(BindingUI.BORDER_STATE_MARKER_INSETS) : new Insets(2, 3, 2, 3);
     }
 
     /**
@@ -77,12 +74,12 @@ public class BorderStateMarker implements Border, ImageObserver, IFStateMarker {
     @Override
     public void paintBorder(Component c, Graphics g, int x, int y, int width, int height) {
 		if(!valid) {
-            drawInvalid(g, x, y, width, height);
+            drawInvalid(c, g, x, y, width, height);
 		} else {
 			if(dirty) {
-                drawChanged(g, x, y, width, height);
+                drawChanged(c, g, x, y, width, height);
 			} else {
-                drawNormal(g, x, y, width, height);
+                drawNormal(c, g, x, y, width, height);
 			}
 		}
     }
@@ -96,13 +93,11 @@ public class BorderStateMarker implements Border, ImageObserver, IFStateMarker {
      * @param width The width of the component.
      * @param height The height of the component.
      */
-    private void drawNormal(Graphics g, int x, int y, int width, int height) {
-        if(!iconOnly) {
-            // TODO Add colors to uimanager
-            g.setColor(Color.LIGHT_GRAY);
+    private void drawNormal(Component c, Graphics g, int x, int y, int width, int height) {
+        if(strategy != BorderStateMarkerStrategy.ICON_ONLY) {
+        	g.setColor(UIManager.getColor(BindingUI.BORDER_STATE_MARKER_NORMAL_OUTER_BORDER));
             g.drawRect(x, y, width - 1, height - 1);
-            // TODO Add colors to uimanager
-            g.setColor(Color.DARK_GRAY);
+            g.setColor(UIManager.getColor(BindingUI.BORDER_STATE_MARKER_NORMAL_INNER_BORDER));
             g.drawRect(x + 1, y + 1, width - 3, height - 3);
         }
     }
@@ -116,17 +111,17 @@ public class BorderStateMarker implements Border, ImageObserver, IFStateMarker {
      * @param width The width of the component.
      * @param height The height of the component.
      */
-    private void drawChanged(Graphics g, int x, int y, int width, int height) {
-        if(!iconOnly) {
-            // TODO Add colors to uimanager
-            g.setColor(Color.LIGHT_GRAY);
+    private void drawChanged(Component c, Graphics g, int x, int y, int width, int height) {
+    	if(strategy != BorderStateMarkerStrategy.ICON_ONLY) {
+    		g.setColor(UIManager.getColor(BindingUI.BORDER_STATE_MARKER_CHANGED_OUTER_BORDER));
             g.drawRect(x, y, width - 1, height - 1);
-            // TODO Add colors to uimanager
-            g.setColor(new Color(130, 130, 30));
+            g.setColor(UIManager.getColor(BindingUI.BORDER_STATE_MARKER_CHANGED_INNER_BORDER));
             g.drawRect(x + 1, y + 1, width - 3, height - 3);
     
         }
-        g.drawImage(attentionImage.getImage(), x + width - 10, 0, 10, 10, this);
+    	if (strategy != BorderStateMarkerStrategy.BORDER_ONLY) {
+    		changedIcon.paintIcon(c, g, x + width -10, 0);
+    	}
     }
 
     /**
@@ -138,16 +133,16 @@ public class BorderStateMarker implements Border, ImageObserver, IFStateMarker {
      * @param width The width of the component.
      * @param height The height of the component.
      */
-    private void drawInvalid(Graphics g, int x, int y, int width, int height) {
-        if(!iconOnly) {
-            // TODO Add colors to uimanager
-            g.setColor(Color.LIGHT_GRAY);
+    private void drawInvalid(Component c, Graphics g, int x, int y, int width, int height) {
+    	if(strategy != BorderStateMarkerStrategy.ICON_ONLY) {
+    		g.setColor(UIManager.getColor(BindingUI.BORDER_STATE_MARKER_INVALID_OUTER_BORDER));
             g.drawRect(x, y, width - 1, height - 1);
-            // TODO Add colors to uimanager
-            g.setColor(new Color(100, 30, 30));
+            g.setColor(UIManager.getColor(BindingUI.BORDER_STATE_MARKER_INVALID_INNER_BORDER));
             g.drawRect(x + 1, y + 1, width - 3, height - 3);
         }
-        g.drawImage(crossImage.getImage(), x + width - 10, 0, 10, 10, this);
+    	if (strategy != BorderStateMarkerStrategy.BORDER_ONLY) {
+    		invalidIcon.paintIcon(c, g, x + width -10, 0);
+    	}
     }
 
     /**
@@ -172,5 +167,11 @@ public class BorderStateMarker implements Border, ImageObserver, IFStateMarker {
 	@Override
 	public void initialize(JComponent component) {
 		component.setBorder(this);
+	}
+	
+	public enum BorderStateMarkerStrategy {
+		ICON_ONLY,
+		BORDER_ONLY,
+		ALL;
 	}
 }
