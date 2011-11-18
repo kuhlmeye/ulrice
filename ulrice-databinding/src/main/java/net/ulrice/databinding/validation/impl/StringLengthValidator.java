@@ -7,10 +7,10 @@ import net.ulrice.databinding.validation.ValidationResult;
 
 
 public class StringLengthValidator extends AbstractValidator<String> {
-    private final int _minLength;
-    private final int _maxLength;
+    private final Integer _minLength;
+    private final Integer _maxLength;
     
-    public StringLengthValidator (int minLength, int maxLength) {
+    public StringLengthValidator (Integer minLength, Integer maxLength) {
         _minLength = minLength;
         _maxLength = maxLength;
     }
@@ -24,13 +24,13 @@ public class StringLengthValidator extends AbstractValidator<String> {
 			return result;
 		}
 		
-        if (attribute.length () < _minLength) {
+        if (_minLength != null && attribute.length () < _minLength) {
         	// TODO Christof Internationalize
-            result.addValidationError(new ValidationError(bindingId, "min. LÃ¤nge: " + _minLength, null));
+            result.addValidationError(new ValidationError(bindingId, "min. Länge: " + _minLength, null));
         }
-        if (attribute.length () > _maxLength) {
+        if (_maxLength != null && attribute.length () > _maxLength) {
         	// TODO Christof Internationalize
-            result.addValidationError(new ValidationError(bindingId, "max. LÃ¤nge: " + _minLength, null));
+            result.addValidationError(new ValidationError(bindingId, "max. Länge: " + _minLength, null));
         }
         
         return result;
