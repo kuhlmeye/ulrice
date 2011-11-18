@@ -302,6 +302,9 @@ public class Application implements IFProcessEventListener, ActionListener {
 									LOG.log(Level.WARNING, "Error parsing application description.", e);
 								}
 							}
+							else {
+							    LOG.log(Level.WARNING, "Application description not found: " + appDescr);
+							}
 						}
 					}
 				}
