@@ -67,7 +67,7 @@ public class ColumnDefinition<T extends Object> {
     }
 	
     public ColumnDefinition(String columnName, IFDynamicModelValueAccessor dataAccessor, Class<T> columnClass) {
-        this.id = dataAccessor.getAttributeId();
+        this.id = dataAccessor != null ? dataAccessor.getAttributeId() : columnName;
         this.columnName = columnName;
         this.dataAccessor = dataAccessor;
         this.columnClass = columnClass;

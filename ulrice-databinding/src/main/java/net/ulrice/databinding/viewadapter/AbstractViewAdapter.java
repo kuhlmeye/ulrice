@@ -102,6 +102,9 @@ public abstract class AbstractViewAdapter<M, V> implements IFViewAdapter<M, V> {
             if(binding.isReadOnly() && isComponentEnabled()) {
                 setComponentEnabled(false);
             }
+            if(!binding.isReadOnly() && isEditable()) {
+                setComponentEnabled(true);
+            }
             
             addComponentListener();
         }
