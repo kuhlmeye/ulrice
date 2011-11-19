@@ -39,7 +39,7 @@ public class TableAM implements IFAttributeModel {
     protected Map<String, Element> elementIdMap = new HashMap<String, Element>();
 
     private List<IFValidator> validators = new ArrayList<IFValidator>();
-    private EventListenerList listenerList;
+    private EventListenerList listenerList = new EventListenerList();
     private String id;
     private boolean readOnly;
     private long nextUniqueId;
@@ -67,6 +67,25 @@ public class TableAM implements IFAttributeModel {
     private Map<String, List< ?>> keyDeleteMap = new HashMap<String, List< ?>>();
     private Map<List< ?>, ValidationError> currentErrorMap = new HashMap<List< ?>, ValidationError>();
 
+    
+    public TableAM(IFIndexedModelValueAccessor tableMVA, IFAttributeInfo attributeInfo) {
+        this(tableMVA, attributeInfo, false);
+    }
+
+    public TableAM(IFIndexedModelValueAccessor tableMVA, IFAttributeInfo attributeInfo, boolean readOnly) {
+        this(tableMVA.getAttributeId(), tableMVA, attributeInfo, readOnly);
+    }
+    
+    public TableAM(String id, IFIndexedModelValueAccessor tableMVA, IFAttributeInfo attributeInfo, boolean readOnly) {
+        this.id = id;
+        this.tableMVA = tableMVA;
+        this.readOnly = readOnly;
+        this.attributeInfo = attributeInfo;
+
+        nextUniqueId = System.currentTimeMillis();
+    }
+
+    
     private void checkUniqueConstraint(Element element) {
         if (columnIds == null) {
             return;
@@ -186,20 +205,6 @@ public class TableAM implements IFAttributeModel {
     }
 
     // end of unique constraint handling
-
-    public TableAM(IFIndexedModelValueAccessor tableMVA, IFAttributeInfo attributeInfo, boolean readOnly) {
-        this.tableMVA = tableMVA;
-
-        nextUniqueId = System.currentTimeMillis();
-
-        this.id = tableMVA.getAttributeId();
-        this.listenerList = new EventListenerList();
-        this.readOnly = readOnly;
-    }
-
-    public TableAM(IFIndexedModelValueAccessor tableMVA, IFAttributeInfo attributeInfo) {
-        this(tableMVA, attributeInfo, false);
-    }
 
     /**
      * @see net.ulrice.databinding.bufferedbinding.IFAttributeModel#getId()
