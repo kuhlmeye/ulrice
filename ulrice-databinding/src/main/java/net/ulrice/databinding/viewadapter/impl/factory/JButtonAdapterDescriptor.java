@@ -21,7 +21,7 @@ public class JButtonAdapterDescriptor implements IFViewAdapterDescriptor {
         JButtonViewAdapter viewAdapter = new JButtonViewAdapter(button);
 
         DetailedTooltipHandler tooltipHandler = new DetailedTooltipHandler();
-        BorderStateMarker stateMarker = new BorderStateMarker();
+        BorderStateMarker stateMarker = new BorderStateMarker(button.getBorder());
     	
 		viewAdapter.setTooltipHandler(tooltipHandler);
 		viewAdapter.setStateMarker(stateMarker);

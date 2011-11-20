@@ -31,7 +31,7 @@ public class VDataBinding extends JPanel {
 		final JTextField tf2 = new JTextField();
 		
 		textFieldGA1 = new JTextComponentViewAdapter(tf1);
-		BorderStateMarker borderStateMarker = new BorderStateMarker();
+		BorderStateMarker borderStateMarker = new BorderStateMarker(textFieldGA1.getComponent().getBorder());
 		textFieldGA1.setStateMarker(borderStateMarker);
 		textFieldGA1.setTooltipHandler(new DetailedTooltipHandler());
 		tf1.setBorder(borderStateMarker);

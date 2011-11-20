@@ -2,15 +2,11 @@ package net.ulrice.databinding.ui;
 
 public interface BindingUIConstants {
 	
-	public static final String BORDER_STATE_MARKER_INSETS = "Ulrice.Binding.BorderStateMarker.Insets";
-	public static final String BORDER_STATE_MARKER_CHANGED_IMAGE = "Ulrice.Binding.BorderStateMarker.Image.Changed";
+    public static final String BORDER_STATE_MARKER_INSETS = "Ulrice.Binding.BorderStateMarker.Image.Changed";
+    public static final String BORDER_STATE_MARKER_CHANGED_IMAGE = "Ulrice.Binding.BorderStateMarker.Image.Changed";
 	public static final String BORDER_STATE_MARKER_INVALID_IMAGE = "Ulrice.Binding.BorderStateMarker.Image.Invalid";
-	public static final String BORDER_STATE_MARKER_NORMAL_INNER_BORDER = "Ulrice.Binding.BorderStateMarker.Border.Inner.Normal";
-	public static final String BORDER_STATE_MARKER_NORMAL_OUTER_BORDER = "Ulrice.Binding.BorderStateMarker.Border.Outer.Normal";
-	public static final String BORDER_STATE_MARKER_CHANGED_INNER_BORDER = "Ulrice.Binding.BorderStateMarker.Border.Inner.Changed";
-	public static final String BORDER_STATE_MARKER_CHANGED_OUTER_BORDER = "Ulrice.Binding.BorderStateMarker.Border.Outer.Changed";
-	public static final String BORDER_STATE_MARKER_INVALID_INNER_BORDER = "Ulrice.Binding.BorderStateMarker.Border.Inner.Invalid";
-	public static final String BORDER_STATE_MARKER_INVALID_OUTER_BORDER = "Ulrice.Binding.BorderStateMarker.Border.Outer.Invalid";
+	public static final String BORDER_STATE_MARKER_CHANGED_BORDER = "Ulrice.Binding.BorderStateMarker.Border.Changed";
+	public static final String BORDER_STATE_MARKER_INVALID_BORDER = "Ulrice.Binding.BorderStateMarker.Border.Invalid";
 	public static final String BACKGROUND_STATE_MARKER_INVALID = "Ulrice.Binding.BackgroundStateMarker.InvalidBackground";
 	public static final String BACKGROUND_STATE_MARKER_CHANGED = "Ulrice.Binding.BackgroundStateMarker.ChangedBackground";
 
