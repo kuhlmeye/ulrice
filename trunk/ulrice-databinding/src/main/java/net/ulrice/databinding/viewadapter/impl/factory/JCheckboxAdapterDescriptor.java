@@ -20,7 +20,7 @@ public class JCheckboxAdapterDescriptor implements IFViewAdapterDescriptor {
         JCheckBoxViewAdapter viewAdapter = new JCheckBoxViewAdapter(checkBox);
 
         DetailedTooltipHandler tooltipHandler = new DetailedTooltipHandler();
-        BorderStateMarker stateMarker = new BorderStateMarker();
+        BorderStateMarker stateMarker = new BorderStateMarker(checkBox.getBorder());
     	
 		viewAdapter.setTooltipHandler(tooltipHandler);
 		viewAdapter.setStateMarker(stateMarker);

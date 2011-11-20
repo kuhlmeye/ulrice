@@ -12,12 +12,8 @@ public class BindingUI implements BindingUIConstants {
 
 	public static void applyDefaultUI() {
 		UIManager.put(BORDER_STATE_MARKER_INSETS, new Insets(2, 3, 2, 3));
-		UIManager.put(BORDER_STATE_MARKER_NORMAL_INNER_BORDER, Color.DARK_GRAY);
-		UIManager.put(BORDER_STATE_MARKER_NORMAL_OUTER_BORDER, Color.LIGHT_GRAY);
-		UIManager.put(BORDER_STATE_MARKER_CHANGED_INNER_BORDER, new Color(130, 130, 30));
-		UIManager.put(BORDER_STATE_MARKER_CHANGED_OUTER_BORDER, Color.LIGHT_GRAY);
-		UIManager.put(BORDER_STATE_MARKER_INVALID_INNER_BORDER, new Color(100, 30, 30));
-		UIManager.put(BORDER_STATE_MARKER_INVALID_OUTER_BORDER, Color.LIGHT_GRAY);
+		UIManager.put(BORDER_STATE_MARKER_CHANGED_BORDER, new Color(130, 130, 30));
+		UIManager.put(BORDER_STATE_MARKER_INVALID_BORDER, new Color(100, 30, 30));
 		UIManager.put(BORDER_STATE_MARKER_CHANGED_IMAGE, new ImageIcon(BorderStateMarker.class.getResource("attention.png")));
 		UIManager.put(BORDER_STATE_MARKER_INVALID_IMAGE, new ImageIcon(BorderStateMarker.class.getResource("cross.png")));
 	}

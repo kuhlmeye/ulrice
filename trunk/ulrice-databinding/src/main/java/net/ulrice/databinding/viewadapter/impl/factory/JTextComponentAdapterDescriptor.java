@@ -22,7 +22,7 @@ public class JTextComponentAdapterDescriptor implements IFViewAdapterDescriptor 
 		JTextComponentViewAdapter viewAdapter = new JTextComponentViewAdapter (textComponent);
 
         DetailedTooltipHandler tooltipHandler = new DetailedTooltipHandler();
-        BorderStateMarker stateMarker = new BorderStateMarker();
+        BorderStateMarker stateMarker = new BorderStateMarker(textComponent.getBorder());
     	
 		viewAdapter.setTooltipHandler(tooltipHandler);
 		viewAdapter.setStateMarker(stateMarker);

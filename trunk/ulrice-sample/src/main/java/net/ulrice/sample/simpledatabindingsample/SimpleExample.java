@@ -1,7 +1,9 @@
 package net.ulrice.sample.simpledatabindingsample;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
 
+import javax.swing.BorderFactory;
 import javax.swing.JFrame;
 import javax.swing.SwingUtilities;
 
@@ -35,13 +37,13 @@ public class SimpleExample {
                 final ModelBinding binding = new ModelBinding (model);        
                 
                 Binding b = binding.register (panel._vornameTF, "vorname", String.class); //TODO do not pass the type any more
-                BorderStateMarker borderStateMarker = new BorderStateMarker();
+                BorderStateMarker borderStateMarker = new BorderStateMarker(BorderFactory.createLineBorder(Color.DARK_GRAY));
 				b.getViewAdapter().setStateMarker(borderStateMarker);
                 panel._vornameTF.setBorder(borderStateMarker);
                 b.getViewAdapter().setTooltipHandler(new DetailedTooltipHandler());
                 
                 b = binding.register (panel._vorname2TF, "vorname", String.class, new StringLengthValidator (2, 30)); 
-                borderStateMarker = new BorderStateMarker();
+                borderStateMarker = new BorderStateMarker(BorderFactory.createLineBorder(Color.DARK_GRAY));
 				b.getViewAdapter().setStateMarker(borderStateMarker);
                 panel._vorname2TF.setBorder(borderStateMarker);
                 b.getViewAdapter().setTooltipHandler(new DetailedTooltipHandler());
