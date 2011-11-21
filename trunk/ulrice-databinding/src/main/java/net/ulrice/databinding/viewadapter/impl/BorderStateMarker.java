@@ -6,6 +6,7 @@ import java.awt.Image;
 import java.awt.Insets;
 import java.awt.image.ImageObserver;
 
+import javax.swing.BorderFactory;
 import javax.swing.Icon;
 import javax.swing.JComponent;
 import javax.swing.UIManager;
@@ -36,21 +37,30 @@ public class BorderStateMarker implements Border, ImageObserver, IFStateMarker {
 
     private Border normalBorder;
 
+    private Insets insets;
+
     /**
      * Creates a new border state marker.
      */
     public BorderStateMarker(Border normalBorder) {
         this(BorderStateMarkerStrategy.BORDER_ONLY, normalBorder);        
     }
+    
+
+    public BorderStateMarker(BorderStateMarkerStrategy strategy, Border normalBorder) {
+        this(strategy, normalBorder, UIManager.get(BindingUI.BORDER_STATE_MARKER_INSETS) != null ? UIManager.getInsets(BindingUI.BORDER_STATE_MARKER_INSETS) : new Insets(2, 3, 2, 3));        
+    }
+    
         /**
          * Creates a new border state marker.
          * @param iconOnly true, if only the icon should be shown. 
          */
-    public BorderStateMarker(BorderStateMarkerStrategy strategy, Border normalBorder) {        
+    public BorderStateMarker(BorderStateMarkerStrategy strategy, Border normalBorder, Insets insets) {        
         changedIcon = UIManager.getIcon(BindingUI.BORDER_STATE_MARKER_CHANGED_IMAGE);
         invalidIcon = UIManager.getIcon(BindingUI.BORDER_STATE_MARKER_INVALID_IMAGE);
         this.strategy = strategy;
         this.normalBorder = normalBorder;
+        this.insets = insets;
     }
 
     /**
@@ -58,7 +68,7 @@ public class BorderStateMarker implements Border, ImageObserver, IFStateMarker {
      */
     @Override
     public Insets getBorderInsets(Component c) {
-        return UIManager.get(BindingUI.BORDER_STATE_MARKER_INSETS) != null ? UIManager.getInsets(BindingUI.BORDER_STATE_MARKER_INSETS) : new Insets(2, 3, 2, 3);
+        return insets;
     }
 
     /**
@@ -66,7 +76,7 @@ public class BorderStateMarker implements Border, ImageObserver, IFStateMarker {
      */
     @Override
     public boolean isBorderOpaque() {
-        return true;
+        return false;
     }
 
     /**
@@ -97,7 +107,7 @@ public class BorderStateMarker implements Border, ImageObserver, IFStateMarker {
      */
     private void drawNormal(Component c, Graphics g, int x, int y, int width, int height) {
         if(normalBorder != null ){
-            normalBorder.paintBorder(c, g, x, y, width, height);
+            normalBorder.paintBorder(c, g, x, y, width - 1, height - 1);
         }
     }
 
@@ -111,14 +121,10 @@ public class BorderStateMarker implements Border, ImageObserver, IFStateMarker {
      * @param height The height of the component.
      */
     private void drawChanged(Component c, Graphics g, int x, int y, int width, int height) {
-        if(normalBorder != null ){
-            normalBorder.paintBorder(c, g, x, y, width, height);
-        }
 
     	if(strategy != BorderStateMarkerStrategy.ICON_ONLY) {
             g.setColor(UIManager.getColor(BindingUI.BORDER_STATE_MARKER_CHANGED_BORDER));
-            g.drawRect(x + 1, y + 1, width - 3, height - 3);
-    
+            g.drawRect(x, y, width - 1, height - 1);
         }
     	if (strategy != BorderStateMarkerStrategy.BORDER_ONLY) {
     		changedIcon.paintIcon(c, g, x + width -10, 0);
@@ -135,13 +141,9 @@ public class BorderStateMarker implements Border, ImageObserver, IFStateMarker {
      * @param height The height of the component.
      */
     private void drawInvalid(Component c, Graphics g, int x, int y, int width, int height) {
-        if(normalBorder != null ){
-            normalBorder.paintBorder(c, g, x, y, width, height);
-        }
-
     	if(strategy != BorderStateMarkerStrategy.ICON_ONLY) {
             g.setColor(UIManager.getColor(BindingUI.BORDER_STATE_MARKER_INVALID_BORDER));
-            g.drawRect(x + 1, y + 1, width - 3, height - 3);
+            g.drawRect(x, y, width - 1, height - 1);
         }
     	if (strategy != BorderStateMarkerStrategy.BORDER_ONLY) {
     		invalidIcon.paintIcon(c, g, x + width -10, 0);
