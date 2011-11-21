@@ -104,14 +104,19 @@ public class MaskTextField extends JTextField {
 				|| chr == CHARACTER_UPPERCASE_MASK_CHAR || chr == CHARACTER_OR_NUMBER_LOWERCASE_MASK_CHAR || chr == CHARACTER_OR_NUMBER_UPPERCASE_MASK_CHAR;
 	}
 
-	
+	@Override
+	public Color getBackground() {
+	    if(isEditable()) {
+	        return UIManager.getColor("TextField.background");
+	    } else {
+            return UIManager.getColor("TextField.disabledBackground");
+	    }
+	}
 	
 	@Override
 	public void updateUI() {	    	    
 		setUI(new MaskTextFieldUI());
-		int fontSize = getFont().getSize();
-		int fontStyle = getFont().getStyle();
-		setFont(new Font("monospaced", fontStyle, fontSize));	        
+		setFont(UIManager.getFont("MaskTextField.font"));	        
 	}
 
 	@Override
