@@ -10,5 +10,7 @@ import java.util.EventListener;
 public interface IFBindingGroupEventListener extends EventListener {
 	
 	void bindingGroupChanged(IFBindingGroup bindingGroup);
+	
+	void bindingGroupDataChanged(IFBindingGroup bindingGroup, String attributeModelId);
 
 }
