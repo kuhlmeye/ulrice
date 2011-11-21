@@ -146,14 +146,9 @@ public class BindingGroup extends AbstractBindingGroup {
         valid = invalidSet.isEmpty();		
 	}
 
-    /**
-     * @see net.ulrice.databinding.bufferedbinding.IFAttributeModelEventListener#dataChanged(net.ulrice.databinding.IFGuiAccessor,
-     *      net.ulrice.databinding.bufferedbinding.IFAttributeModel, java.lang.Object,
-     *      java.lang.Object, net.ulrice.databinding.DataState)
-     */
     @Override
-    public void dataChanged(IFViewAdapter gaSource, IFAttributeModel amSource) {
-        // Ignore these events.
+    protected void dataChangedInternal(IFViewAdapter viewAdapter, IFAttributeModel amSource) {
+        // ignore
     }
 
     /**

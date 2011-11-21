@@ -97,16 +97,15 @@ public class SingleObjectModel<T> extends AbstractBindingGroup<T> {
         }
     }
 
-	@SuppressWarnings("rawtypes")
-	@Override
-	public void dataChanged(IFViewAdapter viewAdapter,
-			IFAttributeModel<T> amSource) {
-		// ignore
-	}
-
 	@Override
 	protected void stateChangedInternal(IFViewAdapter viewAdapter,
 			IFAttributeModel<T> amSource) {
 	}
+
+    @Override
+    protected void dataChangedInternal(IFViewAdapter viewAdapter, IFAttributeModel<T> amSource) {
+        // TODO Auto-generated method stub
+        
+    }
 
 }

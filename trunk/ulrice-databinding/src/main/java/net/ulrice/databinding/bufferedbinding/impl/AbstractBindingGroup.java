@@ -32,6 +32,15 @@ public abstract class AbstractBindingGroup<T> implements IFBindingGroup,
     		}
     	}
     }
+	
+	protected void fireBindingGroupDataChanged(String attributeModelId) {
+	    IFBindingGroupEventListener[] listeners = listenerList.getListeners(IFBindingGroupEventListener.class);
+	    if (listeners != null) {
+	        for (IFBindingGroupEventListener l : listeners) {
+	            l.bindingGroupDataChanged(this, attributeModelId);
+	        }
+	    }
+	}
 
 	@Override
 	public void stateChanged(IFViewAdapter viewAdapter,
@@ -43,5 +52,14 @@ public abstract class AbstractBindingGroup<T> implements IFBindingGroup,
 	}
 	
 	abstract protected void stateChangedInternal(IFViewAdapter viewAdapter, IFAttributeModel<T> amSource);
+
+    @Override
+    public void dataChanged(IFViewAdapter viewAdapter, IFAttributeModel<T> amSource) {
+        dataChangedInternal(viewAdapter, amSource);
+        
+        fireBindingGroupDataChanged(amSource != null ? amSource.getId() : "");
+    }
+    
+    abstract protected void dataChangedInternal(IFViewAdapter viewAdapter, IFAttributeModel<T> amSource);
 
 }

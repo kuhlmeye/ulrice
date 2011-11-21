@@ -86,4 +86,10 @@ public class CRadioButtonSample extends AbstractController implements IFBindingG
 		System.out.println("Color was set to : " + model.getData().getC());
 	}
 
+    @Override
+    public void bindingGroupDataChanged(IFBindingGroup bindingGroup, String attributeModelId) {
+        // TODO Auto-generated method stub
+        
+    }
+
 }
