@@ -26,11 +26,11 @@ public class StringLengthValidator extends AbstractValidator<String> {
 		
         if (_minLength != null && attribute.length () < _minLength) {
         	// TODO Christof Internationalize
-            result.addValidationError(new ValidationError(bindingId, "min. Länge: " + _minLength, null));
+            result.addValidationError(new ValidationError(bindingId, "min. L\u00e4nge: " + _minLength, null));
         }
         if (_maxLength != null && attribute.length () > _maxLength) {
         	// TODO Christof Internationalize
-            result.addValidationError(new ValidationError(bindingId, "max. Länge: " + _minLength, null));
+            result.addValidationError(new ValidationError(bindingId, "max. L\u00e4nge: " + _minLength, null));
         }
         
         return result;
