@@ -295,24 +295,33 @@ public class Element {
 
 	public void setCurrentValue(Object currentValue, boolean dirty,
 			boolean valid) {
-		this.originalValueDirty = dirty;
-		this.originalValueValid = valid;
-		this.originalValue = currentValue;
-		if (modelList != null) {
-			for (int i = 0; i < modelList.size(); i++) {
-				GenericAM model = modelList.get(i);
-				IFDynamicModelValueAccessor dataAccessor = columns.get(i)
-						.getDataAccessor();
-
-				Object value = dataAccessor.getValue(currentValue);
-				Object converted = (model.getValueConverter() != null ? model
-						.getValueConverter().modelToView(value) : value);
-				model.setValue(converted);
-			}
-            fireValueChanged(null);
-			updateState();
-		}
+	    setCurrentValue(currentValue, dirty, valid, false);
 	}
+	
+	public void setCurrentValue(Object currentValue, boolean dirty,
+        boolean valid, boolean omitReadOnly) {
+    this.originalValueDirty = dirty;
+    this.originalValueValid = valid;
+    this.originalValue = currentValue;
+    if (modelList != null) {
+        for (int i = 0; i < modelList.size(); i++) {
+            if(isReadOnly(i) && omitReadOnly){
+                continue;
+            }
+            
+            GenericAM model = modelList.get(i);
+            IFDynamicModelValueAccessor dataAccessor = columns.get(i).getDataAccessor();
+
+            Object value = dataAccessor.getValue(currentValue);             
+            Object converted = (model.getValueConverter() != null ? model
+                    .getValueConverter().modelToView(value) : value);
+            model.setValue(converted);
+        }
+        fireValueChanged(null);
+        updateState();
+    }
+}
+	
 
 	public Object getCurrentValue() {
 		Object result = tableAM.cloneObject(getOriginalValue());
