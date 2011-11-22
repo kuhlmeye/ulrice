@@ -54,7 +54,7 @@ public abstract class AbstractUTableRenderer extends DefaultTableCellRenderer {
     
             Element element = tableComponent.getElementAtViewIndex(row);
             if (element != null) {
-                IFStateMarker sm = getStateMarker();
+                IFStateMarker sm = getStateMarker(tableComponent);
                 if (sm != null) {
                     dirty |= element.isOriginalValueDirty();
                     valid &= element.isOriginalValueValid();
@@ -68,7 +68,7 @@ public abstract class AbstractUTableRenderer extends DefaultTableCellRenderer {
                     sm.updateState(element, readOnly, dirty, valid, component);
                 }
 
-                IFTooltipHandler tth = getTooltipHandler();
+                IFTooltipHandler tth = getTooltipHandler(tableComponent);
                 if (tth != null) {
                     tth.updateTooltip(element, component);
                 }
@@ -78,16 +78,26 @@ public abstract class AbstractUTableRenderer extends DefaultTableCellRenderer {
         return component;
     }
 
-    public IFStateMarker getStateMarker() {
-        return stateMarker == null ? AbstractUTableRenderer.getDefaultStateMarker() : stateMarker;
+    public IFStateMarker getStateMarker(UTableComponent tableComponent) {
+        if(stateMarker != null) {
+            return stateMarker;
+        } else if(tableComponent.getCellStateMarker() != null) {
+            return tableComponent.getCellStateMarker();
+        }
+        return AbstractUTableRenderer.getDefaultStateMarker();
     }
 
     public void setStateMarker(IFStateMarker stateMarker) {
         this.stateMarker = stateMarker;        
     }
 
-    public IFTooltipHandler<Element> getTooltipHandler() {
-        return tooltipHandler == null ? AbstractUTableRenderer.getDefaultTooltipHandler() : tooltipHandler;
+    public IFTooltipHandler<Element> getTooltipHandler(UTableComponent tableComponent) {
+        if(tooltipHandler != null) {
+            return tooltipHandler;
+        } else if(tableComponent.getCellTooltipHandler() != null) {
+            return tableComponent.getCellTooltipHandler();
+        }
+        return AbstractUTableRenderer.getDefaultTooltipHandler();
     }
 
     public void setTooltipHandler(IFTooltipHandler<Element> tooltipHandler) {

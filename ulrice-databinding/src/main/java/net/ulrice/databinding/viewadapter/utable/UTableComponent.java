@@ -291,13 +291,11 @@ public class UTableComponent extends JPanel {
 
 	public void setCellTooltipHandler(IFTooltipHandler<Element> tooltipHandler) {
 		this.tooltipHandler = tooltipHandler;
-		AbstractUTableRenderer.setDefaultTooltipHandler(tooltipHandler);
 	}
 
 
 	public void setCellStateMarker(IFStateMarker stateMarker) {
 		this.stateMarker = stateMarker;
-		AbstractUTableRenderer.setDefaultStateMarker(stateMarker);
 	}
 
 	public IFTooltipHandler<Element> getCellTooltipHandler() {
