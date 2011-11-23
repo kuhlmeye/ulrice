@@ -32,16 +32,18 @@ public class MultiStateAction extends ModuleDelegationAction  {
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        actionState = (actionState + 1) % actions.size();
+        int newActionState = (actionState + 1) % actions.size();
         
-        updateAction();
+        updateAction(newActionState);
         
         Ulrice.getActionManager().performAction(this, e);
+        
+        actionState = newActionState;
     }
     
-    private void updateAction() {
-        putValue(SMALL_ICON, actions.get(actionState).getIcon());
-        putValue(SHORT_DESCRIPTION, actions.get(actionState).getName());
+    private void updateAction(int actionStateNumber) {
+        putValue(SMALL_ICON, actions.get(actionStateNumber).getIcon());
+        putValue(SHORT_DESCRIPTION, actions.get(actionStateNumber).getName());
     }
 
     public String getCurrentActionId() {
@@ -52,7 +54,7 @@ public class MultiStateAction extends ModuleDelegationAction  {
         for(int i = 0; i < actions.size(); i++) {
             if (actions.get(i).getUniqueId().equals(id)) {
                 actionState = i;
-                updateAction();
+                updateAction(actionState);
                 break;
             }
         }
