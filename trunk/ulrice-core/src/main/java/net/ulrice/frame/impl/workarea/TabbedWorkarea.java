@@ -44,8 +44,9 @@ public class TabbedWorkarea extends JTabbedPane implements IFWorkarea, MouseList
     /** The logger used by this class. */
     private static final Logger LOG = Logger.getLogger(TabbedWorkarea.class.getName());
 
-    /** The close icon. */
+    /** The close icons. */
     private ImageIcon closeIcon;
+    private ImageIcon closeIconBorder;
 
     private final Map<JComponent, GlassPanel> glassPanelMap = new HashMap<JComponent, GlassPanel>();
 
@@ -56,17 +57,12 @@ public class TabbedWorkarea extends JTabbedPane implements IFWorkarea, MouseList
     public TabbedWorkarea() {
         super();
 
-        final URL closeIconUrl = getClass().getResource("close.gif");
-        if (closeIconUrl != null) {
-            closeIcon = new ImageIcon(closeIconUrl);
-        }
-        
-       addChangeListener(new ChangeListener() {
-            
+        loadCloseIcons();
 
+        addChangeListener(new ChangeListener() {
             @Override
             public void stateChanged(ChangeEvent e) {
-                if(!ignoreStateChangedEvents) {
+                if (!ignoreStateChangedEvents) {
                     int selIdx = getSelectedIndex();
                     if (selIdx >= 0) {
                         Component tabComponent = getTabComponentAt(getSelectedIndex());
@@ -79,8 +75,18 @@ public class TabbedWorkarea extends JTabbedPane implements IFWorkarea, MouseList
                     }
                 }
             }
-
         });
+    }
+    
+    private void loadCloseIcons() {
+        final URL closeIconUrl = getClass().getResource("/net/ulrice/frame/impl/close.gif");
+        if (closeIconUrl != null) {
+            closeIcon = new ImageIcon(closeIconUrl);
+        }
+        final URL closeIconBorderUrl = getClass().getResource("/net/ulrice/frame/impl/close_border.gif");
+        if (closeIconBorderUrl != null) {
+            closeIconBorder = new ImageIcon(closeIconBorderUrl);
+        }
     }
 
     /**
@@ -256,7 +262,7 @@ public class TabbedWorkarea extends JTabbedPane implements IFWorkarea, MouseList
             final ImageIcon icon = Ulrice.getModuleManager().getModule(controller).getIcon(ModuleIconSize.Size_16x16);
 
             // Create the button for closing the controller.
-            final JButton closeButton = new JButton(new CloseModuleAction("X", closeIcon, controller));
+            final JButton closeButton = new JButton(new CloseModuleAction("", closeIcon, controller));
             closeButton.setOpaque(false);
             closeButton.setBorderPainted(false);
             closeButton.setContentAreaFilled(false);
@@ -265,6 +271,11 @@ public class TabbedWorkarea extends JTabbedPane implements IFWorkarea, MouseList
             closeButton.setHorizontalAlignment(SwingConstants.RIGHT);
             closeButton.setBorder(BorderFactory.createEmptyBorder(2, 0, 0, 0));
             closeButton.setMargin(new Insets(0, 0, 0, 0));
+            closeButton.setToolTipText(null);
+            
+            closeButton.setIcon(closeIcon);
+            closeButton.setRolloverEnabled(true);
+            closeButton.setRolloverIcon(closeIconBorder);
 
             // Create the label displaying the controller title
             final JLabel label = new JLabel(controllerTitle, icon, JLabel.HORIZONTAL);
