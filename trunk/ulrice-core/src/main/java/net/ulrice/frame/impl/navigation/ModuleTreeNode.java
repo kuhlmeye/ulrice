@@ -25,7 +25,8 @@ public class ModuleTreeNode {
         this.comparator = comparator;
         this.filter = filter;
         
-        this.childs = new ArrayList<ModuleTreeNode>(moduleGroup.getModuleGroups().size());
+        int numGroups = (moduleGroup != null && moduleGroup.getModuleGroups() != null) ? moduleGroup.getModuleGroups().size() : 0;
+        this.childs = new ArrayList<ModuleTreeNode>(numGroups);
         for(IFModuleGroup subGroup : moduleGroup.getModuleGroups()) {
             childs.add(new ModuleTreeNode(subGroup, comparator, filter));
         }
@@ -47,7 +48,9 @@ public class ModuleTreeNode {
     
     public void applyFilter() {
         if(moduleGroup != null) {
-            this.filteredChilds = new ArrayList<ModuleTreeNode>(moduleGroup.getModuleGroups().size());
+
+            int numGroups = (moduleGroup.getModuleGroups() != null) ? moduleGroup.getModuleGroups().size() : 0;
+            this.filteredChilds = new ArrayList<ModuleTreeNode>(numGroups);
 
             for(ModuleTreeNode child : childs) {
                 if(child.isGroup()) {

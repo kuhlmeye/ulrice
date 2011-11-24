@@ -4,6 +4,7 @@ import net.ulrice.databinding.ObjectWithPresentation;
 import net.ulrice.databinding.converter.impl.DoNothingConverter;
 import net.ulrice.databinding.converter.impl.GenericStringToNumberConverter;
 import net.ulrice.databinding.converter.impl.Reverser;
+import net.ulrice.databinding.converter.impl.StringToBooleanConverter;
 import net.ulrice.databinding.converter.impl.StringToIntegerConverter;
 
 
@@ -28,6 +29,11 @@ public class HeuristicConverterFactory implements IFConverterFactory {
         // Model: String => View: Int
         if ((Integer.class.equals (modelType) || Integer.TYPE.equals (modelType)) && String.class.equals (presentationType)) {
             return (IFValueConverter) new Reverser <String, Integer> (new StringToIntegerConverter());
+        }
+        
+        // Model: String => View: Boolean
+        if ((Boolean.class.equals (modelType) || Boolean.TYPE.equals (modelType)) && String.class.equals (presentationType)) {
+            return (IFValueConverter) new Reverser <String, Boolean> (new StringToBooleanConverter());
         }
         
         throw new IllegalArgumentException ("keine Implizite Konvertierung von " + presentationType.getName () + " in " + modelType.getName () + ".");

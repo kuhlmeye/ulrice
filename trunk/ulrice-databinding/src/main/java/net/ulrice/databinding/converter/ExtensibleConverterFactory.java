@@ -7,6 +7,7 @@ import java.util.List;
 import net.ulrice.databinding.ObjectWithPresentation;
 import net.ulrice.databinding.converter.impl.DoNothingConverter;
 import net.ulrice.databinding.converter.impl.GenericStringToNumberConverter;
+import net.ulrice.databinding.converter.impl.StringToBooleanConverter;
 /**
  * 
  * @author apunahassaphemapetilon@hotmail.com
@@ -16,7 +17,8 @@ public class ExtensibleConverterFactory implements IFConverterFactory {
 	private static final List<? extends IFValueConverter<?, ?>> builtin = Arrays.asList (
 			GenericStringToNumberConverter.INT,
 			GenericStringToNumberConverter.LONG,
-			GenericStringToNumberConverter.DOUBLE
+			GenericStringToNumberConverter.DOUBLE,
+			new StringToBooleanConverter()
 			);
 	
 	

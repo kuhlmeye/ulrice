@@ -11,7 +11,8 @@ public class UlriceValueConverterContributer implements
 	
 	private static final IFValueConverter<?, ?>[] valueConverterArray = {
 			DoNothingConverter.INSTANCE,
-			new StringToIntegerConverter()
+            new StringToIntegerConverter(),
+            new StringToBooleanConverter()
 	};
 
 	@Override
