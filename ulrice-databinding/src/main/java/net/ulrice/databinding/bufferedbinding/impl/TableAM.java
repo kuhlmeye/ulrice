@@ -170,7 +170,7 @@ public class TableAM implements IFAttributeModel {
                     oldUniqueId = entry.getKey();
                     // remove Element from new Elements and replace it with the former deleted one
                     // newElements.remove(getElementById(newUniqueId));
-                    keyDeleteMap.remove(oldUniqueId);
+//                    keyDeleteMap.remove(oldUniqueId);
                 }
             }
         }
@@ -197,7 +197,12 @@ public class TableAM implements IFAttributeModel {
                     break;
                 }
             }
-            oldElement.setCurrentValue(element.getCurrentValue());
+            if (oldElement != null) {
+                oldElement.setCurrentValue(element.getCurrentValue());
+            }
+            else {
+                oldElement = element;
+            }
 
             elementIdMap.put(oldUniqueId, oldElement);
             return oldElement;
@@ -341,16 +346,7 @@ public class TableAM implements IFAttributeModel {
     }
 
     protected void elementDataChanged(final Element element, final String columnId) {
-    	if(!SwingUtilities.isEventDispatchThread()) {
-		    SwingUtilities.invokeLater(new Runnable() {                    
-                @Override
-                public void run() {
-                    fireUpdateViews();
-                }
-            });
-		} else {
-    		fireUpdateViews();
-    	}
+    	fireUpdateViews();
 
         if (columnIds != null) {
             checkUniqueConstraint(element);
@@ -360,34 +356,9 @@ public class TableAM implements IFAttributeModel {
             checkAgainstDeletedElements(element);
         }
 
-        if(!SwingUtilities.isEventDispatchThread()) {
-		    SwingUtilities.invokeLater(new Runnable() {                    
-                @Override
-                public void run() {
-                	fireElementChanged(element, columnId);
-                }
-            });
-		} else {
-			fireElementChanged(element, columnId);
-    	}
-        
-//        ElementLifecycleListener[] listeners = listenerList.getListeners(ElementLifecycleListener.class);
-//        if (listeners != null) {
-//            for (ElementLifecycleListener constraint : listeners) {
-//                constraint.elementChanged(TableAM.this, element, columnId);
-//            }
-//        }
-        
-        if(!SwingUtilities.isEventDispatchThread()) {
-		    SwingUtilities.invokeLater(new Runnable() {                    
-                @Override
-                public void run() {
-                	fireDataChanged();
-                }
-            });
-		} else {
-			fireDataChanged();
-    	}
+		fireElementChanged(element, columnId);
+
+		fireDataChanged();
     }
 
     protected void elementStateChanged(final Element element) {
@@ -413,28 +384,10 @@ public class TableAM implements IFAttributeModel {
         valid = invElements.isEmpty();
         dirty = !modElements.isEmpty() || !delElements.isEmpty() || !newElements.isEmpty();
 
-        if(!SwingUtilities.isEventDispatchThread()) {
-            SwingUtilities.invokeLater(new Runnable() {                    
-                @Override
-                public void run() {
-                    fireElementStatusChanged(element);
-                }
-            });
-        } else {
-        	fireElementStatusChanged(element);
-        }
+        fireElementStatusChanged(element);
 
         if (oldValid != valid || oldDirty != dirty) {
-        	if(!SwingUtilities.isEventDispatchThread()) {
-                SwingUtilities.invokeLater(new Runnable() {                    
-                    @Override
-                    public void run() {
-                        fireStateChanged();
-                    }
-                });
-            } else {
-        		fireStateChanged();
-        	}
+        	fireStateChanged();
         }
 
     }
@@ -442,8 +395,17 @@ public class TableAM implements IFAttributeModel {
     private void fireElementChanged(final Element element, final String columnId) {
     	ElementLifecycleListener[] listeners = listenerList.getListeners(ElementLifecycleListener.class);
         if (listeners != null) {
-            for (ElementLifecycleListener constraint : listeners) {
-                constraint.elementChanged(TableAM.this, element, columnId);
+            for (final ElementLifecycleListener constraint : listeners) {
+                if(!SwingUtilities.isEventDispatchThread()) {
+                    SwingUtilities.invokeLater(new Runnable() {                    
+                        @Override
+                        public void run() {
+                            constraint.elementChanged(TableAM.this, element, columnId);
+                        }
+                    });
+                } else {
+                    constraint.elementChanged(TableAM.this, element, columnId);
+                }
             }
         }
     }
@@ -451,8 +413,17 @@ public class TableAM implements IFAttributeModel {
     private void fireDataChanged() {
         IFAttributeModelEventListener[] listeners = listenerList.getListeners(IFAttributeModelEventListener.class);
         if (listeners != null) {
-            for (IFAttributeModelEventListener listener : listeners) {
-                listener.dataChanged(null, this);
+            for (final IFAttributeModelEventListener listener : listeners) {
+                if(!SwingUtilities.isEventDispatchThread()) {
+                    SwingUtilities.invokeLater(new Runnable() {                    
+                        @Override
+                        public void run() {
+                            listener.dataChanged(null, TableAM.this);
+                        }
+                    });
+                } else {
+                    listener.dataChanged(null, this);
+                }
             }
         }
     }
@@ -460,8 +431,17 @@ public class TableAM implements IFAttributeModel {
     private void fireStateChanged() {
         IFAttributeModelEventListener[] listeners = listenerList.getListeners(IFAttributeModelEventListener.class);
         if (listeners != null) {
-            for (IFAttributeModelEventListener listener : listeners) {
-                listener.stateChanged(null, this);
+            for (final IFAttributeModelEventListener listener : listeners) {
+                if(!SwingUtilities.isEventDispatchThread()) {
+                    SwingUtilities.invokeLater(new Runnable() {                    
+                        @Override
+                        public void run() {
+                            listener.stateChanged(null, TableAM.this);
+                        }
+                    });
+                } else {
+                    listener.stateChanged(null, this);
+                }
             }
         }
     }
@@ -507,38 +487,74 @@ public class TableAM implements IFAttributeModel {
         listenerList.add(TableAMListener.class, listener);
     }
 
-    private void fireColumnValueRangeChanged(ColumnDefinition< ?> colDef) {
+    private void fireColumnValueRangeChanged(final ColumnDefinition< ?> colDef) {
         TableAMListener[] listeners = listenerList.getListeners(TableAMListener.class);
         if (listeners != null) {
-            for (TableAMListener listener : listeners) {
-                listener.columnValueRangeChanged(this, colDef);
+            for (final TableAMListener listener : listeners) {
+                if(!SwingUtilities.isEventDispatchThread()) {
+                    SwingUtilities.invokeLater(new Runnable() {                    
+                        @Override
+                        public void run() {
+                            listener.columnValueRangeChanged(TableAM.this, colDef);
+                        }
+                    });
+                } else {
+                    listener.columnValueRangeChanged(this, colDef);
+                }
             }
         }
     }
 
-    private void fireColumnAdded(ColumnDefinition< ?> colDef) {
+    private void fireColumnAdded(final ColumnDefinition< ?> colDef) {
         TableAMListener[] listeners = listenerList.getListeners(TableAMListener.class);
         if (listeners != null) {
-            for (TableAMListener listener : listeners) {
-                listener.columnAdded(this, colDef);
+            for (final TableAMListener listener : listeners) {
+                if(!SwingUtilities.isEventDispatchThread()) {
+                    SwingUtilities.invokeLater(new Runnable() {                    
+                        @Override
+                        public void run() {
+                            listener.columnAdded(TableAM.this, colDef);
+                        }
+                    });
+                } else {
+                    listener.columnAdded(this, colDef);
+                }
             }
         }
     }
 
-    private void fireColumnRemoved(ColumnDefinition< ?> colDef) {
+    private void fireColumnRemoved(final ColumnDefinition< ?> colDef) {
         TableAMListener[] listeners = listenerList.getListeners(TableAMListener.class);
         if (listeners != null) {
-            for (TableAMListener listener : listeners) {
-                listener.columnRemoved(this, colDef);
+            for (final TableAMListener listener : listeners) {
+                if(!SwingUtilities.isEventDispatchThread()) {
+                    SwingUtilities.invokeLater(new Runnable() {                    
+                        @Override
+                        public void run() {
+                            listener.columnRemoved(TableAM.this, colDef);
+                        }
+                    });
+                } else {
+                    listener.columnRemoved(this, colDef);
+                }
             }
         }
     }
 
-    private void fireColumnFilterModeChanged(ColumnDefinition< ?> colDef) {
+    private void fireColumnFilterModeChanged(final ColumnDefinition< ?> colDef) {
         TableAMListener[] listeners = listenerList.getListeners(TableAMListener.class);
         if (listeners != null) {
-            for (TableAMListener listener : listeners) {
-                listener.columnFilterModeChanged(this, colDef);
+            for (final TableAMListener listener : listeners) {
+                if(!SwingUtilities.isEventDispatchThread()) {
+                    SwingUtilities.invokeLater(new Runnable() {                    
+                        @Override
+                        public void run() {
+                            listener.columnFilterModeChanged(TableAM.this, colDef);
+                        }
+                    });
+                } else {
+                    listener.columnFilterModeChanged(this, colDef);
+                }
             }
         }
     }
@@ -561,8 +577,17 @@ public class TableAM implements IFAttributeModel {
 
     public void fireUpdateViews() {
         if (viewAdapterList != null) {
-            for (IFViewAdapter viewAdapter : viewAdapterList) {
-                viewAdapter.updateFromBinding(this);
+            for (final IFViewAdapter viewAdapter : viewAdapterList) {
+                if(!SwingUtilities.isEventDispatchThread()) {
+                    SwingUtilities.invokeLater(new Runnable() {                    
+                        @Override
+                        public void run() {
+                            viewAdapter.updateFromBinding(TableAM.this);
+                        }
+                    });
+                } else {
+                    viewAdapter.updateFromBinding(this);
+                }
             }
         }
     }
@@ -940,15 +965,24 @@ public class TableAM implements IFAttributeModel {
         listenerList.remove(ElementLifecycleListener.class, constraint);
     }
 
-    private void fireElementAdded(Element element) {
+    private void fireElementAdded(final Element element) {
         if (columnIds != null) {
             checkUniqueConstraint(element);
         }
 
         ElementLifecycleListener[] listeners = listenerList.getListeners(ElementLifecycleListener.class);
         if (listeners != null) {
-            for (ElementLifecycleListener constraint : listeners) {
-                constraint.elementAdded(this, element);
+            for (final ElementLifecycleListener constraint : listeners) {
+                if(!SwingUtilities.isEventDispatchThread()) {
+                    SwingUtilities.invokeLater(new Runnable() {                    
+                        @Override
+                        public void run() {
+                            constraint.elementAdded(TableAM.this, element);
+                        }
+                    });
+                } else {
+                    constraint.elementAdded(this, element);
+                }
             }
         }
     }
@@ -958,7 +992,7 @@ public class TableAM implements IFAttributeModel {
         newElements.add(element);
     }
 
-    private void fireElementDeleted(Element element) {
+    private void fireElementDeleted(final Element element) {
         if (columnIds != null) {
             handleKey(element.getUniqueId(), null);
             // uniqueConstraint.elementRemoved(this, element);
@@ -966,8 +1000,17 @@ public class TableAM implements IFAttributeModel {
 
         ElementLifecycleListener[] listeners = listenerList.getListeners(ElementLifecycleListener.class);
         if (listeners != null) {
-            for (ElementLifecycleListener constraint : listeners) {
-                constraint.elementRemoved(this, element);
+            for (final ElementLifecycleListener constraint : listeners) {
+                if(!SwingUtilities.isEventDispatchThread()) {
+                    SwingUtilities.invokeLater(new Runnable() {                    
+                        @Override
+                        public void run() {
+                            constraint.elementRemoved(TableAM.this, element);
+                        }
+                    });
+                } else {
+                    constraint.elementRemoved(this, element);
+                }
             }
         }
     }
@@ -982,21 +1025,39 @@ public class TableAM implements IFAttributeModel {
 
         ElementLifecycleListener[] listeners = listenerList.getListeners(ElementLifecycleListener.class);
         if (listeners != null) {
-            for (ElementLifecycleListener constraint : listeners) {
-                constraint.tableCleared(this);
+            for (final ElementLifecycleListener constraint : listeners) {
+                if(!SwingUtilities.isEventDispatchThread()) {
+                    SwingUtilities.invokeLater(new Runnable() {                    
+                        @Override
+                        public void run() {
+                            constraint.tableCleared(TableAM.this);
+                        }
+                    });
+                } else {
+                    constraint.tableCleared(this);
+                }
             }
         }
     }
 
-    private void fireElementStatusChanged(Element element) {
+    private void fireElementStatusChanged(final Element element) {
         if (columnIds != null) {
             // uniqueConstraint.elementStateChanged(this, element);
         }
 
         ElementLifecycleListener[] listeners = listenerList.getListeners(ElementLifecycleListener.class);
         if (listeners != null) {
-            for (ElementLifecycleListener constraint : listeners) {
-                constraint.elementStateChanged(this, element);
+            for (final ElementLifecycleListener constraint : listeners) {
+                if(!SwingUtilities.isEventDispatchThread()) {
+                    SwingUtilities.invokeLater(new Runnable() {                    
+                        @Override
+                        public void run() {
+                            constraint.elementStateChanged(TableAM.this, element);
+                        }
+                    });
+                } else {
+                    constraint.elementStateChanged(this, element);
+                }
             }
         }
     }

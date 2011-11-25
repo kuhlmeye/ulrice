@@ -1,8 +1,10 @@
 package net.ulrice.databinding.bufferedbinding.impl;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.swing.SwingUtilities;
 import javax.swing.event.EventListenerList;
 
 import net.ulrice.databinding.UlriceDatabinding;
@@ -277,31 +279,82 @@ public class GenericAM<T> implements IFAttributeModel<T>, IFViewChangeListener {
 	}
 
 	@SuppressWarnings("unchecked")
-	public void fireDataChanged(IFViewAdapter viewAdapter) {
+	public void fireDataChanged(final IFViewAdapter viewAdapter) {
 		IFAttributeModelEventListener<T>[] listeners = listenerList.getListeners(IFAttributeModelEventListener.class);
 		if (listeners != null) {
-			for (IFAttributeModelEventListener<T> listener : listeners) {
-				listener.dataChanged(viewAdapter, this);
+			for (final IFAttributeModelEventListener<T> listener : listeners) {
+				if(!SwingUtilities.isEventDispatchThread()) {
+                    try {
+                        SwingUtilities.invokeAndWait(new Runnable() {                    
+                            @Override
+                            public void run() {
+                                listener.dataChanged(viewAdapter, GenericAM.this);
+                            }
+                        });
+                    }
+                    catch (InterruptedException e) {
+                        throw new RuntimeException(e);
+                    }
+                    catch (InvocationTargetException e) {
+                        throw new RuntimeException(e);
+                    }
+                } else {
+                    listener.dataChanged(viewAdapter, this);
+                }
 			}
 		}
 		fireUpdateViews();
 	}
 
 	@SuppressWarnings("unchecked")
-	public void fireStateChanged(IFViewAdapter viewAdapter) {
+	public void fireStateChanged(final IFViewAdapter viewAdapter) {
 		IFAttributeModelEventListener<T>[] listeners = listenerList.getListeners(IFAttributeModelEventListener.class);
 		if (listeners != null) {
-			for (IFAttributeModelEventListener<T> listener : listeners) {
-				listener.stateChanged(viewAdapter, this);
+			for (final IFAttributeModelEventListener<T> listener : listeners) {
+			    if(!SwingUtilities.isEventDispatchThread()) {
+                    try {
+                        SwingUtilities.invokeAndWait(new Runnable() {                    
+                            @Override
+                            public void run() {
+                                listener.stateChanged(viewAdapter, GenericAM.this);
+                            }
+                        });
+                    }
+                    catch (InterruptedException e) {
+                        throw new RuntimeException(e);
+                    }
+                    catch (InvocationTargetException e) {
+                        throw new RuntimeException(e);
+                    }
+                } else {
+                    listener.stateChanged(viewAdapter, this);
+                }
 			}
 		}
-		fireUpdateViews();
+        fireUpdateViews();
 	}
 
 	public void fireUpdateViews() {
 		if (viewAdapterList != null) {
 			for (final IFViewAdapter viewAdapter : viewAdapterList) {
-				viewAdapter.updateFromBinding(this);
+				if(!SwingUtilities.isEventDispatchThread()) {
+                    try {
+                        SwingUtilities.invokeAndWait(new Runnable() {                    
+                            @Override
+                            public void run() {
+                                viewAdapter.updateFromBinding(GenericAM.this);
+                            }
+                        });
+                    }
+                    catch (InterruptedException e) {
+                        throw new RuntimeException(e);
+                    }
+                    catch (InvocationTargetException e) {
+                        throw new RuntimeException(e);
+                    }
+                } else {
+                    viewAdapter.updateFromBinding(this);
+                }
 			}
 		}
 	}

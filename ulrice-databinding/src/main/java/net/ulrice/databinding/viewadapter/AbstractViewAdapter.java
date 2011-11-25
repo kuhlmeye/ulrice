@@ -32,18 +32,7 @@ public abstract class AbstractViewAdapter<M, V> implements IFViewAdapter<M, V> {
     protected void fireViewChange() {
         inNotification = true;
         if (isEditable()) {
-            
-            if(SwingUtilities.isEventDispatchThread()) {
-                fireViewChangeInternal();
-            } else {
-                SwingUtilities.invokeLater(new Runnable() {
-                    
-                    @Override
-                    public void run() {
-                        fireViewChangeInternal();
-                    }
-                });
-            }
+           fireViewChangeInternal();
         }
         inNotification = false;
     }
