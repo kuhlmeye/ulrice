@@ -1,18 +1,14 @@
 package net.ulrice.ui.components;
 
 import java.awt.Color;
-import java.awt.Font;
 import java.awt.Graphics;
-import java.awt.Insets;
 import java.awt.Rectangle;
 import java.awt.Shape;
 import java.util.ArrayList;
 import java.util.List;
 
 import javax.swing.JTextField;
-import javax.swing.UIDefaults;
 import javax.swing.UIManager;
-import javax.swing.border.LineBorder;
 import javax.swing.event.DocumentEvent;
 import javax.swing.plaf.metal.MetalTextFieldUI;
 import javax.swing.text.AttributeSet;
