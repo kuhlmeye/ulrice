@@ -190,11 +190,11 @@ public class MaskTextField extends JTextField {
 				case CHARACTER_LOWERCASE_MASK_CHAR:
 				case CHARACTER_UPPERCASE_MASK_CHAR:
 				case CHARACTER_MASK_CHAR:
-					return Character.isLetter(inputChar);
+					return Character.isLetter(inputChar) || inputChar == ' ';
 				case CHARACTER_OR_NUMBER_LOWERCASE_MASK_CHAR:
 				case CHARACTER_OR_NUMBER_UPPERCASE_MASK_CHAR:
 				case CHARACTER_OR_NUMBER_CHAR:
-					return Character.isDigit(inputChar) || Character.isLetter(inputChar);
+					return Character.isDigit(inputChar) || Character.isLetter(inputChar) || inputChar == ' ';
 				case NUM_MASK_CHAR:
 					return Character.isDigit(inputChar);
 				default:
