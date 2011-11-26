@@ -1,14 +1,13 @@
 package net.ulrice.databinding.bufferedbinding.impl;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.Map.Entry;
+import java.util.Set;
 
 import javax.swing.SwingUtilities;
 import javax.swing.event.EventListenerList;
@@ -1073,5 +1072,33 @@ public class TableAM implements IFAttributeModel {
 
     public ColumnDefinition getColumnByIndex(int index) {
         return columns.get(index);
+    }
+
+    public Element deleteElementOfObject(Object object) {
+        if(columnIds != null) {
+            Element tempElement = createElement(object, false, false, true);
+            List<?> key = buildKey(tempElement);
+            Set<String> idSet = uniqueMap.get(key);
+            if(idSet != null) {
+                if(idSet.size() == 1) {
+                    return getElementById(idSet.iterator().next());
+                }
+                for(String id : idSet) {
+                    Element element = getElementById(id);
+                    if(element.getCurrentValue().equals(object)) {
+                        return element;
+                    }
+                }
+            }
+        } else {
+            if(elements != null) {
+                for(Element element : elements) {
+                    if(element.getCurrentValue().equals(object)) {
+                        return element;
+                    }
+                }
+            }
+        }
+        return null;
     }
 }
