@@ -23,6 +23,8 @@ public abstract class AbstractViewAdapter<M, V> implements IFViewAdapter<M, V> {
 
     private boolean editable = true;
 
+    private boolean readOnlyBinding;
+
     @SuppressWarnings({ "rawtypes", "unchecked" })
     public AbstractViewAdapter(Class viewType) {
         this.viewType = viewType;
@@ -31,7 +33,7 @@ public abstract class AbstractViewAdapter<M, V> implements IFViewAdapter<M, V> {
 
     protected void fireViewChange() {
         inNotification = true;
-        if (isEditable()) {
+        if (!readOnlyBinding && isEditable()) {
            fireViewChangeInternal();
         }
         inNotification = false;
@@ -87,6 +89,8 @@ public abstract class AbstractViewAdapter<M, V> implements IFViewAdapter<M, V> {
         if (!isInNotification()) {
             removeComponentListener();
             setValue((M) binding.getCurrentValue());
+            
+            readOnlyBinding = binding.isReadOnly();
 
             if(binding.isReadOnly() && isComponentEnabled()) {
                 setComponentEnabled(false);
