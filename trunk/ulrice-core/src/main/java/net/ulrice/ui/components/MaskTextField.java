@@ -40,8 +40,8 @@ public class MaskTextField extends JTextField {
 	public static final char CHARACTER_MASK_CHAR = '?';
 	public static final char CHARACTER_UPPERCASE_MASK_CHAR = 'U';
 	public static final char CHARACTER_LOWERCASE_MASK_CHAR = 'L';
-	public static final char CHARACTER_OR_NUMBER_UPPERCASE_MASK_CHAR = 'u';
-	public static final char CHARACTER_OR_NUMBER_LOWERCASE_MASK_CHAR = 'l';
+	public static final char ALL_MASK_UPPERCASE_CHAR = 'u';
+	public static final char ALL_MASK_LOWERCASE_CHAR = 'l';
 	public static final char CHARACTER_OR_NUMBER_CHAR = 'A';
 	public static final char ESCAPE_CHAR = '\'';
 
@@ -97,7 +97,7 @@ public class MaskTextField extends JTextField {
 
 	private boolean isMaskChar(char chr) {
 		return chr == ALL_MASK_CHAR || chr == NUM_MASK_CHAR || chr == CHARACTER_MASK_CHAR || chr == CHARACTER_OR_NUMBER_CHAR || chr == CHARACTER_LOWERCASE_MASK_CHAR
-				|| chr == CHARACTER_UPPERCASE_MASK_CHAR || chr == CHARACTER_OR_NUMBER_LOWERCASE_MASK_CHAR || chr == CHARACTER_OR_NUMBER_UPPERCASE_MASK_CHAR;
+				|| chr == CHARACTER_UPPERCASE_MASK_CHAR || chr == ALL_MASK_LOWERCASE_CHAR || chr == ALL_MASK_UPPERCASE_CHAR;
 	}
 
 	@Override
@@ -152,11 +152,11 @@ public class MaskTextField extends JTextField {
 								return;
 							}
 							switch (maskChar) {
-								case CHARACTER_OR_NUMBER_LOWERCASE_MASK_CHAR:
+								case ALL_MASK_LOWERCASE_CHAR:
 								case CHARACTER_LOWERCASE_MASK_CHAR:
 									resultStr.append(Character.toLowerCase(inputChar));
 									break;
-								case CHARACTER_OR_NUMBER_UPPERCASE_MASK_CHAR:
+								case ALL_MASK_UPPERCASE_CHAR:
 								case CHARACTER_UPPERCASE_MASK_CHAR:
 									resultStr.append(Character.toUpperCase(inputChar));
 									break;
@@ -191,10 +191,10 @@ public class MaskTextField extends JTextField {
 				case CHARACTER_UPPERCASE_MASK_CHAR:
 				case CHARACTER_MASK_CHAR:
 					return Character.isLetter(inputChar) || inputChar == ' ';
-				case CHARACTER_OR_NUMBER_LOWERCASE_MASK_CHAR:
-				case CHARACTER_OR_NUMBER_UPPERCASE_MASK_CHAR:
+				case ALL_MASK_LOWERCASE_CHAR:
+				case ALL_MASK_UPPERCASE_CHAR:
 				case CHARACTER_OR_NUMBER_CHAR:
-					return Character.isDigit(inputChar) || Character.isLetter(inputChar) || inputChar == ' ';
+					return inputChar <= 0xff;
 				case NUM_MASK_CHAR:
 					return Character.isDigit(inputChar);
 				default:
