@@ -312,8 +312,37 @@ public abstract class ControllerMatcher implements Serializable {
     }
 
     /**
-     * Returns a collection that contains all the controllers that match. The returned collection may or may not be the
-     * controllers parameters, as well as the controllers parameter may or may not be altered.
+     * Matches all controllers that are blocked
+     * 
+     * @return the matcher
+     */
+    public static ControllerMatcher blocked() {
+        return new ControllerMatcher() {
+
+            private static final long serialVersionUID = 2592992524282214062L;
+
+            @Override
+            public Collection<IFController> match(Collection<IFController> controllers) throws RemoteControlException {
+                Iterator<IFController> it = controllers.iterator();
+                while (it.hasNext()) {
+                    if (!Ulrice.getModuleManager().isBlocked(it.next())) {
+                        it.remove();
+                    }
+                }
+                return controllers;
+            }
+
+            @Override
+            public String toString() {
+                return "blocked";
+            }
+
+        };
+    }
+
+    /**
+     * Returns a collection that contains all the controllers that match. The returned collection may or may not be
+     * the controllers parameters, as well as the controllers parameter may or may not be altered.
      * 
      * @param controllers the controllers
      * @return the matching controllers

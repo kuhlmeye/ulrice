@@ -32,6 +32,27 @@ public interface ControllerRemoteControl {
     ControllerState stateOf(ControllerMatcher... matchers) throws RemoteControlException;
 
     /**
+     * Waits for the specified amount of seconds for at least one controller to correlate the matcher
+     * 
+     * @param seconds the seconds
+     * @param matchers one or more matchers, concatenated by and
+     * @return a collection of states, never null
+     * @throws RemoteControlException if no controller was found or on other errors
+     */
+    Collection<ControllerState> waitForAll(double seconds, ControllerMatcher... matchers)
+        throws RemoteControlException;
+
+    /**
+     * Waits for the specified amount of seconds for one controller to correlate the matcher
+     * 
+     * @param seconds the seconds
+     * @param matchers one or more matchers, concatenated by and
+     * @return the controller, never null
+     * @throws RemoteControlException if no controller was found or on other errors
+     */
+    ControllerState waitFor(double seconds, ControllerMatcher... matchers) throws RemoteControlException;
+
+    /**
      * Returns true if there is a controller that matches all the matchers
      * 
      * @param matchers the matchers, concatenated by and
