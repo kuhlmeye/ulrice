@@ -42,7 +42,7 @@ public class ComponentRemoteControlImpl implements ComponentRemoteControl {
         }
 
         if (states.size() > 1) {
-            throw new RemoteControlException("Multiple components match " + matchers);
+            throw new RemoteControlException("Multiple components match " + and(matchers));
         }
 
         return states.iterator().next();
@@ -83,7 +83,7 @@ public class ComponentRemoteControlImpl implements ComponentRemoteControl {
 
         final Result<Boolean> result = new Result<Boolean>(interaction.duration() + 10);
 
-        RemoteControlUtils.invokeInSwing(new Runnable() {
+        RemoteControlUtils.invokeInThread(new Runnable() {
             @Override
             public void run() {
                 Robot robot;
@@ -96,9 +96,9 @@ public class ComponentRemoteControlImpl implements ComponentRemoteControl {
                 }
 
                 boolean success = true;
-
                 for (Component component : components) {
 
+                    System.out.println("doing interaction for: " + component);
                     try {
                         success &= interaction.interact(component, robot);
                     }

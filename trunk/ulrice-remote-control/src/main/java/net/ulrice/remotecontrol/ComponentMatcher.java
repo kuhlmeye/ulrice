@@ -487,6 +487,39 @@ public abstract class ComponentMatcher implements Serializable {
     }
 
     /**
+     * Matches all components that are visible
+     * 
+     * @return the matcher
+     */
+    public static ComponentMatcher visible() {
+        return new ComponentMatcher() {
+
+            private static final long serialVersionUID = -7181604678594727946L;
+
+            @Override
+            public Collection<Component> match(Collection<Component> components) throws RemoteControlException {
+                Iterator<Component> it = components.iterator();
+
+                while (it.hasNext()) {
+                    Component component = it.next();
+
+                    if (!component.isVisible()) {
+                        it.remove();
+                    }
+                }
+
+                return components;
+            }
+
+            @Override
+            public String toString() {
+                return "visible";
+            }
+
+        };
+    }
+
+    /**
      * Matches the one component that is the focus owner
      * 
      * @return the matcher
