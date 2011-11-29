@@ -5,6 +5,8 @@ import java.awt.Robot;
 import javax.swing.JComboBox;
 
 import net.ulrice.remotecontrol.RemoteControlException;
+import net.ulrice.remotecontrol.util.RemoteControlUtils;
+import net.ulrice.remotecontrol.util.Result;
 
 public class JComboBoxHelper extends AbstractJComponentHelper<JComboBox> {
 
@@ -37,15 +39,26 @@ public class JComboBoxHelper extends AbstractJComponentHelper<JComboBox> {
      *      java.lang.String)
      */
     @Override
-    public boolean enter(Robot robot, JComboBox component, String text) throws RemoteControlException {
-        for (int i = 0; i < component.getModel().getSize(); i += 1) {
-            if (text.equals(String.valueOf(component.getModel().getElementAt(i)))) {
-                component.setSelectedIndex(i);
-                return true;
-            }
-        }
+    public boolean enter(final Robot robot, final JComboBox component, final String text) throws RemoteControlException {
+        final Result<Boolean> result = new Result<Boolean>(1);
+        RemoteControlUtils.invokeInSwing(new Runnable() {
 
-        return false;
+            @Override
+            public void run() {
+                for (int i = 0; i < component.getModel().getSize(); i += 1) {
+                    if (text.equals(String.valueOf(component.getModel().getElementAt(i)))) {
+                        component.setSelectedIndex(i);
+                        result.fireResult(true);
+                        return;
+                    }
+                }
+                
+                result.fireResult(false);
+            }
+            
+        });
+
+        return result.aquireResult();
     }
 
 }
