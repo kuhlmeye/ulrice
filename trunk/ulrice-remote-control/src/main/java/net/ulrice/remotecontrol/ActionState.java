@@ -60,7 +60,7 @@ public class ActionState implements Serializable {
         this.action = action;
 
         uniqueId = action.getAction().getUniqueId();
-        enabled = action.isEnabled();
+        enabled = action.getAction().isEnabled();
     }
 
     /**

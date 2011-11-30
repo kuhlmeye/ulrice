@@ -196,7 +196,7 @@ public abstract class ActionMatcher implements Serializable {
                 Iterator<ModuleActionState> it = actions.iterator();
 
                 while (it.hasNext()) {
-                    if (!it.next().isEnabled()) {
+                    if (!it.next().getAction().isEnabled()) {
                         it.remove();
                     }
                 }

@@ -32,6 +32,27 @@ public interface ActionRemoteControl {
     ActionState stateOf(ActionMatcher... matchers) throws RemoteControlException;
 
     /**
+     * Waits for the specified amount of seconds for at least one action to correlate the matcher
+     * 
+     * @param seconds the seconds
+     * @param matchers one or more matchers, concatenated by and
+     * @return a collection of states, never null
+     * @throws RemoteControlException if no action was found or on other errors
+     */
+    Collection<ActionState> waitForAll(double seconds, ActionMatcher... matchers)
+        throws RemoteControlException;
+
+    /**
+     * Waits for the specified amount of seconds for one action to correlate the matcher
+     * 
+     * @param seconds the seconds
+     * @param matchers one or more matchers, concatenated by and
+     * @return the action, never null
+     * @throws RemoteControlException if no action was found or on other errors
+     */
+    ActionState waitFor(double seconds, ActionMatcher... matchers) throws RemoteControlException;
+
+    /**
      * Returns true if there is at least one matching action
      * 
      * @param matchers matchers one or more matchers, concatenated by and

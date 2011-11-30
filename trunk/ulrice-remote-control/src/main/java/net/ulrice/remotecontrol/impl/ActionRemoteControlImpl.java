@@ -14,6 +14,7 @@ import net.ulrice.remotecontrol.ActionRemoteControl;
 import net.ulrice.remotecontrol.ActionState;
 import net.ulrice.remotecontrol.RemoteControlException;
 import net.ulrice.remotecontrol.util.RemoteControlUtils;
+import net.ulrice.remotecontrol.util.Result;
 
 /**
  * Implementation of the {@link ActionRemoteControl}
@@ -71,6 +72,61 @@ public class ActionRemoteControlImpl implements ActionRemoteControl {
 
     /**
      * {@inheritDoc}
+     */
+    @Override
+    public Collection<ActionState> waitForAll(final double seconds, final ActionMatcher... matchers)
+        throws RemoteControlException {
+        final Result<Collection<ActionState>> result = new Result<Collection<ActionState>>(seconds);
+        
+        RemoteControlUtils.invokeInThread(new Runnable() {
+            @Override
+            public void run() {
+                long start = System.currentTimeMillis();
+                long timeToWait = (long) (seconds * 1000);
+                long end = start + timeToWait;
+
+                while (timeToWait > 0) {
+                    try {
+                        Thread.sleep((timeToWait > 250) ? 250 : timeToWait);
+                    }
+                    catch (InterruptedException e) {
+                        // ignore
+                    }
+
+                    Collection<ActionState> states;
+                    try {
+                        states = statesOf(matchers);
+                    }
+                    catch (RemoteControlException e) {
+                        result.fireException(e);
+                        return;
+                    }
+
+                    if ((states != null) && (states.size() > 0)) {
+                        result.fireResult(states);
+                        return;
+                    }
+
+                    timeToWait = end - System.currentTimeMillis();
+                }
+            }
+        });
+
+        return result.aquireResult();
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public ActionState waitFor(double seconds, ActionMatcher... matchers) throws RemoteControlException {
+        Collection<ActionState> results = waitForAll(seconds, matchers);
+
+        return results.iterator().next();
+    }
+
+    /**
+     * {@inheritDoc}
      * 
      * @see net.ulrice.remotecontrol.ActionRemoteControl#contains(net.ulrice.remotecontrol.ActionMatcher[])
      */
@@ -102,7 +158,7 @@ public class ActionRemoteControlImpl implements ActionRemoteControl {
         boolean result = true;
 
         for (final ModuleActionState actionState : list) {
-            if (actionState.isEnabled()) {
+            if (actionState.getAction().isEnabled()) {
                 RemoteControlUtils.invokeInSwing(new Runnable() {
                     @Override
                     public void run() {
