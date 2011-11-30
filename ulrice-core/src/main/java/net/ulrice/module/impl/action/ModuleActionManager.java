@@ -1,6 +1,9 @@
 package net.ulrice.module.impl.action;
 
+import java.awt.KeyEventDispatcher;
+import java.awt.KeyboardFocusManager;
 import java.awt.event.ActionEvent;
+import java.awt.event.KeyEvent;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
@@ -10,6 +13,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.logging.Logger;
 
+import javax.swing.Action;
+import javax.swing.KeyStroke;
 import javax.swing.event.EventListenerList;
 
 import net.ulrice.Ulrice;
@@ -24,7 +29,7 @@ import net.ulrice.module.impl.ModuleActionState;
  * 
  * @author christof
  */
-public class ModuleActionManager implements IFModuleEventListener, PropertyChangeListener {
+public class ModuleActionManager implements IFModuleEventListener, PropertyChangeListener, KeyEventDispatcher {
 
 	/** The logger used by this class. */
 	private static final Logger LOG = Logger.getLogger(ModuleActionManager.class.getName());
@@ -42,13 +47,59 @@ public class ModuleActionManager implements IFModuleEventListener, PropertyChang
 
 	/** The list of event listeners. */
 	private EventListenerList listenerList = new EventListenerList();
-
+	
+    private HashMap<KeyStroke, UlriceAction> applicationActionHotkeyMap = new HashMap<KeyStroke, UlriceAction>();
+    private HashMap<KeyStroke, UlriceAction> controllerActionHotkeyMap = new HashMap<KeyStroke, UlriceAction>();
+        
+	
 	/**
 	 * Creates a new module action manager.
 	 */
 	public ModuleActionManager() {
 		Ulrice.getModuleManager().addModuleEventListener(this);
+
+        KeyboardFocusManager.getCurrentKeyboardFocusManager().addKeyEventDispatcher(this);
 	}
+	  
+    public boolean dispatchKeyEvent(KeyEvent keyEvent) {        
+        KeyStroke ks = KeyStroke.getKeyStrokeForEvent(keyEvent);
+
+        UlriceAction action = null;
+        if(controllerActionHotkeyMap.containsKey(ks)) {
+            action = controllerActionHotkeyMap.get(ks);
+        }
+        
+        if (action != null) {
+            ActionEvent av =
+                new ActionEvent(
+                    keyEvent.getSource(),
+                    keyEvent.getID(),
+                    action.getHotkey().toString(),
+                    (keyEvent).getModifiers());
+            performAction(action, av);
+            return true;
+        }
+        return false;
+    }
+        
+    public void addHotkey(HashMap<KeyStroke, UlriceAction> hotkeyMap, UlriceAction action) {
+        KeyStroke keyStroke = action.getHotkey();
+        
+        if (keyStroke != null) {
+            hotkeyMap.put(keyStroke, action);
+        }
+    }
+
+    public void removeHotkey(HashMap<KeyStroke, UlriceAction> hotkeyMap, UlriceAction action) {
+        if (action == null) {
+            return;
+        }
+        
+        KeyStroke keyStroke = action.getHotkey();
+        if (keyStroke != null) {
+            hotkeyMap.remove(keyStroke);
+        }
+    }
 
 	/**
 	 * Adds a listener.
@@ -88,8 +139,6 @@ public class ModuleActionManager implements IFModuleEventListener, PropertyChang
 	 * 
 	 * @param moduleAction
 	 *            The action that should be performed.
-	 * @param e
-	 *            The action event.
 	 */
 	public void performAction(UlriceAction moduleAction, ActionEvent e) {
 
@@ -125,6 +174,7 @@ public class ModuleActionManager implements IFModuleEventListener, PropertyChang
 			return;
 		}
 				
+		addHotkey(applicationActionHotkeyMap, moduleAction);
 
 		moduleAction.addPropertyChangeListener(this);
 		applicationActions.put(moduleAction.getUniqueId(), moduleAction);
@@ -138,6 +188,7 @@ public class ModuleActionManager implements IFModuleEventListener, PropertyChang
 	 *            The action.
 	 */
 	public void removeApplicationAction(UlriceAction moduleAction) {
+        removeHotkey(applicationActionHotkeyMap, moduleAction);
 		moduleAction.removePropertyChangeListener(this);
 		applicationActions.remove(moduleAction.getUniqueId());
 		fireApplicationActionsChanged();
@@ -171,8 +222,10 @@ public class ModuleActionManager implements IFModuleEventListener, PropertyChang
 			Map<UlriceAction, ModuleActionState> actionStateMap = controllerActionStateMap.get(activeController);
 			if (actionStateMap != null) {
 				List<UlriceAction> moduleActionList = new ArrayList<UlriceAction>(actionStateMap.size());
+				controllerActionHotkeyMap.clear();
 				for (ModuleActionState moduleActionState : actionStateMap.values()) {
 					UlriceAction action = moduleActionState.getAction();					
+                    addHotkey(controllerActionHotkeyMap, action);
 					if (!ActionType.SystemAction.equals(action.getType())) {
 						action.setEnabled(moduleActionState.isEnabled());
 					}
