@@ -3,7 +3,9 @@ package net.ulrice.module.impl.action;
 import java.awt.event.ActionEvent;
 
 import javax.swing.AbstractAction;
+import javax.swing.Action;
 import javax.swing.Icon;
+import javax.swing.KeyStroke;
 
 /**
  * Action that is handled by the ulrice action manager and delegated to the ulrice modules.
@@ -90,5 +92,13 @@ public abstract class UlriceAction extends AbstractAction {
 	public String getName()  {
 	    return name;
 	}
+
+    public KeyStroke getHotkey() {
+        return (KeyStroke)getValue(Action.ACCELERATOR_KEY);
+    }
+    
+    public void setHotkey(KeyStroke keyStroke) {
+        putValue(Action.ACCELERATOR_KEY, keyStroke);
+    }
 
 }
