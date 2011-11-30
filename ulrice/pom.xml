@@ -64,11 +64,11 @@
 				<artifactId>ulrice-remote-control</artifactId>
 				<version>${version.ulrice}</version>
 			</dependency>
-			<dependency>
+<!-- 			<dependency>
 				<groupId>net.ulrice</groupId>
 				<artifactId>ulrice-sample</artifactId>
 				<version>${version.ulrice}</version>
-			</dependency>
+			</dependency> -->
 			<dependency>
 				<groupId>net.ulrice</groupId>
 				<artifactId>ulrice-translator</artifactId>
@@ -90,22 +90,22 @@
 				<version>4.8.2</version>
 				<scope>test</scope>
 			</dependency>
-			<dependency>
+<!-- 			<dependency>
 				<groupId>info.cukes</groupId>
 				<artifactId>cucumber-core</artifactId>
-				<version>1.0.0</version>
+				<version>1.0.0-SNAPSHOT</version>
 				<scope>test</scope>
 			</dependency>
 			<dependency>
 				<groupId>info.cukes</groupId>
 				<artifactId>cucumber-picocontainer</artifactId>
-				<version>1.0.0</version>
+				<version>1.0.0-SNAPSHOT</version>
 				<scope>test</scope>
 			</dependency>
 			<dependency>
 				<groupId>info.cukes</groupId>
 				<artifactId>cucumber-junit</artifactId>
-				<version>1.0.0</version>
+				<version>1.0.0-SNAPSHOT</version>
 				<scope>test</scope>
 			</dependency>
 			<dependency>
@@ -119,7 +119,7 @@
 				<artifactId>jbehave-core</artifactId>
 				<version>3.5.1</version>
 				<scope>test</scope>
-			</dependency>
+			</dependency> -->
 		</dependencies>
 	</dependencyManagement>
 
