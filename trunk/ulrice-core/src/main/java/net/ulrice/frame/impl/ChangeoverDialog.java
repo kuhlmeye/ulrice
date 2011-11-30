@@ -200,7 +200,7 @@ public class ChangeoverDialog extends JPanel implements KeyEventDispatcher {
 		}
 
 		// Hide the changeover dialog.
-		if (KeyStroke.getKeyStroke("released CONTROL").equals(ks)) {
+		if (KeyStroke.getKeyStroke("released CONTROL").equals(ks) && showChangeoverDialog) {
 			LOG.finest("Hide Changeover dialog.");
 			showChangeoverDialog = false;
 			hideChangeOverDialog();
