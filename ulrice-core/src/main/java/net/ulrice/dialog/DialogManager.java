@@ -221,7 +221,9 @@ public class DialogManager {
 
         @Override
         public void windowClosing(WindowEvent e) {
-            e.getWindow().dispose();
+            if (e.getWindow() instanceof JDialog) {
+                e.getWindow().dispose();
+            }
         }
 
         @Override
