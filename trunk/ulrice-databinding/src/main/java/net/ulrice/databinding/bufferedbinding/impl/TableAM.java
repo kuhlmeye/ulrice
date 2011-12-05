@@ -751,6 +751,9 @@ public class TableAM implements IFAttributeModel {
     }
 
     public void clear() {
+        boolean oldValid = valid;
+        boolean oldDirty = dirty;
+
         initialized = false;
         dirty = false;
         valid = true;
@@ -764,6 +767,10 @@ public class TableAM implements IFAttributeModel {
 
         fireTableCleared();
         fireDataChanged();
+        
+        if (oldValid != valid || oldDirty != dirty) {
+            fireStateChanged();
+        }
     }
 
     /**
