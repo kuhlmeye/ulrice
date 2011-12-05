@@ -26,7 +26,12 @@ public class UTableComponentHelper extends AbstractJComponentHelper<UTableCompon
         ComponentTableData data = new ComponentTableData();
 
         for (int column = 0; column < component.getColumnCount(); column += 1) {
-            data.setHeader(column, component.getColumnByViewIndex(column).getColumnName());
+            try {
+                data.setHeader(column, component.getColumnByViewIndex(column).getColumnName());
+            }
+            catch (ArrayIndexOutOfBoundsException e) {
+                //ignore
+            }
         }
 
         for (int row = 0; row < component.getViewRowCount(); row += 1) {
