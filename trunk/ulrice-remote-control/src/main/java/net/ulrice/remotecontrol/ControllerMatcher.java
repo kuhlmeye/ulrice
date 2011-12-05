@@ -4,7 +4,6 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.regex.Pattern;
@@ -295,12 +294,13 @@ public abstract class ControllerMatcher implements Serializable {
             @Override
             public Collection<IFController> match(Collection<IFController> controllers) throws RemoteControlException {
                 IFController currentController = Ulrice.getModuleManager().getCurrentController();
+                Collection<IFController> result = new LinkedHashSet<IFController>();
 
                 if ((currentController != null) && (controllers.contains(currentController))) {
-                    return Arrays.asList(currentController);
+                    result.add(currentController);
                 }
 
-                return Collections.<IFController> emptySet();
+                return result;
             }
 
             @Override

@@ -213,9 +213,10 @@ public class ComponentUtils {
      * 
      * @param component the component
      * @param point the point
+     * @throws RemoteControlException on occasion
      */
-    public static void scrollPointToVisible(Component component, Point point) {
-    	scrollPointToVisible(component, point, 2);
+    public static void scrollPointToVisible(Component component, Point point) throws RemoteControlException {
+        scrollPointToVisible(component, point, 2);
     }
 
     /**
@@ -225,23 +226,26 @@ public class ComponentUtils {
      * @param component the component
      * @param point the point
      * @param size creates a rectangle out of the point with the specified size as width and height
+     * @throws RemoteControlException on occasion
      */
-    public static void scrollPointToVisible(Component component, Point point, int size) {
-    	if (size < 2) {
-    		size = 2;
-    	}
-    	
-    	scrollRectToVisible(component, new Rectangle(point.x - size / 2, point.y - size / 2, size, size));
+    public static void scrollPointToVisible(Component component, Point point, int size) throws RemoteControlException {
+        if (size < 2) {
+            size = 2;
+        }
+
+        scrollRectToVisible(component, new Rectangle(point.x - (size / 2), point.y - (size / 2), size, size));
     }
-    
+
     /**
      * Tries to move the specified rectangle of the specified component to the visible part of the viewport of the
      * parents.
      * 
      * @param component the component
      * @param rectangle the rectangle
+     * @throws RemoteControlException on occasion
      */
-    public static void scrollRectToVisible(Component component, Rectangle rectangle) {
+    public static void scrollRectToVisible(final Component component, final Rectangle rectangle)
+        throws RemoteControlException {
         Container parent = component.getParent();
 
         if (parent != null) {
@@ -249,9 +253,15 @@ public class ComponentUtils {
         }
 
         if (component instanceof JComponent) {
-            ((JComponent) component).scrollRectToVisible(rectangle);
+            RemoteControlUtils.invokeInSwing(new Runnable() {
 
-            component.repaint(0);
+                @Override
+                public void run() {
+                    ((JComponent) component).scrollRectToVisible(rectangle);
+
+                    component.repaint(0);
+                }
+            });
         }
     }
 

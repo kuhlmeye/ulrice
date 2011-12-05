@@ -52,7 +52,7 @@ public class ControllerRemoteControlImpl implements ControllerRemoteControl {
 
         // TODO: WTF, why are null controllers in the list?
         controllers.remove(null);
-
+        
         return ControllerState.inspect(and(matchers).match(controllers));
     }
 
