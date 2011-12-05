@@ -98,7 +98,6 @@ public class ComponentRemoteControlImpl implements ComponentRemoteControl {
                 boolean success = true;
                 for (Component component : components) {
 
-                    System.out.println("doing interaction for: " + component);
                     try {
                         success &= interaction.interact(component, robot);
                     }

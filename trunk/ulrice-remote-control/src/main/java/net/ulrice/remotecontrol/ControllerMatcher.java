@@ -136,7 +136,9 @@ public abstract class ControllerMatcher implements Serializable {
 
             @Override
             public Collection<IFController> match(Collection<IFController> controllers) throws RemoteControlException {
-                controllers.removeAll(matcher.match(new ArrayList<IFController>(controllers)));
+                Collection<IFController> matched = matcher.match(new ArrayList<IFController>(controllers));
+                
+                controllers.removeAll(matched);
 
                 return controllers;
             }

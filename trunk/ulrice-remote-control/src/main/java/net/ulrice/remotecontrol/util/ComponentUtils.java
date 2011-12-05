@@ -108,7 +108,6 @@ public class ComponentUtils {
                 final Window window = (Window) component;
 
                 if (!window.isActive()) {
-                    System.out.println(window.getOwner());
                     final Result<Boolean> result = new Result<Boolean>(2);
 
                     WindowFocusListener focusListener = new WindowFocusListener() {
