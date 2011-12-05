@@ -1,9 +1,12 @@
 package net.ulrice.remotecontrol.impl.helper;
 
 import java.awt.Robot;
+import java.util.regex.Pattern;
 
+import javax.swing.ComboBoxModel;
 import javax.swing.JComboBox;
 
+import net.ulrice.remotecontrol.ComponentListData;
 import net.ulrice.remotecontrol.RemoteControlException;
 import net.ulrice.remotecontrol.util.RemoteControlUtils;
 import net.ulrice.remotecontrol.util.Result;
@@ -35,27 +38,48 @@ public class JComboBoxHelper extends AbstractJComponentHelper<JComboBox> {
     /**
      * {@inheritDoc}
      * 
+     * @see net.ulrice.remotecontrol.impl.helper.AbstractComponentHelper#getData(java.awt.Component)
+     */
+    @Override
+    public Object getData(JComboBox component) {
+        ComponentListData data = new ComponentListData();
+        ComboBoxModel model = component.getModel();
+
+        for (int i = 0; i < model.getSize(); i += 1) {
+            Object element = model.getElementAt(i);
+            data.addEntry(element.toString(), model.getSelectedItem() == element);
+        }
+
+        return data;
+    }
+
+    /**
+     * {@inheritDoc}
+     * 
      * @see net.ulrice.remotecontrol.impl.helper.AbstractComponentHelper#enter(java.awt.Robot, java.awt.Component,
      *      java.lang.String)
      */
     @Override
-    public boolean enter(final Robot robot, final JComboBox component, final String text) throws RemoteControlException {
+    public boolean enter(final Robot robot, final JComboBox component, final String text)
+        throws RemoteControlException {
         final Result<Boolean> result = new Result<Boolean>(1);
+        final Pattern pattern = RemoteControlUtils.toPattern(text);
+
         RemoteControlUtils.invokeInSwing(new Runnable() {
 
             @Override
             public void run() {
                 for (int i = 0; i < component.getModel().getSize(); i += 1) {
-                    if (text.equals(String.valueOf(component.getModel().getElementAt(i)))) {
+                    if (pattern.matcher(String.valueOf(component.getModel().getElementAt(i))).matches()) {
                         component.setSelectedIndex(i);
                         result.fireResult(true);
                         return;
                     }
                 }
-                
+
                 result.fireResult(false);
             }
-            
+
         });
 
         return result.aquireResult();

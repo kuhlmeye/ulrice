@@ -81,7 +81,7 @@ public class BehaviorJBehaveSteps {
         assertTrue(componentRC().interact(click(), like(name), ofType(JButton.class)));
     }
 
-    @When("I enter following knowledge into the table: $table")
+    @When("I enter following knowledge into the table:$table")
     public void enterTableData(ExamplesTable table) throws RemoteControlException {
         for (Map<String, String> entry : table.getRows()) {
             clickButton("Add");
@@ -107,7 +107,7 @@ public class BehaviorJBehaveSteps {
         assertTrue(actionRC().action(ActionMatcher.withId(id)));
     }
 
-    @Then("a dialog should appear containing following data: $table")
+    @Then("a dialog should appear containing following data:$table")
     public void checkDialog(ExamplesTable table) throws RemoteControlException {
         ComponentState dialog = componentRC().waitFor(2, ofType(JDialog.class));
 
