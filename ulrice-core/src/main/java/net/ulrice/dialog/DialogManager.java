@@ -221,7 +221,7 @@ public class DialogManager {
 
         @Override
         public void windowClosing(WindowEvent e) {
-            if (e.getWindow() instanceof JDialog) {
+            if (e.getWindow() != Ulrice.getMainFrame().getFrame()) {
                 e.getWindow().dispose();
             }
         }
