@@ -1,6 +1,7 @@
 package net.ulrice.databinding.bufferedbinding.impl;
 
 import java.lang.reflect.InvocationTargetException;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -59,6 +60,7 @@ public class GenericAM<T> implements IFAttributeModel<T>, IFViewChangeListener {
 	    this.modelAccessor = modelAccessor;
         this.attributeInfo = attributeInfo;
         this.id = modelAccessor.getAttributeId();
+        
 	}
 	
 	/**
@@ -152,10 +154,17 @@ public class GenericAM<T> implements IFAttributeModel<T>, IFViewChangeListener {
 			if (getCurrentValue() == null && getOriginalValue() == null) {
 				stateChanged |= (dirty != false);
 				dirty = false;
-			} else if (getCurrentValue() != null && getOriginalValue() != null) {
-				boolean newDirty = !getCurrentValue().equals(getOriginalValue());
-				stateChanged |= (newDirty != dirty);
-				dirty = newDirty;
+			} else if (getCurrentValue() != null && getOriginalValue() != null) {				
+			    boolean newDirty;			    
+			    //XHU: Needed, because it is not allowed to compare BigDecimal values with equals()!
+			    if(getCurrentValue() instanceof BigDecimal){			        
+		             newDirty = !(((BigDecimal) getCurrentValue()).compareTo((BigDecimal) getOriginalValue()) == 0);	             			        
+			    }else{
+		              newDirty = !getCurrentValue().equals(getOriginalValue());
+			    }		    
+                stateChanged |= (newDirty != dirty);
+                dirty = newDirty;
+                
 			} else {
 				stateChanged |= (dirty != true);
 				dirty = true;

@@ -3,7 +3,7 @@ package net.ulrice.databinding.converter;
 
 public class ValueConverterException extends RuntimeException {
 
-	public ValueConverterException(NumberFormatException ex) {
+	public ValueConverterException(Exception ex) {
 		super(ex);
 	}
 	
