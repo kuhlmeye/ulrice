@@ -2,6 +2,7 @@ package net.ulrice.translator;
 
 import java.util.List;
 
+import net.ulrice.Ulrice;
 import net.ulrice.module.IFController;
 import net.ulrice.process.AbstractProcess;
 import net.ulrice.translator.service.DictionaryEntryDTO;
@@ -67,6 +68,11 @@ public class PSaveData extends AbstractProcess<Void, Void> {
 	@Override
 	protected void finished(Void result) {		
 	}
+	
+    @Override
+    protected void failed(Throwable t) {
+        Ulrice.getMessageHandler().handleException(getOwningController(), t);
+    }
 
     @Override
     public boolean hasProgressInformation() {

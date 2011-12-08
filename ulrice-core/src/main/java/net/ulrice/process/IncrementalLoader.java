@@ -2,8 +2,6 @@ package net.ulrice.process;
 
 import java.util.List;
 
-import javax.swing.SwingUtilities;
-
 import net.ulrice.Ulrice;
 import net.ulrice.module.IFController;
 
@@ -87,6 +85,11 @@ public class IncrementalLoader<T> extends AbstractProcess<T, List<T>>{
         catch (Exception e) {
             Ulrice.getMessageHandler().handleException(getOwningController(), e);
         }
+    }
+    
+    @Override
+    protected void failed(Throwable t) {
+        Ulrice.getMessageHandler().handleException(getOwningController(), t);
     }
 
     @Override

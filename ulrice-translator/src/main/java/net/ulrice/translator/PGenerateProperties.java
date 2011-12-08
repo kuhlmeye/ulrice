@@ -9,6 +9,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Properties;
 
+import net.ulrice.Ulrice;
 import net.ulrice.module.IFController;
 import net.ulrice.process.AbstractProcess;
 import net.ulrice.translator.service.TranslationDTO;
@@ -73,6 +74,11 @@ public class PGenerateProperties extends AbstractProcess<Void, Void> {
 	protected void finished(Void result) {
 		
 	}
+	
+    @Override
+    protected void failed(Throwable t) {
+        Ulrice.getMessageHandler().handleException(getOwningController(), t);
+    }
 
     @Override
     public boolean hasProgressInformation() {

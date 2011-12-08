@@ -36,6 +36,11 @@ public class PSample1 extends AbstractProcess<Void, Void>  {
 	protected void finished(Void result) {
 		// Nothing to do.	
 	}
+	
+    @Override
+    protected void failed(Throwable t) {
+        Ulrice.getMessageHandler().handleException(getOwningController(), t);
+    }
 
     @Override
     public boolean hasProgressInformation() {
