@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
+import net.ulrice.Ulrice;
 import net.ulrice.module.IFController;
 import net.ulrice.process.AbstractProcess;
 import net.ulrice.translator.service.DictionaryEntryDTO;
@@ -109,6 +110,11 @@ public class PGenerateTranslations extends AbstractProcess<List<TranslationDTO>,
 		model.setTranslations(result);
 		model.getTranslationsAM().read();
 	}
+	
+    @Override
+    protected void failed(Throwable t) {
+        Ulrice.getMessageHandler().handleException(getOwningController(), t);
+    }
 
     @Override
     public boolean hasProgressInformation() {

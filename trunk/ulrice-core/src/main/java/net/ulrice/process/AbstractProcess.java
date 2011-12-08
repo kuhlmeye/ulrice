@@ -85,14 +85,14 @@ public abstract class AbstractProcess<T, V> extends SwingWorker<T, V> implements
         try {
             finished(get());
         }
-        catch (CancellationException e) {
+        catch (CancellationException ex) {
             this.state = ProcessState.Cancelled;
         }
-        catch (InterruptedException e) {
-            Ulrice.getMessageHandler().handleException(e);
+        catch (InterruptedException ex) {
+            Ulrice.getMessageHandler().handleException(ex);
         }
-        catch (ExecutionException e) {
-            Ulrice.getMessageHandler().handleException(e);
+        catch (ExecutionException ex) {
+            failed(ex.getCause());
         }
         finally {
             this.state = ProcessState.Done;
@@ -185,6 +185,8 @@ public abstract class AbstractProcess<T, V> extends SwingWorker<T, V> implements
      * @param result The result of the background process
      */
     protected abstract void finished(T result);
+    
+    protected abstract void failed(Throwable t);
 
     public boolean blocksWorkarea() {
         return blocksWorkarea;
