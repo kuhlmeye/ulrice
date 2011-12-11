@@ -1,19 +1,20 @@
 package net.ulrice.frame.impl.navigation;
 
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.util.Comparator;
 
 import javax.swing.JComponent;
 import javax.swing.JTree;
-import javax.swing.event.TreeModelEvent;
+import javax.swing.KeyStroke;
 import javax.swing.tree.TreePath;
 
 import net.ulrice.Ulrice;
 import net.ulrice.frame.IFMainFrameComponent;
 import net.ulrice.module.ControllerProviderCallback;
 import net.ulrice.module.IFController;
-import net.ulrice.module.IFModule;
 import net.ulrice.module.exception.ModuleInstantiationException;
 
 /**
@@ -34,6 +35,33 @@ public class ModuleTree extends JTree implements IFMainFrameComponent, MouseList
         setRootVisible(false);
         setCellRenderer(new ModuleTreeCellRenderer());
         addMouseListener(this);
+        
+        addKeyListener(new KeyAdapter() {
+            
+            @Override
+            public void keyTyped(KeyEvent e) {
+                if(!isSelectionEmpty() && e.getKeyChar() == '\n' && e.isControlDown()) {
+                    TreePath path = getSelectionPath();
+                    Object pathComponent = path.getLastPathComponent();
+                
+                    if (pathComponent instanceof ModuleTreeNode) {
+                        ModuleTreeNode node = (ModuleTreeNode) pathComponent;
+                        if (!node.isGroup()) {
+                            Ulrice.getModuleManager().openModule(node.getModule().getUniqueId(), new ControllerProviderCallback() {
+                                @Override
+                                public void onFailure(ModuleInstantiationException exc) {
+                                    Ulrice.getMessageHandler().handleException(exc);
+                                }
+
+                                @Override
+                                public void onControllerReady(IFController controller) {
+                                }                                
+                            });                                                            
+                        }
+                    }
+                }
+            }
+        });
     }
 
     /**

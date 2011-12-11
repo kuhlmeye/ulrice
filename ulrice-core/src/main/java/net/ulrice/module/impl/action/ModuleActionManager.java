@@ -61,10 +61,13 @@ public class ModuleActionManager implements IFModuleEventListener, PropertyChang
         KeyboardFocusManager.getCurrentKeyboardFocusManager().addKeyEventDispatcher(this);
 	}
 	  
-    public boolean dispatchKeyEvent(KeyEvent keyEvent) {        
+    public boolean dispatchKeyEvent(KeyEvent keyEvent) {    
         KeyStroke ks = KeyStroke.getKeyStrokeForEvent(keyEvent);
 
         UlriceAction action = null;
+        if(applicationActionHotkeyMap.containsKey(ks)) {
+            action = applicationActionHotkeyMap.get(ks);
+        }
         if(controllerActionHotkeyMap.containsKey(ks)) {
             action = controllerActionHotkeyMap.get(ks);
         }
@@ -137,15 +140,15 @@ public class ModuleActionManager implements IFModuleEventListener, PropertyChang
 	 * Performs an action. In this method the action will be checked against the
 	 * controller settings and the delegated to the currently active module.
 	 * 
-	 * @param moduleAction
+	 * @param action
 	 *            The action that should be performed.
 	 */
-	public void performAction(UlriceAction moduleAction, ActionEvent e) {
+	public void performAction(UlriceAction action, ActionEvent e) {
 
 		if (activeController != null) {
 
-			if (!Ulrice.getSecurityManager().allowExecuteAction(activeController, moduleAction)) {
-				LOG.info("Action [Id: " + moduleAction.getUniqueId() + ", Module: "
+			if (!Ulrice.getSecurityManager().allowExecuteAction(activeController, action)) {
+				LOG.info("Action [Id: " + action.getUniqueId() + ", Module: "
 						+ Ulrice.getModuleManager().getModule(activeController).getModuleTitle(Usage.Default)
 						+ "] will not be executed. Not authorized by ulrice security manager.");
 				return;
@@ -153,11 +156,17 @@ public class ModuleActionManager implements IFModuleEventListener, PropertyChang
 
 			Map<UlriceAction, ModuleActionState> actionStateMap = controllerActionStateMap.get(activeController);
 			if (actionStateMap != null) {
-				ModuleActionState moduleActionState = actionStateMap.get(moduleAction);
+				ModuleActionState moduleActionState = actionStateMap.get(action);
 				if (moduleActionState != null && moduleActionState.isEnabled()) {
-					activeController.performModuleAction(moduleAction.getUniqueId());
-				}
+					activeController.performModuleAction(action.getUniqueId());
+					return;
+				}  
 			}
+			
+			if(action.isEnabled()) {
+                action.actionPerformed(e);
+                return;
+            }
 		}
 	}
 
