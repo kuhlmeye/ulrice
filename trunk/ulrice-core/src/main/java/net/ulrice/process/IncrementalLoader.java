@@ -49,7 +49,8 @@ public class IncrementalLoader<T> extends AbstractProcess<T, List<T>>{
             final List<T> chunk = provider.getData (numLoaded, chunkSize);
             publish(chunk);
             numLoaded += chunk.size();
-            setProgress(Math.round(100.0f / totalNumRows * numLoaded));
+            int loadedPercent = Math.round(100.0f / totalNumRows * numLoaded);
+            setProgress(loadedPercent > 100 ? 100 : loadedPercent);
             fireProgressChanged();
             
             if(chunk.size() == 0) {
