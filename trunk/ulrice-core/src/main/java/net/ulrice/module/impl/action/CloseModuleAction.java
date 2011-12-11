@@ -6,6 +6,7 @@ package net.ulrice.module.impl.action;
 import java.awt.event.ActionEvent;
 
 import javax.swing.Icon;
+import javax.swing.KeyStroke;
 
 import net.ulrice.Ulrice;
 import net.ulrice.module.IFController;
@@ -26,11 +27,13 @@ public class CloseModuleAction extends UlriceAction {
 
     public CloseModuleAction(String name, Icon icon) {
         super(ACTION_ID, name, true, ActionType.SystemAction, icon);
+        this.setHotkey(KeyStroke.getKeyStroke("ctrl W"));
     }
 
     public CloseModuleAction(String name, Icon icon, IFController controller) {
         super(ACTION_ID, name, true, ActionType.SystemAction, icon);
         this.controller = controller;
+        this.setHotkey(KeyStroke.getKeyStroke("ctrl w"));
     }
 	
 	@Override
