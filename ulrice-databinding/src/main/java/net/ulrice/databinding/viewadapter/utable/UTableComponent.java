@@ -695,6 +695,13 @@ public class UTableComponent extends JPanel {
         return null;
     }
     
+    public TableColumn getColumn(int column){        
+        if(column < fixedColumns) {
+            return staticTable.getColumnModel().getColumn(column);
+        } 
+        return scrollTable.getColumnModel().getColumn(column-fixedColumns);        
+    }
+    
     public void addTableAction(Action action) {
         popupMenuActions.add(action);
     }    
