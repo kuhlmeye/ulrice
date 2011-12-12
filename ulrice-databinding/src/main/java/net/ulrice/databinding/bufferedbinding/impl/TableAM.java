@@ -47,7 +47,7 @@ public class TableAM implements IFAttributeModel {
     private Set<Element> modElements = new HashSet<Element>();
     private Set<Element> delElements = new HashSet<Element>();
     private Set<Element> invElements = new HashSet<Element>();
-
+    
     private List<IFViewAdapter> viewAdapterList = new ArrayList<IFViewAdapter>();
 
     private IFValueConverter valueConverter;
@@ -57,6 +57,8 @@ public class TableAM implements IFAttributeModel {
     private boolean initialized = false;
     private boolean dirty = false;
     private boolean valid = true;
+    //prevent update ui, for mass editing
+    private boolean massEditMode = false;
 
     // unique constraint handling
     private String[] columnIds = null;
@@ -345,18 +347,18 @@ public class TableAM implements IFAttributeModel {
     }
 
     protected void elementDataChanged(final Element element, final String columnId) {
-    	fireUpdateViews();
-
-        if (columnIds != null) {
+        fireUpdateViews();
+        
+    	if (columnIds != null) {
             checkUniqueConstraint(element);
             if (keyDeleteMap.containsValue(buildKey(element))) {
             	checkAgainstDeletedElements(element);
             }
             checkAgainstDeletedElements(element);
         }
-
+        
 		fireElementChanged(element, columnId);
-
+		
 		fireDataChanged();
     }
 
@@ -411,7 +413,7 @@ public class TableAM implements IFAttributeModel {
 
     private void fireDataChanged() {
         IFAttributeModelEventListener[] listeners = listenerList.getListeners(IFAttributeModelEventListener.class);
-        if (listeners != null) {
+        if (listeners != null && !massEditMode) {
             for (final IFAttributeModelEventListener listener : listeners) {
                 if(!SwingUtilities.isEventDispatchThread()) {
                     SwingUtilities.invokeLater(new Runnable() {                    
@@ -575,7 +577,7 @@ public class TableAM implements IFAttributeModel {
     }
 
     public void fireUpdateViews() {
-        if (viewAdapterList != null) {
+        if (viewAdapterList != null && !massEditMode) {
             for (final IFViewAdapter viewAdapter : viewAdapterList) {
                 if(!SwingUtilities.isEventDispatchThread()) {
                     SwingUtilities.invokeLater(new Runnable() {                    
@@ -1108,4 +1110,22 @@ public class TableAM implements IFAttributeModel {
         }
         return null;
     }
+
+    /**
+     * Activate the mass edit mode, where fireUpdateViews and fireDataChanged are not active
+     */
+    public void activateMassEditMode() {
+        this.massEditMode = true;
+    }    
+    
+    /**
+     * Deactivate the mass edit mode, where fireUpdateViews and fireDataChanged are active
+     * and execute fireUpdateViews and fireDataChanged
+     */
+    public void deactivateMassEditModeAndUpdate(){
+        this.massEditMode = false;
+        fireUpdateViews();
+        fireDataChanged();
+    }
+    
 }
