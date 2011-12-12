@@ -359,6 +359,7 @@ public class UTableComponent extends JPanel {
 		if (columnDefinitions != null) {
 			for (int i = 0; i < fixedColumns; i++) {
 				ColumnDefinition<?> columnDefinition = columnDefinitions.get(i);
+				columnDefinition.setFixedColumn(true);
                 addColumn(columnModel, i, columnDefinition);
 			}
 		}
@@ -371,6 +372,7 @@ public class UTableComponent extends JPanel {
 		if (columnDefinitions != null) {
 			for (int i = fixedColumns; i < columnDefinitions.size(); i++) {
 				ColumnDefinition<?> columnDefinition = columnDefinitions.get(i);
+				columnDefinition.setFixedColumn(false);
 				addColumn(columnModel, i - fixedColumns, columnDefinition);
 			}
 		}
@@ -464,7 +466,8 @@ public class UTableComponent extends JPanel {
                 renderer = table.getTableHeader().getDefaultRenderer();
             }
             Component comp = renderer.getTableCellRendererComponent(table, col.getHeaderValue(), false, false, 0, 0);
-            maxWidth = comp.getPreferredSize().width;
+            // TODO find a clever way and place to calculate the a real value instead of setting just +10
+            maxWidth = comp.getPreferredSize().width + 10;
         }
 
         for (int r = 0; r < table.getRowCount(); r++) {
