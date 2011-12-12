@@ -23,6 +23,7 @@ import javax.swing.event.ListDataListener;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.TableColumnModelEvent;
 import javax.swing.event.TableColumnModelListener;
+import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumn;
 import javax.swing.table.TableColumnModel;
 import javax.swing.text.BadLocationException;
@@ -181,7 +182,24 @@ public class UTableVAFilter extends RowFilter<UTableViewAdapter, String> impleme
 		for (int i = 0; i < entry.getValueCount() && include; i++) {
 		    
 			String columnId = columnIdentifiers.get(i);
-			include &= includeValue(columnId, entry.getIdentifier(), entry.getValue(i));
+			UTableComponent uTableComponent = entry.getModel().getComponent();
+			@SuppressWarnings("rawtypes")
+            ColumnDefinition colDef = uTableComponent.getColumnById(columnId);
+			UTable table = null;
+			if (colDef.isFixedColumn()) {
+			    table = (UTable) uTableComponent.getStaticTable();
+			}
+			else {
+			    table = (UTable) uTableComponent.getScrollTable();
+			}
+			TableCellRenderer tableCellRenderer = uTableComponent.getColumnById(columnId).getCellRenderer();
+			if (tableCellRenderer != null && StringBasedTableCellRenderer.class.isAssignableFrom(tableCellRenderer.getClass())) {
+			    StringBasedTableCellRenderer c = (StringBasedTableCellRenderer) tableCellRenderer;
+			    include &= includeValue(columnId, entry.getIdentifier(), c.getString(entry.getValue(i), table, colDef));
+			}
+			else {
+			    include &= includeValue(columnId, entry.getIdentifier(), entry.getValue(i));
+			}
 		}
 		return include;
 	}
@@ -201,15 +219,31 @@ public class UTableVAFilter extends RowFilter<UTableViewAdapter, String> impleme
 				case Boolean:
 					Pattern pattern = regexExpressionMap.get(columnId);
 					if (pattern != null) {
-						LOG.finest("ColumnId: " + columnId + ", Value: " + strValue + ", Pattern: " + pattern.pattern());
-						return pattern.matcher(strValue).matches();
+					    if (pattern.pattern().startsWith("\\+")) {
+					        return value != null;
+					    }
+					    else if (pattern.pattern().startsWith("\\-")) {
+                            return value == null;
+                        }
+					    else {
+					        LOG.finest("ColumnId: " + columnId + ", Value: " + strValue + ", Pattern: " + pattern.pattern());
+	                        return pattern.matcher(strValue).matches();
+					    }
 					}
 				case Numeric:
 					NumericPattern numericPattern = numericPatternExpressionMap.get(columnId);
 					if (numericPattern != null) {
-						LOG.finest("ColumnId: " + columnId + ", Value: " + strValue + ", Pattern: "
-								+ numericPattern.toString());
-						return numericPattern.matches(value);
+//					    if (numericPattern.pattern().startsWith("+")) {
+//                            return value != null;
+//                        }
+//                        else if (numericPattern.pattern().startsWith("-")) {
+//                            return value == null;
+//                        }
+//                        else {
+    						LOG.finest("ColumnId: " + columnId + ", Value: " + strValue + ", Pattern: "
+    								+ numericPattern.toString());
+    						return numericPattern.matches(value);
+//                        }
 					}
 			}
 		}
@@ -287,6 +321,12 @@ public class UTableVAFilter extends RowFilter<UTableViewAdapter, String> impleme
                 case Boolean:
                 case RegEx: {
                     String regex = text;
+                    if (regex.startsWith("+")) {
+                        regex = regex.replace("+", "\\+");
+                    }
+                    if (regex.startsWith("-")) {
+                        regex = regex.replace("-", "\\-");
+                    }
                     regex = regex.replace("?", ".?");
                     regex = regex.replace("*", ".*");
                     regex += ".*";

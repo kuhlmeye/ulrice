@@ -31,6 +31,7 @@ public class ColumnDefinition<T extends Object> {
 	private boolean useValueRange = false;
 	private List<T> valueRange;
 	private Comparator<T> comparator;
+	private boolean fixedColumn;
 	
 	private TableCellEditor cellEditor;
 	private TableCellRenderer cellRenderer;
@@ -307,5 +308,13 @@ public class ColumnDefinition<T extends Object> {
     
     public void setComparator(Comparator<T> comparator) {
         this.comparator = comparator;
+    }
+
+    public boolean isFixedColumn() {
+        return fixedColumn;
+    }
+
+    public void setFixedColumn(boolean fixedColumn) {
+        this.fixedColumn = fixedColumn;
     }
 }
