@@ -35,11 +35,16 @@ public class JTableHelper extends AbstractJComponentHelper<JTable> {
 
         for (int row = 0; row < model.getRowCount(); row += 1) {
             for (int column = 0; column < model.getColumnCount(); column += 1) {
-                int modelRow = component.convertRowIndexToModel(row);
-                int modelColumn = component.convertColumnIndexToModel(column);
-
-                data.setEntry(row, column, model.getValueAt(modelRow, modelColumn),
-                    component.isCellSelected(row, column));
+                try {
+                    int modelRow = component.convertRowIndexToModel(row);
+                    int modelColumn = component.convertColumnIndexToModel(column);
+    
+                    data.setEntry(row, column, model.getValueAt(modelRow, modelColumn),
+                        component.isCellSelected(row, column));
+                }
+                catch (IndexOutOfBoundsException e) {
+                    // concurrent problem
+                }
             }
         }
 

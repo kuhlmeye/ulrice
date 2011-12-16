@@ -128,38 +128,39 @@ public class ComponentRemoteControlImpl implements ComponentRemoteControl {
         RemoteControlUtils.invokeInThread(new Runnable() {
             @Override
             public void run() {
-                try {
-                    long start = System.currentTimeMillis();
-                    long timeToWait = (long) (seconds * 1000);
-                    long end = start + timeToWait;
+                long start = System.currentTimeMillis();
+                long timeToWait = (long) (seconds * 1000);
+                long end = start + timeToWait;
+                long waitDelay = RemoteControlUtils.getWaitDelay();
 
-                    while (timeToWait > 0) {
-                        try {
-                            Thread.sleep((timeToWait > 250) ? 250 : timeToWait);
-                        }
-                        catch (InterruptedException e) {
-                            // ignore
-                        }
-
-                        Collection<ComponentState> states;
-                        try {
-                            states = statesOf(matchers);
-                        }
-                        catch (RemoteControlException e) {
-                            result.fireException(e);
-                            return;
-                        }
-
-                        if ((states != null) && (states.size() > 0)) {
-                            result.fireResult(states);
-                            return;
-                        }
-
-                        timeToWait = end - System.currentTimeMillis();
+                while (true) {
+                    Collection<ComponentState> states;
+                    try {
+                        states = statesOf(matchers);
                     }
-                }
-                catch (Exception e) {
-                    result.fireException(e);
+                    catch (Exception e) {
+                        result.fireException(e);
+                        return;
+                    }
+
+                    if ((states != null) && (states.size() > 0)) {
+                        result.fireResult(states);
+                        return;
+                    }
+
+                    timeToWait = end - System.currentTimeMillis();
+
+                    if (timeToWait <= 0) {
+                        // timeout will be managed outside
+                        return;
+                    }
+
+                    try {
+                        Thread.sleep((timeToWait > waitDelay) ? waitDelay : timeToWait);
+                    }
+                    catch (InterruptedException e) {
+                        // ignore
+                    }
                 }
             }
         });

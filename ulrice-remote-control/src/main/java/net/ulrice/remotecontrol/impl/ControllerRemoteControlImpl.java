@@ -52,7 +52,7 @@ public class ControllerRemoteControlImpl implements ControllerRemoteControl {
 
         // TODO: WTF, why are null controllers in the list?
         controllers.remove(null);
-        
+
         return ControllerState.inspect(and(matchers).match(controllers));
     }
 
@@ -90,20 +90,14 @@ public class ControllerRemoteControlImpl implements ControllerRemoteControl {
                 long start = System.currentTimeMillis();
                 long timeToWait = (long) (seconds * 1000);
                 long end = start + timeToWait;
+                long waitDelay = RemoteControlUtils.getWaitDelay();
 
-                while (timeToWait > 0) {
-                    try {
-                        Thread.sleep((timeToWait > 250) ? 250 : timeToWait);
-                    }
-                    catch (InterruptedException e) {
-                        // ignore
-                    }
-
+                while (true) {
                     Collection<ControllerState> states;
                     try {
                         states = statesOf(matchers);
                     }
-                    catch (RemoteControlException e) {
+                    catch (Exception e) {
                         result.fireException(e);
                         return;
                     }
@@ -114,6 +108,18 @@ public class ControllerRemoteControlImpl implements ControllerRemoteControl {
                     }
 
                     timeToWait = end - System.currentTimeMillis();
+
+                    if (timeToWait <= 0) {
+                        // timeout will be managed outside
+                        return;
+                    }
+
+                    try {
+                        Thread.sleep((timeToWait > waitDelay) ? waitDelay : timeToWait);
+                    }
+                    catch (InterruptedException e) {
+                        // ignore
+                    }
                 }
             }
         });
