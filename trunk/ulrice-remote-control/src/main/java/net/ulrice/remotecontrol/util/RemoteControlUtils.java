@@ -25,6 +25,8 @@ public class RemoteControlUtils {
 
     public static final double PAUSE_DELAY = 0.1;
 
+    public static final double WAIT_DELAY = 0.1;
+
     private static Double speedFactor;
 
     /**
@@ -194,6 +196,25 @@ public class RemoteControlUtils {
      */
     public static double getPauseDelay() {
         return PAUSE_DELAY * speedFactor();
+    }
+
+    /**
+     * Returns the wait delay for the wait-for operations
+     * 
+     * @return the delay
+     */
+    public static long getWaitDelay() {
+        long result = (long) (WAIT_DELAY * speedFactor() * 1000);
+
+        if (result < 10) {
+            result = 10;
+        }
+
+        if (result > 1000) {
+            result = 1000;
+        }
+
+        return result;
     }
 
     /**

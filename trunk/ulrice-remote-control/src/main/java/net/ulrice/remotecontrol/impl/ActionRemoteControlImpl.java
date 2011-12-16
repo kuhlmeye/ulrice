@@ -77,27 +77,21 @@ public class ActionRemoteControlImpl implements ActionRemoteControl {
     public Collection<ActionState> waitForAll(final double seconds, final ActionMatcher... matchers)
         throws RemoteControlException {
         final Result<Collection<ActionState>> result = new Result<Collection<ActionState>>(seconds);
-        
+
         RemoteControlUtils.invokeInThread(new Runnable() {
             @Override
             public void run() {
                 long start = System.currentTimeMillis();
                 long timeToWait = (long) (seconds * 1000);
                 long end = start + timeToWait;
+                long waitDelay = RemoteControlUtils.getWaitDelay();
 
-                while (timeToWait > 0) {
-                    try {
-                        Thread.sleep((timeToWait > 250) ? 250 : timeToWait);
-                    }
-                    catch (InterruptedException e) {
-                        // ignore
-                    }
-
+                while (true) {
                     Collection<ActionState> states;
                     try {
                         states = statesOf(matchers);
                     }
-                    catch (RemoteControlException e) {
+                    catch (Exception e) {
                         result.fireException(e);
                         return;
                     }
@@ -108,13 +102,25 @@ public class ActionRemoteControlImpl implements ActionRemoteControl {
                     }
 
                     timeToWait = end - System.currentTimeMillis();
+
+                    if (timeToWait <= 0) {
+                        // timeout will be managed outside
+                        return;
+                    }
+
+                    try {
+                        Thread.sleep((timeToWait > waitDelay) ? waitDelay : timeToWait);
+                    }
+                    catch (InterruptedException e) {
+                        // ignore
+                    }
                 }
             }
         });
 
         return result.aquireResult();
     }
-    
+
     /**
      * {@inheritDoc}
      */
