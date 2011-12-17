@@ -440,4 +440,8 @@ public class ModuleActionManager implements IFModuleEventListener, PropertyChang
             }
         }
     }
+
+    @Override
+    public void nameChanged(IFController controller) {
+    }
 }

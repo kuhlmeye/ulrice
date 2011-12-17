@@ -478,11 +478,37 @@ public class ModuleManager implements IFModuleManager, IFModuleStructureManager 
         }
     }
 
+
     private void uncheckedFireModuleStructureChanged() {
         IFModuleStructureEventListener[] listeners = listenerList.getListeners(IFModuleStructureEventListener.class);
         if (listeners != null) {
             for (IFModuleStructureEventListener listener : listeners) {
                 listener.moduleStructureChanged();
+            }
+        }
+    }
+    
+    public void fireModuleNameChanged(final IFController controller) {
+        // Inform event listeners.
+        if (!SwingUtilities.isEventDispatchThread()) {
+            SwingUtilities.invokeLater(new Runnable() {
+
+                @Override
+                public void run() {
+                    uncheckedFireModuleNameChanged(controller);
+                }
+            });
+        }
+        else {
+            uncheckedFireModuleNameChanged(controller);
+        }
+    }
+
+    private void uncheckedFireModuleNameChanged(IFController controller) {
+        IFModuleEventListener[] listeners = listenerList.getListeners(IFModuleEventListener.class);
+        if (listeners != null) {
+            for (IFModuleEventListener listener : listeners) {
+                listener.nameChanged(controller);
             }
         }
     }

@@ -329,4 +329,10 @@ public class MessageHandler implements UncaughtExceptionHandler, IFModuleEventLi
 		// TODO Auto-generated method stub
 		
 	}
+
+    @Override
+    public void nameChanged(IFController controller) {
+        // TODO Auto-generated method stub
+        
+    }
 }

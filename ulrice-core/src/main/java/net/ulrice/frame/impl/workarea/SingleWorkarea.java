@@ -136,4 +136,8 @@ public class SingleWorkarea implements IFWorkarea, AWTEventListener {
             Toolkit.getDefaultToolkit().removeAWTEventListener(this);
         }
     }
+
+    @Override
+    public void nameChanged(IFController controller) {
+    }
 }

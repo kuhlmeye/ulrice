@@ -249,6 +249,7 @@ public class TabbedWorkarea extends JTabbedPane implements IFWorkarea, MouseList
         /** Default generated serial version uid. */
         private static final long serialVersionUID = -6541174126754145798L;
         private IFController controller;
+        private JLabel label;
 
         TabControllerPanel(final IFController controller) {
             this.controller = controller;
@@ -277,8 +278,7 @@ public class TabbedWorkarea extends JTabbedPane implements IFWorkarea, MouseList
             closeButton.setRolloverEnabled(true);
             closeButton.setRolloverIcon(closeIconBorder);
 
-            // Create the label displaying the controller title
-            final JLabel label = new JLabel(controllerTitle, icon, JLabel.HORIZONTAL);
+            label = new JLabel(controllerTitle, icon, JLabel.HORIZONTAL);
             label.setBorder(BorderFactory.createEmptyBorder(2, 0, 0, 20));
             label.setHorizontalAlignment(SwingConstants.LEFT);
 
@@ -288,6 +288,10 @@ public class TabbedWorkarea extends JTabbedPane implements IFWorkarea, MouseList
             add(closeButton, BorderLayout.EAST);
         }
 
+        public void setTitle(String title) {
+            label.setText(title);
+        }
+        
         public IFController getController() {
             return controller;
         }
@@ -381,4 +385,13 @@ public class TabbedWorkarea extends JTabbedPane implements IFWorkarea, MouseList
             glassPanel.setBlocked(false);
         }
     }
+
+
+    @Override
+    public void nameChanged(IFController controller) {
+        int ctrlIdx = getTabIndex(controller);
+        TabControllerPanel titleComponent = (TabControllerPanel)getTabComponentAt(ctrlIdx);
+        titleComponent.setTitle(Ulrice.getModuleManager().getModuleTitle(controller, Usage.DetailedTitle));
+    }
+
 }
