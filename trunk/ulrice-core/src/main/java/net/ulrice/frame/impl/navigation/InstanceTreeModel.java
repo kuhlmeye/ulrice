@@ -284,4 +284,9 @@ public class InstanceTreeModel implements TreeModel, IFModuleEventListener {
 		// TODO Auto-generated method stub
 		
 	}
+
+    @Override
+    public void nameChanged(IFController controller) {
+        fireTreeStructureChanged(new TreeModelEvent(getRoot(), new TreePath(getRoot())));
+    }
 }

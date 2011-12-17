@@ -42,4 +42,6 @@ public interface IFModuleEventListener extends EventListener {
 	void moduleBlocked(IFController controller, Object blocker);
 	
 	void moduleUnblocked(IFController controller, Object blocker);
+	
+	void nameChanged(IFController controller);
 }

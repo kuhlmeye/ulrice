@@ -149,7 +149,6 @@ public class DialogManager {
         public void deactivateModule(IFController controller) {
             hideAllDialogs(controller);
         }
-
     }
 
     private class MainFrameFocusListener extends FocusAdapter {

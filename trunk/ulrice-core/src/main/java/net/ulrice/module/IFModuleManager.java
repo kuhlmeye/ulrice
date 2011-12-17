@@ -154,4 +154,6 @@ public interface IFModuleManager {
 	 * @return A list of modules.
 	 */
 	List<IFModule> getAllModules();
+
+    void fireModuleNameChanged(IFController controller);
 }
