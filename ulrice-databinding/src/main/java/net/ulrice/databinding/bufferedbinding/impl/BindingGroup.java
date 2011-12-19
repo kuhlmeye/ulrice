@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import net.ulrice.databinding.bufferedbinding.IFAttributeInfo;
 import net.ulrice.databinding.bufferedbinding.IFAttributeModel;
 import net.ulrice.databinding.viewadapter.IFViewAdapter;
 
@@ -218,6 +219,11 @@ public class BindingGroup extends AbstractBindingGroup {
         return amMap != null ? amMap.get(id) : null;
     }
     
+    public IFAttributeInfo getAttributeInfo(String id) {
+        IFAttributeModel attributeModel = getAttributeModel(id);
+        return attributeModel != null ? attributeModel.getAttributeInfo() : null;
+    }
+    
     @Override
     public boolean isValid() {
 		return valid;
@@ -235,5 +241,4 @@ public class BindingGroup extends AbstractBindingGroup {
     public void removeAttributeModel(String id) {
         amMap.remove(id);
     }
-
 }
