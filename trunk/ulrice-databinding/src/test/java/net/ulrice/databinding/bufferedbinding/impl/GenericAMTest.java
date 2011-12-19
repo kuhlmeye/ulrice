@@ -101,4 +101,20 @@ public class GenericAMTest {
     	Assert.assertEquals(true, stringBAM.isValid());
 
     }
+    
+    @Test
+    public void externalErrorMessage() {
+        stringAAM.read();
+        Assert.assertTrue(stringAAM.isInitialized());
+        Assert.assertFalse(stringAAM.isDirty());
+        Assert.assertTrue(stringAAM.isValid());
+
+        stringAAM.addExternalValidationError("Test");
+        Assert.assertFalse(stringAAM.isDirty());
+        Assert.assertFalse(stringAAM.isValid());
+        
+        stringAAM.setCurrentValue("Test");
+        Assert.assertTrue(stringAAM.isDirty());
+        Assert.assertTrue(stringAAM.isValid());        
+    }
 }
