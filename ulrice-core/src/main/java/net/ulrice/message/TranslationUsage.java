@@ -3,7 +3,7 @@ package net.ulrice.message;
 
 public enum TranslationUsage {
     Button,
-    Label,
+    Label,    
     /** serves for generic text as well */
     Message,
     Title,
@@ -12,5 +12,6 @@ public enum TranslationUsage {
     Action,
     SelectItem,
     Tooltip,
-    Menu;
+    Menu,
+    ValidationLabel;
 }
