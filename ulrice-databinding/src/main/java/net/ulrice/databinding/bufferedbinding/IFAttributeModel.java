@@ -5,6 +5,7 @@ import java.util.List;
 import net.ulrice.databinding.IFBinding;
 import net.ulrice.databinding.converter.IFValueConverter;
 import net.ulrice.databinding.validation.IFValidator;
+import net.ulrice.databinding.validation.ValidationError;
 import net.ulrice.databinding.validation.ValidationResult;
 import net.ulrice.databinding.viewadapter.IFViewAdapter;
 
@@ -89,4 +90,10 @@ public interface IFAttributeModel<T> extends IFBinding {
 	IFAttributeInfo getAttributeInfo();
 	
 	void setReadOnly(boolean readOnly);
+
+    void addExternalValidationError(String translatedMessage);
+
+    void clearExternalValidationErrors();
+
+    void addExternalValidationError(ValidationError validationError);
 }
