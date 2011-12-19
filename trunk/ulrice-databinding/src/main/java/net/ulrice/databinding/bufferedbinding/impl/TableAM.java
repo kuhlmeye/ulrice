@@ -704,7 +704,6 @@ public class TableAM implements IFAttributeModel {
 
             Object value = tableMVA.getValue(i);
             Element elem = createElement(value, false, true, false);
-            elem.readObject();
 
             elementIdMap.put(elem.getUniqueId(), elem);
             elements.add(elem);
@@ -723,7 +722,6 @@ public class TableAM implements IFAttributeModel {
 
             Object value = valueList.get(i);
             Element elem = createElement(value, false, true, false);
-            elem.readObject();
 
             elementIdMap.put(elem.getUniqueId(), elem);
             elements.add(elem);
@@ -743,7 +741,6 @@ public class TableAM implements IFAttributeModel {
 
             Object value = tableMVA.getValue(i);
             Element elem = createElement(value, false, true, false);
-            elem.readObject();
 
             elementIdMap.put(elem.getUniqueId(), elem);
             elements.add(elem);
