@@ -1124,5 +1124,23 @@ public class TableAM implements IFAttributeModel {
         fireUpdateViews();
         fireDataChanged();
     }
+
+    @Override
+    public void addExternalValidationError(String translatedMessage) {
+        // TODO Implement me..
+        
+    }
+
+    @Override
+    public void clearExternalValidationErrors() {
+        // TODO Implement me..
+        
+    }
+
+    @Override
+    public void addExternalValidationError(ValidationError validationError) {
+        // TODO Implement me..
+        
+    }
     
 }
