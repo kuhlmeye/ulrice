@@ -11,7 +11,7 @@ import net.ulrice.databinding.viewadapter.IFStateMarker;
 public class BackgroundStateMarker implements IFStateMarker {
 
 	private static final Color INVALID_BG_COLOR = BindingUI.getColor(BindingUI.BACKGROUND_STATE_MARKER_INVALID, new Color(200, 130, 130));
-	private static final Color CHANGED_BG_COLOR = BindingUI.getColor(BindingUI.BACKGROUND_STATE_MARKER_CHANGED, new Color(230, 230, 130));
+	private static final Color CHANGED_BG_COLOR = BindingUI.getColor(BindingUI.BACKGROUND_STATE_MARKER_CHANGED, new Color(186,207,226));
 	private Color normalBGColor;
 
 	
