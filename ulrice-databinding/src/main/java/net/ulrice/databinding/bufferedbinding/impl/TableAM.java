@@ -764,6 +764,7 @@ public class TableAM implements IFAttributeModel {
         invElements.clear();
         elements.clear();
 
+        fireUpdateViews();
         fireTableCleared();
         fireDataChanged();
         
