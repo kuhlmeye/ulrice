@@ -8,14 +8,15 @@ import javax.swing.table.DefaultTableCellRenderer;
 
 import net.ulrice.databinding.bufferedbinding.impl.Element;
 import net.ulrice.databinding.ui.BindingUI;
+import net.ulrice.databinding.viewadapter.IFCellTooltipHandler;
 import net.ulrice.databinding.viewadapter.IFStateMarker;
 import net.ulrice.databinding.viewadapter.IFTooltipHandler;
 
 public abstract class AbstractUTableRenderer extends DefaultTableCellRenderer {
     IFStateMarker stateMarker;
-    IFTooltipHandler<Element> tooltipHandler;
+    IFCellTooltipHandler tooltipHandler;
     static IFStateMarker defaultStateMarker;
-    static IFTooltipHandler<Element> defaultTooltipHandler;
+    static IFCellTooltipHandler defaultTooltipHandler;
 
     Color evenNormalBackground = BindingUI.getColor(BindingUI.BACKGROUND_NORMAL_EVEN_TABLE_ROW, new Color(230, 230, 230));
     Color oddNormalBackground = BindingUI.getColor(BindingUI.BACKGROUND_NORMAL_ODD_TABLE_ROW, new Color(200,200, 200));
@@ -68,9 +69,9 @@ public abstract class AbstractUTableRenderer extends DefaultTableCellRenderer {
                     sm.updateState(element, readOnly, dirty, valid, component);
                 }
 
-                IFTooltipHandler tth = getTooltipHandler(tableComponent);
+                IFCellTooltipHandler tth = getTooltipHandler(tableComponent);
                 if (tth != null) {
-                    tth.updateTooltip(element, component);
+                    tth.updateTooltip(element, columnId, component);
                 }
     
             }
@@ -91,7 +92,7 @@ public abstract class AbstractUTableRenderer extends DefaultTableCellRenderer {
         this.stateMarker = stateMarker;        
     }
 
-    public IFTooltipHandler<Element> getTooltipHandler(UTableComponent tableComponent) {
+    public IFCellTooltipHandler getTooltipHandler(UTableComponent tableComponent) {
         if(tooltipHandler != null) {
             return tooltipHandler;
         } else if(tableComponent.getCellTooltipHandler() != null) {
@@ -100,7 +101,7 @@ public abstract class AbstractUTableRenderer extends DefaultTableCellRenderer {
         return AbstractUTableRenderer.getDefaultTooltipHandler();
     }
 
-    public void setTooltipHandler(IFTooltipHandler<Element> tooltipHandler) {
+    public void setTooltipHandler(IFCellTooltipHandler tooltipHandler) {
         this.tooltipHandler = tooltipHandler;
     }
     
@@ -108,7 +109,7 @@ public abstract class AbstractUTableRenderer extends DefaultTableCellRenderer {
         AbstractUTableRenderer.defaultStateMarker = defaultStateMarker;
     }
     
-    public static void setDefaultTooltipHandler(IFTooltipHandler<Element> defaultTooltipHandler) {
+    public static void setDefaultTooltipHandler(IFCellTooltipHandler defaultTooltipHandler) {
         AbstractUTableRenderer.defaultTooltipHandler = defaultTooltipHandler;
     }
     
@@ -116,7 +117,7 @@ public abstract class AbstractUTableRenderer extends DefaultTableCellRenderer {
         return defaultStateMarker;
     }
     
-    public static IFTooltipHandler<Element> getDefaultTooltipHandler() {
+    public static IFCellTooltipHandler getDefaultTooltipHandler() {
         return defaultTooltipHandler;
     }
 }

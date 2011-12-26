@@ -15,7 +15,7 @@ public abstract class AbstractViewAdapter<M, V> implements IFViewAdapter<M, V> {
 
     private Class<V> viewType;
 
-    private IFTooltipHandler<IFBinding> tooltipHandler;
+    private IFTooltipHandler tooltipHandler;
     private IFStateMarker stateMarker;
     private IFValueConverter<M, V> valueConverter;
     private boolean bindWithoutValue;
@@ -149,7 +149,7 @@ public abstract class AbstractViewAdapter<M, V> implements IFViewAdapter<M, V> {
     }
 
     @Override
-    public void setTooltipHandler(IFTooltipHandler<IFBinding> tooltipHandler) {
+    public void setTooltipHandler(IFTooltipHandler tooltipHandler) {
         this.tooltipHandler = tooltipHandler;
     }
 
@@ -161,7 +161,7 @@ public abstract class AbstractViewAdapter<M, V> implements IFViewAdapter<M, V> {
         }
     }
 
-    protected IFTooltipHandler<IFBinding> getTooltipHandler() {
+    protected IFTooltipHandler getTooltipHandler() {
         return tooltipHandler;
     }
 

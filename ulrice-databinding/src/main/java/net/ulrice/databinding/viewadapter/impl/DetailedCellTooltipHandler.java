@@ -5,7 +5,7 @@ import java.util.List;
 import javax.swing.JComponent;
 
 import net.ulrice.databinding.bufferedbinding.impl.Element;
-import net.ulrice.databinding.viewadapter.IFTooltipHandler;
+import net.ulrice.databinding.viewadapter.IFCellTooltipHandler;
 
 /**
  * Displays the detailed state of an attribute model as a tooltip in the
@@ -13,21 +13,21 @@ import net.ulrice.databinding.viewadapter.IFTooltipHandler;
  * 
  * @author christof
  */
-public class DetailedCellTooltipHandler implements IFTooltipHandler<Element> {
+public class DetailedCellTooltipHandler implements IFCellTooltipHandler {
 
 	/**
 	 * @see net.ulrice.databinding.viewadapter.IFTooltipHandler#updateTooltip(net.ulrice.databinding.IFAttributeModel,
 	 *      net.ulrice.databinding.IFGuiAccessor, javax.swing.JComponent)
 	 */
 	@Override
-	public void updateTooltip(Element element, JComponent component) {
+	public void updateTooltip(Element element, String columnId, JComponent component) {
 
 
 		if (!element.isValid()) {
 			StringBuffer buffer = new StringBuffer();
 			// TODO Add to UI class
 			buffer.append("<html>State: Invalid");
-			List<String> validationFailures = element.getValidationFailures();
+			List<String> validationFailures = element.getValidationFailures(columnId);
 			if (validationFailures != null) {
 				for (String message : validationFailures) {
 					buffer.append("<br>");

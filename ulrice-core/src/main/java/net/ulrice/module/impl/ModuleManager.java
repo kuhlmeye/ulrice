@@ -1,5 +1,6 @@
 package net.ulrice.module.impl;
 
+import java.awt.Cursor;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -59,70 +60,79 @@ public class ModuleManager implements IFModuleManager, IFModuleStructureManager 
     public void openModule(final String moduleId, final IFController parent, final ControllerProviderCallback callback) {
         final IFModule module = moduleMap.get(moduleId);
 
-        if (module == null) {
-            callback.onFailure(new ModuleInstantiationException("Module with id (" + moduleId + ") could not be found.", null));
-            return;
-        }
+        try {
+            Ulrice.getMainFrame().getFrame().setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
 
-        final boolean isSingleModule = ModuleType.SingleModule.equals(module.getModuleInstanceType());
-
-        if (isSingleModule && openControllers.getControllers(module).size() > 0) {
-            // If it's a single module and if it's already open than return the instance.
-            final IFController ctrlInstance = openControllers.getControllers(module).iterator().next();
-
-            activateModule(ctrlInstance);
-
-            if (callback != null) {
-                callback.onControllerReady(ctrlInstance);
+            if (module == null) {
+                callback.onFailure(new ModuleInstantiationException("Module with id (" + moduleId
+                    + ") could not be found.", null));
+                return;
             }
 
-        }
-        else {
-            module.instantiateModule(new ControllerProviderCallback() {
+            final boolean isSingleModule = ModuleType.SingleModule.equals(module.getModuleInstanceType());
 
-                @Override
-                public void onControllerReady(IFController controller) {
+            if (isSingleModule && openControllers.getControllers(module).size() > 0) {
+                // If it's a single module and if it's already open than return the instance.
+                final IFController ctrlInstance = openControllers.getControllers(module).iterator().next();
 
-                    if (!Ulrice.getSecurityManager().allowOpenModule(module, controller)) {
-                        LOG.info("Module [Id: " + module.getUniqueId() + ", Name: "
-                            + module.getModuleTitle(Usage.Default)
-                            + "] will not be created. Not authorized by ulrice security manager.");
-                        if (callback != null) {
-                            callback.onFailure(new ModuleInstantiationException("Not allowed by security manager",
-                                null));
+                activateModule(ctrlInstance);
+
+                if (callback != null) {
+                    callback.onControllerReady(ctrlInstance);
+                }
+
+            }
+            else {
+                module.instantiateModule(new ControllerProviderCallback() {
+
+                    @Override
+                    public void onControllerReady(IFController controller) {
+
+                        if (!Ulrice.getSecurityManager().allowOpenModule(module, controller)) {
+                            LOG.info("Module [Id: " + module.getUniqueId() + ", Name: "
+                                + module.getModuleTitle(Usage.Default)
+                                + "] will not be created. Not authorized by ulrice security manager.");
+                            if (callback != null) {
+                                callback.onFailure(new ModuleInstantiationException(
+                                    "Not allowed by security manager", null));
+                            }
+                            return;
                         }
-                        return;
-                    }
 
-                    // Inform event listeners.
-                    if (openControllers.getActive() != null) {
+                        // Inform event listeners.
+                        if (openControllers.getActive() != null) {
+                            for (IFModuleEventListener listener : listenerList
+                                .getListeners(IFModuleEventListener.class)) {
+                                listener.deactivateModule(openControllers.getActive());
+                            }
+                        }
+
+                        openControllers.addController(controller, parent, module);
+
                         for (IFModuleEventListener listener : listenerList.getListeners(IFModuleEventListener.class)) {
-                            listener.deactivateModule(openControllers.getActive());
+                            listener.openModule(controller);
+                        }
+
+                        controller.postCreate();
+
+                        activateModule(controller);
+
+                        if (callback != null) {
+                            callback.onControllerReady(controller);
                         }
                     }
 
-                    openControllers.addController(controller, parent, module);
-
-                    for (IFModuleEventListener listener : listenerList.getListeners(IFModuleEventListener.class)) {
-                        listener.openModule(controller);
+                    @Override
+                    public void onFailure(ModuleInstantiationException exc) {
+                        if (callback != null) {
+                            callback.onFailure(exc);
+                        }
                     }
-
-                    controller.postCreate();
-
-                    activateModule(controller);
-
-                    if (callback != null) {
-                        callback.onControllerReady(controller);
-                    }
-                }
-
-                @Override
-                public void onFailure(ModuleInstantiationException exc) {
-                    if (callback != null) {
-                        callback.onFailure(exc);
-                    }
-                }
-            });
+                });
+            }
+        }
+        finally {
+            Ulrice.getMainFrame().getFrame().setCursor(Cursor.getDefaultCursor());
         }
     }
 
@@ -137,17 +147,15 @@ public class ModuleManager implements IFModuleManager, IFModuleStructureManager 
         }
         return getModule(controller);
     }
-    
 
     @Override
     public String getModuleTitle(IFController controller, Usage usage) {
         IFModuleTitleProvider titleProvider = getTitleProvider(controller);
-        if(titleProvider != null) {
+        if (titleProvider != null) {
             return titleProvider.getModuleTitle(usage);
         }
         return null;
     }
-
 
     public void activateModule(IFController controller) {
         IFModuleEventListener[] listeners = listenerList.getListeners(IFModuleEventListener.class);
@@ -478,7 +486,6 @@ public class ModuleManager implements IFModuleManager, IFModuleStructureManager 
         }
     }
 
-
     private void uncheckedFireModuleStructureChanged() {
         IFModuleStructureEventListener[] listeners = listenerList.getListeners(IFModuleStructureEventListener.class);
         if (listeners != null) {
@@ -487,7 +494,7 @@ public class ModuleManager implements IFModuleManager, IFModuleStructureManager 
             }
         }
     }
-    
+
     public void fireModuleNameChanged(final IFController controller) {
         // Inform event listeners.
         if (!SwingUtilities.isEventDispatchThread()) {
