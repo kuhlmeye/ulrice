@@ -5,7 +5,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.swing.SwingUtilities;
 import javax.swing.event.EventListenerList;
 
 import net.ulrice.databinding.IFBinding;
@@ -171,6 +170,22 @@ public class Element {
 		return idModelMap.get(columnId).getCurrentValue();
 	}
 
+	
+	public Object getOriginalValueAt(int columnIndex) {
+	    if(columnIndex < 0 || columnIndex >= modelList.size()) {
+	        throw new IndexOutOfBoundsException("ColumnIndex: " + columnIndex + ", Size: " + modelList.size());
+	    }
+	    return modelList.get(columnIndex).getOriginalValue();
+	}
+
+  
+    public Object getOriginalValueAt(String columnId) {
+        if (!idModelMap.containsKey(columnId)) {
+            throw new IllegalStateException("Unknown column id: " + columnId);
+        }
+        return idModelMap.get(columnId).getOriginalValue();
+    }
+    
 	/**
 	 * Set the value of a cell.
 	 * 
@@ -293,8 +308,7 @@ public class Element {
 		setCurrentValue(currentValue, false, true);
 	}
 
-	public void setCurrentValue(Object currentValue, boolean dirty,
-			boolean valid) {
+	public void setCurrentValue(Object currentValue, boolean dirty, boolean valid) {
 	    setCurrentValue(currentValue, dirty, valid, false);
 	}
 	
@@ -433,24 +447,48 @@ public class Element {
 		return errors;
 	}
 
-	public List<String> getValidationFailures() {
-		List<String> errors = new ArrayList<String>();
 
-		for (ValidationError elementError : validationResult
-				.getValidationErrors()) {
-			errors.add(elementError.getMessage());
-		}
 
-		if (modelList != null) {
-			for (GenericAM<?> model : modelList) {
-				if (model.getValidationResult() != null) {
-					errors.addAll(model.getValidationFailures());
-				}
-			}
-		}
-		return errors;
+    public List<String> getValidationFailures() {
+        
+        List<String> result = new ArrayList<String>();
+        if(modelList != null) {
+            for(GenericAM<?> attributeModel : modelList) {
+                result.addAll(attributeModel.getValidationFailures());
+            }
+        }
+
+        for (ValidationError elementError : validationResult.getValidationErrors()) {
+            result.add(elementError.getMessage());
+        }
+        
+        return result;
+    }
+	
+    public List<String> getValidationFailures(String columnId) {
+        List<String> errors = new ArrayList<String>();
+
+        if (idModelMap.containsKey(columnId)) {
+            GenericAM<?> model = idModelMap.get(columnId);
+            if (model.getValidationResult() != null) {
+                errors.addAll(model.getValidationFailures());
+            }
+        }
+        
+        for (ValidationError elementError : validationResult.getValidationErrors()) {
+            errors.add(elementError.getMessage());
+        }
+        return errors;
+    }   
+
+	public void addColumnValidationError(String columnId, String message) {
+	    GenericAM<? extends Object> genericAM = idModelMap.get(columnId);
+	    if(genericAM != null) {
+	        genericAM.addExternalValidationError(new ValidationError(genericAM, message, null));
+	    }
+        updateState();
 	}
-
+	
 	public void addElementValidationError(ValidationError validationError) {
 		validationResult.addValidationError(validationError);
 		if (modelList != null) {

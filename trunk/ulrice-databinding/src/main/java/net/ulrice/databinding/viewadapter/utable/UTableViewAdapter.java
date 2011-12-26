@@ -19,8 +19,8 @@ import net.ulrice.databinding.bufferedbinding.impl.Element;
 import net.ulrice.databinding.bufferedbinding.impl.TableAM;
 import net.ulrice.databinding.bufferedbinding.impl.TableAMListener;
 import net.ulrice.databinding.viewadapter.AbstractViewAdapter;
+import net.ulrice.databinding.viewadapter.IFCellTooltipHandler;
 import net.ulrice.databinding.viewadapter.IFStateMarker;
-import net.ulrice.databinding.viewadapter.IFTooltipHandler;
 
 /**
  * @author christof
@@ -225,7 +225,7 @@ public class UTableViewAdapter extends AbstractViewAdapter implements TableModel
     /**
      * @see net.ulrice.databinding.IFGuiAccessor#getTooltipHandler()
      */
-    public IFTooltipHandler<Element> getCellTooltipHandler() {
+    public IFCellTooltipHandler getCellTooltipHandler() {
         return table.getCellTooltipHandler();
     }
 
@@ -239,7 +239,7 @@ public class UTableViewAdapter extends AbstractViewAdapter implements TableModel
     /**
      * @see net.ulrice.databinding.IFGuiAccessor#setTooltipHandler(net.ulrice.databinding.viewadapter.IFTooltipHandler)
      */
-    public void setCellTooltipHandler(IFTooltipHandler<Element> tooltipHandler) {
+    public void setCellTooltipHandler(IFCellTooltipHandler tooltipHandler) {
         table.setCellTooltipHandler(tooltipHandler);
     }
 

@@ -28,8 +28,8 @@ import javax.swing.table.TableColumnModel;
 import net.ulrice.databinding.bufferedbinding.impl.ColumnDefinition;
 import net.ulrice.databinding.bufferedbinding.impl.Element;
 import net.ulrice.databinding.bufferedbinding.impl.TableAM;
+import net.ulrice.databinding.viewadapter.IFCellTooltipHandler;
 import net.ulrice.databinding.viewadapter.IFStateMarker;
-import net.ulrice.databinding.viewadapter.IFTooltipHandler;
 
 
 public class UTableComponent extends JPanel {
@@ -56,7 +56,7 @@ public class UTableComponent extends JPanel {
 
 	private UTableRowSorter sorter;
 
-	private IFTooltipHandler<Element> tooltipHandler;
+	private IFCellTooltipHandler tooltipHandler;
 
 	private IFStateMarker stateMarker;
 
@@ -289,7 +289,7 @@ public class UTableComponent extends JPanel {
 		add(component, BorderLayout.WEST);
 	}
 
-	public void setCellTooltipHandler(IFTooltipHandler<Element> tooltipHandler) {
+	public void setCellTooltipHandler(IFCellTooltipHandler tooltipHandler) {
 		this.tooltipHandler = tooltipHandler;
 	}
 
@@ -298,7 +298,7 @@ public class UTableComponent extends JPanel {
 		this.stateMarker = stateMarker;
 	}
 
-	public IFTooltipHandler<Element> getCellTooltipHandler() {
+	public IFCellTooltipHandler getCellTooltipHandler() {
 		return tooltipHandler;
 	}
 

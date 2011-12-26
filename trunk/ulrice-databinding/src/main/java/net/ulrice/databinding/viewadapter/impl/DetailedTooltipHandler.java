@@ -14,7 +14,7 @@ import net.ulrice.databinding.viewadapter.IFTooltipHandler;
  * 
  * @author christof
  */
-public class DetailedTooltipHandler implements IFTooltipHandler<IFBinding> {
+public class DetailedTooltipHandler implements IFTooltipHandler {
 
 	/**
 	 * @see net.ulrice.databinding.viewadapter.IFTooltipHandler#updateTooltip(net.ulrice.databinding.IFAttributeModel,

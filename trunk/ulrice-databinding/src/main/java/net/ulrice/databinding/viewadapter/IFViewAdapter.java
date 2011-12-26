@@ -31,7 +31,7 @@ public interface IFViewAdapter <M, V> {
     void setEditable(boolean editable);
     boolean isEditable();
     
-	void setTooltipHandler(IFTooltipHandler<IFBinding> tooltipHandler);
+	void setTooltipHandler(IFTooltipHandler tooltipHandler);
 	void setStateMarker(IFStateMarker stateMarker);
 	void setValueConverter(IFValueConverter<M, V> converter);
 	IFValueConverter<M, V> getValueConverter();
