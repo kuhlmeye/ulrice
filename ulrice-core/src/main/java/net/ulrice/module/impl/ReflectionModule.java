@@ -19,7 +19,6 @@ import net.ulrice.module.exception.ModuleInstantiationException;
  * 
  * @author ckuhlmeyer
  */
-@Deprecated
 public class ReflectionModule implements IFModule {
 
 	/** The unique id of the reflection module. */

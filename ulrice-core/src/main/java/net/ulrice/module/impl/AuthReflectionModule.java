@@ -9,7 +9,6 @@ import net.ulrice.security.Authorization;
  * 
  * @author ckuhlmeyer
  */
-@Deprecated
 public class AuthReflectionModule extends ReflectionModule {
 
 
