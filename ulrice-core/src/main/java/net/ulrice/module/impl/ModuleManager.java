@@ -145,6 +145,9 @@ public class ModuleManager implements IFModuleManager, IFModuleStructureManager 
     }
 
     public IFModuleTitleProvider getTitleProvider(IFController controller) {
+    	if(controller == null) {
+    		return null;
+    	}
         final IFModuleTitleProvider fromController = controller.getTitleProvider();
         if (fromController != null) {
             return fromController;
