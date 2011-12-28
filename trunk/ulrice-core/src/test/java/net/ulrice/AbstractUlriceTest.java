@@ -12,6 +12,8 @@ import net.ulrice.module.ModuleType;
 import net.ulrice.module.impl.ModuleManager;
 import net.ulrice.module.impl.ReflectionModule;
 import net.ulrice.module.impl.SimpleModuleTitleRenderer;
+import net.ulrice.profile.persister.DefaultProfilePersister;
+import net.ulrice.profile.persister.ProfilePersister;
 import net.ulrice.security.GrantAllAuthCallback;
 import net.ulrice.security.IFAuthCallback;
 
@@ -85,5 +87,10 @@ public class AbstractUlriceTest implements IFUlriceConfiguration {
     public TranslationProvider getTranslationProvider() {
         return null;
     }
+
+	@Override
+	public ProfilePersister getProfilePersister() {
+		return new DefaultProfilePersister();
+	}
 
 }

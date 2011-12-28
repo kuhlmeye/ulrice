@@ -5,23 +5,43 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.Enumeration;
 import java.util.List;
-import java.util.TreeSet;
 
+import javax.swing.ImageIcon;
+
+import net.ulrice.Ulrice;
+import net.ulrice.module.ControllerProviderCallback;
 import net.ulrice.module.IFModule;
 import net.ulrice.module.IFModuleGroup;
+import net.ulrice.module.ModuleIconSize;
+import net.ulrice.module.ModuleType;
+import net.ulrice.module.IFModuleTitleProvider.Usage;
+import net.ulrice.profile.Profile;
+import net.ulrice.profile.ProfilableModule;
+import net.ulrice.profile.ProfileManager;
+import net.ulrice.profile.ProfiledModule;
 
 public class ModuleTreeNode {
 
     private IFModuleGroup moduleGroup;
     private IFModule module;
+    private ProfiledModule profiledModule;
     private Comparator<ModuleTreeNode> comparator;
     private ModuleTreeNodeFilter filter;
+    
+    public enum NodeType {
+    	ModuleGroup, 
+    	Module,
+    	ProfiledModule
+    }
 
     private List<ModuleTreeNode> childs = new ArrayList<ModuleTreeNode>();    
     private List<ModuleTreeNode> filteredChilds = new ArrayList<ModuleTreeNode>();
+	private NodeType nodeType;
     
     public ModuleTreeNode(IFModuleGroup moduleGroup, Comparator<ModuleTreeNode> comparator, ModuleTreeNodeFilter filter) {
         this.moduleGroup = moduleGroup;
+        this.nodeType = NodeType.ModuleGroup;
+        
         this.comparator = comparator;
         this.filter = filter;
         
@@ -38,30 +58,41 @@ public class ModuleTreeNode {
             Collections.sort(childs, comparator);
         }
         
+        
         applyFilter();
     }
     
     public ModuleTreeNode(IFModule module) {
         this.module = module;
+        this.nodeType = NodeType.Module;
+        
+        if(module instanceof ProfilableModule) {
+	        List<ProfiledModule> profiledModules = Ulrice.getProfileManager().loadProfiledModules((ProfilableModule)module);
+	        if(profiledModules != null) {
+	        	for(ProfiledModule profiledModule : profiledModules) {
+	        		childs.add(new ModuleTreeNode(profiledModule));
+	        	}
+	        }        
+        }
+    }
+    
+    public ModuleTreeNode(ProfiledModule profiledModule) {
+    	this.profiledModule = profiledModule;
+    	this.nodeType = NodeType.ProfiledModule;
     }
     
     
     public void applyFilter() {
-        if(moduleGroup != null) {
+        this.filteredChilds = new ArrayList<ModuleTreeNode>(childs.size());
 
-            int numGroups = (moduleGroup.getModuleGroups() != null) ? moduleGroup.getModuleGroups().size() : 0;
-            this.filteredChilds = new ArrayList<ModuleTreeNode>(numGroups);
-
-            for(ModuleTreeNode child : childs) {
-                if(child.isGroup()) {
-                    child.applyFilter();
-                    if(child.getChildCount() > 0) {
-                        filteredChilds.add(child);
-                    }
-                } else {
-                    if(filter == null || filter.accept(child.getModule())) {
-                        filteredChilds.add(child);
-                    }
+        for(ModuleTreeNode child : childs) {
+            child.applyFilter();
+            if(child.getChildCount() > 0) {
+                    filteredChilds.add(child);
+            }
+            else {
+                if(filter == null || filter.accept(child.getModule())) {
+                    filteredChilds.add(child);
                 }
             }
         }
@@ -79,9 +110,10 @@ public class ModuleTreeNode {
         return filteredChilds.indexOf(child);
     }
     
-    public boolean isGroup() {
-        return moduleGroup != null;
+    public NodeType getNodeType() {
+        return nodeType;
     }
+    
     
     public IFModule getModule() {
         return module;
@@ -91,7 +123,11 @@ public class ModuleTreeNode {
         return moduleGroup;
     }
 
-    public Enumeration<ModuleTreeNode> getChildren() {
-        return Collections.enumeration(childs);
-    }
+	public boolean hasChilds() {
+		return filteredChilds.size() > 0;
+	}
+
+	public ProfiledModule getProfiledModule() {
+		return profiledModule;
+	}
 }

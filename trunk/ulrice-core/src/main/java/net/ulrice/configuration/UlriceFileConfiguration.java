@@ -12,6 +12,8 @@ import net.ulrice.message.TranslationProvider;
 import net.ulrice.module.IFModuleManager;
 import net.ulrice.module.IFModuleStructureManager;
 import net.ulrice.module.impl.ModuleManager;
+import net.ulrice.profile.persister.DefaultProfilePersister;
+import net.ulrice.profile.persister.ProfilePersister;
 import net.ulrice.security.IFAuthCallback;
 
 /**
@@ -36,6 +38,8 @@ public class UlriceFileConfiguration extends ClassLoadingHelper implements IFUlr
 	private IFAuthCallback authCallback;
 
     private TranslationProvider translationProvider;
+
+	private ProfilePersister profilePersister;
 
 	/**
 	 * Initialize ulrice by a file configuration.
@@ -75,6 +79,7 @@ public class UlriceFileConfiguration extends ClassLoadingHelper implements IFUlr
 		mainFrame = (IFMainFrame) loadClass(properties.getProperty(IFMainFrame.class.getName(), MainFrame.class.getName()));
 		authCallback = (IFAuthCallback) loadClass(properties.getProperty(IFAuthCallback.class.getName(), null));		
 		translationProvider = (TranslationProvider) loadClass(properties.getProperty(TranslationProvider.class.getName(), EmptyTranslationProvider.class.getName()));
+		profilePersister = (ProfilePersister) loadClass(properties.getProperty(ProfilePersister.class.getName(), DefaultProfilePersister.class.getName()));
 
 		// Initialize ulrice.
 		Ulrice.initialize(this);
@@ -122,5 +127,10 @@ public class UlriceFileConfiguration extends ClassLoadingHelper implements IFUlr
 	@Override
 	public IFAuthCallback getAuthCallback() {		
 		return authCallback;
+	}
+
+	@Override
+	public ProfilePersister getProfilePersister() {
+		return profilePersister;
 	}
 }

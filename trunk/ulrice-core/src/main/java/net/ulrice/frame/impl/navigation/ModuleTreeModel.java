@@ -40,8 +40,7 @@ public class ModuleTreeModel implements TreeModel, IFModuleStructureEventListene
 	 */
 	public ModuleTreeModel() {
 		structureManager = Ulrice.getModuleStructureManager();
-		structureManager.addModuleStructureEventListener(this);
-		
+		structureManager.addModuleStructureEventListener(this);		
 	}
 
 	/**
@@ -93,7 +92,7 @@ public class ModuleTreeModel implements TreeModel, IFModuleStructureEventListene
 	 */
 	@Override
 	public boolean isLeaf(Object node) {
-		return !((ModuleTreeNode)node).isGroup();
+		return !((ModuleTreeNode)node).hasChilds();
 	}
 
 	/**

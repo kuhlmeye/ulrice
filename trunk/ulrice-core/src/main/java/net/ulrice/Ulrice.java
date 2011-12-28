@@ -16,6 +16,7 @@ import net.ulrice.module.IFModuleManager;
 import net.ulrice.module.IFModuleStructureManager;
 import net.ulrice.module.impl.action.ModuleActionManager;
 import net.ulrice.process.ProcessManager;
+import net.ulrice.profile.ProfileManager;
 import net.ulrice.security.GrantAllAuthCallback;
 import net.ulrice.security.IFAuthCallback;
 import net.ulrice.ui.UI;
@@ -49,6 +50,8 @@ public class Ulrice {
     /** Contains all other configuration values. */
     private static Properties configuration;
 
+    private static ProfileManager profileManager;
+    
     /** Contains the I18N-Support */
     private static TranslationProvider translationProvider;
 
@@ -75,6 +78,7 @@ public class Ulrice {
         Ulrice.processManager = new ProcessManager();
         Ulrice.dialogManager = new DialogManager();
         Ulrice.translationProvider = configuration.getTranslationProvider();
+        Ulrice.profileManager = new ProfileManager(configuration.getProfilePersister());
 
         if (configuration.getAuthCallback() != null) {
             Ulrice.securityManager = configuration.getAuthCallback();
@@ -272,5 +276,9 @@ public class Ulrice {
 
     public static void removeConfigurationListener(ConfigurationListener listener) {
         listenerList.remove(ConfigurationListener.class, listener);
+    }
+    
+    public static ProfileManager getProfileManager() {
+    	return profileManager;
     }
 }
