@@ -353,9 +353,10 @@ public class ModuleActionManager implements IFModuleEventListener, PropertyChang
 
 			if (source instanceof UlriceAction) {
 				UlriceAction moduleAction = (UlriceAction) source;
+				// TODO What happens, if the controller is null? (module closed in meantime..)
 				if (!Ulrice.getSecurityManager().allowEnableAction(activeController, moduleAction)) {
 					LOG.info("Action [Id: " + moduleAction.getUniqueId() + ", Module: "
-							+ Ulrice.getModuleManager().getModule(activeController).getModuleTitle(Usage.Default)
+							+ Ulrice.getModuleManager().getModuleTitle(activeController, Usage.Default)
 							+ "] will not be enabled. Not authorized by ulrice security manager.");
 					return;
 				}
