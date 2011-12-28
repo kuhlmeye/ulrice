@@ -27,12 +27,12 @@ import net.ulrice.security.Authorization;
  * 
  * @author christof
  */
-public class CLafList extends AbstractController {
+public class LafListController extends AbstractController {
 
 	private static final String REFRESH_ACTION = "REFRESH";
 
-	private final MLafList model = new MLafList();
-	private final VLafList view = new VLafList();
+	private final LafListModel model = new LafListModel();
+	private final LafListView view = new LafListView();
 	
 	/**
 	 * @see net.ulrice.module.impl.AbstractController#postCreationEvent(net.ulrice.module.IFModule)
@@ -107,8 +107,7 @@ public class CLafList extends AbstractController {
 	}
     
 	@Override
-    public void onClose(IFClosing closing) {
-        
+    public void onClose(IFClosing closing) {        
         closing.doClose();
     }
 }

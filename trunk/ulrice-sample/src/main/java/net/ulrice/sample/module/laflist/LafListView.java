@@ -15,7 +15,7 @@ import javax.swing.JTable;
  * 
  * @author christof
  */
-public class VLafList {	
+public class LafListView {	
 	
 	/** The jtable displaying the look and feel constants. */
 	private final JTable lafTable = new JTable ();
@@ -23,7 +23,7 @@ public class VLafList {
 	/** The view component. */
 	private JPanel view = new JPanel ();
 
-	public VLafList() {
+	public LafListView() {
 	    view.setLayout(new BorderLayout());
 	    view.add(new JScrollPane(lafTable), BorderLayout.CENTER );
 	}

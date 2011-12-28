@@ -1,15 +1,15 @@
-package net.ulrice.sample.module.sample1;
+package net.ulrice.sample.module.processsample;
 
 import net.ulrice.Ulrice;
 import net.ulrice.module.IFController;
 import net.ulrice.process.AbstractProcess;
 
-public class PSample1 extends AbstractProcess<Void, Void>  {
+public class SampleProcess extends AbstractProcess<Void, Void>  {
 
 
 	private int progress;
 
-	public PSample1(IFController controller) {
+	public SampleProcess(IFController controller) {
 		super(controller, true);
         setProgressMessage("Sample Process");
 	}
@@ -25,7 +25,6 @@ public class PSample1 extends AbstractProcess<Void, Void>  {
 			} catch (InterruptedException e) {
 				Ulrice.getMessageHandler().handleException(e);
 			}
-			//System.out.println(progress + "%");
 		}
 
 		return null;		
