@@ -99,6 +99,10 @@ public class ModuleManager implements IFModuleManager, IFModuleStructureManager 
                             return;
                         }
 
+                        if(callback != null) {
+                        	callback.onControllerInitialization(controller);
+                        }
+                        
                         // Inform event listeners.
                         if (openControllers.getActive() != null) {
                             for (IFModuleEventListener listener : listenerList

@@ -18,15 +18,21 @@ public class ModuleTreeCellRenderer extends DefaultTreeCellRenderer {
 		
 		if(value instanceof ModuleTreeNode) {
 		    ModuleTreeNode node = (ModuleTreeNode) renderValue;
-		    if(node.isGroup()) {
-                StringBuffer buffer = new StringBuffer();
-                buffer.append(node.getModuleGroup().getTitle());
-                renderValue = buffer.toString();
-		    } else {
-    			StringBuffer buffer = new StringBuffer();
-    			buffer.append(node.getModule().getModuleTitle(Usage.ModuleTree));
-    			renderValue = buffer.toString();
+			StringBuffer buffer = new StringBuffer();
+		    switch(node.getNodeType()) {
+		    	case ModuleGroup:
+	                buffer.append(node.getModuleGroup().getTitle());
+		    		break;
+		    	case Module:
+	    			buffer.append(node.getModule().getModuleTitle(Usage.ModuleTree));
+		    		break;
+		    	case ProfiledModule:
+	    			buffer.append(node.getProfiledModule().getProfileId());
+		    		break;
+	    		default:
+	    			break;
 		    }
+			renderValue = buffer.toString();
 		}
 	
 		

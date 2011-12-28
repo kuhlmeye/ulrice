@@ -26,6 +26,7 @@ import net.ulrice.module.impl.action.CloseModuleAction;
 import net.ulrice.module.impl.action.ExitApplicationAction;
 import net.ulrice.module.impl.action.ModuleActionManager;
 import net.ulrice.module.impl.action.ModuleDelegationAction;
+import net.ulrice.sample.module.profiledmodulesample.ProfiledModuleSampleModule;
 import net.ulrice.security.Authorization;
 import net.ulrice.translator.CTranslator;
 import net.ulrice.translator.service.IFTranslationService;
@@ -55,7 +56,7 @@ public class UlriceSampleApplication {
 		} catch (ConfigurationException e) {
 			LOG.log(Level.SEVERE, "Configuration exception occurred.", e);
 			System.exit(0);
-		}
+		}		
 
 		// Define the modules.
 		AuthReflectionModule movieDBModule = new AuthReflectionModule("movieDB", ModuleType.NormalModule,
@@ -119,6 +120,8 @@ public class UlriceSampleApplication {
             }
 		    
 		};
+		
+		ProfiledModuleSampleModule sample1Module = new ProfiledModuleSampleModule();
 
 		// Add the modules.
 		IFModuleManager moduleManager = Ulrice.getModuleManager();
@@ -130,6 +133,7 @@ public class UlriceSampleApplication {
 		moduleManager.registerModule(translator);
 		moduleManager.registerModule(radioModule);
 		moduleManager.registerModule(behaviorModule);
+		moduleManager.registerModule(sample1Module);
 
 		// Add the modules to the structure.
 		IFModuleStructureManager moduleStructureManager = Ulrice.getModuleStructureManager();
@@ -141,6 +145,7 @@ public class UlriceSampleApplication {
 		moduleStructureManager.addModule(translator);
 		moduleStructureManager.addModule(radioModule);
 		moduleStructureManager.addModule(behaviorModule);
+		moduleStructureManager.addModule(sample1Module);
 
 		moduleStructureManager.fireModuleStructureChanged();
 		

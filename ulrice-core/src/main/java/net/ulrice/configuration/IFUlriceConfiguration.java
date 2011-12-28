@@ -6,6 +6,7 @@ import net.ulrice.frame.IFMainFrame;
 import net.ulrice.message.TranslationProvider;
 import net.ulrice.module.IFModuleManager;
 import net.ulrice.module.IFModuleStructureManager;
+import net.ulrice.profile.persister.ProfilePersister;
 import net.ulrice.security.IFAuthCallback;
 
 /**
@@ -52,4 +53,6 @@ public interface IFUlriceConfiguration {
 	IFAuthCallback getAuthCallback();
 
     TranslationProvider getTranslationProvider();
+
+    ProfilePersister getProfilePersister();
 }

@@ -33,6 +33,7 @@ public class ModuleTree extends JTree implements IFMainFrameComponent, MouseList
     public ModuleTree() {
         super(new ModuleTreeModel());
         setRootVisible(false);
+        setShowsRootHandles(true);
         setCellRenderer(new ModuleTreeCellRenderer());
         addMouseListener(this);
         
@@ -46,18 +47,7 @@ public class ModuleTree extends JTree implements IFMainFrameComponent, MouseList
                 
                     if (pathComponent instanceof ModuleTreeNode) {
                         ModuleTreeNode node = (ModuleTreeNode) pathComponent;
-                        if (!node.isGroup()) {
-                            Ulrice.getModuleManager().openModule(node.getModule().getUniqueId(), new ControllerProviderCallback() {
-                                @Override
-                                public void onFailure(ModuleInstantiationException exc) {
-                                    Ulrice.getMessageHandler().handleException(exc);
-                                }
-
-                                @Override
-                                public void onControllerReady(IFController controller) {
-                                }                                
-                            });                                                            
-                        }
+                        handleNodeActivated(node);
                     }
                 }
             }
@@ -102,21 +92,43 @@ public class ModuleTree extends JTree implements IFMainFrameComponent, MouseList
             Object pathComponent = path.getLastPathComponent();
             if (pathComponent instanceof ModuleTreeNode) {
                 ModuleTreeNode node = (ModuleTreeNode) pathComponent;
-                if (!node.isGroup()) {
-                    Ulrice.getModuleManager().openModule(node.getModule().getUniqueId(), new ControllerProviderCallback() {
-                        @Override
-                        public void onFailure(ModuleInstantiationException exc) {
-                            Ulrice.getMessageHandler().handleException(exc);
-                        }
-
-                        @Override
-                        public void onControllerReady(IFController controller) {
-                        }
-                    });
-                }
+                handleNodeActivated(node);
             }
         }
     }
+
+    /**
+     * Handles the activation events on nodes. Opens the module or profiled module.
+     */
+	private void handleNodeActivated(ModuleTreeNode node) {
+		switch(node.getNodeType()) {
+			case Module:
+		        Ulrice.getModuleManager().openModule(node.getModule().getUniqueId(), new ControllerProviderCallback() {
+		            @Override
+		            public void onFailure(ModuleInstantiationException exc) {
+		                Ulrice.getMessageHandler().handleException(exc);
+		            }
+
+		            @Override
+		            public void onControllerReady(IFController controller) {
+		            }                                
+		        });
+		        break;
+			case ProfiledModule:
+				Ulrice.getProfileManager().openProfiledModule(node.getProfiledModule(), new ControllerProviderCallback() {
+					
+					@Override
+					public void onFailure(ModuleInstantiationException exc) {
+		                Ulrice.getMessageHandler().handleException(exc);
+					}
+					
+					@Override
+					public void onControllerReady(IFController controller) {
+					}
+				});
+				break;
+		}
+	}
 
     /**
      * @see java.awt.event.MouseListener#mouseEntered(java.awt.event.MouseEvent)
