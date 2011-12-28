@@ -9,7 +9,7 @@ import net.ulrice.profile.ProfilableModule;
 public class ProfiledModuleSampleModule extends AuthReflectionModule implements ProfilableModule<ProfiledModuleSampleController> {
 
 	public ProfiledModuleSampleModule() {
-		super("ProfiledModuleSample", ModuleType.NormalModule, ProfiledModuleSampleController.class.getName(), null);
+		super("Profiled Module", ModuleType.NormalModule, ProfiledModuleSampleController.class.getName(), null);
 		
 		Profile profile = new Profile();
 		profile.setGroupId(getProfileGroupId());

@@ -15,8 +15,6 @@ import net.ulrice.configuration.ConfigurationException;
 import net.ulrice.configuration.UlriceFileConfiguration;
 import net.ulrice.module.ControllerProviderCallback;
 import net.ulrice.module.IFModule;
-import net.ulrice.module.IFModuleManager;
-import net.ulrice.module.IFModuleStructureManager;
 import net.ulrice.module.ModuleIconSize;
 import net.ulrice.module.ModuleType;
 import net.ulrice.module.impl.AuthReflectionModule;
@@ -26,6 +24,9 @@ import net.ulrice.module.impl.action.CloseModuleAction;
 import net.ulrice.module.impl.action.ExitApplicationAction;
 import net.ulrice.module.impl.action.ModuleActionManager;
 import net.ulrice.module.impl.action.ModuleDelegationAction;
+import net.ulrice.sample.module.laflist.LafListModel;
+import net.ulrice.sample.module.masktextfield.MaskTextFieldModule;
+import net.ulrice.sample.module.processsample.ProcessSampleModule;
 import net.ulrice.sample.module.profiledmodulesample.ProfiledModuleSampleModule;
 import net.ulrice.security.Authorization;
 import net.ulrice.translator.CTranslator;
@@ -121,33 +122,19 @@ public class UlriceSampleApplication {
 		    
 		};
 		
-		ProfiledModuleSampleModule sample1Module = new ProfiledModuleSampleModule();
-
+		registerModule(new ProfiledModuleSampleModule());
+		registerModule(new ProcessSampleModule());
+		registerModule(new MaskTextFieldModule());		
+		
 		// Add the modules.
-		IFModuleManager moduleManager = Ulrice.getModuleManager();
-		moduleManager.registerModule(movieDBModule);
-		moduleManager.registerModule(sampleModule1);
-		moduleManager.registerModule(sampleModule2);
-		moduleManager.registerModule(lafListModule);
-		moduleManager.registerModule(dataBindingSample);
-		moduleManager.registerModule(translator);
-		moduleManager.registerModule(radioModule);
-		moduleManager.registerModule(behaviorModule);
-		moduleManager.registerModule(sample1Module);
+		registerModule(movieDBModule);
+		registerModule(lafListModule);
+		registerModule(dataBindingSample);
+		registerModule(translator);
+		registerModule(radioModule);
+		registerModule(behaviorModule);
 
-		// Add the modules to the structure.
-		IFModuleStructureManager moduleStructureManager = Ulrice.getModuleStructureManager();
-		moduleStructureManager.addModule(movieDBModule);
-		moduleStructureManager.addModule(sampleModule1);
-		moduleStructureManager.addModule(sampleModule2);
-		moduleStructureManager.addModule(lafListModule);
-		moduleStructureManager.addModule(dataBindingSample);
-		moduleStructureManager.addModule(translator);
-		moduleStructureManager.addModule(radioModule);
-		moduleStructureManager.addModule(behaviorModule);
-		moduleStructureManager.addModule(sample1Module);
-
-		moduleStructureManager.fireModuleStructureChanged();
+		Ulrice.getModuleStructureManager().fireModuleStructureChanged();
 		
 
 		// Add the application actions.
@@ -179,6 +166,11 @@ public class UlriceSampleApplication {
                 new ExitApplicationAction(null, null).actionPerformed(new ActionEvent(this, e.getID(), null));
             }
         });
+	}
+
+	private static void registerModule(IFModule module) {
+		Ulrice.getModuleManager().registerModule(module);
+		Ulrice.getModuleStructureManager().addModule(module);
 	}
 
 	private static ImageIcon loadImage(String image) {

@@ -10,12 +10,12 @@ import javax.swing.table.DefaultTableModel;
  * 
  * @author christof
  */
-public class MLafList extends DefaultTableModel {
+public class LafListModel extends DefaultTableModel {
 
 	/** Default generated serial version uid. */
 	private static final long serialVersionUID = 1731283174024412217L;
 
-	public MLafList() {
+	public LafListModel() {
 		addColumn("Key");
 		addColumn("Value");
 	}
