@@ -426,7 +426,7 @@ public class UTableViewAdapter extends AbstractViewAdapter implements TableModel
     public List<Element> getSelectedElements() {
         return table.getSelectedElements();
     }
-
+    
     public Object getSelectedObject() {
         return table.getSelectedObject();
     }
