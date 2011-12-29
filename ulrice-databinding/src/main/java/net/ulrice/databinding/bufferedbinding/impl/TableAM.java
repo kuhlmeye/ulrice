@@ -932,6 +932,10 @@ public class TableAM implements IFAttributeModel {
     public List<Element> getDeletedElements() {
         return new ArrayList<Element>(delElements);
     }
+    
+    public List<Element> getElements() {
+        return new ArrayList<Element>(elements);
+    }
 
     public void commitElement(Element element) {
         element.writeObject();
