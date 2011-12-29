@@ -2,6 +2,7 @@ package net.ulrice.databinding.viewadapter.utable;
 
 import java.awt.BorderLayout;
 import java.awt.Component;
+import java.awt.Rectangle;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.util.ArrayList;
@@ -712,5 +713,9 @@ public class UTableComponent extends JPanel {
             popupMenu.add(action);
         }
         popupMenu.show(component, x, y);
+    }
+    
+    public void scrollToRow(int row){
+        scrollTable.scrollRectToVisible(new Rectangle(scrollTable.getCellRect(row, 0, true)));
     }
 }
