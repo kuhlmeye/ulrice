@@ -14,7 +14,6 @@ import javax.swing.JComboBox;
 import javax.swing.JComponent;
 import javax.swing.JTextField;
 import javax.swing.RowFilter;
-import javax.swing.SwingUtilities;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
@@ -28,6 +27,7 @@ import javax.swing.table.TableColumn;
 import javax.swing.table.TableColumnModel;
 import javax.swing.text.BadLocationException;
 
+import net.ulrice.databinding.ObjectWithPresentation;
 import net.ulrice.databinding.bufferedbinding.impl.ColumnDefinition;
 import net.ulrice.databinding.bufferedbinding.impl.Element;
 import net.ulrice.databinding.bufferedbinding.impl.FilterMode;
@@ -213,9 +213,11 @@ public class UTableVAFilter extends RowFilter<UTableViewAdapter, String> impleme
 	private boolean includeValue(String columnId, String identifier, Object value) {
 		String strValue = value == null ? "" : value.toString();
 		if (columnFilterModes != null && columnFilterModes.containsKey(columnId)) {
+            boolean isCombo = false;
 			switch (columnFilterModes.get(columnId)) {
 				case RegEx:
 				case ComboBox:
+                    isCombo = true;
 				case Boolean:
 					Pattern pattern = regexExpressionMap.get(columnId);
 					if (pattern != null) {
@@ -227,7 +229,11 @@ public class UTableVAFilter extends RowFilter<UTableViewAdapter, String> impleme
                         }
 					    else {
 					        LOG.finest("ColumnId: " + columnId + ", Value: " + strValue + ", Pattern: " + pattern.pattern());
-	                        return pattern.matcher(strValue).matches();
+                            if (isCombo) {
+                                return pattern.pattern().equals(strValue);
+                            }
+                            else
+                                return pattern.matcher(strValue).matches();
 					    }
 					}
 				case Numeric:
@@ -313,11 +319,13 @@ public class UTableVAFilter extends RowFilter<UTableViewAdapter, String> impleme
             numericPatternExpressionMap.remove(columnId);
         }
         else if (columnFilterModes.containsKey(columnId)) {
+            boolean isCombo = false;
 
             switch (columnFilterModes.get(columnId)) {
                 case NoFilter:
                     break;
                 case ComboBox:
+                    isCombo = true;
                 case Boolean:
                 case RegEx: {
                     String regex = text;
@@ -329,7 +337,9 @@ public class UTableVAFilter extends RowFilter<UTableViewAdapter, String> impleme
                     }
                     regex = regex.replace("?", ".?");
                     regex = regex.replace("*", ".*");
-                    regex += ".*";
+                    if (!isCombo) {
+                        regex += ".*";
+                    }
 
                     try {
                         final Pattern pattern = Pattern.compile(regex, Pattern.CASE_INSENSITIVE);
@@ -453,6 +463,9 @@ public class UTableVAFilter extends RowFilter<UTableViewAdapter, String> impleme
         }
         else if (value == BooleanFilter.No) {
             filterChanged(cbModel.columndId, Boolean.FALSE.toString());
+        }
+        else if (value instanceof ObjectWithPresentation< ?>) {
+            filterChanged(cbModel.columndId, ((ObjectWithPresentation< ?>) value).getValue().toString());
         }
         else if (value != null) {
             filterChanged(cbModel.columndId, value.toString());
