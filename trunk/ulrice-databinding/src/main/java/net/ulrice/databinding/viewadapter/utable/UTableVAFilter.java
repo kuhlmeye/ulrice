@@ -215,9 +215,9 @@ public class UTableVAFilter extends RowFilter<UTableViewAdapter, String> impleme
 		if (columnFilterModes != null && columnFilterModes.containsKey(columnId)) {
             boolean isCombo = false;
 			switch (columnFilterModes.get(columnId)) {
-				case RegEx:
 				case ComboBox:
                     isCombo = true;
+                case RegEx:
 				case Boolean:
 					Pattern pattern = regexExpressionMap.get(columnId);
 					if (pattern != null) {
