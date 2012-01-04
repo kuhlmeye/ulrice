@@ -23,7 +23,7 @@ public class StringToIntegerConverter implements IFValueConverter<Integer, Strin
     
 	@Override
 	public Integer viewToModel(String view) {
-		if (view == null || "".equals(view.trim())) {
+		if (view == null || "".equals(view.trim()) || "-".equals(view.trim())) {
 			return null;
 		}
 		try {
