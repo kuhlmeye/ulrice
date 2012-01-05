@@ -48,9 +48,9 @@ public class UTableRowSorter extends DefaultRowSorter<UTableViewAdapter, String>
 			}
 
 			@Override
-			public String getIdentifier(int row) {
-				return model.getAttributeModel().getElementAt(row).getUniqueId();
-			}
+            public String getIdentifier(int row) {
+                return model.getAttributeModel().getElementAt(row).getUniqueId();
+            }
 		});
 	}
 
@@ -73,7 +73,34 @@ public class UTableRowSorter extends DefaultRowSorter<UTableViewAdapter, String>
 		UTableRowSorter.this.setSortKeys(sortKeys);		
 		UTableRowSorter.this.model.getComponent().invalidate();
 		UTableRowSorter.this.model.getComponent().repaint();
-	}		
+	}
+	
+	/**
+	 * allows to set the sorting keys
+	 * do not use setSortKeys, because the sort keys of staticTableRS and scrollTableRS 
+	 * are not refreshed the right way
+	 *
+	 * @param sortKeys
+	 */
+    public void setGlobalSortKeys(List<SortKey> sortKeys) {
+        List<SortKey> newStaticSortKeys = new ArrayList<RowSorter.SortKey>();
+        List<SortKey> newScrollSortKeys = new ArrayList<RowSorter.SortKey>();
+
+        for (SortKey key : sortKeys) {
+            if (key.getColumn() >= fixedColumns) {
+                newScrollSortKeys.add(new SortKey(key.getColumn() - fixedColumns, key.getSortOrder()));
+            }
+            else {
+                newStaticSortKeys.add(new SortKey(key.getColumn(), key.getSortOrder()));
+            }
+        }
+
+        this.staticSortKeys = newStaticSortKeys;
+        this.scrollSortKeys = newScrollSortKeys;
+        updateGlobalSortKeys();
+        UTableRowSorter.this.sort();
+        fireSortOrderChanged();
+    }
 	
 	protected class UTableModelRowSorter extends RowSorter<UTableModel> {
 		private UTableModel model;
@@ -141,6 +168,8 @@ public class UTableRowSorter extends DefaultRowSorter<UTableViewAdapter, String>
 				fireSortOrderChanged();
 				scrollTableRS.fireSortOrderChanged();
 			}
+			
+
 		}
 
 
