@@ -55,6 +55,8 @@ public class Element {
 	private TableAM tableAM;
 
 	private ValidationResult validationResult;
+	
+	private List<Element> childElements = new ArrayList<Element>();	
 
 	/**
 	 * Creates a new element.
@@ -197,6 +199,10 @@ public class Element {
 	public void setValueAt(int columnIndex, Object aValue) {
 		GenericAM<?> model = modelList.get(columnIndex);
 		setValue(model, columns.get(columnIndex).getId(), aValue);
+		
+		for(Element elem: childElements){
+		    elem.setValueAt(columnIndex, aValue);
+		}
 	}
 
 	/**
@@ -553,5 +559,31 @@ public class Element {
     
     public void setInsertedOrRemoved(boolean insertedOrRemoved) {
         this.insertedOrRemoved = insertedOrRemoved;
+    }
+    
+    public Element getChild(int index){
+        return childElements.get(index);
+    }
+    
+    public int getChildCount(){
+        return childElements.size();
+    }
+    
+    public void addChildElement(Element element){
+        childElements.add(element);
+    }
+    
+    public String toString(){
+        //hack because TreeTableCellRenderer uses the toString of the row for display
+        Object value = getOriginalValue();
+        if(value == null){
+            return null;
+        }
+        String result = value.toString();
+        if(childElements != null && childElements.size()>0){
+            return result +" ("+childElements.size()+")";
+        }
+        return result;      
+        
     }
 }
