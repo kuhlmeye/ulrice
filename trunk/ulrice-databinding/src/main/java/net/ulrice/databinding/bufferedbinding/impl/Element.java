@@ -579,11 +579,6 @@ public class Element {
         if(value == null){
             return null;
         }
-        String result = value.toString();
-        if(childElements != null && childElements.size()>0){
-            return result +" ("+childElements.size()+")";
-        }
-        return result;      
-        
+        return value.toString();   
     }
 }
