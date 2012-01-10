@@ -575,7 +575,7 @@ public class Element {
     
     public String toString(){
         //hack because TreeTableCellRenderer uses the toString of the row for display
-        Object value = getOriginalValue();
+        Object value = getCurrentValue();
         if(value == null){
             return null;
         }
