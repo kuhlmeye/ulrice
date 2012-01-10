@@ -75,7 +75,7 @@ public class UTableComponent extends JPanel {
         
         staticTable = new UTable(this);        
         scrollTable = new UTable(this);
-
+        
         staticTable.setAssocTable(scrollTable);
         scrollTable.setAssocTable(staticTable);
         
@@ -174,6 +174,17 @@ public class UTableComponent extends JPanel {
     }
 	
 	public void init(final UTableViewAdapter viewAdapter) {
+	    
+	    rowSelModel = new DefaultListSelectionModel();
+	  
+	    staticTable.setDefaultRenderer(Object.class, new UTableVADefaultRenderer());
+        scrollTable.setDefaultRenderer(Object.class, new UTableVADefaultRenderer());
+	    
+	    if(viewAdapter.getAttributeModel().isForTreeTable()){
+	        initTreeTable(viewAdapter);
+	        return;
+	    }
+	    
 	    rowSelModel = new DefaultListSelectionModel();
 	    rowSelModel.addListSelectionListener(new ListSelectionListener() {
             private boolean nested = false;
@@ -247,6 +258,45 @@ public class UTableComponent extends JPanel {
             }
         });
 	    
+	}
+	
+	private void initTreeTable(final UTableViewAdapter viewAdapter) {
+	    
+        UTreeTableModel treeTableModel = new UTreeTableModel(viewAdapter.getAttributeModel());                    
+        viewAdapter.addTableModelListener(treeTableModel);
+        
+        // JTree erstellen.
+        TreeTableCellRenderer tree = new TreeTableCellRenderer(scrollTable, treeTableModel);
+        tree.setRootVisible(true);
+         
+        // Modell setzen.
+        scrollTable.setModel(new TreeTableModelAdapter(treeTableModel, tree));
+         
+        // Gleichzeitiges Selektieren fuer Tree und Table.
+        TreeTableSelectionModel selectionModel = new TreeTableSelectionModel();
+        tree.setSelectionModel(selectionModel); //For the tree
+        scrollTable.setSelectionModel(selectionModel.getListSelectionModel()); //For the table
+ 
+         
+        // Renderer fuer den Tree.
+        scrollTable.setDefaultRenderer(TreeTableModel.class, tree);
+        // Editor fuer die TreeTable
+        scrollTable.setDefaultEditor(TreeTableModel.class, new TreeTableCellEditor(tree, scrollTable));
+        
+        sorter = new UTableRowSorter(viewAdapter, UTableComponent.this.fixedColumns, staticTableModel, scrollTableModel);
+        staticTable.setRowSorter(sorter.getStaticTableRowSorter());
+        scrollTable.setRowSorter(sorter.getScrollTableRowSorter());
+        
+        filter = new UTableVAFilter(sorter, staticTable.getUTableHeader(), scrollTable.getUTableHeader());
+        sorter.setRowFilter(filter);
+        
+        //staticTableModel = new UTableModel(false, UTableComponent.this.fixedColumns, viewAdapter);
+        //staticTable.setModel(new TreeTableModelAdapter(treeTableModel, tree));
+        //staticTable.setSelectionModel(rowSelModel);
+        
+        staticTableModel = new UTableModel(false, UTableComponent.this.fixedColumns, viewAdapter);
+        staticTable.setModel(staticTableModel);
+        staticTable.setSelectionModel(rowSelModel);
 	}
 
 
@@ -335,7 +385,7 @@ public class UTableComponent extends JPanel {
 
 	/**
 	 */
-	protected void updateColumnModel() {
+	public void updateColumnModel() {
 	    
 	    if(fixedColumns < originalFixedColumns) {
 	        setFixedColumns(originalFixedColumns);
@@ -392,7 +442,7 @@ public class UTableComponent extends JPanel {
         }
         
         Comparator< ?> comparator = columnDefinition.getComparator();
-        if(comparator != null) {
+        if(comparator != null && sorter != null) {
             sorter.setComparator(columnIndex, comparator);
         }
 
