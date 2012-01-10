@@ -125,7 +125,7 @@ public class UTableViewAdapter extends AbstractViewAdapter implements TableModel
     /**
      * @param e
      */
-    private void fireTableChanged(TableModelEvent e) {
+    protected void fireTableChanged(TableModelEvent e) {
         TableModelListener[] listeners = listenerList.getListeners(TableModelListener.class);
         for (TableModelListener listener : listeners) {
             listener.tableChanged(e);
@@ -177,6 +177,7 @@ public class UTableViewAdapter extends AbstractViewAdapter implements TableModel
      */
     @Override
     public int getRowCount() {
+         
         if (getAttributeModel() != null) {
             return getAttributeModel().getRowCount();
         }
@@ -296,6 +297,7 @@ public class UTableViewAdapter extends AbstractViewAdapter implements TableModel
         if (getStateMarker() != null) {
             getStateMarker().updateState(binding, binding.isReadOnly() && isEditable(), isDirty(), isValid(), table);
         }
+        
     }
 
     public int insertEmptyRow() {
