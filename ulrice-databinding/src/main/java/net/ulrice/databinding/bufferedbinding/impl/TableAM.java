@@ -17,10 +17,12 @@ import net.ulrice.databinding.bufferedbinding.IFAttributeModel;
 import net.ulrice.databinding.bufferedbinding.IFAttributeModelEventListener;
 import net.ulrice.databinding.converter.IFValueConverter;
 import net.ulrice.databinding.modelaccess.IFIndexedModelValueAccessor;
+import net.ulrice.databinding.modelaccess.impl.IndexedReflectionMVA;
 import net.ulrice.databinding.validation.IFValidator;
 import net.ulrice.databinding.validation.ValidationError;
 import net.ulrice.databinding.validation.ValidationResult;
 import net.ulrice.databinding.viewadapter.IFViewAdapter;
+import net.ulrice.databinding.viewadapter.utable.TreeTableModel;
 
 /**
  * @author christof
@@ -68,6 +70,7 @@ public class TableAM implements IFAttributeModel {
     private Map<String, List< ?>> keyDeleteMap = new HashMap<String, List< ?>>();
     private Map<List< ?>, ValidationError> currentErrorMap = new HashMap<List< ?>, ValidationError>();
 
+    private String pathToChildren;
     
     public TableAM(IFIndexedModelValueAccessor tableMVA, IFAttributeInfo attributeInfo) {
         this(tableMVA, attributeInfo, false);
@@ -235,8 +238,24 @@ public class TableAM implements IFAttributeModel {
     protected Element createElement(Object value, boolean dirty, boolean valid, boolean insertedOrDeleted) {
         String uniqueId = Long.toHexString(nextUniqueId++);
         Element elem = new Element(this, uniqueId, columns, value, isReadOnly(), dirty, valid, insertedOrDeleted);
+        
+        if(isForTreeTable()){
+            addChildsToElement(value, dirty, valid, insertedOrDeleted, elem);
+        }
+        
         return elem;
     }
+    
+    
+    protected void addChildsToElement(Object value, boolean dirty, boolean valid, boolean insertedOrDeleted, Element element){
+       IFIndexedModelValueAccessor mva = new IndexedReflectionMVA(value,getPathToChildren());
+       for(int i = 0; i < mva.getSize(); i++){           
+           Object child = mva.getValue(i);
+           element.addChildElement(createElement(child, dirty, valid, insertedOrDeleted));    
+       }
+    }
+
+ 
 
     /**
      * @see net.ulrice.databinding.bufferedbinding.IFAttributeModel#addAttributeModelEventListener(net.ulrice.databinding.bufferedbinding.IFAttributeModelEventListener)
@@ -288,6 +307,9 @@ public class TableAM implements IFAttributeModel {
      * @see javax.swing.table.TableModel#getColumnClass(int)
      */
     public Class< ?> getColumnClass(int columnIndex) {
+        if(isForTreeTable() && columnIndex == 0){
+            return TreeTableModel.class;
+        }
         return columns.get(columnIndex).getColumnClass();
     }
 
@@ -1146,6 +1168,22 @@ public class TableAM implements IFAttributeModel {
     public void addExternalValidationError(ValidationError validationError) {
         // TODO Implement me..
         
+    }
+
+    public String getPathToChildren() {
+        return pathToChildren;
+    }
+
+    public void setPathToChildren(String pathToChildren) {
+        this.pathToChildren = pathToChildren;
+    }
+    
+    public boolean isForTreeTable() {
+        return pathToChildren != null;
+    }
+   
+    public String toString(){
+        return elements.size()+" Elements";
     }
     
 }
