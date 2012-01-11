@@ -6,10 +6,10 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
-import java.util.regex.Pattern;
 
 import net.ulrice.module.IFModule;
 import net.ulrice.module.IFModuleTitleProvider;
+import net.ulrice.remotecontrol.util.RegularMatcher;
 import net.ulrice.remotecontrol.util.RemoteControlUtils;
 
 /**
@@ -153,7 +153,7 @@ public abstract class ModuleMatcher implements Serializable {
      * @throws RemoteControlException on occasion
      */
     public static ModuleMatcher withId(final String regex) throws RemoteControlException {
-        final Pattern pattern = RemoteControlUtils.toPattern(regex);
+        final RegularMatcher matcher = RemoteControlUtils.toMatcher(regex);
 
         return new ModuleMatcher() {
 
@@ -166,7 +166,7 @@ public abstract class ModuleMatcher implements Serializable {
                 while (it.hasNext()) {
                     IFModule module = it.next();
 
-                    if ((module.getUniqueId() == null) || (!pattern.matcher(module.getUniqueId()).matches())) {
+                    if ((module.getUniqueId() == null) || (!matcher.matches(module.getUniqueId()))) {
                         it.remove();
                     }
                 }
@@ -190,7 +190,7 @@ public abstract class ModuleMatcher implements Serializable {
      * @throws RemoteControlException on occasion
      */
     public static ModuleMatcher titeled(final String regex) throws RemoteControlException {
-        final Pattern pattern = RemoteControlUtils.toPattern(regex);
+        final RegularMatcher matcher = RemoteControlUtils.toMatcher(regex);
 
         return new ModuleMatcher() {
 
@@ -206,7 +206,7 @@ public abstract class ModuleMatcher implements Serializable {
                     for (IFModuleTitleProvider.Usage usage : IFModuleTitleProvider.Usage.values()) {
                         String title = module.getModuleTitle(usage);
 
-                        if ((title != null) && (pattern.matcher(title).matches())) {
+                        if ((title != null) && (matcher.matches(title))) {
                             continue moduleLoop;
                         }
                     }
@@ -233,7 +233,7 @@ public abstract class ModuleMatcher implements Serializable {
      * @throws RemoteControlException on occasion
      */
     public static ModuleMatcher like(final String regex) throws RemoteControlException {
-        final Pattern pattern = RemoteControlUtils.toPattern(regex);
+        final RegularMatcher matcher = RemoteControlUtils.toMatcher(regex);
 
         return new ModuleMatcher() {
 
@@ -246,14 +246,14 @@ public abstract class ModuleMatcher implements Serializable {
                 moduleLoop: while (it.hasNext()) {
                     IFModule module = it.next();
 
-                    if (pattern.matcher(module.getUniqueId()).matches()) {
+                    if (matcher.matches(module.getUniqueId())) {
                         continue;
                     }
 
                     for (IFModuleTitleProvider.Usage usage : IFModuleTitleProvider.Usage.values()) {
                         String title = module.getModuleTitle(usage);
 
-                        if ((title != null) && (pattern.matcher(title).matches())) {
+                        if ((title != null) && (matcher.matches(title))) {
                             continue moduleLoop;
                         }
                     }
