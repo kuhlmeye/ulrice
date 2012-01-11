@@ -156,6 +156,16 @@ public class ComponentTableData implements Serializable {
         return true;
     }
 
+    public int findSelectedRow() {
+        for (int row = 0; row < getRowCount(); row += 1) {
+            if (isRowSelected(row)) {
+                return row;
+            }
+        }
+
+        return -1;
+    }
+
     public boolean isRowSelected(int row) {
         for (int column = 0; column < getColumnCount(); column += 1) {
             if (!isSelected(row, column)) {
