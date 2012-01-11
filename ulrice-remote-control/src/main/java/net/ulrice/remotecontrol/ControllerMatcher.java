@@ -6,13 +6,13 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
-import java.util.regex.Pattern;
 
 import net.ulrice.Ulrice;
 import net.ulrice.module.IFController;
 import net.ulrice.module.IFModule;
 import net.ulrice.module.IFModuleManager;
 import net.ulrice.module.IFModuleTitleProvider;
+import net.ulrice.remotecontrol.util.RegularMatcher;
 import net.ulrice.remotecontrol.util.RemoteControlUtils;
 
 /**
@@ -158,7 +158,7 @@ public abstract class ControllerMatcher implements Serializable {
      * @throws RemoteControlException on occasion
      */
     public static ControllerMatcher withId(final String regex) throws RemoteControlException {
-        final Pattern pattern = RemoteControlUtils.toPattern(regex);
+        final RegularMatcher matcher = RemoteControlUtils.toMatcher(regex);
 
         return new ControllerMatcher() {
 
@@ -174,7 +174,7 @@ public abstract class ControllerMatcher implements Serializable {
                     IFModule module = manager.getModule(controller);
 
                     if ((module != null) && (module.getUniqueId() != null)
-                        && (pattern.matcher(module.getUniqueId()).matches())) {
+                        && (matcher.matches(module.getUniqueId()))) {
                         continue;
                     }
 
@@ -199,7 +199,7 @@ public abstract class ControllerMatcher implements Serializable {
      * @throws RemoteControlException on occasion
      */
     public static ControllerMatcher titeled(final String regex) throws RemoteControlException {
-        final Pattern pattern = RemoteControlUtils.toPattern(regex);
+        final RegularMatcher matcher = RemoteControlUtils.toMatcher(regex);
 
         return new ControllerMatcher() {
 
@@ -215,7 +215,7 @@ public abstract class ControllerMatcher implements Serializable {
                     for (IFModuleTitleProvider.Usage usage : IFModuleTitleProvider.Usage.values()) {
                         String title = controller.getTitleProvider().getModuleTitle(usage);
 
-                        if ((title != null) && (pattern.matcher(title).matches())) {
+                        if ((title != null) && (matcher.matches(title))) {
                             continue controllerLoop;
                         }
                     }
@@ -241,7 +241,7 @@ public abstract class ControllerMatcher implements Serializable {
      * @throws RemoteControlException on occasion
      */
     public static ControllerMatcher like(final String regex) throws RemoteControlException {
-        final Pattern pattern = RemoteControlUtils.toPattern(regex);
+        final RegularMatcher matcher = RemoteControlUtils.toMatcher(regex);
 
         return new ControllerMatcher() {
 
@@ -257,14 +257,14 @@ public abstract class ControllerMatcher implements Serializable {
                     IFModule module = manager.getModule(controller);
 
                     if (module != null) {
-                        if ((module.getUniqueId() != null) && (pattern.matcher(module.getUniqueId()).matches())) {
+                        if ((module.getUniqueId() != null) && (matcher.matches(module.getUniqueId()))) {
                             continue;
                         }
 
                         for (IFModuleTitleProvider.Usage usage : IFModuleTitleProvider.Usage.values()) {
                             String title = module.getModuleTitle(usage);
 
-                            if ((title != null) && (pattern.matcher(title).matches())) {
+                            if ((title != null) && (matcher.matches(title))) {
                                 continue controllerLoop;
                             }
                         }

@@ -5,8 +5,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.regex.Pattern;
 
+import net.ulrice.remotecontrol.util.RegularMatcher;
 import net.ulrice.remotecontrol.util.RemoteControlUtils;
 
 /**
@@ -56,7 +56,7 @@ public class ComponentTableData implements Serializable {
     }
 
     public int findHeader(String regex) throws RemoteControlException {
-        Pattern pattern = RemoteControlUtils.toPattern(regex);
+        RegularMatcher matcher = RemoteControlUtils.toMatcher(regex);
 
         for (int column = 0; column < getColumnCount(); column += 1) {
             String header = getHeader(column);
@@ -65,7 +65,7 @@ public class ComponentTableData implements Serializable {
                 continue;
             }
 
-            if (pattern.matcher(header).matches()) {
+            if (matcher.matches(header)) {
                 return column;
             }
         }

@@ -1,13 +1,13 @@
 package net.ulrice.remotecontrol.impl.helper;
 
 import java.awt.Robot;
-import java.util.regex.Pattern;
 
 import javax.swing.ComboBoxModel;
 import javax.swing.JComboBox;
 
 import net.ulrice.remotecontrol.ComponentListData;
 import net.ulrice.remotecontrol.RemoteControlException;
+import net.ulrice.remotecontrol.util.RegularMatcher;
 import net.ulrice.remotecontrol.util.RemoteControlUtils;
 import net.ulrice.remotecontrol.util.Result;
 
@@ -63,14 +63,14 @@ public class JComboBoxHelper extends AbstractJComponentHelper<JComboBox> {
     public boolean enter(final Robot robot, final JComboBox component, final String text)
         throws RemoteControlException {
         final Result<Boolean> result = new Result<Boolean>(1);
-        final Pattern pattern = RemoteControlUtils.toPattern(text);
+        final RegularMatcher matcher = RemoteControlUtils.toMatcher(text);
 
         RemoteControlUtils.invokeInSwing(new Runnable() {
 
             @Override
             public void run() {
                 for (int i = 0; i < component.getModel().getSize(); i += 1) {
-                    if (pattern.matcher(String.valueOf(component.getModel().getElementAt(i))).matches()) {
+                    if (matcher.matches(String.valueOf(component.getModel().getElementAt(i)))) {
                         component.setSelectedIndex(i);
                         result.fireResult(true);
                         return;

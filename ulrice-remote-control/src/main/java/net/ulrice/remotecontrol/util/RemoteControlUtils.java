@@ -5,8 +5,6 @@ import java.awt.Robot;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.regex.Pattern;
-import java.util.regex.PatternSyntaxException;
 
 import javax.swing.SwingUtilities;
 
@@ -33,16 +31,10 @@ public class RemoteControlUtils {
      * Creates a pattern from the specified regular expression
      * 
      * @param regex the regular expression
-     * @return the pattern
-     * @throws RemoteControlException if the regular expression is invalid
+     * @return the matcher 
      */
-    public static Pattern toPattern(String regex) throws RemoteControlException {
-        try {
-            return Pattern.compile(regex, Pattern.CASE_INSENSITIVE);
-        }
-        catch (PatternSyntaxException e) {
-            throw new RemoteControlException("Invalid pattern: " + regex, e);
-        }
+    public static RegularMatcher toMatcher(String regex) {
+        return new RegularMatcher(regex);
     }
 
     /**

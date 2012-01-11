@@ -7,12 +7,12 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
-import java.util.regex.Pattern;
 
 import net.ulrice.remotecontrol.impl.ComponentRegistry;
 import net.ulrice.remotecontrol.impl.helper.ComponentHelper;
 import net.ulrice.remotecontrol.impl.helper.ComponentHelperRegistry;
 import net.ulrice.remotecontrol.util.ComponentUtils;
+import net.ulrice.remotecontrol.util.RegularMatcher;
 import net.ulrice.remotecontrol.util.RemoteControlUtils;
 
 /**
@@ -223,7 +223,7 @@ public abstract class ComponentMatcher implements Serializable {
      * @throws RemoteControlException on occasion
      */
     public static ComponentMatcher like(final String regex) throws RemoteControlException {
-        final Pattern pattern = RemoteControlUtils.toPattern(regex);
+        final RegularMatcher matcher = RemoteControlUtils.toMatcher(regex);
 
         return new ComponentMatcher() {
 
@@ -237,20 +237,20 @@ public abstract class ComponentMatcher implements Serializable {
                     Component component = it.next();
                     String name = component.getName();
 
-                    if ((name != null) && (pattern.matcher(name).matches())) {
+                    if ((name != null) && (matcher.matches(name))) {
                         continue;
                     }
 
                     ComponentHelper<Component> helper = ComponentHelperRegistry.get(component.getClass());
                     String text = helper.getText(component);
 
-                    if ((text != null) && (pattern.matcher(text).matches())) {
+                    if ((text != null) && (matcher.matches(text))) {
                         continue;
                     }
 
                     String title = helper.getTitle(component);
 
-                    if ((title != null) && (pattern.matcher(title).matches())) {
+                    if ((title != null) && (matcher.matches(title))) {
                         continue;
                     }
 
@@ -276,7 +276,7 @@ public abstract class ComponentMatcher implements Serializable {
      * @throws RemoteControlException on occasion
      */
     public static ComponentMatcher named(final String regex) throws RemoteControlException {
-        final Pattern pattern = RemoteControlUtils.toPattern(regex);
+        final RegularMatcher matcher = RemoteControlUtils.toMatcher(regex);
 
         return new ComponentMatcher() {
 
@@ -290,7 +290,7 @@ public abstract class ComponentMatcher implements Serializable {
                     Component component = it.next();
                     String name = component.getName();
 
-                    if ((name != null) && (pattern.matcher(name).matches())) {
+                    if ((name != null) && (matcher.matches(name))) {
                         continue;
                     }
 
@@ -317,7 +317,7 @@ public abstract class ComponentMatcher implements Serializable {
      * @throws RemoteControlException on occasion
      */
     public static ComponentMatcher titeled(final String regex) throws RemoteControlException {
-        final Pattern pattern = RemoteControlUtils.toPattern(regex);
+        final RegularMatcher matcher = RemoteControlUtils.toMatcher(regex);
 
         return new ComponentMatcher() {
 
@@ -332,7 +332,7 @@ public abstract class ComponentMatcher implements Serializable {
                     ComponentHelper<Component> helper = ComponentHelperRegistry.get(component.getClass());
                     String title = helper.getTitle(component);
 
-                    if ((title != null) && (pattern.matcher(title).matches())) {
+                    if ((title != null) && (matcher.matches(title))) {
                         continue;
                     }
 
@@ -359,7 +359,7 @@ public abstract class ComponentMatcher implements Serializable {
      * @throws RemoteControlException on occasion
      */
     public static ComponentMatcher texted(final String regex) throws RemoteControlException {
-        final Pattern pattern = RemoteControlUtils.toPattern(regex);
+        final RegularMatcher matcher = RemoteControlUtils.toMatcher(regex);
 
         return new ComponentMatcher() {
 
@@ -374,7 +374,7 @@ public abstract class ComponentMatcher implements Serializable {
                     ComponentHelper<Component> helper = ComponentHelperRegistry.get(component.getClass());
                     String text = helper.getText(component);
 
-                    if ((text != null) && (pattern.matcher(text).matches())) {
+                    if ((text != null) && (matcher.matches(text))) {
                         continue;
                     }
 
@@ -402,7 +402,7 @@ public abstract class ComponentMatcher implements Serializable {
      * @throws RemoteControlException on occasion
      */
     public static ComponentMatcher labeled(final String regex) throws RemoteControlException {
-        final Pattern pattern = RemoteControlUtils.toPattern(regex);
+        final RegularMatcher matcher = RemoteControlUtils.toMatcher(regex);
 
         return new ComponentMatcher() {
 
@@ -422,21 +422,21 @@ public abstract class ComponentMatcher implements Serializable {
 
                     String name = component.getName();
 
-                    if ((name != null) && (pattern.matcher(name).matches())) {
+                    if ((name != null) && (matcher.matches(name))) {
                         results.add(labelFor);
                         continue;
                     }
 
                     String text = helper.getText(component);
 
-                    if ((text != null) && (pattern.matcher(text).matches())) {
+                    if ((text != null) && (matcher.matches(text))) {
                         results.add(labelFor);
                         continue;
                     }
 
                     String title = helper.getTitle(component);
 
-                    if ((title != null) && (pattern.matcher(title).matches())) {
+                    if ((title != null) && (matcher.matches(title))) {
                         results.add(labelFor);
                         continue;
                     }
