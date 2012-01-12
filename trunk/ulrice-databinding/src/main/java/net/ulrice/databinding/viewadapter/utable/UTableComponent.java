@@ -463,8 +463,10 @@ public class UTableComponent extends JPanel {
     
 	private void setFixedColumns(int fixedColumns) {
         this.fixedColumns = fixedColumns;
+        if(scrollTableModel != null && staticTableModel != null){       //FIXME Quick fix to open all modules
         this.scrollTableModel.setOffset(fixedColumns);
         this.staticTableModel.setOffset(fixedColumns);
+        }
     }
 
     public int convertColumnIndexToModel(int col) {
