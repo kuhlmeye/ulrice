@@ -38,6 +38,8 @@ public class ColumnDefinition<T extends Object> {
 	
 	private EventListenerList eventListeners = new EventListenerList();
 	
+	private ColumnColorOverride columnColorOverride;
+	
 	private ColumnType columnType = ColumnType.Editable;
 	
 	public enum ColumnType {
@@ -317,4 +319,16 @@ public class ColumnDefinition<T extends Object> {
     public void setFixedColumn(boolean fixedColumn) {
         this.fixedColumn = fixedColumn;
     }
+
+    public ColumnColorOverride getColumnColorOverride() {
+        return columnColorOverride;
+    }
+
+    public void setColumnColorOverride(ColumnColorOverride columnColorOverride) {
+        this.columnColorOverride = columnColorOverride;
+    }
+
+ 
+    
+    
 }

@@ -6,6 +6,8 @@ import javax.swing.JComponent;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableCellRenderer;
 
+import net.ulrice.databinding.bufferedbinding.impl.ColumnColorOverride;
+import net.ulrice.databinding.bufferedbinding.impl.ColumnDefinition;
 import net.ulrice.databinding.bufferedbinding.impl.Element;
 import net.ulrice.databinding.ui.BindingUI;
 import net.ulrice.databinding.viewadapter.IFCellTooltipHandler;
@@ -49,9 +51,21 @@ public abstract class AbstractUTableRenderer extends DefaultTableCellRenderer {
             else {
                 component.setBackground(row % 2 == 0 ? evenNormalBackground : oddNormalBackground);
             }
-    
+            
+            
             String columnId = table.getColumnModel().getColumn(column).getIdentifier().toString();
             // TODO SELECTION BACKGROUND
+            
+            ColumnDefinition colDef = tableComponent.getColumnByViewIndex(column);            
+            ColumnColorOverride colorOverride = colDef.getColumnColorOverride();
+            
+            if(colorOverride != null){                
+                if (readOnly && !isSelected) {
+                    component.setBackground(row % 2 == 0 ? colorOverride.getEvenReadOnlyColor() : colorOverride.getOddReadOnlyColor());
+                } else if(!readOnly && !isSelected) {
+                    component.setBackground(row % 2 == 0 ? colorOverride.getEvenNormalColor() : colorOverride.getOddNormalColor());
+                }
+            }            
     
             Element element = tableComponent.getElementAtViewIndex(row);
             if (element != null) {
