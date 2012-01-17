@@ -12,7 +12,6 @@ import net.ulrice.databinding.bufferedbinding.impl.Element;
 import net.ulrice.databinding.ui.BindingUI;
 import net.ulrice.databinding.viewadapter.IFCellTooltipHandler;
 import net.ulrice.databinding.viewadapter.IFStateMarker;
-import net.ulrice.databinding.viewadapter.IFTooltipHandler;
 
 public abstract class AbstractUTableRenderer extends DefaultTableCellRenderer {
     IFStateMarker stateMarker;
@@ -56,7 +55,7 @@ public abstract class AbstractUTableRenderer extends DefaultTableCellRenderer {
             String columnId = table.getColumnModel().getColumn(column).getIdentifier().toString();
             // TODO SELECTION BACKGROUND
             
-            ColumnDefinition colDef = tableComponent.getColumnByViewIndex(column);            
+            ColumnDefinition colDef = tableComponent.getColumnById(columnId);
             ColumnColorOverride colorOverride = colDef.getColumnColorOverride();
             
             if(colorOverride != null){                
