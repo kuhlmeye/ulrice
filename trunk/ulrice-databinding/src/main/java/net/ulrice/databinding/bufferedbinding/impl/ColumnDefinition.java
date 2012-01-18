@@ -282,6 +282,10 @@ public class ColumnDefinition<T extends Object> {
         return cellEditor;
     }
     
+    public void setCellEditor(TableCellEditor cellEditor) {
+        this.cellEditor = cellEditor;
+    }
+
     public TableCellRenderer getCellRenderer() {
         return cellRenderer;
     }
