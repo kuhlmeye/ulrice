@@ -17,6 +17,7 @@ public class ComponentHelperRegistry {
     static {
         register(new DefaultComponentHelper());
         register(new DefaultJComponentHelper());
+        register(new JCheckBoxHelper());
         register(new JComboBoxHelper());
         register(new JLabelHelper());
         register(new JListHelper());
