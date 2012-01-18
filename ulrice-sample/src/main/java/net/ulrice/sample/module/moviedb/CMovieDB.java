@@ -32,7 +32,7 @@ public class CMovieDB extends AbstractController implements ListSelectionListene
         addColumn("actors", new ActorValueConverter());
         addDerivedColumn ("description", "The film {0} directed by {1}.", "name", "director");
 
-        getColumn("name").setValidator(new StringLengthValidator(1, 255));
+        getColumn("name").addValidator(new StringLengthValidator(1, 255));
         getColumn("actors").setColumnType(ColumnType.ReadOnly);
     }};
     

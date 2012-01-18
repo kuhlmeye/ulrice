@@ -1,5 +1,6 @@
 package net.ulrice.databinding.bufferedbinding.impl;
 
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 
@@ -23,7 +24,7 @@ public class ColumnDefinition<T extends Object> {
     private Class<T> columnClass;
     private FilterMode filterMode;
     private IFValueConverter valueConverter;
-    private IFValidator validator;
+    private List<IFValidator> validators = new ArrayList<IFValidator>();
     private IFAttributeInfo attributeInfo;
     private String columnName;
     private String columnTooltip;
@@ -97,11 +98,13 @@ public class ColumnDefinition<T extends Object> {
     }
 
     public GenericAM<T> createAM() {
-        GenericAM<T> genericAM = new GenericAM<T>(id);
+        GenericAM<T> genericAM = new GenericAM<T>(id, attributeInfo);
         genericAM.setReadOnly(getColumnType().equals(ColumnType.ReadOnly));        
         genericAM.setValueConverter(getValueConverter());
-        if(getValidator() != null) {
-            genericAM.addValidator(getValidator());
+        if(getValidators() != null && !getValidators().isEmpty()) {
+            for (IFValidator validator : getValidators()) {
+                genericAM.addValidator(validator);
+            }
         }
 		return genericAM;
     }
@@ -197,12 +200,12 @@ public class ColumnDefinition<T extends Object> {
 	}
 
 
-	public IFValidator getValidator() {
-		return validator;
+	public List<IFValidator> getValidators() {
+		return validators;
 	}
 	
-	public void setValidator(IFValidator validator) {
-		this.validator = validator;
+	public void addValidator(IFValidator validator) {
+		validators.add(validator);
 	}
 	
     public boolean isUseAutoValueConverter() {

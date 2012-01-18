@@ -60,21 +60,16 @@ public class GenericAM<T> implements IFAttributeModel<T>, IFViewChangeListener {
 
     private List<ValidationError> externalValidationErrors = new LinkedList<ValidationError>();
 
-    public GenericAM(String id, IFModelValueAccessor modelAccessor, IFAttributeInfo attributeInfo) {
+    public GenericAM(IFModelValueAccessor modelAccessor, IFAttributeInfo attributeInfo) {
         this.modelAccessor = modelAccessor;
         this.attributeInfo = attributeInfo;
         this.id = modelAccessor.getAttributeId();
 
     }
-
-    /**
-     * Creates a new generic attribute model.
-     * 
-     * @param id The Identifier.
-     * @param dataAccessor The data accessor.
-     */
-    public GenericAM(IFModelValueAccessor modelAccessor, IFAttributeInfo attributeInfo) {
-        this(modelAccessor.getAttributeId(), modelAccessor, attributeInfo);
+    
+    public GenericAM(String id, IFAttributeInfo attributeInfo) {
+        this.id = id;
+        this.attributeInfo = attributeInfo;
     }
 
     /**
