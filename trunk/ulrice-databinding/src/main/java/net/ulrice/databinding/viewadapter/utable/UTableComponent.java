@@ -21,6 +21,8 @@ import javax.swing.ListSelectionModel;
 import javax.swing.event.EventListenerList;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
+import javax.swing.plaf.basic.BasicTableHeaderUI;
+import javax.swing.table.JTableHeader;
 import javax.swing.table.TableCellEditor;
 import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumn;
@@ -171,6 +173,10 @@ public class UTableComponent extends JPanel {
         };
         staticTable.addMouseListener(mouseListener);
         scrollTable.addMouseListener(mouseListener);
+        
+        //for multi column sorting
+        setAlteredTableHeaderListener(staticTable);
+        setAlteredTableHeaderListener(scrollTable);
     }
 	
 	public void init(final UTableViewAdapter viewAdapter) {
@@ -297,6 +303,17 @@ public class UTableComponent extends JPanel {
         staticTableModel = new UTableModel(false, UTableComponent.this.fixedColumns, viewAdapter);
         staticTable.setModel(staticTableModel);
         staticTable.setSelectionModel(rowSelModel);
+	}
+	
+	private void setAlteredTableHeaderListener(JTable table){
+	    JTableHeader header = table.getTableHeader();
+        for (MouseListener ml : header.getMouseListeners()) {
+            if (ml instanceof BasicTableHeaderUI.MouseInputHandler) {                
+                MouseListener altered = new UTableHeaderListener((BasicTableHeaderUI.MouseInputHandler) ml, table, this);
+                header.removeMouseListener(ml);
+                header.addMouseListener(altered);
+            }
+        }
 	}
 
 
@@ -770,4 +787,6 @@ public class UTableComponent extends JPanel {
     public void scrollToRow(int row){
         scrollTable.scrollRectToVisible(new Rectangle(scrollTable.getCellRect(row, 0, true)));
     }
+    
+    
 }
