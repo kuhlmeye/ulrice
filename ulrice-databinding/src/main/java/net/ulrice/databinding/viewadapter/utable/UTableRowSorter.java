@@ -150,60 +150,60 @@ public class UTableRowSorter extends DefaultRowSorter<UTableViewAdapter, String>
 			return model;
 		}
 		
-//		@Override
-//		public void toggleSortOrder(int column) {
-//			List<? extends SortKey> sortKeys = getSortKeys();
-//			SortKey sortKey = null;
-//			for (SortKey key : sortKeys) {
-//				if (key.getColumn() == column) {
-//					sortKey = key;
-//				}
-//			}
-//
-//			if (sortKey != null) {
-//				switch (sortKey.getSortOrder()) {
-//					case ASCENDING:
-//						sortKey = new RowSorter.SortKey(column, SortOrder.DESCENDING);
-//						break;
-//					case DESCENDING:
-//						sortKey = new RowSorter.SortKey(column, SortOrder.UNSORTED);
-//						break;
-//					case UNSORTED:
-//						sortKey = new RowSorter.SortKey(column, SortOrder.ASCENDING);
-//						break;
-//				}
-//			} else {
-//				sortKey = new RowSorter.SortKey(column, SortOrder.ASCENDING);
-//			}
-//			List<RowSorter.SortKey> newSortKeys = new ArrayList<RowSorter.SortKey>();
-//			newSortKeys.add(sortKey);
-//			setSortKeys(newSortKeys);
-//			
-//		}
+		@Override
+		public void toggleSortOrder(int column) {
+			List<? extends SortKey> sortKeys = getSortKeys();
+			SortKey sortKey = null;
+			for (SortKey key : sortKeys) {
+				if (key.getColumn() == column) {
+					sortKey = key;
+				}
+			}
+
+			if (sortKey != null) {
+				switch (sortKey.getSortOrder()) {
+					case ASCENDING:
+						sortKey = new RowSorter.SortKey(column, SortOrder.DESCENDING);
+						break;
+					case DESCENDING:
+						sortKey = new RowSorter.SortKey(column, SortOrder.UNSORTED);
+						break;
+					case UNSORTED:
+						sortKey = new RowSorter.SortKey(column, SortOrder.ASCENDING);
+						break;
+				}
+			} else {
+				sortKey = new RowSorter.SortKey(column, SortOrder.ASCENDING);
+			}
+			List<RowSorter.SortKey> newSortKeys = new ArrayList<RowSorter.SortKey>();
+			newSortKeys.add(sortKey);
+			setSortKeys(newSortKeys);
+			
+		}
 
 		@Override
 		public List<? extends SortKey> getSortKeys() {
 			return scrollable ? scrollSortKeys : staticSortKeys;
 		}
 
-//		@Override
-//		public void setSortKeys(List<? extends SortKey> keys) {
-//		    if (scrollable) {
-//				staticSortKeys.clear();
-//				scrollSortKeys = keys;
-//				updateGlobalSortKeys();
-//				UTableRowSorter.this.sort();
-//				fireSortOrderChanged();
-//				staticTableRS.fireSortOrderChanged();
-//			} else {
-//				staticSortKeys = keys;
-//				scrollSortKeys.clear();
-//				updateGlobalSortKeys();
-//				UTableRowSorter.this.sort();
-//				fireSortOrderChanged();
-//				scrollTableRS.fireSortOrderChanged();
-//			}
-//		 }
+		@Override
+		public void setSortKeys(List<? extends SortKey> keys) {
+		    if (scrollable) {
+				staticSortKeys.clear();
+				scrollSortKeys = keys;
+				updateGlobalSortKeys();
+				UTableRowSorter.this.sort();
+				fireSortOrderChanged();
+				staticTableRS.fireSortOrderChanged();
+			} else {
+				staticSortKeys = keys;
+				scrollSortKeys.clear();
+				updateGlobalSortKeys();
+				UTableRowSorter.this.sort();
+				fireSortOrderChanged();
+				scrollTableRS.fireSortOrderChanged();
+			}
+		 }
 
 
 
