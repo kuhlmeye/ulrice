@@ -3,6 +3,9 @@
  */
 package net.ulrice.databinding.viewadapter.impl;
 
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
+
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.text.JTextComponent;
@@ -15,7 +18,7 @@ import net.ulrice.databinding.viewadapter.AbstractViewAdapter;
  * 
  * @author christof
  */
-public class JTextComponentViewAdapter extends AbstractViewAdapter implements DocumentListener {
+public class JTextComponentViewAdapter extends AbstractViewAdapter implements DocumentListener, PropertyChangeListener {
 
 	
 	private JTextComponent textComponent;
@@ -31,6 +34,7 @@ public class JTextComponentViewAdapter extends AbstractViewAdapter implements Do
 		this.textComponent = textComponent;
         setEditable(isComponentEnabled());
         textComponent.getDocument().addDocumentListener(this);
+        textComponent.addPropertyChangeListener(this);
         setEditable(isComponentEnabled());
 	}
 	
@@ -105,6 +109,13 @@ public class JTextComponentViewAdapter extends AbstractViewAdapter implements Do
 	protected void removeComponentListener() {
 		textComponent.getDocument().addDocumentListener(this);	
 	}
+	
+    @Override
+    public void propertyChange(PropertyChangeEvent evt) {
+        if (evt.getPropertyName().equals("editable")) {
+            setEditable((Boolean) evt.getNewValue());
+        }
+    }
 
 	public void setConvertEmptyToNull(boolean convertEmptyToNull) {
 		this.convertEmptyToNull = convertEmptyToNull;
@@ -113,4 +124,5 @@ public class JTextComponentViewAdapter extends AbstractViewAdapter implements Do
 	public boolean isConvertEmptyToNull() {
 		return convertEmptyToNull;
 	}
+
 }
