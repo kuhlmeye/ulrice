@@ -579,6 +579,9 @@ public class UTableComponent extends JPanel {
         return result;
     }
         
+    public void selectElement(int index) {
+        getSelectionModel().addSelectionInterval(index, index);
+    }
 
     public boolean isSingleRowSelected() {
         ListSelectionModel sm = getSelectionModel();
