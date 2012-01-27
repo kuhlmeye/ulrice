@@ -34,53 +34,50 @@ import net.ulrice.databinding.bufferedbinding.impl.TableAM;
 import net.ulrice.databinding.viewadapter.IFCellTooltipHandler;
 import net.ulrice.databinding.viewadapter.IFStateMarker;
 
-
 public class UTableComponent extends JPanel {
 
-
-
     private EventListenerList listenerList = new EventListenerList();
-    
-	private static final long serialVersionUID = 6533485227507042410L;
+
+    private static final long serialVersionUID = 6533485227507042410L;
 
     private static final int RESIZE_MARGIN = 2;
-	private UTable staticTable;
-	private UTable scrollTable;
+    private UTable staticTable;
+    private UTable scrollTable;
 
-	private UTableVAFilter filter;
-	
-	private ListSelectionModel rowSelModel;
+    private UTableVAFilter filter;
 
-	private int fixedColumns;
-	
-	private int originalFixedColumns;
+    private ListSelectionModel rowSelModel;
 
-	private int selColumn = -1;
+    private int fixedColumns;
 
-	private UTableRowSorter sorter;
+    private int originalFixedColumns;
 
-	private IFCellTooltipHandler tooltipHandler;
+    private int selColumn = -1;
 
-	private IFStateMarker stateMarker;
+    private UTableRowSorter sorter;
+
+    private IFCellTooltipHandler tooltipHandler;
+
+    private IFStateMarker stateMarker;
 
     private UTableModel staticTableModel;
 
     private UTableModel scrollTableModel;
 
     private TableAM attributeModel;
-    
+
     private List<Action> popupMenuActions = new ArrayList<Action>();
 
     public UTableComponent(final int fixedColumns) {
         this.fixedColumns = fixedColumns;
         this.originalFixedColumns = fixedColumns;
-        
-        staticTable = new UTable(this);        
+
+        staticTable = new UTable(this);
         scrollTable = new UTable(this);
-        
+
         staticTable.setAssocTable(scrollTable);
         scrollTable.setAssocTable(staticTable);
-        
+
         UTableViewport staticViewport = new UTableViewport();
         staticTable.setBackground(staticViewport.getBackground());
         staticViewport.setView(staticTable);
@@ -99,8 +96,6 @@ public class UTableComponent extends JPanel {
 
         setLayout(new BorderLayout());
         add(scrollPane, BorderLayout.CENTER);
-        
-       
 
         MouseListener mouseListener = new MouseListener() {
 
@@ -113,7 +108,7 @@ public class UTableComponent extends JPanel {
                     }
                 }
 
-                if(e.isPopupTrigger()) {
+                if (e.isPopupTrigger()) {
                     showPopupMenu(e.getComponent(), e.getX(), e.getY());
                 }
             }
@@ -127,11 +122,10 @@ public class UTableComponent extends JPanel {
                     }
                 }
 
-                if(e.isPopupTrigger()) {
+                if (e.isPopupTrigger()) {
                     showPopupMenu(e.getComponent(), e.getX(), e.getY());
                 }
             }
-
 
             @Override
             public void mouseExited(MouseEvent e) {
@@ -161,38 +155,39 @@ public class UTableComponent extends JPanel {
                         listener.mouseClicked(adaptMouseEvent(e));
                     }
                 }
-                if(e.isPopupTrigger()) {
+                if (e.isPopupTrigger()) {
                     showPopupMenu(e.getComponent(), e.getX(), e.getY());
                 }
             }
 
             private MouseEvent adaptMouseEvent(MouseEvent e) {
-                return new MouseEvent(UTableComponent.this, e.getID(), e.getWhen(), e.getModifiers(), e.getX(), e.getY(),
-                    e.getXOnScreen(), e.getYOnScreen(), e.getClickCount(), e.isPopupTrigger(), e.getButton());
+                return new MouseEvent(UTableComponent.this, e.getID(), e.getWhen(), e.getModifiers(), e.getX(),
+                    e.getY(), e.getXOnScreen(), e.getYOnScreen(), e.getClickCount(), e.isPopupTrigger(),
+                    e.getButton());
             }
         };
         staticTable.addMouseListener(mouseListener);
         scrollTable.addMouseListener(mouseListener);
-        
-        //for multi column sorting
+
+        // for multi column sorting
         setAlteredTableHeaderListener(staticTable);
         setAlteredTableHeaderListener(scrollTable);
     }
-	
-	public void init(final UTableViewAdapter viewAdapter) {
-	    
-	    rowSelModel = new DefaultListSelectionModel();
-	  
-	    staticTable.setDefaultRenderer(Object.class, new UTableVADefaultRenderer());
+
+    public void init(final UTableViewAdapter viewAdapter) {
+
+        rowSelModel = new DefaultListSelectionModel();
+
+        staticTable.setDefaultRenderer(Object.class, new UTableVADefaultRenderer());
         scrollTable.setDefaultRenderer(Object.class, new UTableVADefaultRenderer());
-	    
-	    if(viewAdapter.getAttributeModel().isForTreeTable()){
-	        initTreeTable(viewAdapter);
-	        return;
-	    }
-	    
-	    rowSelModel = new DefaultListSelectionModel();
-	    rowSelModel.addListSelectionListener(new ListSelectionListener() {
+
+        if ((viewAdapter.getAttributeModel() != null) && (viewAdapter.getAttributeModel().isForTreeTable())) {
+            initTreeTable(viewAdapter);
+            return;
+        }
+
+        rowSelModel = new DefaultListSelectionModel();
+        rowSelModel.addListSelectionListener(new ListSelectionListener() {
             private boolean nested = false;
 
             @Override
@@ -216,32 +211,34 @@ public class UTableComponent extends JPanel {
                 }
             }
         });
-        
-	    staticTableModel = new UTableModel(false, UTableComponent.this.fixedColumns, viewAdapter);
-	    staticTable.setModel(staticTableModel);
-	    staticTable.setSelectionModel(rowSelModel);
-	    
-	    scrollTableModel = new UTableModel(true, UTableComponent.this.fixedColumns, viewAdapter);
-	    scrollTable.setModel(scrollTableModel);
-	    scrollTable.setSelectionModel(rowSelModel);
-	    
-        sorter = new UTableRowSorter(viewAdapter, UTableComponent.this.fixedColumns, staticTableModel, scrollTableModel);
+
+        staticTableModel = new UTableModel(false, UTableComponent.this.fixedColumns, viewAdapter);
+        staticTable.setModel(staticTableModel);
+        staticTable.setSelectionModel(rowSelModel);
+
+        scrollTableModel = new UTableModel(true, UTableComponent.this.fixedColumns, viewAdapter);
+        scrollTable.setModel(scrollTableModel);
+        scrollTable.setSelectionModel(rowSelModel);
+
+        sorter =
+                new UTableRowSorter(viewAdapter, UTableComponent.this.fixedColumns, staticTableModel,
+                    scrollTableModel);
         staticTable.setRowSorter(sorter.getStaticTableRowSorter());
         scrollTable.setRowSorter(sorter.getScrollTableRowSorter());
-        
+
         staticTable.setDefaultRenderer(Object.class, new UTableVADefaultRenderer());
         scrollTable.setDefaultRenderer(Object.class, new UTableVADefaultRenderer());
-        
+
         filter = new UTableVAFilter(sorter, staticTable.getUTableHeader(), scrollTable.getUTableHeader());
         sorter.setRowFilter(filter);
-        
+
         staticTable.getColumnModel().getSelectionModel().addListSelectionListener(new ListSelectionListener() {
             @Override
             public void valueChanged(ListSelectionEvent e) {
-                if(staticTable.getSelectedColumn() >= 0) {
+                if (staticTable.getSelectedColumn() >= 0) {
                     selColumn = staticTable.getSelectedColumn();
-                } 
-                else if(scrollTable.getSelectedColumn() >= 0) {
+                }
+                else if (scrollTable.getSelectedColumn() >= 0) {
                     selColumn = scrollTable.getSelectedColumn() + UTableComponent.this.fixedColumns;
                 }
                 else {
@@ -252,70 +249,71 @@ public class UTableComponent extends JPanel {
         scrollTable.getColumnModel().getSelectionModel().addListSelectionListener(new ListSelectionListener() {
             @Override
             public void valueChanged(ListSelectionEvent e) {
-                if(scrollTable.getSelectedColumn() >= 0) {
+                if (scrollTable.getSelectedColumn() >= 0) {
                     selColumn = scrollTable.getSelectedColumn() + UTableComponent.this.fixedColumns;
-                } 
-                else if(staticTable.getSelectedColumn() >= 0) {
+                }
+                else if (staticTable.getSelectedColumn() >= 0) {
                     selColumn = staticTable.getSelectedColumn();
-                } 
+                }
                 else {
                     selColumn = -1;
                 }
             }
         });
-	    
-	}
-	
-	private void initTreeTable(final UTableViewAdapter viewAdapter) {
-	    
-        UTreeTableModel treeTableModel = new UTreeTableModel(viewAdapter.getAttributeModel());                    
+
+    }
+
+    private void initTreeTable(final UTableViewAdapter viewAdapter) {
+
+        UTreeTableModel treeTableModel = new UTreeTableModel(viewAdapter.getAttributeModel());
         viewAdapter.addTableModelListener(treeTableModel);
-        
+
         // JTree erstellen.
         TreeTableCellRenderer tree = new TreeTableCellRenderer(scrollTable, treeTableModel);
         tree.setRootVisible(true);
-         
+
         // Modell setzen.
         scrollTable.setModel(new TreeTableModelAdapter(treeTableModel, tree));
-         
+
         // Gleichzeitiges Selektieren fuer Tree und Table.
         TreeTableSelectionModel selectionModel = new TreeTableSelectionModel();
-        tree.setSelectionModel(selectionModel); //For the tree
-        scrollTable.setSelectionModel(selectionModel.getListSelectionModel()); //For the table
- 
-         
+        tree.setSelectionModel(selectionModel); // For the tree
+        scrollTable.setSelectionModel(selectionModel.getListSelectionModel()); // For the table
+
         // Renderer fuer den Tree.
         scrollTable.setDefaultRenderer(TreeTableModel.class, tree);
         // Editor fuer die TreeTable
         scrollTable.setDefaultEditor(TreeTableModel.class, new TreeTableCellEditor(tree, scrollTable));
-        
-        sorter = new UTableRowSorter(viewAdapter, UTableComponent.this.fixedColumns, staticTableModel, scrollTableModel);
+
+        sorter =
+                new UTableRowSorter(viewAdapter, UTableComponent.this.fixedColumns, staticTableModel,
+                    scrollTableModel);
         staticTable.setRowSorter(sorter.getStaticTableRowSorter());
         scrollTable.setRowSorter(sorter.getScrollTableRowSorter());
-        
+
         filter = new UTableVAFilter(sorter, staticTable.getUTableHeader(), scrollTable.getUTableHeader());
         sorter.setRowFilter(filter);
-        
-        //staticTableModel = new UTableModel(false, UTableComponent.this.fixedColumns, viewAdapter);
-        //staticTable.setModel(new TreeTableModelAdapter(treeTableModel, tree));
-        //staticTable.setSelectionModel(rowSelModel);
-        
+
+        // staticTableModel = new UTableModel(false, UTableComponent.this.fixedColumns, viewAdapter);
+        // staticTable.setModel(new TreeTableModelAdapter(treeTableModel, tree));
+        // staticTable.setSelectionModel(rowSelModel);
+
         staticTableModel = new UTableModel(false, UTableComponent.this.fixedColumns, viewAdapter);
         staticTable.setModel(staticTableModel);
         staticTable.setSelectionModel(rowSelModel);
-	}
-	
-	private void setAlteredTableHeaderListener(JTable table){
-	    JTableHeader header = table.getTableHeader();
+    }
+
+    private void setAlteredTableHeaderListener(JTable table) {
+        JTableHeader header = table.getTableHeader();
         for (MouseListener ml : header.getMouseListeners()) {
-            if (ml instanceof BasicTableHeaderUI.MouseInputHandler) {                
-                MouseListener altered = new UTableHeaderListener((BasicTableHeaderUI.MouseInputHandler) ml, table, this);
+            if (ml instanceof BasicTableHeaderUI.MouseInputHandler) {
+                MouseListener altered =
+                        new UTableHeaderListener((BasicTableHeaderUI.MouseInputHandler) ml, table, this);
                 header.removeMouseListener(ml);
                 header.addMouseListener(altered);
             }
         }
-	}
-
+    }
 
     public void addMouseListener(MouseListener l) {
         listenerList.add(MouseListener.class, l);
@@ -333,183 +331,179 @@ public class UTableComponent extends JPanel {
         listenerList.remove(ListSelectionListener.class, l);
     }
 
-	public JTable getStaticTable() {
-		return staticTable;
-	}
+    public JTable getStaticTable() {
+        return staticTable;
+    }
 
-	public JTable getScrollTable() {
-		return scrollTable;
-	}
+    public JTable getScrollTable() {
+        return scrollTable;
+    }
 
-	public void setUpperInfoArea(JComponent component) {
-		add(component, BorderLayout.NORTH);
-	}
+    public void setUpperInfoArea(JComponent component) {
+        add(component, BorderLayout.NORTH);
+    }
 
-	public void setLowerInfoArea(JComponent component) {
-		add(component, BorderLayout.SOUTH);
-	}
+    public void setLowerInfoArea(JComponent component) {
+        add(component, BorderLayout.SOUTH);
+    }
 
-	public void setLeftInfoArea(JComponent component) {
-		add(component, BorderLayout.EAST);
-	}
+    public void setLeftInfoArea(JComponent component) {
+        add(component, BorderLayout.EAST);
+    }
 
-	public void setRightInfoArea(JComponent component) {
-		add(component, BorderLayout.WEST);
-	}
+    public void setRightInfoArea(JComponent component) {
+        add(component, BorderLayout.WEST);
+    }
 
-	public void setCellTooltipHandler(IFCellTooltipHandler tooltipHandler) {
-		this.tooltipHandler = tooltipHandler;
-	}
+    public void setCellTooltipHandler(IFCellTooltipHandler tooltipHandler) {
+        this.tooltipHandler = tooltipHandler;
+    }
 
+    public void setCellStateMarker(IFStateMarker stateMarker) {
+        this.stateMarker = stateMarker;
+    }
 
-	public void setCellStateMarker(IFStateMarker stateMarker) {
-		this.stateMarker = stateMarker;
-	}
+    public IFCellTooltipHandler getCellTooltipHandler() {
+        return tooltipHandler;
+    }
 
-	public IFCellTooltipHandler getCellTooltipHandler() {
-		return tooltipHandler;
-	}
+    public IFStateMarker getCellStateMarker() {
+        return stateMarker;
+    }
 
-	public IFStateMarker getCellStateMarker() {
-		return stateMarker;
-	}
+    public UTableRowSorter getRowSorter() {
+        return sorter;
+    }
 
+    public UTableVAFilter getFilter() {
+        return filter;
+    }
 
-	public UTableRowSorter getRowSorter() {
-		return sorter;
-	}
+    public ListSelectionModel getSelectionModel() {
+        return rowSelModel;
+    }
 
-	public UTableVAFilter getFilter() {
-		return filter;
-	}
+    public void setSelectedColumn(int selColumn) {
+        this.selColumn = selColumn;
+        if (selColumn < fixedColumns) {
+            getStaticTable().setColumnSelectionInterval(selColumn, selColumn);
+        }
+        else {
+            getScrollTable().setColumnSelectionInterval(selColumn - fixedColumns, selColumn - fixedColumns);
+        }
+    }
 
-	public ListSelectionModel getSelectionModel() {
-		return rowSelModel;
-	}
+    public int getSelectedColumn() {
+        return selColumn;
+    }
 
-	public void setSelectedColumn(int selColumn) {
-		this.selColumn = selColumn;
-		if (selColumn < fixedColumns) {
-			getStaticTable().setColumnSelectionInterval(selColumn, selColumn);
-		} else {
-			getScrollTable().setColumnSelectionInterval(selColumn - fixedColumns, selColumn - fixedColumns);
-		}
-	}
-
-	public int getSelectedColumn() {
-		return selColumn;
-	}
-
-	/**
+    /**
 	 */
-	public void updateColumnModel() {
-	    
-	    if(fixedColumns < originalFixedColumns) {
-	        setFixedColumns(originalFixedColumns);
-	    }
-	    
-	    if(originalFixedColumns >= attributeModel.getColumnCount()) {
-	        setFixedColumns(attributeModel.getColumnCount() > 0 ? attributeModel.getColumnCount() - 1 : 0);
-	    }
-	    
-	    
-	    
-		TableColumnModel columnModel = null;
-		List<ColumnDefinition<? extends Object>> columnDefinitions = attributeModel.getColumns();
+    public void updateColumnModel() {
 
-		columnModel = getStaticTable().getColumnModel();
-		for (int i = columnModel.getColumnCount() - 1; i >= 0; i--) {
-			columnModel.removeColumn(columnModel.getColumn(i));
-		}
-		
-		
-		
-		if (columnDefinitions != null) {
-			for (int i = 0; i < fixedColumns; i++) {
-				ColumnDefinition<?> columnDefinition = columnDefinitions.get(i);
-				columnDefinition.setFixedColumn(true);
+        if (fixedColumns < originalFixedColumns) {
+            setFixedColumns(originalFixedColumns);
+        }
+
+        if (originalFixedColumns >= attributeModel.getColumnCount()) {
+            setFixedColumns(attributeModel.getColumnCount() > 0 ? attributeModel.getColumnCount() - 1 : 0);
+        }
+
+        TableColumnModel columnModel = null;
+        List<ColumnDefinition< ? extends Object>> columnDefinitions = attributeModel.getColumns();
+
+        columnModel = getStaticTable().getColumnModel();
+        for (int i = columnModel.getColumnCount() - 1; i >= 0; i--) {
+            columnModel.removeColumn(columnModel.getColumn(i));
+        }
+
+        if (columnDefinitions != null) {
+            for (int i = 0; i < fixedColumns; i++) {
+                ColumnDefinition< ?> columnDefinition = columnDefinitions.get(i);
+                columnDefinition.setFixedColumn(true);
                 addColumn(columnModel, i, columnDefinition);
-			}
-		}
+            }
+        }
 
-		columnModel = getScrollTable().getColumnModel();
-		for (int i = columnModel.getColumnCount() - 1; i >= 0; i--) {
-			columnModel.removeColumn(columnModel.getColumn(i));
-		}
+        columnModel = getScrollTable().getColumnModel();
+        for (int i = columnModel.getColumnCount() - 1; i >= 0; i--) {
+            columnModel.removeColumn(columnModel.getColumn(i));
+        }
 
-		if (columnDefinitions != null) {
-			for (int i = fixedColumns; i < columnDefinitions.size(); i++) {
-				ColumnDefinition<?> columnDefinition = columnDefinitions.get(i);
-				columnDefinition.setFixedColumn(false);
-				addColumn(columnModel, i - fixedColumns, columnDefinition);
-			}
-		}
-	}
+        if (columnDefinitions != null) {
+            for (int i = fixedColumns; i < columnDefinitions.size(); i++) {
+                ColumnDefinition< ?> columnDefinition = columnDefinitions.get(i);
+                columnDefinition.setFixedColumn(false);
+                addColumn(columnModel, i - fixedColumns, columnDefinition);
+            }
+        }
+    }
 
     private void addColumn(TableColumnModel columnModel, int columnIndex, ColumnDefinition< ?> columnDefinition) {
         TableColumn column = new TableColumn();
         column.setIdentifier(columnDefinition.getId());
         column.setHeaderValue(columnDefinition);
         column.setModelIndex(columnIndex);
-        if(columnDefinition.getCellEditor() != null) {
+        if (columnDefinition.getCellEditor() != null) {
             column.setCellEditor(columnDefinition.getCellEditor());
         }
-        if(columnDefinition.getCellRenderer() != null) {
+        if (columnDefinition.getCellRenderer() != null) {
             column.setCellRenderer(columnDefinition.getCellRenderer());
         }
-        
+
         Comparator< ?> comparator = columnDefinition.getComparator();
-        if(comparator != null && sorter != null) {
+        if (comparator != null && sorter != null) {
             sorter.setComparator(columnIndex, comparator);
         }
 
         columnModel.addColumn(column);
-        
-        if(columnDefinition.isUseValueRange()) {				    
-            if(columnDefinition.getValueRange() != null) {
+
+        if (columnDefinition.isUseValueRange()) {
+            if (columnDefinition.getValueRange() != null) {
                 column.setCellEditor(new UTableComboBoxCellEditor(columnDefinition.getValueRange()));
-            } else {
+            }
+            else {
                 column.setCellEditor(new UTableComboBoxCellEditor(Collections.EMPTY_LIST));
             }
         }
     }
-	
+
     public int getFixedColumns() {
-    	return fixedColumns;
+        return fixedColumns;
     }
-    
-	private void setFixedColumns(int fixedColumns) {
+
+    private void setFixedColumns(int fixedColumns) {
         this.fixedColumns = fixedColumns;
-        if(scrollTableModel != null && staticTableModel != null){       //FIXME Quick fix to open all modules
-        this.scrollTableModel.setOffset(fixedColumns);
-        this.staticTableModel.setOffset(fixedColumns);
+        if (scrollTableModel != null && staticTableModel != null) { // FIXME Quick fix to open all modules
+            this.scrollTableModel.setOffset(fixedColumns);
+            this.staticTableModel.setOffset(fixedColumns);
         }
     }
 
     public int convertColumnIndexToModel(int col) {
-	    int modelCol = col;
-	    if(col < fixedColumns) {
-	        modelCol = staticTable.convertColumnIndexToModel(col);
-	    } else {
-	        modelCol = scrollTable.convertColumnIndexToModel(col - fixedColumns) + fixedColumns;
-	    }
-	    return modelCol;
-	}
+        int modelCol = col;
+        if (col < fixedColumns) {
+            modelCol = staticTable.convertColumnIndexToModel(col);
+        }
+        else {
+            modelCol = scrollTable.convertColumnIndexToModel(col - fixedColumns) + fixedColumns;
+        }
+        return modelCol;
+    }
 
     public boolean stopEditing() {
         return staticTable.getCellEditor().stopCellEditing() || scrollTable.getCellEditor().stopCellEditing();
     }
 
-    public void setDefaultCellRenderer(Class<?> clazz, TableCellRenderer renderer) {
+    public void setDefaultCellRenderer(Class< ?> clazz, TableCellRenderer renderer) {
         scrollTable.setDefaultRenderer(clazz, renderer);
         staticTable.setDefaultRenderer(clazz, renderer);
     }
 
-    public void setDefaultCellEditor(Class<?> clazz, TableCellEditor editor) {
+    public void setDefaultCellEditor(Class< ?> clazz, TableCellEditor editor) {
         scrollTable.setDefaultEditor(clazz, editor);
         staticTable.setDefaultEditor(clazz, editor);
     }
-    
 
     public void sizeColumns(boolean includeHeader) {
         for (int c = 0; c < staticTable.getColumnCount(); c++) {
@@ -525,7 +519,6 @@ public class UTableComponent extends JPanel {
         int maxWidth = calcMaxSize(table, colIndex, includeHeader, col);
         col.setPreferredWidth(maxWidth + 2 * margin);
     }
-    
 
     private int calcMaxSize(JTable table, int vColIndex, boolean includeHeader, TableColumn col) {
         int maxWidth = 0;
@@ -549,7 +542,7 @@ public class UTableComponent extends JPanel {
         }
         return maxWidth;
     }
-    
+
     public int getSelectedRowViewIndex() {
         return getSelectionModel().getMinSelectionIndex();
     }
@@ -561,7 +554,7 @@ public class UTableComponent extends JPanel {
         }
         return -1;
     }
-    
+
     public int[] getSelectedRowsViewIndex() {
         int min = getSelectionModel().getMinSelectionIndex();
         int max = getSelectionModel().getMaxSelectionIndex();
@@ -578,22 +571,21 @@ public class UTableComponent extends JPanel {
         System.arraycopy(tmpRows, 0, result, 0, idx);
         return result;
     }
-        
+
     public void selectElement(int index) {
         getSelectionModel().addSelectionInterval(index, index);
     }
 
     public boolean isSingleRowSelected() {
         ListSelectionModel sm = getSelectionModel();
-        return !sm.isSelectionEmpty() && sm.getMinSelectionIndex() == sm.getMaxSelectionIndex(); 
-    }
-    
-    public boolean areRowsSelected() {
-        ListSelectionModel sm = getSelectionModel();
-        return !sm.isSelectionEmpty();         
+        return !sm.isSelectionEmpty() && sm.getMinSelectionIndex() == sm.getMaxSelectionIndex();
     }
 
-   
+    public boolean areRowsSelected() {
+        ListSelectionModel sm = getSelectionModel();
+        return !sm.isSelectionEmpty();
+    }
+
     public int[] getSelectedRowsModelIndex() {
         int min = getSelectionModel().getMinSelectionIndex();
         int max = getSelectionModel().getMaxSelectionIndex();
@@ -615,17 +607,16 @@ public class UTableComponent extends JPanel {
         this.attributeModel = attributeModel;
     }
 
-
     public void addRow() {
         checkAttributeModelSet();
         int modelIdx = getSelectedRowModelIndex();
-        if(modelIdx >= 0) {
+        if (modelIdx >= 0) {
             attributeModel.addElement(modelIdx, null);
-        } else {
+        }
+        else {
             attributeModel.addElement(null);
         }
     }
-        
 
     public void delRowWithModelIndex(int modelIndex) {
         checkAttributeModelSet();
@@ -637,7 +628,6 @@ public class UTableComponent extends JPanel {
         attributeModel.delElement(getRowSorter().convertRowIndexToModel(viewIndex));
     }
 
-
     public void copySelectedRows() {
         checkAttributeModelSet();
         List<Object> values = getSelectedObjects();
@@ -646,8 +636,8 @@ public class UTableComponent extends JPanel {
                 attributeModel.addElement(value);
             }
         }
-    }   
-    
+    }
+
     public void delSelectedRows() {
         checkAttributeModelSet();
         List<Element> elements = getSelectedElements();
@@ -657,7 +647,6 @@ public class UTableComponent extends JPanel {
             }
         }
     }
-
 
     @SuppressWarnings({ "rawtypes", "unchecked" })
     public List getSelectedObjects() {
@@ -680,7 +669,6 @@ public class UTableComponent extends JPanel {
         return result;
     }
 
-
     public Element getSelectedElement() {
         checkAttributeModelSet();
         int rowInModel = getSelectedRowModelIndex();
@@ -692,32 +680,31 @@ public class UTableComponent extends JPanel {
         int rowInModel = getSelectedRowModelIndex();
         return attributeModel.getCurrentValueAt(rowInModel);
     }
-    
+
     private void checkAttributeModelSet() {
-        if(attributeModel == null) {
+        if (attributeModel == null) {
             throw new IllegalStateException("Component is not bound to an attribute model.");
-        }        
+        }
     }
-    
+
     public Element getElementById(String id) {
-        if(attributeModel == null) {
+        if (attributeModel == null) {
             return null;
         }
         return attributeModel.getElementById(id);
     }
 
     public Element getElementAtViewIndex(int viewIndex) {
-        if(attributeModel == null) {
+        if (attributeModel == null) {
             return null;
         }
         int modelRow = getRowSorter().convertRowIndexToModel(viewIndex);
         return getElementAtModelIndex(modelRow);
     }
-    
+
     public Element getElementAtModelIndex(int modelIndex) {
         return attributeModel.getElementAt(modelIndex);
-    }    
-
+    }
 
     public boolean isCellDirty(int row, int col) {
         int modelRow = getRowSorter().convertRowIndexToModel(row);
@@ -730,11 +717,11 @@ public class UTableComponent extends JPanel {
         int modelCol = convertColumnIndexToModel(col);
         return attributeModel != null ? attributeModel.isCellValid(modelRow, modelCol) : true;
     }
-    
+
     public boolean isCellEditable(int row, int col) {
         int modelRow = getRowSorter().convertRowIndexToModel(row);
         int modelCol = convertColumnIndexToModel(col);
-        
+
         if (attributeModel != null) {
             return attributeModel.isCellEditable(modelRow, modelCol);
         }
@@ -744,52 +731,51 @@ public class UTableComponent extends JPanel {
     public int getColumnCount() {
         return attributeModel != null ? attributeModel.getColumnCount() : 0;
     }
-    
+
     public int getModelRowCount() {
         return getRowSorter().getModelRowCount();
     }
-    
+
     public int getViewRowCount() {
         return getRowSorter().getViewRowCount();
     }
 
     public ColumnDefinition< ?> getColumnById(String columnId) {
-        if(attributeModel != null) {
+        if (attributeModel != null) {
             return attributeModel.getColumnById(columnId);
         }
         return null;
     }
 
     public ColumnDefinition getColumnByViewIndex(int viewIndex) {
-        if(attributeModel != null) {
+        if (attributeModel != null) {
             int modelIndex = convertColumnIndexToModel(viewIndex);
             return attributeModel.getColumnByIndex(modelIndex);
         }
         return null;
     }
-    
-    public TableColumn getColumn(int column){        
-        if(column < fixedColumns) {
+
+    public TableColumn getColumn(int column) {
+        if (column < fixedColumns) {
             return staticTable.getColumnModel().getColumn(column);
-        } 
-        return scrollTable.getColumnModel().getColumn(column-fixedColumns);        
+        }
+        return scrollTable.getColumnModel().getColumn(column - fixedColumns);
     }
-    
+
     public void addTableAction(Action action) {
         popupMenuActions.add(action);
-    }    
+    }
 
     private void showPopupMenu(Component component, int x, int y) {
         JPopupMenu popupMenu = new JPopupMenu();
-        for(Action action : popupMenuActions) {
+        for (Action action : popupMenuActions) {
             popupMenu.add(action);
         }
         popupMenu.show(component, x, y);
     }
-    
-    public void scrollToRow(int row){
+
+    public void scrollToRow(int row) {
         scrollTable.scrollRectToVisible(new Rectangle(scrollTable.getCellRect(row, 0, true)));
     }
-    
-    
+
 }

@@ -195,19 +195,11 @@
 		<module>../ulrice-core</module>
 		<module>../ulrice-databinding</module>
 		<module>../ulrice-remote-control</module>
-<!-- 		<module>../ulrice-sample</module> -->
+		<module>../ulrice-sample</module>
 		<module>../ulrice-dashboard</module>
 		<module>../ulrice-translator</module>
 		<module>../ulrice-webstarter</module>
 		<module>../ulrice-webstarter-maven-plugin</module>
 	</modules>
-
-	<!-- ...until cucumber-java is released -->
-	<repositories>
-		<repository>
-			<id>sonatype-snapshots</id>
-			<url>http://oss.sonatype.org/content/repositories/snapshots</url>
-		</repository>
-	</repositories>
 
 </project>
