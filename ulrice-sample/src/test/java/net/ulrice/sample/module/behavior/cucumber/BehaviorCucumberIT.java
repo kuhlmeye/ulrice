@@ -10,9 +10,9 @@ import cucumber.junit.Feature;
 @Feature(value = "net/ulrice/sample/module/behavior/cucumber/behavior.feature")
 public class BehaviorCucumberIT {
 
-    @After
-    public void shutdown() {
-        // killApplication();
-    }
+//    @After
+//    public void shutdown() {
+//        // killApplication();
+//    }
 
 }
