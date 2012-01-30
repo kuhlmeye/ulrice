@@ -1,5 +1,7 @@
 package net.ulrice.databinding.bufferedbinding.impl;
 
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
@@ -17,7 +19,7 @@ import net.ulrice.databinding.validation.IFValidator;
  * @author christof
  * 
  */
-public class ColumnDefinition<T extends Object> {
+public class ColumnDefinition<T extends Object> implements PropertyChangeListener {
 
     private String id;
     private IFDynamicModelValueAccessor dataAccessor;
@@ -42,6 +44,8 @@ public class ColumnDefinition<T extends Object> {
 	private ColumnColorOverride columnColorOverride;
 	
 	private ColumnType columnType = ColumnType.Editable;
+	
+	private Integer preferredWidth;
 	
 	public enum ColumnType {
 		Editable,
@@ -335,7 +339,23 @@ public class ColumnDefinition<T extends Object> {
         this.columnColorOverride = columnColorOverride;
     }
 
- 
+    @Override
+    public void propertyChange(PropertyChangeEvent evt) {
+        if("preferredWidth".equals(evt.getPropertyName())){
+            Integer newValue = (Integer) evt.getNewValue();
+            if(preferredWidth == null || preferredWidth.intValue() != newValue.intValue()){
+                preferredWidth = newValue;
+            }
+        }
+    }
+
+    public Integer getPreferredWidth() {
+        return preferredWidth;
+    }
+
+    public void setPreferredWidth(Integer preferredWidth) {
+        this.preferredWidth = preferredWidth;
+    }    
     
     
 }
