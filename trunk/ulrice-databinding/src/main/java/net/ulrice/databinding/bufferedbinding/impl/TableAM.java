@@ -10,6 +10,7 @@ import java.util.Map.Entry;
 import java.util.Set;
 
 import javax.swing.SwingUtilities;
+import javax.swing.RowSorter.SortKey;
 import javax.swing.event.EventListenerList;
 
 import net.ulrice.databinding.bufferedbinding.IFAttributeInfo;
@@ -71,6 +72,8 @@ public class TableAM implements IFAttributeModel {
     private Map<List< ?>, ValidationError> currentErrorMap = new HashMap<List< ?>, ValidationError>();
 
     private String pathToChildren;
+    
+    private List<SortKey> defaultSortKeys;
     
     public TableAM(IFIndexedModelValueAccessor tableMVA, IFAttributeInfo attributeInfo) {
         this(tableMVA, attributeInfo, false);
@@ -1181,7 +1184,17 @@ public class TableAM implements IFAttributeModel {
     public boolean isForTreeTable() {
         return pathToChildren != null;
     }
+    
+    
    
+    public List<SortKey> getDefaultSortKeys() {
+        return defaultSortKeys;
+    }
+
+    public void setDefaultSortKeys(List<SortKey> defaultSortKeys) {
+        this.defaultSortKeys = defaultSortKeys;
+    }
+
     public String toString(){
         return elements.size()+" Elements";
     }
