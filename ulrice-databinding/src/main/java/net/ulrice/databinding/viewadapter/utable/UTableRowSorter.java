@@ -60,10 +60,10 @@ public class UTableRowSorter extends DefaultRowSorter<UTableViewAdapter, String>
     public List< ? extends SortKey> getSortKeys() {     
 	    //for testing
         List< ? extends SortKey> keys = super.getSortKeys();
-//        System.out.println("get sortkeys");
-//        for(SortKey key : keys){
-//            System.out.println(" "+key.getColumn()+" "+key.getSortOrder());
-//        }
+       // System.out.println("get sortkeys");
+       // for(SortKey key : keys){
+       //     System.out.println(" "+key.getColumn()+" "+key.getSortOrder());
+       // }
         return keys;
     }
 

@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.swing.JTable;
+import javax.swing.RowSorter;
 import javax.swing.RowSorter.SortKey;
 import javax.swing.SortOrder;
 import javax.swing.plaf.basic.BasicTableHeaderUI;
@@ -58,7 +59,18 @@ public class UTableHeaderListener implements MouseListener, MouseMotionListener 
         for (SortKey k : oldKeys) {
             if (k.getColumn() == colModel) {
                 found = true;
-                SortOrder newOrder = (k.getSortOrder() == SortOrder.ASCENDING ? SortOrder.DESCENDING : SortOrder.ASCENDING);
+                SortOrder newOrder = null;
+                switch (k.getSortOrder()) {
+                    case ASCENDING:
+                        newOrder = SortOrder.DESCENDING;
+                        break;
+                    case DESCENDING:
+                        newOrder = SortOrder.UNSORTED;
+                        break;
+                    case UNSORTED:
+                        newOrder = SortOrder.ASCENDING;
+                        break;
+                }
                 newKeys.add(new SortKey(colModel, newOrder));
             }
             else {
