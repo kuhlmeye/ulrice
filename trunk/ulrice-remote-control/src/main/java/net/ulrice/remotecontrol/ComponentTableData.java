@@ -2,6 +2,7 @@ package net.ulrice.remotecontrol;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -230,6 +231,8 @@ public class ComponentTableData implements Serializable {
 
         int widths[] = new int[columnCount];
 
+        Arrays.fill(widths, 1);
+        
         for (int column = 0; column < columnCount; column += 1) {
             String header = getHeader(column);
             widths[column] = Math.max(widths[column], (header != null) ? header.length() : 0);

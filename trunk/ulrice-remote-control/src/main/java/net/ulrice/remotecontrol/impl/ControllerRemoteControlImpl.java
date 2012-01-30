@@ -149,6 +149,44 @@ public class ControllerRemoteControlImpl implements ControllerRemoteControl {
 
     /**
      * {@inheritDoc}
+     * @see net.ulrice.remotecontrol.ControllerRemoteControl#focus(net.ulrice.remotecontrol.ControllerMatcher[])
+     */
+    @Override
+    public boolean focus(ControllerMatcher... matchers) throws RemoteControlException {
+        Collection<ControllerState> states = statesOf(matchers);
+
+        if (states.isEmpty()) {
+            return false;
+        }
+
+        boolean success = true;
+
+        for (final ControllerState state : states) {
+            final Result<Boolean> result = new Result<Boolean>(2);
+
+            RemoteControlUtils.invokeInSwing(new Runnable() {
+
+                @Override
+                public void run() {
+                    try {
+                        Ulrice.getModuleManager().activateModule(state.getController());
+                        result.fireResult(true);
+                    }
+                    catch (Exception e) {
+                        e.printStackTrace(System.err);
+                        result.fireException(e);
+                    }
+                }
+            });
+
+            success &= result.aquireResult();
+        }
+
+        return success;
+    }
+
+    /**
+     * {@inheritDoc}
      * 
      * @see net.ulrice.remotecontrol.ControllerRemoteControl#close(net.ulrice.remotecontrol.ControllerMatcher[])
      */

@@ -62,6 +62,15 @@ public interface ControllerRemoteControl {
     boolean contains(ControllerMatcher... matchers) throws RemoteControlException;
 
     /**
+     * Makes the controller the current one
+     * 
+     * @param matchers the matchers, concatenated by and
+     * @return true if successful
+     * @throws RemoteControlException on occasion
+     */
+    boolean focus(ControllerMatcher... matchers) throws RemoteControlException;
+
+    /**
      * Closes the specified controller. Tries to close all opened dialogs as well.
      * 
      * @param matchers the matchers, concatenated by and
