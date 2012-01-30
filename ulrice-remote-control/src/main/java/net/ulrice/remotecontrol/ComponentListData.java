@@ -114,7 +114,7 @@ public class ComponentListData implements Serializable {
     public String toString() {
         StringBuilder builder = new StringBuilder();
 
-        int width = 0;
+        int width = 1;
 
         for (int index = 0; index < size(); index += 1) {
             width = Math.max(width, toString(index).length());
@@ -126,6 +126,7 @@ public class ComponentListData implements Serializable {
         for (int i = -2; i < width; i += 1) {
             builder.append("-");
         }
+        
         builder.append("+");
 
         for (int index = 0; index < size(); index += 1) {

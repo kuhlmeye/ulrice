@@ -34,7 +34,8 @@ public class ControllerState extends ModuleState {
             return null;
         }
 
-        return new ControllerState(module, controller);
+        return new ControllerState(module, controller, controller == Ulrice.getModuleManager()
+            .getCurrentController());
     }
 
     /**
@@ -61,11 +62,13 @@ public class ControllerState extends ModuleState {
 
     private final Collection<ActionState> actions;
     private final ComponentState view;
+    private final boolean current;
 
-    protected ControllerState(IFModule module, IFController controller) {
+    protected ControllerState(IFModule module, IFController controller, boolean current) {
         super(module);
 
         this.controller = controller;
+        this.current = current;
 
         actions = ActionState.inspect(controller.getHandledActions());
         view = ComponentState.inspect(controller.getView());
@@ -83,6 +86,10 @@ public class ControllerState extends ModuleState {
         return view;
     }
 
+    public boolean isCurrent() {
+        return current;
+    }
+
     /**
      * {@inheritDoc}
      * 
@@ -95,6 +102,7 @@ public class ControllerState extends ModuleState {
         builder.append("ControllerState {");
 
         builder.append("\n\tuniqueId: ").append(getUniqueId());
+        builder.append("\n\tcurrent:  ").append(isCurrent());
         builder.append("\n\ttitles:   ").append(getTitles());
 
         if (!actions.isEmpty()) {
