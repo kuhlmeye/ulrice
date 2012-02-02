@@ -159,6 +159,15 @@ public class ComponentUtils {
                         window.removeWindowListener(windowListener);
                     }
                 }
+                else {
+                    SwingUtilities.invokeLater(new Runnable() {
+                        @Override
+                        public void run() {
+                            window.toFront();
+                            window.requestFocus();
+                        }
+                    });
+                }
 
                 return false;
             }
