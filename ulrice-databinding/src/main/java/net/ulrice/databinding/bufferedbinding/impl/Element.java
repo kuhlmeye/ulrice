@@ -365,48 +365,53 @@ public class Element {
 	/**
 	 * Read the object from the value object
 	 */
-	@SuppressWarnings("unchecked")
 	public void readObject() {
 		modelList.clear();
 		originalValueDirty = false;
 		originalValueValid = true;
+        readAdditionalColumns(columns, true);
+    }
 
-		if (columns != null) {
-			for (ColumnDefinition<? extends Object> column : columns) {
-				GenericAM attributeModel = column.createAM();
-				attributeModel.addValidator(new IFValidator() {
+    @SuppressWarnings("unchecked")
+    public void readAdditionalColumns(List<ColumnDefinition< ? extends Object>> columns, boolean updateState) {
 
-					@Override
-					public ValidationResult isValid(IFBinding bindingId,
-							Object attribute) {
-						return validationResult;
-					}
+        if (columns != null) {
+            for (ColumnDefinition< ? extends Object> column : columns) {
+                GenericAM attributeModel = column.createAM();
+                attributeModel.addValidator(new IFValidator() {
 
-					@Override
-					public ValidationResult getLastValidationErrors() {
-						return validationResult;
-					}
+                    @Override
+                    public ValidationResult isValid(IFBinding bindingId, Object attribute) {
+                        return validationResult;
+                    }
 
-					@Override
-					public void clearValidationErrors() {
-						validationResult = new ValidationResult();
-					}
-				});
-				attributeModel.setReadOnly(column.getColumnType().equals(ColumnType.ReadOnly));
-				modelList.add(attributeModel);
-				idModelMap.put(attributeModel.getId(), attributeModel);
+                    @Override
+                    public ValidationResult getLastValidationErrors() {
+                        return validationResult;
+                    }
 
-				if (getOriginalValue() != null) {
-					Object value = column.getDataAccessor().getValue(
-							getOriginalValue());
-					Object converted = (column.getValueConverter() != null ? column
-							.getValueConverter().modelToView(value) : value);
-					attributeModel.directRead(converted);
-				}
-			}
-			updateState();
-		}
-	}
+                    @Override
+                    public void clearValidationErrors() {
+                        validationResult = new ValidationResult();
+                    }
+                });
+                attributeModel.setReadOnly(column.getColumnType().equals(ColumnType.ReadOnly));
+                modelList.add(attributeModel);
+                idModelMap.put(attributeModel.getId(), attributeModel);
+
+                if (getOriginalValue() != null) {
+                    Object value = column.getDataAccessor().getValue(getOriginalValue());
+                    Object converted =
+                            (column.getValueConverter() != null ? column.getValueConverter().modelToView(value)
+                                    : value);
+                    attributeModel.directRead(converted);
+
+                }
+            }
+            if (updateState)
+                updateState();
+        }
+    }
 
 	/**
 	 * Return the current value object.
