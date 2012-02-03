@@ -5,7 +5,6 @@ import java.awt.Component;
 import java.awt.Rectangle;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
-import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -444,6 +443,9 @@ public class UTableComponent extends JPanel {
 		}
 
 		if (columnDefinitions != null) {
+            if (sorter != null) {
+                sorter.modelStructureChanged();
+            }
 			for (int i = fixedColumns; i < columnDefinitions.size(); i++) {
 				ColumnDefinition<?> columnDefinition = columnDefinitions.get(i);
 				columnDefinition.setFixedColumn(false);
