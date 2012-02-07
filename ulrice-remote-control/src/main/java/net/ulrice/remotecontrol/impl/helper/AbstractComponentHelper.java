@@ -1,6 +1,7 @@
 package net.ulrice.remotecontrol.impl.helper;
 
 import java.awt.Component;
+import java.awt.MouseInfo;
 import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.Robot;
@@ -147,11 +148,11 @@ public abstract class AbstractComponentHelper<TYPE extends Component> implements
         ComponentUtils.toFront(component);
         SwingUtilities.convertPointToScreen(location, component);
 
-        // Point mousePosition = MouseInfo.getPointerInfo().getLocation();
+        Point mousePosition = MouseInfo.getPointerInfo().getLocation();
         robot.mouseMove(location.x, location.y);
         robot.mousePress(InputEvent.BUTTON1_MASK);
         robot.mouseRelease(InputEvent.BUTTON1_MASK);
-        // robot.mouseMove(mousePosition.x, mousePosition.y);
+        robot.mouseMove(mousePosition.x, mousePosition.y);
 
         return true;
     }
