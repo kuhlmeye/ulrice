@@ -13,9 +13,9 @@
 		</license>
 	</licenses>
 	<scm>
-		<connection>scm:svn:https://ulrice.googlecode.com/svn/trunk/ulrice-databinding</connection>
-		<developerConnection>scm:svn:https://ulrice.googlecode.com/svn/trunk/ulrice-databinding</developerConnection>
-		<url>http://ulrice.googlecode.com/svn/</url>
+		<connection>scm:svn:https://ulrice.googlecode.com/svn/tags/ulrice-0.2.4/ulrice-databinding</connection>
+		<developerConnection>scm:svn:https://ulrice.googlecode.com/svn/tags/ulrice-0.2.4/ulrice-databinding</developerConnection>
+		<url>http://ulrice.googlecode.com/svn/tags/ulrice-0.2.4/svn</url>
 	</scm>
 	<developers>
 		<developer>
@@ -43,7 +43,7 @@
 	<parent>
 		<groupId>net.ulrice</groupId>
 		<artifactId>ulrice</artifactId>
-		<version>0.2.4-SNAPSHOT</version>
+		<version>0.2.4</version>
 		<relativePath>../ulrice</relativePath>
 	</parent>
 	

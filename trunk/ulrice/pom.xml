@@ -4,7 +4,7 @@
 	<artifactId>ulrice</artifactId>
 	<packaging>pom</packaging>
 	<name>Ulrice</name>
-	<version>0.2.4-SNAPSHOT</version>
+	<version>0.2.4</version>
 	<description>Ulrice is a framework for rich clients supporting the mvc-based (or module based) development of applications</description>
 	<url>http://ulrice.googlecode.com</url>
 	<licenses>
@@ -15,9 +15,9 @@
 		</license>
 	</licenses>
 	<scm>
-		<connection>scm:svn:https://ulrice.googlecode.com/svn/trunk/ulrice</connection>
-		<developerConnection>scm:svn:https://ulrice.googlecode.com/svn/trunk/ulrice</developerConnection>
-		<url>http://ulrice.googlecode.com/svn/</url>
+		<connection>scm:svn:https://ulrice.googlecode.com/svn/tags/ulrice-0.2.4/ulrice</connection>
+		<developerConnection>scm:svn:https://ulrice.googlecode.com/svn/tags/ulrice-0.2.4/ulrice</developerConnection>
+		<url>http://ulrice.googlecode.com/svn/tags/ulrice-0.2.4/svn</url>
 	</scm>
 	<developers>
 		<developer>
@@ -33,7 +33,7 @@
 	</developers>
 
 	<properties>
-		<version.ulrice>0.2.4-SNAPSHOT</version.ulrice>
+		<version.ulrice>0.2.4</version.ulrice>
 	</properties>
 
 	<dependencyManagement>
