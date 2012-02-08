@@ -18,6 +18,7 @@ import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.ListSelectionModel;
+import javax.swing.RowSorter.SortKey;
 import javax.swing.event.EventListenerList;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
@@ -100,7 +101,6 @@ public class UTableComponent extends JPanel {
         setLayout(new BorderLayout());
         add(scrollPane, BorderLayout.CENTER);
         
-       
 
         MouseListener mouseListener = new MouseListener() {
 
@@ -444,7 +444,9 @@ public class UTableComponent extends JPanel {
 
 		if (columnDefinitions != null) {
             if (sorter != null) {
+                List<SortKey> sortKeys = sorter.getGlobalSortKeys();
                 sorter.modelStructureChanged();
+                sorter.setGlobalSortKeys(sortKeys);
             }
 			for (int i = fixedColumns; i < columnDefinitions.size(); i++) {
 				ColumnDefinition<?> columnDefinition = columnDefinitions.get(i);
