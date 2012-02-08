@@ -76,6 +76,12 @@ public class JComboBoxHelper extends AbstractJComponentHelper<JComboBox> {
                         return;
                     }
                 }
+                
+                if (text.isEmpty()) {
+                    component.setSelectedIndex(-1);
+                    result.fireResult(true);
+                    return;
+                }
 
                 result.fireResult(false);
             }

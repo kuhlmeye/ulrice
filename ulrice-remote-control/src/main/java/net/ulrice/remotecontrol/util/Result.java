@@ -48,15 +48,17 @@ public class Result<RESULT_TYPE> {
             }
 
             long maximumWaitFor = (long) (waitForSeconds * 1000);
-            long waitFor = endMillis - System.currentTimeMillis();
-
-            if (waitFor < 1) {
-                throw new RemoteControlException(String.format("Action timed out: %,.3f seconds",
-                    (double) timeout / 1000));
-            }
-
-            if (waitFor > maximumWaitFor) {
-                waitFor = maximumWaitFor;
+            long waitFor = maximumWaitFor;
+            
+            if (RemoteControlUtils.isTimeoutEnabled()) {
+                waitFor = endMillis - System.currentTimeMillis();
+    
+                if (waitFor < 1) {
+                    throw new RemoteControlException(String.format("Action timed out: %,.3f seconds",
+                        (double) timeout / 1000));
+                }
+    
+                waitFor = Math.min(waitFor, maximumWaitFor);
             }
 
             if (!gotResult) {
@@ -81,13 +83,17 @@ public class Result<RESULT_TYPE> {
      */
     public RESULT_TYPE aquireResult() throws RemoteControlException {
         synchronized (semaphore) {
-            long waitFor = endMillis - System.currentTimeMillis();
-
-            if (waitFor < 1) {
-                throw new RemoteControlException(String.format("Action timed out: %,.3f seconds",
-                    (double) timeout / 1000));
+            long waitFor = 0;
+            
+            if (RemoteControlUtils.isTimeoutEnabled()) {
+                waitFor = endMillis - System.currentTimeMillis();
+    
+                if (waitFor < 1) {
+                    throw new RemoteControlException(String.format("Action timed out: %,.3f seconds",
+                        (double) timeout / 1000));
+                }
             }
-
+            
             if (!gotResult) {
                 try {
                     semaphore.wait(waitFor);

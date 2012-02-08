@@ -218,6 +218,16 @@ public class ComponentTableData implements Serializable {
             if ((value instanceof Number) && (((Number) value).doubleValue() == 0)) {
                 continue;
             }
+            
+            if (value instanceof Boolean) {
+                // ignore, what is empty?
+                continue;
+            }
+            
+            if (value instanceof Enum) {
+                // ignore, what is empty?
+                continue;
+            }
 
             return false;
         }

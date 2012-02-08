@@ -18,6 +18,7 @@ import net.ulrice.remotecontrol.RemoteControlException;
 public class RemoteControlUtils {
 
     public static final String SPEED_FACTOR_PROPERTY = "RCSpeedFactor";
+    public static final String DISABLE_TIMEOUTS_PROPERTY = "RCDisableTimeouts";
 
     public static final double ROBOT_DELAY = 0.01;
 
@@ -215,4 +216,14 @@ public class RemoteControlUtils {
     public static void pause() {
         pause(PAUSE_DELAY);
     }
+    
+    /**
+     * Returns true if timeouts are enabled
+     *
+     * @return true if enabled
+     */
+    public static boolean isTimeoutEnabled() {
+        return System.getProperty(DISABLE_TIMEOUTS_PROPERTY) == null;
+    }
+    
 }
