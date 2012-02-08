@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 
+import javax.swing.border.Border;
 import javax.swing.event.EventListenerList;
 import javax.swing.table.TableCellEditor;
 import javax.swing.table.TableCellRenderer;
@@ -46,6 +47,8 @@ public class ColumnDefinition<T extends Object> implements PropertyChangeListene
 	private ColumnType columnType = ColumnType.Editable;
 	
 	private Integer preferredWidth;
+	
+	private Border border;
 	
 	public enum ColumnType {
 		Editable,
@@ -113,7 +116,7 @@ public class ColumnDefinition<T extends Object> implements PropertyChangeListene
 		return genericAM;
     }
 
-    private void setFilterMode(Class<T> columnClass) {
+    private ColumnDefinition<T> setFilterMode(Class<T> columnClass) {
         if (Number.class.isAssignableFrom(columnClass)) {
             setFilterMode(FilterMode.Numeric);
         }
@@ -126,11 +129,13 @@ public class ColumnDefinition<T extends Object> implements PropertyChangeListene
         else {
             setFilterMode(FilterMode.RegEx);
         }
+        return this;
     }
     
-    public void setFilterMode(FilterMode filterMode) {
+    public ColumnDefinition<T> setFilterMode(FilterMode filterMode) {
         this.filterMode = filterMode;
         fireFilterModeChanged();
+        return this;
     }
 
     /**
@@ -208,23 +213,26 @@ public class ColumnDefinition<T extends Object> implements PropertyChangeListene
 		return validators;
 	}
 	
-	public void addValidator(IFValidator validator) {
+	public ColumnDefinition<T> addValidator(IFValidator validator) {
 		validators.add(validator);
+		return this;
 	}
 	
     public boolean isUseAutoValueConverter() {
     	return useAutoValueConverter;
     }
         
-    public void setUseAutoValueConverter(boolean useAutoValueConverter) {
+    public ColumnDefinition<T> setUseAutoValueConverter(boolean useAutoValueConverter) {
 		this.useAutoValueConverter = useAutoValueConverter;
+		return this;
 	}
     public void setColumnName(String columnName) {
         this.columnName = columnName;
     }
 
-    public void setColumnType(ColumnType columnType) {
+    public ColumnDefinition<T> setColumnType(ColumnType columnType) {
 		this.columnType = columnType;
+		return this;
 	}
     
     public ColumnType getColumnType() {
@@ -243,17 +251,19 @@ public class ColumnDefinition<T extends Object> implements PropertyChangeListene
         return useValueRange;
     }
     
-    public void setUseValueRange(boolean useValueRange) {
+    public ColumnDefinition<T> setUseValueRange(boolean useValueRange) {
         this.useValueRange = useValueRange;
+        return this;
     }
     
     public List<T> getValueRange() {
         return valueRange;
     }
     
-    public void setValueRange(List<T> valueRange) {
+    public ColumnDefinition<T> setValueRange(List<T> valueRange) {
         this.valueRange = valueRange;
         fireValueRangeChanged();
+        return this;
     }
     
     private void fireValueRangeChanged() {
@@ -286,8 +296,9 @@ public class ColumnDefinition<T extends Object> implements PropertyChangeListene
         return cellEditor;
     }
     
-    public void setCellEditor(TableCellEditor cellEditor) {
+    public ColumnDefinition<T> setCellEditor(TableCellEditor cellEditor) {
         this.cellEditor = cellEditor;
+        return this;
     }
 
     public TableCellRenderer getCellRenderer() {
@@ -295,20 +306,23 @@ public class ColumnDefinition<T extends Object> implements PropertyChangeListene
     }
     
 
-    public void setCellRenderer(TableCellRenderer cellRenderer) {
+    public ColumnDefinition<T> setCellRenderer(TableCellRenderer cellRenderer) {
         this.cellRenderer = cellRenderer;
+        return this;
     }
 
-    public void setAttributeInfo(IFAttributeInfo attributeInfo) {
+    public ColumnDefinition<T> setAttributeInfo(IFAttributeInfo attributeInfo) {
         this.attributeInfo = attributeInfo;
+        return this;
     }
     
     public IFAttributeInfo getAttributeInfo() {
         return attributeInfo;
     }
     
-    public void setColumnTooltip(String columnTooltip) {
+    public ColumnDefinition<T> setColumnTooltip(String columnTooltip) {
         this.columnTooltip = columnTooltip;
+        return this;
     }
     
     public String getColumnTooltip() {
@@ -335,8 +349,10 @@ public class ColumnDefinition<T extends Object> implements PropertyChangeListene
         return columnColorOverride;
     }
 
-    public void setColumnColorOverride(ColumnColorOverride columnColorOverride) {
+    public ColumnDefinition<T> setColumnColorOverride(ColumnColorOverride columnColorOverride) {
         this.columnColorOverride = columnColorOverride;
+        return this;
+        
     }
 
     @Override
@@ -353,9 +369,19 @@ public class ColumnDefinition<T extends Object> implements PropertyChangeListene
         return preferredWidth;
     }
 
-    public void setPreferredWidth(Integer preferredWidth) {
+    public ColumnDefinition<T> setPreferredWidth(Integer preferredWidth) {
         this.preferredWidth = preferredWidth;
-    }    
+        return this;
+    }
+
+    public Border getBorder() {
+        return border;
+    }
+
+    public ColumnDefinition<T> setBorder(Border border) {
+        this.border = border;
+        return this;
+    }  
     
     
 }

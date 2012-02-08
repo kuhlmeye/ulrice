@@ -65,6 +65,10 @@ public abstract class AbstractUTableRenderer extends DefaultTableCellRenderer {
                     component.setBackground(row % 2 == 0 ? colorOverride.getEvenNormalColor() : colorOverride.getOddNormalColor());
                 }
             }            
+            
+            if(colDef.getBorder() != null){
+                component.setBorder(colDef.getBorder());
+            }        
     
             Element element = tableComponent.getElementAtViewIndex(row);
             if (element != null) {
