@@ -20,7 +20,7 @@ public class RemoteControlUtils {
     public static final String SPEED_FACTOR_PROPERTY = "RCSpeedFactor";
     public static final String DISABLE_TIMEOUTS_PROPERTY = "RCDisableTimeouts";
 
-    public static final double ROBOT_DELAY = 0.01;
+    public static final double ROBOT_DELAY = 0.001;
 
     public static final double PAUSE_DELAY = 0.1;
 
