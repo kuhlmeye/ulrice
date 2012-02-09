@@ -32,10 +32,6 @@
 		</developer>
 	</developers>
 
-	<properties>
-		<version.ulrice>0.2.4</version.ulrice>
-	</properties>
-
 	<dependencyManagement>
 		<dependencies>
 			<dependency>
@@ -46,42 +42,42 @@
 			<dependency>
 				<groupId>net.ulrice</groupId>
 				<artifactId>ulrice-core</artifactId>
-				<version>${version.ulrice}</version>
+				<version>${project.version}</version>
 			</dependency>
 			<dependency>
 				<groupId>net.ulrice</groupId>
 				<artifactId>ulrice-databinding</artifactId>
-				<version>${version.ulrice}</version>
+				<version>${project.version}</version>
 			</dependency>
 			<dependency>
 				<groupId>net.ulrice</groupId>
 				<artifactId>ulrice-dashboard</artifactId>
-				<version>${version.ulrice}</version>
+				<version>${project.version}</version>
 			</dependency>
 			<dependency>
 				<groupId>net.ulrice</groupId>
 				<artifactId>ulrice-remote-control</artifactId>
-				<version>${version.ulrice}</version>
+				<version>${project.version}</version>
 			</dependency>
  			<dependency>
 				<groupId>net.ulrice</groupId>
 				<artifactId>ulrice-sample</artifactId>
-				<version>${version.ulrice}</version>
+				<version>${project.version}</version>
 			</dependency>
 			<dependency>
 				<groupId>net.ulrice</groupId>
 				<artifactId>ulrice-translator</artifactId>
-				<version>${version.ulrice}</version>
+				<version>${project.version}</version>
 			</dependency>
 			<dependency>
 				<groupId>net.ulrice</groupId>
 				<artifactId>ulrice-webstarter</artifactId>
-				<version>${version.ulrice}</version>
+				<version>${project.version}</version>
 			</dependency>
 			<dependency>
 				<groupId>net.ulrice</groupId>
 				<artifactId>ulrice-webstarter-maven-plugin</artifactId>
-				<version>${version.ulrice}</version>
+				<version>${project.version}</version>
 			</dependency>
 			<dependency>
 				<groupId>junit</groupId>
