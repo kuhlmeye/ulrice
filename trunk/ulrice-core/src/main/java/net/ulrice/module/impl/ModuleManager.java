@@ -53,10 +53,12 @@ public class ModuleManager implements IFModuleManager, IFModuleStructureManager 
     private final IdentityHashMap<IFController, IdentityHashMap<Object, Object>> blockers =
             new IdentityHashMap<IFController, IdentityHashMap<Object, Object>>();
 
+    @Override
     public void openModule(final String moduleId, final ControllerProviderCallback callback) {
         openModule(moduleId, null, callback);
     }
 
+    @Override
     public void openModule(final String moduleId, final IFController parent, final ControllerProviderCallback callback) {
         final IFModule module = moduleMap.get(moduleId);
 
@@ -71,7 +73,7 @@ public class ModuleManager implements IFModuleManager, IFModuleStructureManager 
 
             final boolean isSingleModule = ModuleType.SingleModule.equals(module.getModuleInstanceType());
 
-            if (isSingleModule && openControllers.getControllers(module).size() > 0) {
+            if (isSingleModule && (openControllers.getControllers(module).size() > 0)) {
                 // If it's a single module and if it's already open than return the instance.
                 final IFController ctrlInstance = openControllers.getControllers(module).iterator().next();
 
@@ -87,6 +89,7 @@ public class ModuleManager implements IFModuleManager, IFModuleStructureManager 
 
                     @Override
                     public void onControllerReady(IFController controller) {
+                        addBlocker(controller, this);
 
                         if (!Ulrice.getSecurityManager().allowOpenModule(module, controller)) {
                             LOG.info("Module [Id: " + module.getUniqueId() + ", Name: "
@@ -99,10 +102,10 @@ public class ModuleManager implements IFModuleManager, IFModuleStructureManager 
                             return;
                         }
 
-                        if(callback != null) {
-                        	callback.onControllerInitialization(controller);
+                        if (callback != null) {
+                            callback.onControllerInitialization(controller);
                         }
-                        
+
                         // Inform event listeners.
                         if (openControllers.getActive() != null) {
                             for (IFModuleEventListener listener : listenerList
@@ -124,6 +127,8 @@ public class ModuleManager implements IFModuleManager, IFModuleStructureManager 
                         if (callback != null) {
                             callback.onControllerReady(controller);
                         }
+
+                        removeBlocker(controller, this);
                     }
 
                     @Override
@@ -140,14 +145,16 @@ public class ModuleManager implements IFModuleManager, IFModuleStructureManager 
         }
     }
 
+    @Override
     public IFModule getModule(IFController controller) {
         return openControllers.getModule(controller);
     }
 
+    @Override
     public IFModuleTitleProvider getTitleProvider(IFController controller) {
-    	if(controller == null) {
-    		return null;
-    	}
+        if (controller == null) {
+            return null;
+        }
         final IFModuleTitleProvider fromController = controller.getTitleProvider();
         if (fromController != null) {
             return fromController;
@@ -164,6 +171,7 @@ public class ModuleManager implements IFModuleManager, IFModuleStructureManager 
         return null;
     }
 
+    @Override
     public void activateModule(IFController controller) {
         IFModuleEventListener[] listeners = listenerList.getListeners(IFModuleEventListener.class);
 
@@ -339,18 +347,22 @@ public class ModuleManager implements IFModuleManager, IFModuleStructureManager 
         return notCurrentControllers;
     }
 
+    @Override
     public IFController getCurrentController() {
         return openControllers.getActive();
     }
 
+    @Override
     public List<IFController> getActiveControllers() {
         return openControllers.getAll();
     }
 
+    @Override
     public IFController getParentController(IFController controller) {
         return openControllers.getParent(controller);
     }
 
+    @Override
     public void registerModule(IFModule module) {
         if (module == null) {
             throw new IllegalArgumentException("Module must not be null.");
@@ -368,6 +380,7 @@ public class ModuleManager implements IFModuleManager, IFModuleStructureManager 
     /**
      * @see net.ulrice.module.IFModuleManager#unregisterModule(net.ulrice.module.IFModule)
      */
+    @Override
     public void unregisterModule(IFModule module) {
         if (module == null) {
             throw new IllegalArgumentException("Module must not be null.");
@@ -380,6 +393,7 @@ public class ModuleManager implements IFModuleManager, IFModuleStructureManager 
      * 
      * @param group The group of modules that should be added to this module.
      */
+    @Override
     public void addModuleGroup(IFModuleGroup group) {
         rootGroup.addModuleGroup(group);
     }
@@ -389,6 +403,7 @@ public class ModuleManager implements IFModuleManager, IFModuleStructureManager 
      * 
      * @param module The module that should be added to this group.
      */
+    @Override
     public void addModule(IFModule module) {
         if (!Ulrice.getSecurityManager().allowRegisterModule(module)) {
             LOG.info("Module [Id: " + module.getUniqueId() + ", Name: " + module.getModuleTitle(Usage.Default)
@@ -402,6 +417,7 @@ public class ModuleManager implements IFModuleManager, IFModuleStructureManager 
     /**
      * @return the rootGroup
      */
+    @Override
     public IFModuleGroup getRootGroup() {
         return rootGroup;
     }
@@ -409,6 +425,7 @@ public class ModuleManager implements IFModuleManager, IFModuleStructureManager 
     /**
      * @see net.ulrice.module.IFModuleManager#addModuleEventListener(net.ulrice.module.event.IFModuleEventListener)
      */
+    @Override
     public void addModuleEventListener(IFModuleEventListener listener) {
         listenerList.add(IFModuleEventListener.class, listener);
     }
@@ -416,6 +433,7 @@ public class ModuleManager implements IFModuleManager, IFModuleStructureManager 
     /**
      * @see net.ulrice.module.IFModuleManager#removeModuleEventListener(net.ulrice.module.event.IFModuleEventListener)
      */
+    @Override
     public void removeModuleEventListener(IFModuleEventListener listener) {
         listenerList.remove(IFModuleEventListener.class, listener);
     }
@@ -428,14 +446,15 @@ public class ModuleManager implements IFModuleManager, IFModuleStructureManager 
     private class UlriceRootModule implements IFModuleGroup {
 
         /** The list of contained module groups. */
-        private List<IFModuleGroup> moduleGroups = new LinkedList<IFModuleGroup>();
+        private final List<IFModuleGroup> moduleGroups = new LinkedList<IFModuleGroup>();
 
         /** The list of modules directly assigned to the root group. */
-        private List<IFModule> modules = new LinkedList<IFModule>();
+        private final List<IFModule> modules = new LinkedList<IFModule>();
 
         /**
          * @see net.ulrice.module.IFModuleGroup#getModules()
          */
+        @Override
         public List<IFModule> getModules() {
             return Collections.unmodifiableList(modules);
         }
@@ -443,6 +462,7 @@ public class ModuleManager implements IFModuleManager, IFModuleStructureManager 
         /**
          * @see net.ulrice.module.IFModuleGroup#getModuleGroups()
          */
+        @Override
         public List<IFModuleGroup> getModuleGroups() {
             return Collections.unmodifiableList(moduleGroups);
         }
@@ -477,6 +497,7 @@ public class ModuleManager implements IFModuleManager, IFModuleStructureManager 
      * Inform the event listeners after the structure of the module tree has changed (e.g. adding/removing a
      * module(group))
      */
+    @Override
     public void fireModuleStructureChanged() {
         // Inform event listeners.
         if (!SwingUtilities.isEventDispatchThread()) {
@@ -502,6 +523,7 @@ public class ModuleManager implements IFModuleManager, IFModuleStructureManager 
         }
     }
 
+    @Override
     public void fireModuleNameChanged(final IFController controller) {
         // Inform event listeners.
         if (!SwingUtilities.isEventDispatchThread()) {
@@ -571,28 +593,33 @@ public class ModuleManager implements IFModuleManager, IFModuleStructureManager 
             }
             m.put(blocker, blocker);
             if (!wasBlocked) {
-                fireControllerBlocked(controller, this);
+                fireControllerBlocked(controller, blocker);
             }
         }
     }
 
     @Override
-    public void removeBlocker(IFController controller, Object blocker) {
-        boolean wasBlocked = isBlocked(controller);
-        final IdentityHashMap<Object, Object> m = blockers.get(controller);
-        if (m == null || m.remove(blocker) == null) {
-            throw new IllegalStateException(
-                "BUG: attempting to unblock with a blocker for which there was no block: " + blocker);
-        }
-        if (wasBlocked && !isBlocked(controller)) {
-            fireControllerUnblocked(controller, this);
-        }
+    public void removeBlocker(final IFController controller, final Object blocker) {
+        SwingUtilities.invokeLater(new Runnable() {
+            @Override
+            public void run() {
+                boolean wasBlocked = isBlocked(controller);
+                final IdentityHashMap<Object, Object> m = blockers.get(controller);
+                if ((m == null) || (m.remove(blocker) == null)) {
+                    throw new IllegalStateException(
+                        "BUG: attempting to unblock with a blocker for which there was no block: " + blocker);
+                }
+                if (wasBlocked && !isBlocked(controller)) {
+                    fireControllerUnblocked(controller, blocker);
+                }
+            }
+        });
     }
 
     @Override
     public boolean isBlocked(IFController controller) {
         final IdentityHashMap<Object, Object> m = blockers.get(controller);
-        return m != null && !m.isEmpty();
+        return (m != null) && !m.isEmpty();
     }
 
     @Override

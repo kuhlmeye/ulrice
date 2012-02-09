@@ -169,7 +169,6 @@ public class ActionRemoteControlImpl implements ActionRemoteControl {
                     @Override
                     public void run() {
                         Ulrice.getActionManager().performAction(actionState.getAction(), null);
-                        RemoteControlUtils.pause();
                     }
                 });
 

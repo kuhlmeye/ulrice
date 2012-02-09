@@ -107,7 +107,6 @@ public class ModuleRemoteControlImpl implements ModuleRemoteControl {
                                 result.fireResult(true);
                             }
                         });
-                        RemoteControlUtils.pause();
                     }
                     catch (Exception e) {
                         result.fireException(e);
