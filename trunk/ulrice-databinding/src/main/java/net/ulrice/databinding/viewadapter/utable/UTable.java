@@ -1,6 +1,7 @@
 package net.ulrice.databinding.viewadapter.utable;
 
 import java.awt.Insets;
+import java.math.BigInteger;
 import java.util.EventObject;
 
 import javax.swing.DefaultCellEditor;
@@ -38,6 +39,7 @@ public class UTable extends JTable {
         setDefaultRenderer(Long.TYPE, new UTableVANumericCellRenderer());
         setDefaultRenderer(Float.TYPE, new UTableVANumericCellRenderer());
         setDefaultRenderer(Number.class, new UTableVANumericCellRenderer());
+        setDefaultRenderer(BigInteger.class, new UTableVANumericCellRenderer());
         setDefaultRenderer(Boolean.class, new UTableVABooleanCellRenderer());
         setDefaultRenderer(Boolean.TYPE, new UTableVABooleanCellRenderer());
         setDefaultEditor(Character.class, new DefaultCellEditor(new JTextField()));
