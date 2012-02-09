@@ -8,7 +8,6 @@ import javax.swing.table.TableModel;
 
 import net.ulrice.remotecontrol.ComponentTableData;
 import net.ulrice.remotecontrol.RemoteControlException;
-import net.ulrice.remotecontrol.util.RemoteControlUtils;
 
 public class JTableHelper extends AbstractJComponentHelper<JTable> {
 
@@ -88,8 +87,6 @@ public class JTableHelper extends AbstractJComponentHelper<JTable> {
 
         Component editor = component.getComponent(component.getComponentCount() - 1);
 
-        RemoteControlUtils.pause();
-        
         return ComponentHelperRegistry.get(editor.getClass()).enter(robot, editor, text);
     }
 }

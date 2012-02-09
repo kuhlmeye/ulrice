@@ -189,11 +189,7 @@ public abstract class ComponentInteraction implements Serializable {
 
             @Override
             public boolean interact(Component component, Robot robot) throws RemoteControlException {
-                boolean result = ComponentHelperRegistry.get(component.getClass()).click(robot, component);
-                
-                RemoteControlUtils.pause();
-                
-                return result;
+                return ComponentHelperRegistry.get(component.getClass()).click(robot, component);
             }
             
             @Override
@@ -223,11 +219,7 @@ public abstract class ComponentInteraction implements Serializable {
 
             @Override
             public boolean interact(Component component, Robot robot) throws RemoteControlException {
-                boolean result = ComponentHelperRegistry.get(component.getClass()).click(robot, component, index);
-                
-                RemoteControlUtils.pause();
-                
-                return result;
+                return ComponentHelperRegistry.get(component.getClass()).click(robot, component, index);
             }
 
             @Override
@@ -257,11 +249,7 @@ public abstract class ComponentInteraction implements Serializable {
 
             @Override
             public boolean interact(Component component, Robot robot) throws RemoteControlException {
-                boolean result = ComponentHelperRegistry.get(component.getClass()).click(robot, component, text);
-                
-                RemoteControlUtils.pause();
-                
-                return result;
+                return ComponentHelperRegistry.get(component.getClass()).click(robot, component, text);
             }
 
             @Override
@@ -361,11 +349,7 @@ public abstract class ComponentInteraction implements Serializable {
 
             @Override
             public boolean interact(Component component, Robot robot) throws RemoteControlException {
-                boolean result = ComponentHelperRegistry.get(component.getClass()).focus(robot, component);
-                
-                RemoteControlUtils.pause();
-                
-                return result;
+                return ComponentHelperRegistry.get(component.getClass()).focus(robot, component);
             }
 
             @Override
@@ -393,11 +377,7 @@ public abstract class ComponentInteraction implements Serializable {
 
             @Override
             public boolean interact(Component component, Robot robot) throws RemoteControlException {
-                boolean result = ComponentHelperRegistry.get(component.getClass()).selectAll(robot, component);
-                
-                RemoteControlUtils.pause();
-                
-                return result;
+                return ComponentHelperRegistry.get(component.getClass()).selectAll(robot, component);
             }
 
             @Override
@@ -427,11 +407,7 @@ public abstract class ComponentInteraction implements Serializable {
 
             @Override
             public boolean interact(Component component, Robot robot) throws RemoteControlException {
-                boolean result = ComponentHelperRegistry.get(component.getClass()).enter(robot, component, text);
-                
-                RemoteControlUtils.pause();
-                
-                return result;
+                return ComponentHelperRegistry.get(component.getClass()).enter(robot, component, text);
             }
 
             @Override
@@ -465,11 +441,7 @@ public abstract class ComponentInteraction implements Serializable {
 
             @Override
             public boolean interact(Component component, Robot robot) throws RemoteControlException {
-                boolean result = ComponentHelperRegistry.get(component.getClass()).enter(robot, component, text, index);
-                
-                RemoteControlUtils.pause();
-                
-                return result;
+                return ComponentHelperRegistry.get(component.getClass()).enter(robot, component, text, index);
             }
 
             @Override
@@ -501,11 +473,7 @@ public abstract class ComponentInteraction implements Serializable {
 
             @Override
             public boolean interact(Component component, Robot robot) throws RemoteControlException {
-                boolean result = ComponentHelperRegistry.get(component.getClass()).enter(robot, component, text, row, column);
-                
-                RemoteControlUtils.pause();
-                
-                return result;
+                return ComponentHelperRegistry.get(component.getClass()).enter(robot, component, text, row, column);
             }
 
             @Override
@@ -555,8 +523,6 @@ public abstract class ComponentInteraction implements Serializable {
                     instruction.execute(robot);
                 }
 
-                RemoteControlUtils.pause();
-                
                 return true;
             }
 
@@ -660,8 +626,6 @@ public abstract class ComponentInteraction implements Serializable {
                     throw new RemoteControlException("Invocation failed: " + expression, e);
                 }
 
-                RemoteControlUtils.pause();
-                
                 return true;
             }
 
