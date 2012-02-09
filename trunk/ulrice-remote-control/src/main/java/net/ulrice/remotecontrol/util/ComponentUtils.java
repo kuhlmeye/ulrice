@@ -254,11 +254,6 @@ public class ComponentUtils {
      */
     public static void scrollRectToVisible(final Component component, final Rectangle rectangle)
         throws RemoteControlException {
-        Container parent = component.getParent();
-
-        if (parent != null) {
-            scrollRectToVisible(parent, SwingUtilities.convertRectangle(component, new Rectangle(rectangle), parent));
-        }
 
         if (component instanceof JComponent) {
             RemoteControlUtils.invokeInSwing(new Runnable() {
