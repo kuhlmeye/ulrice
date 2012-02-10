@@ -591,7 +591,7 @@ public class ModuleManager implements IFModuleManager, IFModuleStructureManager 
             }
             m.put(blocker, blocker);
             if (!wasBlocked) {
-                fireControllerBlocked(controller, blocker);
+                fireControllerBlocked(controller, this);
             }
         }
     }
@@ -605,7 +605,7 @@ public class ModuleManager implements IFModuleManager, IFModuleStructureManager 
                 "BUG: attempting to unblock with a blocker for which there was no block: " + blocker);
         }
         if (wasBlocked && !isBlocked(controller)) {
-            fireControllerUnblocked(controller, blocker);
+            fireControllerUnblocked(controller, this);
         }
     }
 
