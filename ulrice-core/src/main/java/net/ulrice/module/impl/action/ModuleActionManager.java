@@ -385,7 +385,7 @@ public class ModuleActionManager implements IFModuleEventListener, PropertyChang
 	}
 	
 	@Override
-	public void moduleBlocked(IFController controller, Object blocker) {
+	public void moduleBlocked(IFController controller, Object blocker) {	    
         Map<UlriceAction, ModuleActionState> actionMap = controllerActionStateMap.get(controller);        
         if(actionMap != null) {
 	        Collection<ModuleActionState> actions = actionMap.values();
@@ -402,7 +402,7 @@ public class ModuleActionManager implements IFModuleEventListener, PropertyChang
 
 	@Override
 	public void moduleUnblocked(IFController controller, Object blocker) {
-        Map<UlriceAction, ModuleActionState> actionMap = controllerActionStateMap.get(controller);
+	    Map<UlriceAction, ModuleActionState> actionMap = controllerActionStateMap.get(controller);
         if(actionMap != null) {
             Collection<ModuleActionState> actions = actionMap.values();
             if(actions != null) {
