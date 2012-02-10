@@ -89,7 +89,6 @@ public class ModuleManager implements IFModuleManager, IFModuleStructureManager 
 
                     @Override
                     public void onControllerReady(IFController controller) {
-                        addBlocker(controller, this);
 
                         if (!Ulrice.getSecurityManager().allowOpenModule(module, controller)) {
                             LOG.info("Module [Id: " + module.getUniqueId() + ", Name: "
@@ -128,7 +127,6 @@ public class ModuleManager implements IFModuleManager, IFModuleStructureManager 
                             callback.onControllerReady(controller);
                         }
 
-                        removeBlocker(controller, this);
                     }
 
                     @Override
@@ -600,20 +598,15 @@ public class ModuleManager implements IFModuleManager, IFModuleStructureManager 
 
     @Override
     public void removeBlocker(final IFController controller, final Object blocker) {
-        SwingUtilities.invokeLater(new Runnable() {
-            @Override
-            public void run() {
-                boolean wasBlocked = isBlocked(controller);
-                final IdentityHashMap<Object, Object> m = blockers.get(controller);
-                if ((m == null) || (m.remove(blocker) == null)) {
-                    throw new IllegalStateException(
-                        "BUG: attempting to unblock with a blocker for which there was no block: " + blocker);
-                }
-                if (wasBlocked && !isBlocked(controller)) {
-                    fireControllerUnblocked(controller, blocker);
-                }
-            }
-        });
+        boolean wasBlocked = isBlocked(controller);
+        final IdentityHashMap<Object, Object> m = blockers.get(controller);
+        if ((m == null) || (m.remove(blocker) == null)) {
+            throw new IllegalStateException(
+                "BUG: attempting to unblock with a blocker for which there was no block: " + blocker);
+        }
+        if (wasBlocked && !isBlocked(controller)) {
+            fireControllerUnblocked(controller, blocker);
+        }
     }
 
     @Override
