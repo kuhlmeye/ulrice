@@ -192,7 +192,11 @@ public class UTableVAFilter extends RowFilter<UTableViewAdapter, String> impleme
 			else {
 			    table = (UTable) uTableComponent.getScrollTable();
 			}
-			TableCellRenderer tableCellRenderer = uTableComponent.getColumnById(columnId).getCellRenderer();
+			
+			TableCellRenderer tableCellRenderer = table.getDefaultRenderer(colDef.getColumnClass());
+			if(tableCellRenderer == null) {
+			    tableCellRenderer = uTableComponent.getColumnById(columnId).getCellRenderer();
+			}
 			if (tableCellRenderer != null && StringBasedTableCellRenderer.class.isAssignableFrom(tableCellRenderer.getClass())) {
 			    StringBasedTableCellRenderer c = (StringBasedTableCellRenderer) tableCellRenderer;
 			    include &= includeValue(columnId, entry.getIdentifier(), c.getString(entry.getValue(i), table, colDef));
@@ -335,6 +339,7 @@ public class UTableVAFilter extends RowFilter<UTableViewAdapter, String> impleme
                     if (regex.startsWith("-")) {
                         regex = regex.replace("-", "\\-");
                     }
+                    regex = regex.replace(".", "\\.");
                     regex = regex.replace("?", ".?");
                     regex = regex.replace("*", ".*");
                     if (!isCombo) {
