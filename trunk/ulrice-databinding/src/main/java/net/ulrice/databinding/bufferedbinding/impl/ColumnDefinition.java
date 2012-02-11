@@ -11,6 +11,7 @@ import javax.swing.event.EventListenerList;
 import javax.swing.table.TableCellEditor;
 import javax.swing.table.TableCellRenderer;
 
+import net.ulrice.databinding.UlriceDatabinding;
 import net.ulrice.databinding.bufferedbinding.IFAttributeInfo;
 import net.ulrice.databinding.converter.IFValueConverter;
 import net.ulrice.databinding.modelaccess.IFDynamicModelValueAccessor;
@@ -107,7 +108,9 @@ public class ColumnDefinition<T extends Object> implements PropertyChangeListene
     public GenericAM<T> createAM() {
         GenericAM<T> genericAM = new GenericAM<T>(id, attributeInfo);
         genericAM.setReadOnly(getColumnType().equals(ColumnType.ReadOnly));        
+        
         genericAM.setValueConverter(getValueConverter());
+                       
         if(getValidators() != null && !getValidators().isEmpty()) {
             for (IFValidator validator : getValidators()) {
                 genericAM.addValidator(validator);

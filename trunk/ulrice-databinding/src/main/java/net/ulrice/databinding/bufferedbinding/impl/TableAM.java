@@ -1110,7 +1110,7 @@ public class TableAM implements IFAttributeModel {
         return columns.get(index);
     }
 
-    public Element deleteElementOfObject(Object object) {
+    public Element getElementOfObject(Object object) {
         if(columnIds != null) {
             Element tempElement = createElement(object, false, false, true);
             List<?> key = buildKey(tempElement);
