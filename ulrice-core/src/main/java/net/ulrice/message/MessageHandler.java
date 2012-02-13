@@ -329,6 +329,11 @@ public class MessageHandler implements UncaughtExceptionHandler, IFModuleEventLi
 		// TODO Auto-generated method stub
 		
 	}
+	
+	@Override
+    public void moduleBlockerRemoved(IFController controller, Object blocker) {
+        // Do nothing, MessageHandler doesn´t care about the blockers
+    }
 
     @Override
     public void nameChanged(IFController controller) {

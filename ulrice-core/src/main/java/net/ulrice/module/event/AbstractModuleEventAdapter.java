@@ -51,6 +51,11 @@ public abstract class AbstractModuleEventAdapter implements IFModuleEventListene
     }
     
     @Override
+    public void moduleBlockerRemoved(IFController controller, Object blocker) {
+    }
+    
+    @Override
     public void nameChanged(IFController controller) {
     }
+
 }

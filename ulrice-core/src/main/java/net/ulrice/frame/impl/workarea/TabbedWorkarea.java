@@ -385,6 +385,11 @@ public class TabbedWorkarea extends JTabbedPane implements IFWorkarea, MouseList
             glassPanel.setBlocked(false);
         }
     }
+    
+    @Override
+    public void moduleBlockerRemoved(IFController controller, Object blocker) {
+        // Do nothing, Workarea doesn´t care about the blockers, just if it is blocked or not
+    }
 
 
     @Override

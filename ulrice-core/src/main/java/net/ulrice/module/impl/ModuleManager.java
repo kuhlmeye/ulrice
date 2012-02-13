@@ -577,6 +577,12 @@ public class ModuleManager implements IFModuleManager, IFModuleStructureManager 
             listener.moduleUnblocked(openControllers.getActive(), blocker);
         }
     }
+    
+    private void fireBlockerRemoved(IFController controller, Object blocker) {
+        for (final IFModuleEventListener listener : listenerList.getListeners(IFModuleEventListener.class)) {
+            listener.moduleBlockerRemoved(controller, blocker);
+        }
+    }
 
     @Override
     public void addBlocker(IFController controller, Object blocker) {
@@ -613,8 +619,16 @@ public class ModuleManager implements IFModuleManager, IFModuleStructureManager 
                 if (wasBlocked && !isBlocked(controller)) {
                     fireControllerUnblocked(controller, blocker);
                 }
+                else if (wasBlocked && !isBlockedByBlocker(controller, blocker)) {
+                    fireBlockerRemoved(controller, blocker);
+                }
             }
         });
+    }
+    
+    private boolean isBlockedByBlocker(IFController controller, Object blocker) {
+        final IdentityHashMap<Object, Object> m = blockers.get(controller);
+        return (m != null && !m.isEmpty() && m.containsKey(blocker));
     }
 
     @Override

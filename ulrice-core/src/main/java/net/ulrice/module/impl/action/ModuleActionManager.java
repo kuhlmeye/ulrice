@@ -402,6 +402,15 @@ public class ModuleActionManager implements IFModuleEventListener, PropertyChang
 
 	@Override
 	public void moduleUnblocked(IFController controller, Object blocker) {
+	    unblockInternal(controller, blocker);
+	}
+	
+	@Override
+    public void moduleBlockerRemoved(IFController controller, Object blocker) {
+	    unblockInternal(controller, blocker);
+    }
+	
+	private void unblockInternal(IFController controller, Object blocker) {
 	    Map<UlriceAction, ModuleActionState> actionMap = controllerActionStateMap.get(controller);
         if(actionMap != null) {
             Collection<ModuleActionState> actions = actionMap.values();
@@ -441,7 +450,7 @@ public class ModuleActionManager implements IFModuleEventListener, PropertyChang
             }
         }
     }
-
+    
     @Override
     public void nameChanged(IFController controller) {
     }
