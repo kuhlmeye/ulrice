@@ -184,7 +184,7 @@ public class TableAM implements IFAttributeModel {
         return oldUniqueId;
     }
     
-    private Element checkAgainstDeletedElements(Element element) {
+    private Element checkAgainstDeletedElements(Element element) { //check what?
     	Element oldElement = null;
     	String oldUniqueId = checkForOldUniqueId(buildKey(element), element.getUniqueId());
 
@@ -199,7 +199,7 @@ public class TableAM implements IFAttributeModel {
                 Element el = iter.next();
                 if (oldUniqueId.equals(el.getUniqueId())) {
                     oldElement = el;
-                    oldElement.setInsertedOrRemoved(false);
+                    oldElement.setRemoved(false);
                     iter.remove();
                     break;
                 }
@@ -238,23 +238,23 @@ public class TableAM implements IFAttributeModel {
      * @param value
      * @return
      */
-    protected Element createElement(Object value, boolean dirty, boolean valid, boolean insertedOrDeleted) {
+    protected Element createElement(Object value, boolean dirty, boolean valid, boolean inserted) {
         String uniqueId = Long.toHexString(nextUniqueId++);
-        Element elem = new Element(this, uniqueId, columns, value, isReadOnly(), dirty, valid, insertedOrDeleted);
+        Element elem = new Element(this, uniqueId, columns, value, isReadOnly(), dirty, valid, inserted);
         
         if(isForTreeTable()){
-            addChildsToElement(value, dirty, valid, insertedOrDeleted, elem);
+            addChildsToElement(value, dirty, valid, inserted, elem);
         }
         
         return elem;
     }
     
     
-    protected void addChildsToElement(Object value, boolean dirty, boolean valid, boolean insertedOrDeleted, Element element){
+    protected void addChildsToElement(Object value, boolean dirty, boolean valid, boolean inserted, Element element){
        IFIndexedModelValueAccessor mva = new IndexedReflectionMVA(value,getPathToChildren());
        for(int i = 0; i < mva.getSize(); i++){           
            Object child = mva.getValue(i);
-           element.addChildElement(createElement(child, dirty, valid, insertedOrDeleted));    
+           element.addChildElement(createElement(child, dirty, valid, inserted));    
        }
     }
 
@@ -388,7 +388,7 @@ public class TableAM implements IFAttributeModel {
     }
 
     protected void elementStateChanged(final Element element) {
-        if (element.isValid()) {
+        if (element.isValid() || element.isRemoved()) {
             invElements.remove(element);
         }
         else {
@@ -879,8 +879,8 @@ public class TableAM implements IFAttributeModel {
         invElements.remove(element);
         newElements.remove(element);
         modElements.remove(element);
+        element.setRemoved(true);
         elementStateChanged(element);
-        element.setInsertedOrRemoved(true);
         fireElementDeleted(element);
         fireUpdateViews();
         return true;
@@ -968,7 +968,8 @@ public class TableAM implements IFAttributeModel {
         newElements.remove(element);
         delElements.remove(element);
         elementStateChanged(element);
-        element.setInsertedOrRemoved(false);
+        element.setInserted(false);
+        element.setRemoved(false);
         fireUpdateViews();
     }
 
