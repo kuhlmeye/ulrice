@@ -89,6 +89,7 @@ public class ModuleManager implements IFModuleManager, IFModuleStructureManager 
 
                     @Override
                     public void onControllerReady(IFController controller) {
+                        addBlocker(controller, ModuleManager.this);
 
                         if (!Ulrice.getSecurityManager().allowOpenModule(module, controller)) {
                             LOG.info("Module [Id: " + module.getUniqueId() + ", Name: "
@@ -127,6 +128,7 @@ public class ModuleManager implements IFModuleManager, IFModuleStructureManager 
                             callback.onControllerReady(controller);
                         }
 
+                        removeBlocker(controller, ModuleManager.this);
                     }
 
                     @Override
@@ -565,7 +567,8 @@ public class ModuleManager implements IFModuleManager, IFModuleStructureManager 
 
     private void fireControllerBlocked(IFController controller, Object blocker) {
         for (final IFModuleEventListener listener : listenerList.getListeners(IFModuleEventListener.class)) {
-            listener.moduleBlocked(openControllers.getActive(), blocker);
+//            listener.moduleBlocked(openControllers.getActive(), blocker);
+            listener.moduleBlocked(controller, blocker);
         }
     }
 
@@ -591,22 +594,27 @@ public class ModuleManager implements IFModuleManager, IFModuleStructureManager 
             }
             m.put(blocker, blocker);
             if (!wasBlocked) {
-                fireControllerBlocked(controller, this);
+                fireControllerBlocked(controller, blocker);
             }
         }
     }
 
     @Override
     public void removeBlocker(final IFController controller, final Object blocker) {
-        boolean wasBlocked = isBlocked(controller);
-        final IdentityHashMap<Object, Object> m = blockers.get(controller);
-        if ((m == null) || (m.remove(blocker) == null)) {
-            throw new IllegalStateException(
-                "BUG: attempting to unblock with a blocker for which there was no block: " + blocker);
-        }
-        if (wasBlocked && !isBlocked(controller)) {
-            fireControllerUnblocked(controller, this);
-        }
+        SwingUtilities.invokeLater(new Runnable() {
+            @Override
+            public void run() {
+                boolean wasBlocked = isBlocked(controller);
+                final IdentityHashMap<Object, Object> m = blockers.get(controller);
+                if ((m == null) || (m.remove(blocker) == null)) {
+                    throw new IllegalStateException(
+                        "BUG: attempting to unblock with a blocker for which there was no block: " + blocker);
+                }
+                if (wasBlocked && !isBlocked(controller)) {
+                    fireControllerUnblocked(controller, blocker);
+                }
+            }
+        });
     }
 
     @Override
