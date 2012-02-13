@@ -252,7 +252,7 @@ public class UTableVAFilter extends RowFilter<UTableViewAdapter, String> impleme
 //                        else {
     						LOG.finest("ColumnId: " + columnId + ", Value: " + strValue + ", Pattern: "
     								+ numericPattern.toString());
-    						return numericPattern.matches(value);
+    						return value == null ? false : numericPattern.matches(value);
 //                        }
 					}
 			}
