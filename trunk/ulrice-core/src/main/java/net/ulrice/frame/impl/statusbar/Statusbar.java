@@ -308,6 +308,12 @@ public class Statusbar extends JPanel implements IFMainFrameComponent, IFMessage
 		// TODO Auto-generated method stub
 		
 	}
+	
+	@Override
+    public void moduleBlockerRemoved(IFController controller, Object blocker) {
+        // TODO Auto-generated method stub
+        
+    }
 
     @Override
     public void messagesChanged() {
@@ -320,4 +326,5 @@ public class Statusbar extends JPanel implements IFMainFrameComponent, IFMessage
         // TODO Auto-generated method stub
         
     }
+
 }

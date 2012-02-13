@@ -136,8 +136,14 @@ public class SingleWorkarea implements IFWorkarea, AWTEventListener {
             Toolkit.getDefaultToolkit().removeAWTEventListener(this);
         }
     }
+    
+    @Override
+    public void moduleBlockerRemoved(IFController controller, Object blocker) {
+        // Do nothing, Workarea doesn´t care about the blockers, just if it is blocked or not
+    }
 
     @Override
     public void nameChanged(IFController controller) {
     }
+
 }
