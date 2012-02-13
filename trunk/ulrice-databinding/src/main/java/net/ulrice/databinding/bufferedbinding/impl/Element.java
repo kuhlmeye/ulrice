@@ -50,7 +50,8 @@ public class Element {
 
 	private boolean dirty;
 	private boolean valid;
-	private boolean insertedOrRemoved;
+	private boolean inserted;
+	private boolean removed;
 
 	private TableAM tableAM;
 
@@ -73,7 +74,7 @@ public class Element {
 	 */
 	public Element(TableAM tableAM, String uniqueId,
 			List<ColumnDefinition<? extends Object>> columns,
-			Object valueObject, boolean readOnly, boolean dirty, boolean valid, boolean insertedOrRemoved) {
+			Object valueObject, boolean readOnly, boolean dirty, boolean valid, boolean inserted) {
 		this.originalValueDirty = dirty;
 		this.originalValueValid = valid;
 		this.tableAM = tableAM;
@@ -86,8 +87,6 @@ public class Element {
 		
 		this.dirty = false;
 		this.valid = true;
-
-		this.insertedOrRemoved = insertedOrRemoved;
 		
 		readObject();
 	}
@@ -559,17 +558,31 @@ public class Element {
     }
     
     public boolean isInsertedOrRemoved() {
-        return insertedOrRemoved;
+        return inserted || removed;
     }
+
     
-    public void setInsertedOrRemoved(boolean insertedOrRemoved) {
-        this.insertedOrRemoved = insertedOrRemoved;
-    }
     
     public Element getChild(int index){
         return childElements.get(index);
     }
     
+    public boolean isInserted() {
+        return inserted;
+    }
+
+    public void setInserted(boolean inserted) {
+        this.inserted = inserted;
+    }
+
+    public boolean isRemoved() {
+        return removed;
+    }
+
+    public void setRemoved(boolean removed) {
+        this.removed = removed;
+    }
+
     public int getChildCount(){
         return childElements.size();
     }
