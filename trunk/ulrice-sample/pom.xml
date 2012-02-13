@@ -140,7 +140,7 @@
 					<plugin>
 						<groupId>net.ulrice</groupId>
 						<artifactId>ulrice-webstarter-maven-plugin</artifactId>
-						<version>0.2.4-SNAPSHOT</version>
+						<version>${project.version}</version>
 
 						<configuration>
 							<directories>
