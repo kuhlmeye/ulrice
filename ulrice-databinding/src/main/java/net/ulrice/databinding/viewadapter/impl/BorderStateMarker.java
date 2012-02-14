@@ -167,6 +167,7 @@ public class BorderStateMarker implements Border, ImageObserver, IFStateMarker {
     	this.valid = valid;
     	this.dirty = dirty;
         c.revalidate();
+        c.repaint();
     }
 
 	@Override
