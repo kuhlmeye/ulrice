@@ -309,7 +309,7 @@ public class UTableComponent extends JPanel {
             @Override
             public void tableChanged(TableModelEvent e) {
                 getRowSorter().allRowsChanged();
-                viewAdapter.fireTableChanged(e);                                
+                viewAdapter.fireTableChanged(e);
             }
         });
                  
