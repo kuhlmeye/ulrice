@@ -368,11 +368,15 @@ public class UTableViewAdapter extends AbstractViewAdapter implements TableModel
         return table.isCellValid(row, col);
     }
 
-    public Element getElementAt(int row) {
+    public Element getElementAt(int viewRowIndex) {      
+        return table.getElementAtViewIndex(viewRowIndex);
+    }
+    
+    public Element getElementAtUsingModelIndex(int modelRowIndex) {
         if(getTreeTableModelAdapter() != null) {
-            return getTreeTableModelAdapter().getElementForRow(row);
+            return getTreeTableModelAdapter().getElementForRow(modelRowIndex);
         }        
-        return table.getElementAtViewIndex(row);
+        return table.getElementAtModelIndex(modelRowIndex);
     }
 
     public boolean stopEditing() {
