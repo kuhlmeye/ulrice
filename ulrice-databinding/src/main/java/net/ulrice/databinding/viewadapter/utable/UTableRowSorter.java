@@ -49,7 +49,7 @@ public class UTableRowSorter extends DefaultRowSorter<UTableViewAdapter, String>
 
 			@Override
             public String getIdentifier(int row) {
-                return model.getElementAt(row).getUniqueId();
+                return model.getElementAtUsingModelIndex(row).getUniqueId();
             }
 		});
 	}
