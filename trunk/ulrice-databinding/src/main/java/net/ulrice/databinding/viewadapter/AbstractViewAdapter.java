@@ -30,6 +30,10 @@ public abstract class AbstractViewAdapter<M, V> implements IFViewAdapter<M, V> {
         this.viewType = viewType;
         setValueConverter(null);
     }
+    
+    public boolean isReadOnlyBinding() {
+        return readOnlyBinding;
+    }
 
     protected void fireViewChange() {
         inNotification = true;
