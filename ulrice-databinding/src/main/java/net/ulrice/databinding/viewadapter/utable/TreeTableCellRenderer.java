@@ -2,7 +2,7 @@ package net.ulrice.databinding.viewadapter.utable;
 
 import java.awt.Component;
 import java.awt.Graphics;
- 
+
 import javax.swing.JTable;
 import javax.swing.JTree;
 import javax.swing.table.TableCellRenderer;
@@ -23,6 +23,8 @@ public class TreeTableCellRenderer extends JTree implements TableCellRenderer {
      
     public TreeTableCellRenderer(JTable table, TreeModel model) {
         super(model);
+
+        
         this.table = table;
          
         // Setzen der Zeilenhoehe fuer die JTable
