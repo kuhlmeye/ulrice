@@ -193,9 +193,9 @@ public class UTableVAFilter extends RowFilter<UTableViewAdapter, String> impleme
 			    table = (UTable) uTableComponent.getScrollTable();
 			}
 			
-			TableCellRenderer tableCellRenderer = table.getDefaultRenderer(colDef.getColumnClass());
+			TableCellRenderer tableCellRenderer = uTableComponent.getColumnById(columnId).getCellRenderer();
 			if(tableCellRenderer == null) {
-			    tableCellRenderer = uTableComponent.getColumnById(columnId).getCellRenderer();
+			    tableCellRenderer = table.getDefaultRenderer(colDef.getColumnClass());
 			}
 			if (tableCellRenderer != null && StringBasedTableCellRenderer.class.isAssignableFrom(tableCellRenderer.getClass())) {
 			    StringBasedTableCellRenderer c = (StringBasedTableCellRenderer) tableCellRenderer;
