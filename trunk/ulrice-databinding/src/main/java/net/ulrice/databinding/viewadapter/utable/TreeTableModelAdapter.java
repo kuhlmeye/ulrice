@@ -6,7 +6,7 @@ import javax.swing.event.TreeExpansionListener;
 import javax.swing.table.AbstractTableModel;
 import javax.swing.tree.TreePath;
 
-import net.ulrice.databinding.bufferedbinding.impl.TableAM;
+import net.ulrice.databinding.bufferedbinding.impl.Element;
  
 /**
  * Adapter for the TreeModel to the TableModel
@@ -21,17 +21,22 @@ public class TreeTableModelAdapter extends AbstractTableModel {
     private JTree tree;
     private AbstractTreeTableModel treeTableModel;
  
-    public TreeTableModelAdapter(AbstractTreeTableModel treeTableModel, JTree tree) {
+    public TreeTableModelAdapter(AbstractTreeTableModel treeTableModel, final JTree tree) {
         this.tree = tree;
         this.treeTableModel = treeTableModel;
  
         tree.addTreeExpansionListener(new TreeExpansionListener() {
+            
             public void treeExpanded(TreeExpansionEvent event) {
-                fireTableDataChanged();
+                int rowForPath = tree.getRowForPath(event.getPath());
+                Element elementForRow = getElementForRow(rowForPath);
+                fireTableRowsInserted(rowForPath, rowForPath + elementForRow.getChildCount());
             }
  
             public void treeCollapsed(TreeExpansionEvent event) {
-                fireTableDataChanged();
+                int rowForPath = tree.getRowForPath(event.getPath());
+                Element elementForRow = getElementForRow(rowForPath);
+                fireTableRowsDeleted(rowForPath, rowForPath + elementForRow.getChildCount());
             }
         });
     } 
@@ -49,12 +54,15 @@ public class TreeTableModelAdapter extends AbstractTableModel {
     }
  
     public int getRowCount() {
-        int count =tree.getRowCount();
-        return count;
+        return tree.getRowCount();
     }
  
+    protected Element getElementForRow(int row) {
+        return (Element) nodeForRow(row);
+    }
+    
     protected Object nodeForRow(int row) {
-        TreePath treePath = tree.getPathForRow(row);
+        TreePath treePath = tree.getPathForRow(row);     
         if(treePath == null){
             return null;
         }

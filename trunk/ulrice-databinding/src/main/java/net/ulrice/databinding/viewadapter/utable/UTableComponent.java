@@ -22,12 +22,15 @@ import javax.swing.RowSorter.SortKey;
 import javax.swing.event.EventListenerList;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
+import javax.swing.event.TableModelEvent;
+import javax.swing.event.TableModelListener;
 import javax.swing.plaf.basic.BasicTableHeaderUI;
 import javax.swing.table.JTableHeader;
 import javax.swing.table.TableCellEditor;
 import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumn;
 import javax.swing.table.TableColumnModel;
+import javax.swing.tree.TreePath;
 
 import net.ulrice.databinding.bufferedbinding.impl.ColumnDefinition;
 import net.ulrice.databinding.bufferedbinding.impl.Element;
@@ -273,22 +276,51 @@ public class UTableComponent extends JPanel {
 	
 	private void initTreeTable(final UTableViewAdapter viewAdapter) {
 	    
-        UTreeTableModel treeTableModel = new UTreeTableModel(viewAdapter.getAttributeModel());                    
-        viewAdapter.addTableModelListener(treeTableModel);
+        final UTreeTableModel treeTableModel = new UTreeTableModel(viewAdapter.getAttributeModel());        
+        final TreeTableCellRenderer tree = new TreeTableCellRenderer(scrollTable, treeTableModel);
+        tree.setRootVisible(false);                        
+        viewAdapter.addTableModelListener(new TableModelListener() {
+            
+            @Override
+            public void tableChanged(TableModelEvent e) {
+
+                TableAM tableAM = viewAdapter.getAttributeModel();
+                
+                if(e.getType() == TableModelEvent.ALL_COLUMNS) {
+                    treeTableModel.fireTreeStructureChanged(tableAM, new Object[]{tableAM}, null, null);  
+                } else if(e.getType() == TableModelEvent.INSERT) {
+                    TreePath firstRowPath = tree.getPathForRow(e.getFirstRow());
+                    TreePath lastRowPath = tree.getPathForRow(e.getFirstRow());
+                    treeTableModel.fireTreeNodesInserted(tableAM, new Object[]{firstRowPath, lastRowPath}, null, null);
+                } else if(e.getType() == TableModelEvent.DELETE) {
+                    TreePath firstRowPath = tree.getPathForRow(e.getFirstRow());
+                    TreePath lastRowPath = tree.getPathForRow(e.getFirstRow());
+                    treeTableModel.fireTreeNodesRemoved(tableAM, new Object[]{firstRowPath, lastRowPath}, null, null);
+                } else {
+                    treeTableModel.fireTreeStructureChanged(tableAM, new Object[]{tableAM}, null, null);  
+                }
+            }
+        });
         
-        // JTree erstellen.
-        TreeTableCellRenderer tree = new TreeTableCellRenderer(scrollTable, treeTableModel);
-        tree.setRootVisible(true);
-         
+        TreeTableModelAdapter modelAdapter = new TreeTableModelAdapter(treeTableModel, tree);      
+        viewAdapter.setTreeTableModelAdapter(modelAdapter);
+        modelAdapter.addTableModelListener(new TableModelListener() {
+            
+            @Override
+            public void tableChanged(TableModelEvent e) {
+                viewAdapter.fireTableChanged(e);
+            }
+        });
+                 
         // Modell setzen.
-        scrollTable.setModel(new TreeTableModelAdapter(treeTableModel, tree));
+        scrollTableModel = new UTableModel(true, UTableComponent.this.fixedColumns, viewAdapter);
+        scrollTable.setModel(scrollTableModel);
          
         // Gleichzeitiges Selektieren fuer Tree und Table.
         TreeTableSelectionModel selectionModel = new TreeTableSelectionModel();
         tree.setSelectionModel(selectionModel); //For the tree
         scrollTable.setSelectionModel(selectionModel.getListSelectionModel()); //For the table
- 
-         
+          
         // Renderer fuer den Tree.
         scrollTable.setDefaultRenderer(TreeTableModel.class, tree);
         // Editor fuer die TreeTable
@@ -301,13 +333,9 @@ public class UTableComponent extends JPanel {
         filter = new UTableVAFilter(sorter, staticTable.getUTableHeader(), scrollTable.getUTableHeader());
         sorter.setRowFilter(filter);
         
-        //staticTableModel = new UTableModel(false, UTableComponent.this.fixedColumns, viewAdapter);
-        //staticTable.setModel(new TreeTableModelAdapter(treeTableModel, tree));
-        //staticTable.setSelectionModel(rowSelModel);
-        
         staticTableModel = new UTableModel(false, UTableComponent.this.fixedColumns, viewAdapter);
         staticTable.setModel(staticTableModel);
-        staticTable.setSelectionModel(rowSelModel);
+        staticTable.setSelectionModel(rowSelModel);       
 	}
 	
 	private void setAlteredTableHeaderListener(JTable table){
@@ -560,8 +588,8 @@ public class UTableComponent extends JPanel {
                 renderer = table.getTableHeader().getDefaultRenderer();
             }
             Component comp = renderer.getTableCellRendererComponent(table, col.getHeaderValue(), false, false, 0, 0);
-            // TODO find a clever way and place to calculate the a real value instead of setting just +10
-            maxWidth = comp.getPreferredSize().width + 10;
+            // TODO find a clever way and place to calculate the a real value instead of setting just +15
+            maxWidth = comp.getPreferredSize().width + 15;
         }
 
         for (int r = 0; r < table.getRowCount(); r++) {

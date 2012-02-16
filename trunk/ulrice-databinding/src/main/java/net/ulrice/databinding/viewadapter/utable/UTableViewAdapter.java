@@ -25,8 +25,10 @@ import net.ulrice.databinding.viewadapter.IFStateMarker;
 /**
  * @author christof
  */
+// TODO Check, if treeTableModelAdapter is respected in every method.
 public class UTableViewAdapter extends AbstractViewAdapter implements TableModelListener, TableModel {
-
+   
+    private TreeTableModelAdapter treeTableModelAdapter;
 
     private EventListenerList listenerList = new EventListenerList();
     private TableAM attributeModel;
@@ -55,7 +57,7 @@ public class UTableViewAdapter extends AbstractViewAdapter implements TableModel
             table.updateColumnModel();
         }
     };
-
+    
     public UTableViewAdapter(final UTableComponent table) {
         super(List.class);
 
@@ -144,7 +146,9 @@ public class UTableViewAdapter extends AbstractViewAdapter implements TableModel
 
     @Override
     public Class< ?> getColumnClass(int columnIndex) {
-        if (getAttributeModel() != null) {
+        if(getTreeTableModelAdapter() != null) {
+            return getTreeTableModelAdapter().getColumnClass(columnIndex);
+        } else if (getAttributeModel() != null) {
             return getAttributeModel().getColumnClass(columnIndex);
         }
         return null;
@@ -155,7 +159,9 @@ public class UTableViewAdapter extends AbstractViewAdapter implements TableModel
      */
     @Override
     public int getColumnCount() {
-        if (getAttributeModel() != null) {
+        if(getTreeTableModelAdapter() != null) {
+            return getTreeTableModelAdapter().getColumnCount();
+        } else if (getAttributeModel() != null) {
             return getAttributeModel().getColumnCount();
         }
         return 0;
@@ -166,7 +172,9 @@ public class UTableViewAdapter extends AbstractViewAdapter implements TableModel
      */
     @Override
     public String getColumnName(int columnIndex) {
-        if (getAttributeModel() != null) {
+        if(getTreeTableModelAdapter() != null) {
+            return getTreeTableModelAdapter().getColumnName(columnIndex);
+        } else if (getAttributeModel() != null) {
             return getAttributeModel().getColumnName(columnIndex);
         }
         return null;
@@ -177,8 +185,9 @@ public class UTableViewAdapter extends AbstractViewAdapter implements TableModel
      */
     @Override
     public int getRowCount() {
-         
-        if (getAttributeModel() != null) {
+        if(getTreeTableModelAdapter() != null) {
+            return getTreeTableModelAdapter().getRowCount();
+        } else if (getAttributeModel() != null) {
             return getAttributeModel().getRowCount();
         }
         return 0;
@@ -189,7 +198,9 @@ public class UTableViewAdapter extends AbstractViewAdapter implements TableModel
      */
     @Override
     public Object getValueAt(int rowIndex, int columnIndex) {
-        if (getAttributeModel() != null) {
+        if(getTreeTableModelAdapter() != null) {
+            return getTreeTableModelAdapter().getValueAt(rowIndex, columnIndex);
+        } else if (getAttributeModel() != null) {
             return getAttributeModel().getValueAt(rowIndex, columnIndex);
         }
         return null;
@@ -200,7 +211,9 @@ public class UTableViewAdapter extends AbstractViewAdapter implements TableModel
      */
     @Override
     public boolean isCellEditable(int rowIndex, int columnIndex) {
-        if (getAttributeModel() != null) {
+        if(getTreeTableModelAdapter() != null) {
+            return getTreeTableModelAdapter().isCellEditable(rowIndex, columnIndex);
+        } else if (getAttributeModel() != null) {
             return getAttributeModel().isCellEditable(rowIndex, columnIndex);
         }
         return false;
@@ -211,7 +224,9 @@ public class UTableViewAdapter extends AbstractViewAdapter implements TableModel
      */
     @Override
     public void setValueAt(Object aValue, int rowIndex, int columnIndex) {
-        if (getAttributeModel() != null) {
+        if(getTreeTableModelAdapter() != null) {
+            getTreeTableModelAdapter().setValueAt(aValue, rowIndex, columnIndex);
+        } else if (getAttributeModel() != null) {
             getAttributeModel().setValueAt(aValue, rowIndex, columnIndex);
         }
     }
@@ -354,7 +369,10 @@ public class UTableViewAdapter extends AbstractViewAdapter implements TableModel
     }
 
     public Element getElementAt(int row) {
-       return table.getElementAtViewIndex(row);
+        if(getTreeTableModelAdapter() != null) {
+            return getTreeTableModelAdapter().getElementForRow(row);
+        }        
+        return table.getElementAtViewIndex(row);
     }
 
     public boolean stopEditing() {
@@ -437,4 +455,11 @@ public class UTableViewAdapter extends AbstractViewAdapter implements TableModel
         table.selectElement(index);
     }
 
+    public void setTreeTableModelAdapter(TreeTableModelAdapter treeTableModelAdapter) {
+        this.treeTableModelAdapter = treeTableModelAdapter;
+    }
+
+    public TreeTableModelAdapter getTreeTableModelAdapter() {
+        return treeTableModelAdapter;
+    }       
 }

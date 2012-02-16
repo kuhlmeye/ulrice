@@ -1,8 +1,5 @@
 package net.ulrice.databinding.viewadapter.utable;
 
-import javax.swing.event.TableModelEvent;
-import javax.swing.event.TableModelListener;
-
 import net.ulrice.databinding.bufferedbinding.impl.Element;
 import net.ulrice.databinding.bufferedbinding.impl.TableAM;
 
@@ -13,7 +10,7 @@ import net.ulrice.databinding.bufferedbinding.impl.TableAM;
  * @author rad
  *
  */
-public class UTreeTableModel extends AbstractTreeTableModel implements TableModelListener{
+public class UTreeTableModel extends AbstractTreeTableModel {
 
     
     public UTreeTableModel(TableAM tableAM) {
@@ -85,12 +82,4 @@ public class UTreeTableModel extends AbstractTreeTableModel implements TableMode
         }
         return 0;
     }
-
-    @Override
-    public void tableChanged(TableModelEvent e) {
-        Object[] path = {tableAM};
-        fireTreeStructureChanged(tableAM,  path, null, null);  
-    }
-
-
 }
