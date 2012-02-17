@@ -31,6 +31,11 @@ public abstract class AbstractViewAdapter<M, V> implements IFViewAdapter<M, V> {
         setValueConverter(null);
     }
     
+    
+    protected void setReadOnlyBinding(boolean readOnlyBinding) {
+        this.readOnlyBinding = readOnlyBinding;
+    }
+    
     public boolean isReadOnlyBinding() {
         return readOnlyBinding;
     }
@@ -92,9 +97,8 @@ public abstract class AbstractViewAdapter<M, V> implements IFViewAdapter<M, V> {
     public void updateFromBinding(IFBinding binding) {
         if (!isInNotification()) {
             removeComponentListener();
+            setReadOnlyBinding(binding.isReadOnly());
             setValue((M) binding.getCurrentValue());
-            
-            readOnlyBinding = binding.isReadOnly();
 
             if(binding.isReadOnly() && isComponentEnabled()) {
                 setComponentEnabled(false);
