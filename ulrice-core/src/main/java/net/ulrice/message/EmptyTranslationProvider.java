@@ -5,13 +5,13 @@ import java.util.Locale;
 public class EmptyTranslationProvider implements TranslationProvider {
 
     @Override
-    public String getTranslation(String module, TranslationUsage usage, String key, Object... params) {
-        return String.format(key, params);
+    public Translation getTranslation(String module, TranslationUsage usage, String key, Object... params) {
+        return new Translation(key, true, Locale.getDefault(), String.format(key, params), 0);
     }
 
     @Override
-    public String getTranslation(Locale locale, String module, TranslationUsage usage, String key, Object... params) {
-        return String.format(key, params);
+    public Translation getTranslation(Locale locale, String module, TranslationUsage usage, String key, Object... params) {
+        return new Translation(key, true, locale, String.format(key, params), 0);
     }
 
     @Override
@@ -22,5 +22,15 @@ public class EmptyTranslationProvider implements TranslationProvider {
     @Override
     public boolean isTranslationAvailable(Locale locale, String module, TranslationUsage usage, String key) {
         return false;
+    }
+
+    @Override
+    public String getTranslationText(String module, TranslationUsage usage, String key, Object... params) {
+        return getTranslation(module, usage, key, params).getText();
+    }
+
+    @Override
+    public String getTranslationText(Locale locale, String module, TranslationUsage usage, String key, Object... params) {
+        return getTranslation(locale, module, usage, key, params).getText();
     }
 }
