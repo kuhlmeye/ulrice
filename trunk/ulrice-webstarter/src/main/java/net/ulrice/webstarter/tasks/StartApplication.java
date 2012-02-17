@@ -8,6 +8,7 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.util.List;
+import java.util.StringTokenizer;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -29,6 +30,9 @@ public class StartApplication extends AbstractTask {
 
 	/** Optional parameter containing a location jre path. */
 	private static final String PARAM_LOCAL_JRE = "localJre";
+	
+	/** Optional parameter containing options for the virtual machine, e.g. Xmx512m */
+	private static final String VM_OPTIONS = "vmOptions";
 
 	@Override
 	public boolean doTask(ProcessThread thread) {
@@ -42,6 +46,17 @@ public class StartApplication extends AbstractTask {
 			commandBuffer.append(localDir).append(localJre).append(File.separator).append("bin").append(File.separator);
 		}
 		commandBuffer.append("java ");
+		
+		String vmOptions = getParameterAsString(VM_OPTIONS);
+		if (vmOptions != null) {
+		    StringTokenizer st = new StringTokenizer(vmOptions, ",");
+		    while (st.hasMoreTokens()) {
+		        String vmOption = st.nextToken();
+		        commandBuffer.append("-");
+		        commandBuffer.append(vmOption);
+		        commandBuffer.append(" ");
+		    }
+		}
 
 		commandBuffer.append("-cp ");
 		for (String element : classPath) {
@@ -66,6 +81,7 @@ public class StartApplication extends AbstractTask {
 		}
 
 		try {
+		    LOG.log(Level.SEVERE, commandBuffer.toString());
 			// Start application
 			Process process = Runtime.getRuntime().exec(commandBuffer.toString(), null, new File(localDir));
 			StreamGobbler isGobbler = new StreamGobbler("OUT", process.getInputStream(), System.out);
