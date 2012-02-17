@@ -4,9 +4,13 @@ import java.util.Locale;
 
 
 public interface TranslationProvider {
-    String getTranslation (String module, TranslationUsage usage, String key, Object... params);
-    String getTranslation (Locale locale, String module, TranslationUsage usage, String key, Object... params);
+    
+    Translation getTranslation(String module, TranslationUsage usage, String key, Object... params);
+    Translation getTranslation(Locale locale, String module, TranslationUsage usage, String key, Object... params);
+    
+    String getTranslationText(String module, TranslationUsage usage, String key, Object... params);
+    String getTranslationText(Locale locale, String module, TranslationUsage usage, String key, Object... params);
 
     boolean isTranslationAvailable(String module, TranslationUsage usage, String key);
-    boolean isTranslationAvailable (Locale locale, String module, TranslationUsage usage, String key);
+    boolean isTranslationAvailable(Locale locale, String module, TranslationUsage usage, String key);
 }

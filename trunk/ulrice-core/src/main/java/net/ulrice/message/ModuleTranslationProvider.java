@@ -9,8 +9,10 @@ import java.util.Locale;
  * @author arno
  */
 public interface ModuleTranslationProvider {
-    String getTranslation (TranslationUsage usage, String key, Object... params);
-    String getTranslation (Locale locale, TranslationUsage usage, String key, Object... params);
+    Translation getTranslation(TranslationUsage usage, String key, Object... params);
+    Translation getTranslation(Locale locale, TranslationUsage usage, String key, Object... params);
+    String getTranslationText(TranslationUsage usage, String key, Object... params);
+    String getTranslationText(Locale locale, TranslationUsage usage, String key, Object... params);
     boolean isTranslationAvailable(TranslationUsage usage, String key);
-    boolean isTranslationAvailable (Locale locale, TranslationUsage usage, String key);
+    boolean isTranslationAvailable(Locale locale, TranslationUsage usage, String key);
 }
