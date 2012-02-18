@@ -3,16 +3,10 @@
  */
 package net.ulrice.databinding.viewadapter.utable;
 
-import java.awt.Color;
 import java.awt.Component;
 
 import javax.swing.JComponent;
 import javax.swing.JTable;
-
-import net.ulrice.databinding.bufferedbinding.impl.Element;
-import net.ulrice.databinding.ui.BindingUI;
-import net.ulrice.databinding.viewadapter.IFStateMarker;
-import net.ulrice.databinding.viewadapter.IFTooltipHandler;
 
 /**
  * @author christof

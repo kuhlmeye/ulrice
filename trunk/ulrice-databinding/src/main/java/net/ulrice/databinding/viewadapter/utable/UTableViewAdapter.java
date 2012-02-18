@@ -19,8 +19,8 @@ import net.ulrice.databinding.bufferedbinding.impl.Element;
 import net.ulrice.databinding.bufferedbinding.impl.TableAM;
 import net.ulrice.databinding.bufferedbinding.impl.TableAMListener;
 import net.ulrice.databinding.viewadapter.AbstractViewAdapter;
+import net.ulrice.databinding.viewadapter.IFCellStateMarker;
 import net.ulrice.databinding.viewadapter.IFCellTooltipHandler;
-import net.ulrice.databinding.viewadapter.IFStateMarker;
 
 /**
  * @author christof
@@ -40,6 +40,7 @@ public class UTableViewAdapter extends AbstractViewAdapter implements TableModel
         @Override
         public void columnValueRangeChanged(TableAM tableAM, ColumnDefinition< ?> colDef) {
             table.updateColumnModel();
+            getFilter().rebuildFilter();
         }
 
         @Override
@@ -50,11 +51,13 @@ public class UTableViewAdapter extends AbstractViewAdapter implements TableModel
         @Override
         public void columnRemoved(TableAM tableAM, ColumnDefinition< ?> colDef) {
             table.updateColumnModel();
+            getFilter().rebuildFilter();
         }
 
         @Override
         public void columnAdded(TableAM tableAM, ColumnDefinition< ?> colDef) {
             table.updateColumnModel();
+            getFilter().rebuildFilter();
         }
     };
     
@@ -234,7 +237,7 @@ public class UTableViewAdapter extends AbstractViewAdapter implements TableModel
     /**
      * @see net.ulrice.databinding.IFGuiAccessor#getStateMarker()
      */
-    public IFStateMarker getCellStateMarker() {
+    public IFCellStateMarker getCellStateMarker() {
         return table.getCellStateMarker();
     }
 
@@ -248,7 +251,7 @@ public class UTableViewAdapter extends AbstractViewAdapter implements TableModel
     /**
      * @see net.ulrice.databinding.IFGuiAccessor#setStateMarker(net.ulrice.databinding.viewadapter.IFStateMarker)
      */
-    public void setCellStateMarker(IFStateMarker stateMarker) {
+    public void setCellStateMarker(IFCellStateMarker stateMarker) {
         table.setCellStateMarker(stateMarker);
     }
 

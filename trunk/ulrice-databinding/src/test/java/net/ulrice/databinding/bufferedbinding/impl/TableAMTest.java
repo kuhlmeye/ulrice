@@ -328,12 +328,21 @@ public class TableAMTest {
         Assert.assertEquals(2, tableAM.getRowCount());
         
         tableAM.delElement(0);
-        Assert.assertEquals(1, tableAM.getRowCount());
+        if(tableAM.isDisplayRemovedEntries()) {
+            Assert.assertEquals(2, tableAM.getRowCount());
+            Assert.assertEquals("Max Mustermann", tableAM.getElementAt(0).getValueAt(0));
+            Assert.assertEquals("Petra Musterfrau", tableAM.getElementAt(1).getValueAt(0));
+            Assert.assertEquals(20, tableAM.getElementAt(1).getValueAt(1));
+            Assert.assertTrue(tableAM.getElementAt(0).isRemoved());
+            Assert.assertFalse(tableAM.getElementAt(1).isDirty());
+        } else {
+            Assert.assertEquals(1, tableAM.getRowCount());
+            Assert.assertEquals("Petra Musterfrau", tableAM.getElementAt(0).getValueAt(0));
+            Assert.assertFalse(tableAM.getElementAt(0).isDirty());
+            Assert.assertEquals(20, tableAM.getElementAt(0).getValueAt(1));
+        }
         Assert.assertTrue(tableAM.isDirty());
         Assert.assertTrue(tableAM.isValid());
-        Assert.assertEquals("Petra Musterfrau", tableAM.getElementAt(0).getValueAt(0));
-        Assert.assertFalse(tableAM.getElementAt(0).isDirty());
-        Assert.assertEquals(20, tableAM.getElementAt(0).getValueAt(1));
         
         Assert.assertEquals(0, tableAM.getCreatedObjects().size());
         Assert.assertEquals(0, tableAM.getModifiedObjects().size());
@@ -595,7 +604,6 @@ public class TableAMTest {
     	Assert.assertEquals(21, p.age);
     }
     
-    @Ignore("FIXME") // FIXME fix test case
     @Test
     public void removeAndChangeElementToDeletedData() {
     	tableAM.read();
@@ -609,7 +617,7 @@ public class TableAMTest {
     	Assert.assertEquals(true, tableAM.isDirty());
     	
     	Person p = (Person) tableAM.getCurrentValueAt(1);
-    	Assert.assertEquals(21, p.age);
+    	Assert.assertEquals(20, p.age);
     }
     
     

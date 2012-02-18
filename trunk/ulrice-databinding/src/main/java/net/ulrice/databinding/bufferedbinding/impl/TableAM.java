@@ -28,11 +28,10 @@ import net.ulrice.databinding.viewadapter.utable.TreeTableModel;
 /**
  * @author christof
  */
+@SuppressWarnings("rawtypes")
 public class TableAM implements IFAttributeModel {
 
     private IFIndexedModelValueAccessor tableMVA;
-
-    // private ElementLifecycleListener uniqueConstraint = null;
 
     private List<ColumnDefinition< ? extends Object>> columns = new ArrayList<ColumnDefinition< ? extends Object>>();
     private Map<String, ColumnDefinition> columnIdMap = new HashMap<String, ColumnDefinition>();
@@ -60,11 +59,12 @@ public class TableAM implements IFAttributeModel {
     private boolean initialized = false;
     private boolean dirty = false;
     private boolean valid = true;
+    
     //prevent update ui, for mass editing
     private boolean massEditMode = false;
 
     // unique constraint handling
-    private String[] columnIds = null;
+    private String[] columnIds = null;    
     private Map<List< ?>, Set<String>> uniqueMap = new HashMap<List< ?>, Set<String>>();
     private Map<List< ?>, Set<String>> uniqueDeleteMap = new HashMap<List< ?>, Set<String>>();
     private Map<String, List< ?>> keyMap = new HashMap<String, List< ?>>();
@@ -72,6 +72,8 @@ public class TableAM implements IFAttributeModel {
     private Map<List< ?>, ValidationError> currentErrorMap = new HashMap<List< ?>, ValidationError>();
 
     private String pathToChildren;
+    
+    private boolean displayRemovedEntries = true;
     
     private List<SortKey> defaultSortKeys;
     
@@ -342,7 +344,7 @@ public class TableAM implements IFAttributeModel {
      * @see javax.swing.table.TableModel#isCellEditable(int, int)
      */
     public boolean isCellEditable(int rowIndex, int columnIndex) {
-        return !isReadOnly() && getElementAt(rowIndex) != null && !getElementAt(rowIndex).isReadOnly(columnIndex);
+        return !isReadOnly() && getElementAt(rowIndex) != null && !getElementAt(rowIndex).isReadOnly(columnIndex) && !getElementAt(rowIndex).isRemoved();
     }
 
     /**
@@ -491,6 +493,10 @@ public class TableAM implements IFAttributeModel {
         columnIdMap.put(columnDefinition.getId(), columnDefinition);
         fireColumnAdded(columnDefinition);
     }
+
+    public boolean containsColumn(ColumnDefinition< ?> column) {
+        return columns.contains(column);
+    }    
 
     public void delColumn(ColumnDefinition< ?> columnDefinition) {
         columns.remove(columnDefinition);
@@ -869,10 +875,13 @@ public class TableAM implements IFAttributeModel {
             return false;
         }
 
-        boolean removed = elements.remove(element);
-        if (!removed) {
-            return false;
+        if(!isDisplayRemovedEntries() || element.isInserted()) {
+            boolean removed = elements.remove(element);
+            if (!removed) {
+                return false;
+            }
         }
+        
         if (!newElements.contains(element)) {
             delElements.add(element);
         }
@@ -963,6 +972,11 @@ public class TableAM implements IFAttributeModel {
     }
 
     public void commitElement(Element element) {
+        
+        if(element.isRemoved() && isDisplayRemovedEntries()) {
+            elements.remove(element);
+        }
+        
         element.writeObject();
         element.readObject();
         newElements.remove(element);
@@ -974,7 +988,17 @@ public class TableAM implements IFAttributeModel {
     }
 
     public void rollbackElement(Element element) {
+        boolean wasInserted = element.isInserted(); 
+        if(wasInserted) {            
+            delElement(element);
+        }
+        
         element.readObject();
+        if(!wasInserted && element.isRemoved() && isDisplayRemovedEntries()) {
+            element.setRemoved(false);
+            delElements.remove(element);
+        }
+        
         elementStateChanged(element);
         fireUpdateViews();
     }
@@ -1025,6 +1049,7 @@ public class TableAM implements IFAttributeModel {
 
     private void registerNewElement(Element element) {
         elementIdMap.put(element.getUniqueId(), element);
+        element.setInserted(true);
         newElements.add(element);
     }
 
@@ -1158,20 +1183,17 @@ public class TableAM implements IFAttributeModel {
 
     @Override
     public void addExternalValidationError(String translatedMessage) {
-        // TODO Implement me..
-        
+        // TODO Implement me..       
     }
 
     @Override
     public void clearExternalValidationErrors() {
-        // TODO Implement me..
-        
+        // TODO Implement me..        
     }
 
     @Override
     public void addExternalValidationError(ValidationError validationError) {
-        // TODO Implement me..
-        
+        // TODO Implement me..        
     }
 
     public String getPathToChildren() {
@@ -1185,8 +1207,6 @@ public class TableAM implements IFAttributeModel {
     public boolean isForTreeTable() {
         return pathToChildren != null;
     }
-    
-    
    
     public List<SortKey> getDefaultSortKeys() {
         return defaultSortKeys;
@@ -1196,8 +1216,15 @@ public class TableAM implements IFAttributeModel {
         this.defaultSortKeys = defaultSortKeys;
     }
 
-    public String toString(){
-        return elements.size()+" Elements";
+    public boolean isDisplayRemovedEntries() {
+        return displayRemovedEntries;
     }
     
+    public void setDisplayRemovedEntries(boolean displayRemovedEntries) {
+        this.displayRemovedEntries = displayRemovedEntries;
+    }
+    
+    public String toString(){
+        return elements.size() + " Elements";
+    }
 }

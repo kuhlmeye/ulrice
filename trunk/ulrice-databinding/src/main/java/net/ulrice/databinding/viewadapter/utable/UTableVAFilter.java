@@ -388,7 +388,7 @@ public class UTableVAFilter extends RowFilter<UTableViewAdapter, String> impleme
 			}
 		}
 		rowSorter.sort();
-        rowSorter.getModel().fireTableStructureChanged();
+        rowSorter.getModel().fireTableDataChanged();
         //rowSorter.getModel().getComponent().repaint();
 	}
 
@@ -407,6 +407,8 @@ public class UTableVAFilter extends RowFilter<UTableViewAdapter, String> impleme
 	}
 
 	public void rebuildFilter() {
+	    numericPatternExpressionMap.clear();
+	    regexExpressionMap.clear();
         createFilterComponents(staticTableHeader);
         createFilterComponents(scrollTableHeader);
 	}
