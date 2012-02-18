@@ -76,7 +76,7 @@ public class UlriceSampleApplication {
 		sampleModule2.setAuthorization(new Authorization(SampleSecurityCallback.TYPE_MODULE_REGISTER, "SAMPLE2"));
 		
 		AuthReflectionModule lafListModule = new AuthReflectionModule("lafList", ModuleType.NormalModule,
-				"net.ulrice.sample.module.laflist.CLafList", "net/ulrice/sample/module/laflist/moduleicon.png",
+				"net.ulrice.sample.module.laflist.LafListController", "net/ulrice/sample/module/laflist/moduleicon.png",
 				new SimpleModuleTitleRenderer("Look And Feel Constants"));
 		lafListModule.setAuthorization(new Authorization(SampleSecurityCallback.TYPE_MODULE_REGISTER, "LAFLIST"));
 		

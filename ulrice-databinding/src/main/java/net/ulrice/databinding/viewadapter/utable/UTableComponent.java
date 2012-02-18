@@ -2,6 +2,7 @@ package net.ulrice.databinding.viewadapter.utable;
 
 import java.awt.BorderLayout;
 import java.awt.Component;
+import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
@@ -35,45 +36,40 @@ import javax.swing.tree.TreePath;
 import net.ulrice.databinding.bufferedbinding.impl.ColumnDefinition;
 import net.ulrice.databinding.bufferedbinding.impl.Element;
 import net.ulrice.databinding.bufferedbinding.impl.TableAM;
+import net.ulrice.databinding.viewadapter.IFCellStateMarker;
 import net.ulrice.databinding.viewadapter.IFCellTooltipHandler;
 import net.ulrice.databinding.viewadapter.IFStateMarker;
 
 
 public class UTableComponent extends JPanel {
 
-
+    private static final long serialVersionUID = 6533485227507042410L;
+    private static final int RESIZE_MARGIN = 2;
 
     private EventListenerList listenerList = new EventListenerList();
     
-	private static final long serialVersionUID = 6533485227507042410L;
-
-    private static final int RESIZE_MARGIN = 2;
 	private UTable staticTable;
 	private UTable scrollTable;
 
-	private UTableVAFilter filter;
-	
-	private ListSelectionModel rowSelModel;
+	private UTableModel staticTableModel;
+    private UTableModel scrollTableModel;
 
-	private int fixedColumns;
+    private UTableVAFilter filter;
+    private UTableRowSorter sorter;
 	
+	private ListSelectionModel rowSelModel = new DefaultListSelectionModel();
+
+	private int fixedColumns;	
 	private int originalFixedColumns;
-
 	private int selColumn = -1;
 
-	private UTableRowSorter sorter;
-
 	private IFCellTooltipHandler tooltipHandler;
+	private IFCellStateMarker stateMarker;
 
-	private IFStateMarker stateMarker;
-
-    private UTableModel staticTableModel;
-
-    private UTableModel scrollTableModel;
 
     private TableAM attributeModel;
     
-    private List<Action> popupMenuActions = new ArrayList<Action>();
+    private List<UTableAction> popupMenuActions = new ArrayList<UTableAction>();
 
     public UTableComponent(final int fixedColumns) {        
         this.fixedColumns = fixedColumns;
@@ -184,7 +180,6 @@ public class UTableComponent extends JPanel {
 	
 	public void init(final UTableViewAdapter viewAdapter) {
 	    
-	    rowSelModel = new DefaultListSelectionModel();
 	  
 	    staticTable.setDefaultRenderer(Object.class, new UTableVADefaultRenderer());
         scrollTable.setDefaultRenderer(Object.class, new UTableVADefaultRenderer());
@@ -194,7 +189,6 @@ public class UTableComponent extends JPanel {
 	        return;
 	    }
 	    
-	    rowSelModel = new DefaultListSelectionModel();
 	    rowSelModel.addListSelectionListener(new ListSelectionListener() {
             private boolean nested = false;
 
@@ -396,7 +390,7 @@ public class UTableComponent extends JPanel {
 	}
 
 
-	public void setCellStateMarker(IFStateMarker stateMarker) {
+	public void setCellStateMarker(IFCellStateMarker stateMarker) {
 		this.stateMarker = stateMarker;
 	}
 
@@ -404,7 +398,7 @@ public class UTableComponent extends JPanel {
 		return tooltipHandler;
 	}
 
-	public IFStateMarker getCellStateMarker() {
+	public IFCellStateMarker getCellStateMarker() {
 		return stateMarker;
 	}
 
@@ -828,13 +822,30 @@ public class UTableComponent extends JPanel {
         return scrollTable.getColumnModel().getColumn(column-fixedColumns);        
     }
     
-    public void addTableAction(Action action) {
+    public void addTableAction(UTableAction action) {
         popupMenuActions.add(action);
     }    
 
     private void showPopupMenu(Component component, int x, int y) {
+
+        if(!(areRowsSelected() && !isSingleRowSelected())) {
+            int rowAtPoint = -1;
+            if(scrollTable != null && rowAtPoint == -1) {
+                rowAtPoint = scrollTable.rowAtPoint(new Point(x, y));
+            }
+            
+            if(staticTable != null && rowAtPoint == -1) {
+                rowAtPoint = staticTable.rowAtPoint(new Point(x, y));
+            }
+            
+            if(rowAtPoint > -1) {
+                getSelectionModel().setSelectionInterval(rowAtPoint, rowAtPoint);
+            }
+        }
+        
         JPopupMenu popupMenu = new JPopupMenu();
-        for(Action action : popupMenuActions) {
+        for(UTableAction action : popupMenuActions) {
+            action.initialize(this);
             popupMenu.add(action);
         }
         popupMenu.show(component, x, y);
@@ -843,6 +854,10 @@ public class UTableComponent extends JPanel {
     public void scrollToRow(int row){
         scrollTable.scrollRectToVisible(new Rectangle(scrollTable.getCellRect(row, 0, true)));
     }
-    
-    
+
+    public void undoChangesOfSelectedRow() {
+        if(isSingleRowSelected() && attributeModel != null) {
+            attributeModel.rollbackElement(getSelectedElement());
+        }
+    }
 }

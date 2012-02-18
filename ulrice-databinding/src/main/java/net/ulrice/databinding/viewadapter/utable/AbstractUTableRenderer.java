@@ -4,31 +4,29 @@ import java.awt.Color;
 
 import javax.swing.JComponent;
 import javax.swing.JTable;
+import javax.swing.UIManager;
 import javax.swing.table.DefaultTableCellRenderer;
 
 import net.ulrice.databinding.bufferedbinding.impl.ColumnColorOverride;
 import net.ulrice.databinding.bufferedbinding.impl.ColumnDefinition;
 import net.ulrice.databinding.bufferedbinding.impl.Element;
 import net.ulrice.databinding.ui.BindingUI;
+import net.ulrice.databinding.viewadapter.IFCellStateMarker;
 import net.ulrice.databinding.viewadapter.IFCellTooltipHandler;
 import net.ulrice.databinding.viewadapter.IFStateMarker;
 
 public abstract class AbstractUTableRenderer extends DefaultTableCellRenderer {
-    IFStateMarker stateMarker;
+    IFCellStateMarker stateMarker;
     IFCellTooltipHandler tooltipHandler;
-    static IFStateMarker defaultStateMarker;
+    static IFCellStateMarker defaultStateMarker;
     static IFCellTooltipHandler defaultTooltipHandler;
 
-    Color evenNormalBackground = BindingUI.getColor(BindingUI.BACKGROUND_NORMAL_EVEN_TABLE_ROW, new Color(230, 230, 230));
-    Color oddNormalBackground = BindingUI.getColor(BindingUI.BACKGROUND_NORMAL_ODD_TABLE_ROW, new Color(200,200, 200));
-    Color evenReadOnlyBackground = BindingUI.getColor(BindingUI.BACKGROUND_READONLY_EVEN_TABLE_ROW,new Color(200, 230, 200));
-    Color oddReadOnlyBackground = BindingUI.getColor(BindingUI.BACKGROUND_READONLY_ODD_TABLE_ROW, new Color(170, 200, 170));
-    Color selectedBackground = BindingUI.getColor(BindingUI.BACKGROUND_SELECTED_TABLE_ROW, new Color(200, 200, 255));
-    
+
     public AbstractUTableRenderer() {        
         super();        
         stateMarker = defaultStateMarker;
         tooltipHandler = defaultTooltipHandler;
+        setForeground(UIManager.getColor("Label.Foreground"));
     }
 
     public JComponent adaptComponent(JTable table, boolean isSelected, int row, int column, JComponent component) {
@@ -40,39 +38,18 @@ public abstract class AbstractUTableRenderer extends DefaultTableCellRenderer {
             UTable uTable = (UTable) table;
             UTableComponent tableComponent = uTable.getTableComponent();
             boolean readOnly = !uTable.isCellEditable(row, column);
-    
-            if (isSelected) {
-                component.setBackground(selectedBackground);
-            }
-            else if (readOnly) {
-                component.setBackground(row % 2 == 0 ? evenReadOnlyBackground : oddReadOnlyBackground);
-            }
-            else {
-                component.setBackground(row % 2 == 0 ? evenNormalBackground : oddNormalBackground);
-            }
+
             
             
             String columnId = table.getColumnModel().getColumn(column).getIdentifier().toString();
-            // TODO SELECTION BACKGROUND
-            
-            ColumnDefinition colDef = tableComponent.getColumnById(columnId);
-            ColumnColorOverride colorOverride = colDef.getColumnColorOverride();
-            
-            if(colorOverride != null){                
-                if (readOnly && !isSelected) {
-                    component.setBackground(row % 2 == 0 ? colorOverride.getEvenReadOnlyColor() : colorOverride.getOddReadOnlyColor());
-                } else if(!readOnly && !isSelected) {
-                    component.setBackground(row % 2 == 0 ? colorOverride.getEvenNormalColor() : colorOverride.getOddNormalColor());
-                }
-            }            
-            
+            ColumnDefinition<?> colDef = tableComponent.getColumnById(columnId);
             if(colDef.getBorder() != null){
                 component.setBorder(colDef.getBorder());
-            }        
+            }                    
     
             Element element = tableComponent.getElementAtViewIndex(row);
             if (element != null) {
-                IFStateMarker sm = getStateMarker(tableComponent);
+                IFCellStateMarker sm = getStateMarker(tableComponent);
                 if (sm != null) {
                     dirty |= element.isOriginalValueDirty();
                     valid &= element.isOriginalValueValid();
@@ -81,22 +58,32 @@ public abstract class AbstractUTableRenderer extends DefaultTableCellRenderer {
     
                     dirty |= element.isColumnDirty(columnId);
                     valid &= element.isColumnValid(columnId);
-    
+
                     sm.initialize(component);
-                    sm.updateState(element, readOnly, dirty, valid, component);
+                    sm.updateState(element, row, isSelected, !readOnly, dirty, valid, component);
                 }
 
                 IFCellTooltipHandler tth = getTooltipHandler(tableComponent);
                 if (tth != null) {
                     tth.updateTooltip(element, columnId, component);
+                }    
+            }            
+            
+            
+            ColumnColorOverride colorOverride = colDef.getColumnColorOverride();            
+            if(colorOverride != null){                
+                if (readOnly && !isSelected) {
+                    component.setBackground(row % 2 == 0 ? colorOverride.getEvenReadOnlyColor() : colorOverride.getOddReadOnlyColor());
+                } else if(!readOnly && !isSelected) {
+                    component.setBackground(row % 2 == 0 ? colorOverride.getEvenNormalColor() : colorOverride.getOddNormalColor());
                 }
-    
-            }
+            }            
+
         }
         return component;
     }
 
-    public IFStateMarker getStateMarker(UTableComponent tableComponent) {
+    public IFCellStateMarker getStateMarker(UTableComponent tableComponent) {
         if(stateMarker != null) {
             return stateMarker;
         } else if(tableComponent.getCellStateMarker() != null) {
@@ -105,7 +92,7 @@ public abstract class AbstractUTableRenderer extends DefaultTableCellRenderer {
         return AbstractUTableRenderer.getDefaultStateMarker();
     }
 
-    public void setStateMarker(IFStateMarker stateMarker) {
+    public void setStateMarker(IFCellStateMarker stateMarker) {
         this.stateMarker = stateMarker;        
     }
 
@@ -122,7 +109,7 @@ public abstract class AbstractUTableRenderer extends DefaultTableCellRenderer {
         this.tooltipHandler = tooltipHandler;
     }
     
-    public static void setDefaultStateMarker(IFStateMarker defaultStateMarker) {
+    public static void setDefaultStateMarker(IFCellStateMarker defaultStateMarker) {
         AbstractUTableRenderer.defaultStateMarker = defaultStateMarker;
     }
     
@@ -130,7 +117,7 @@ public abstract class AbstractUTableRenderer extends DefaultTableCellRenderer {
         AbstractUTableRenderer.defaultTooltipHandler = defaultTooltipHandler;
     }
     
-    public static IFStateMarker getDefaultStateMarker() {
+    public static IFCellStateMarker getDefaultStateMarker() {
         return defaultStateMarker;
     }
     
