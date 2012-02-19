@@ -25,6 +25,9 @@ public class UTable extends JTable {
 		setColumnSelectionAllowed(false);
 		setRowSelectionAllowed(true);
 		
+		putClientProperty("JTable.autoStartsEdit", Boolean.TRUE);
+		putClientProperty("terminateEditOnFocusLost", Boolean.TRUE);
+		
 		uTableHeader = new UTableVAHeader(getColumnModel(), new Insets(1, 1, 3, 1));
 		setTableHeader(uTableHeader);
 		
