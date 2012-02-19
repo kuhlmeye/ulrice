@@ -695,6 +695,17 @@ public class UTableComponent extends JPanel {
         }
     }   
     
+    public Element copySelectedRow() {
+        checkAttributeModelSet();
+        
+        if(isSingleRowSelected()) {
+            Object object = getSelectedObject();
+            return attributeModel.addElement(object);
+        } else {
+            return null;
+        }
+    }   
+    
     public void delSelectedRows() {
         checkAttributeModelSet();
         List<Element> elements = getSelectedElements();
