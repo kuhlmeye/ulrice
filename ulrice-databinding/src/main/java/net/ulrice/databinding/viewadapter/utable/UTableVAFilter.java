@@ -1,6 +1,7 @@
 package net.ulrice.databinding.viewadapter.utable;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -56,6 +57,7 @@ public class UTableVAFilter extends RowFilter<UTableViewAdapter, String> impleme
 	/** The map holding the current filter expressions for all columns by id. */
 	private Map<String, Pattern> regexExpressionMap = new HashMap<String, Pattern>();
 	private Map<String, NumericPattern> numericPatternExpressionMap = new HashMap<String, NumericPattern>();
+    private Map<String, List<String>> collapsedRowFilterMap = new HashMap<String, List<String>>();
 
 	private UTableRowSorter rowSorter;
 
@@ -182,6 +184,18 @@ public class UTableVAFilter extends RowFilter<UTableViewAdapter, String> impleme
 		for (int i = 0; i < entry.getValueCount() && include; i++) {
 		    
 			String columnId = columnIdentifiers.get(i);
+
+            if (collapsedRowFilterMap.containsKey(columnId)) {
+                if (element.getCurrentValue() instanceof HeaderCapable) {
+                    HeaderCapable item = (HeaderCapable) element.getCurrentValue();
+                    if (!item.isHeader()) {
+                        if (collapsedRowFilterMap.get(columnId).contains(entry.getStringValue(i))) {
+                            return false;
+                        }
+                    }
+                }
+            }
+
 			UTableComponent uTableComponent = entry.getModel().getComponent();
 			@SuppressWarnings("rawtypes")
             ColumnDefinition colDef = uTableComponent.getColumnById(columnId);
@@ -551,5 +565,40 @@ public class UTableVAFilter extends RowFilter<UTableViewAdapter, String> impleme
             super();
             this.columndId = columndId;
         }
+    }
+
+    public void collapseRow(String columnId, String value) {
+        if (collapsedRowFilterMap.containsKey(columnId)) {
+            if (collapsedRowFilterMap.get(columnId).contains(value)) {
+                collapsedRowFilterMap.get(columnId).remove(value);
+            }
+            else {
+                collapsedRowFilterMap.get(columnId).add(value);
+            }
+        }
+        else {
+            collapsedRowFilterMap.put(columnId, new ArrayList<String>(Arrays.asList(value)));
+        }
+        rowSorter.sort();
+        rowSorter.getModel().fireTableStructureChanged();
+    }
+
+    public void collapseRow(String columnId, String value, boolean collapse) {
+        if (collapse) {
+            if (collapsedRowFilterMap.containsKey(columnId)) {
+                collapsedRowFilterMap.get(columnId).add(value);
+            }
+            else {
+                collapsedRowFilterMap.put(columnId, new ArrayList<String>(Arrays.asList(value)));
+            }
+        }
+        else {
+            List<String> list = collapsedRowFilterMap.get(columnId);
+            if (list != null) {
+                list.remove(value);
+            }
+        }
+        rowSorter.sort();
+        rowSorter.getModel().fireTableStructureChanged();
     }
 }
