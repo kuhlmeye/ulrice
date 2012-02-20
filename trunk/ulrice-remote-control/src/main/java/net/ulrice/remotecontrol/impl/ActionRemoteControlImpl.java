@@ -177,6 +177,8 @@ public class ActionRemoteControlImpl implements ActionRemoteControl {
             else {
                 result = false;
             }
+            
+            RemoteControlUtils.pause();
         }
 
         return result;
