@@ -115,6 +115,8 @@ public class ModuleRemoteControlImpl implements ModuleRemoteControl {
             });
 
             success &= result.aquireResult();
+            
+            RemoteControlUtils.pause();
         }
 
         return success;

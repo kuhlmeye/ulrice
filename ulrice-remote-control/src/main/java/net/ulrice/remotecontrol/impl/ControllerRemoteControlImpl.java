@@ -180,6 +180,8 @@ public class ControllerRemoteControlImpl implements ControllerRemoteControl {
             });
 
             success &= result.aquireResult();
+
+            RemoteControlUtils.pause();
         }
 
         return success;
@@ -242,6 +244,8 @@ public class ControllerRemoteControlImpl implements ControllerRemoteControl {
             }
 
             success &= result.aquireResult();
+            
+            RemoteControlUtils.pause();
         }
 
         return success;

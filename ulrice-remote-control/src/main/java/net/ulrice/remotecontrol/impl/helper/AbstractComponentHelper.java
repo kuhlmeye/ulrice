@@ -150,8 +150,11 @@ public abstract class AbstractComponentHelper<TYPE extends Component> implements
 
         Point mousePosition = MouseInfo.getPointerInfo().getLocation();
         robot.mouseMove(location.x, location.y);
+        RemoteControlUtils.pause();
         robot.mousePress(InputEvent.BUTTON1_MASK);
+        RemoteControlUtils.pause();
         robot.mouseRelease(InputEvent.BUTTON1_MASK);
+        RemoteControlUtils.pause();
         robot.mouseMove(mousePosition.x, mousePosition.y);
 
         return true;
