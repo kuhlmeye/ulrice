@@ -2,6 +2,7 @@ package net.ulrice.databinding.viewadapter.utable;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -581,9 +582,17 @@ public class UTableVAFilter extends RowFilter<UTableViewAdapter, String> impleme
             collapsedRowFilterMap.put(columnId, new ArrayList<String>(Arrays.asList(value)));
         }
         List< ? extends SortKey> sortKeys = rowSorter.getSortKeys();
+        Comparator[] comparators = new Comparator[rowSorter.getModelRowCount()];
+        for (int i = 0; i < rowSorter.getModelRowCount(); i++) {
+            comparators[i] = rowSorter.getComparator(i);
+        }
         rowSorter.sort();
         rowSorter.getModel().fireTableStructureChanged();
+        for (int i = 0; i < rowSorter.getModelRowCount(); i++) {
+            rowSorter.setComparator(i, comparators[i]);
+        }
         rowSorter.setSortKeys(sortKeys);
+
     }
 
     public void collapseRow(String columnId, String value, boolean collapse) {
@@ -602,8 +611,15 @@ public class UTableVAFilter extends RowFilter<UTableViewAdapter, String> impleme
             }
         }
         List< ? extends SortKey> sortKeys = rowSorter.getSortKeys();
+        Comparator[] comparators = new Comparator[rowSorter.getModelRowCount()];
+        for (int i = 0; i < rowSorter.getModelRowCount(); i++) {
+            comparators[i] = rowSorter.getComparator(i);
+        }
         rowSorter.sort();
         rowSorter.getModel().fireTableStructureChanged();
+        for (int i = 0; i < rowSorter.getModelRowCount(); i++) {
+            rowSorter.setComparator(i, comparators[i]);
+        }
         rowSorter.setSortKeys(sortKeys);
     }
 }
