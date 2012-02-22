@@ -356,7 +356,7 @@ public class UTableVAFilter extends RowFilter<UTableViewAdapter, String> impleme
                         regex = regex.replace("-", "\\-");
                     }
                     regex = regex.replace(".", "\\.");
-                    regex = regex.replace("?", ".?");
+                    regex = regex.replace("?", ".");
                     regex = regex.replace("*", ".*");
                     if (!isCombo) {
                         regex += ".*";
