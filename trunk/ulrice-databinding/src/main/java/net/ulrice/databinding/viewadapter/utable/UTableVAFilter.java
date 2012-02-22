@@ -15,6 +15,7 @@ import javax.swing.JComboBox;
 import javax.swing.JComponent;
 import javax.swing.JTextField;
 import javax.swing.RowFilter;
+import javax.swing.RowSorter.SortKey;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
@@ -579,8 +580,10 @@ public class UTableVAFilter extends RowFilter<UTableViewAdapter, String> impleme
         else {
             collapsedRowFilterMap.put(columnId, new ArrayList<String>(Arrays.asList(value)));
         }
+        List< ? extends SortKey> sortKeys = rowSorter.getSortKeys();
         rowSorter.sort();
         rowSorter.getModel().fireTableStructureChanged();
+        rowSorter.setSortKeys(sortKeys);
     }
 
     public void collapseRow(String columnId, String value, boolean collapse) {
@@ -598,7 +601,9 @@ public class UTableVAFilter extends RowFilter<UTableViewAdapter, String> impleme
                 list.remove(value);
             }
         }
+        List< ? extends SortKey> sortKeys = rowSorter.getSortKeys();
         rowSorter.sort();
         rowSorter.getModel().fireTableStructureChanged();
+        rowSorter.setSortKeys(sortKeys);
     }
 }
