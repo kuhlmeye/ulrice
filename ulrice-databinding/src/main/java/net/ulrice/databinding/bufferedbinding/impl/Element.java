@@ -247,7 +247,7 @@ public class Element {
 
 		if (modelList != null) {
 			dirty = false;
-			valid = validationResult.isValid();
+			valid = validationResult == null || validationResult.isValid();
 			for (IFAttributeModel<?> model : modelList) {
 				dirty |= model.isDirty();
 				valid &= model.isValid();
