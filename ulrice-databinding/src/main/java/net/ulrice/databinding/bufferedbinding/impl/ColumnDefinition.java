@@ -11,11 +11,11 @@ import javax.swing.event.EventListenerList;
 import javax.swing.table.TableCellEditor;
 import javax.swing.table.TableCellRenderer;
 
-import net.ulrice.databinding.UlriceDatabinding;
 import net.ulrice.databinding.bufferedbinding.IFAttributeInfo;
 import net.ulrice.databinding.converter.IFValueConverter;
 import net.ulrice.databinding.modelaccess.IFDynamicModelValueAccessor;
 import net.ulrice.databinding.validation.IFValidator;
+import net.ulrice.databinding.viewadapter.utable.UTableRenderer;
 
 /**
  * @author christof
@@ -50,6 +50,9 @@ public class ColumnDefinition<T extends Object> implements PropertyChangeListene
 	private Integer preferredWidth;
 	
 	private Border border;
+	
+	private List<UTableRenderer> preRendererList;
+	private List<UTableRenderer> postRendererList;
 	
 	public enum ColumnType {
 		Editable,
@@ -385,6 +388,32 @@ public class ColumnDefinition<T extends Object> implements PropertyChangeListene
         this.border = border;
         return this;
     }  
+    
+    public ColumnDefinition<T> addPostRenderer(UTableRenderer renderer){
+        if(postRendererList == null){
+            postRendererList = new ArrayList<UTableRenderer>();
+        }
+        postRendererList.add(renderer);
+        return this;
+        
+    }
+    public ColumnDefinition<T> addPreRenderer(UTableRenderer renderer){
+        if(preRendererList == null){
+            preRendererList = new ArrayList<UTableRenderer>();
+        }
+        preRendererList.add(renderer);
+        return this;
+        
+    }
+    
+    public List<UTableRenderer> getPostRendererList() {
+        return postRendererList;
+    }
+
+    public List<UTableRenderer> getPreRendererList() {
+        return preRendererList;
+    }
+
     
     
 }
