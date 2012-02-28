@@ -7,4 +7,11 @@ public interface HeaderCapable {
      */
     public abstract boolean isHeader();
 
+    /**
+     * Is the 'virtual node' from the header row collapsed
+     * 
+     * @return
+     */
+    public abstract boolean isCollapsed();
+
 }
