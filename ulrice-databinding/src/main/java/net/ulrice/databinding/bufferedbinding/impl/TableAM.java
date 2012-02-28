@@ -812,8 +812,10 @@ public class TableAM implements IFAttributeModel {
         final List<Object> values = new ArrayList<Object>();
 
         for (Element elem : elements) {
-            elem.writeObject();
-            values.add(elem.getOriginalValue());
+            if(!elem.isRemoved()) { 
+                elem.writeObject();
+                values.add(elem.getOriginalValue());
+            }
         }
 
         tableMVA.setValues(values);
