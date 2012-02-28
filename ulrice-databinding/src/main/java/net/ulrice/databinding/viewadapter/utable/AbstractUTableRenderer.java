@@ -1,9 +1,13 @@
 package net.ulrice.databinding.viewadapter.utable;
 
+import java.awt.Color;
+import java.util.List;
+
 import javax.swing.JComponent;
 import javax.swing.JTable;
 import javax.swing.UIManager;
 import javax.swing.table.DefaultTableCellRenderer;
+import javax.swing.table.TableCellRenderer;
 
 import net.ulrice.databinding.bufferedbinding.impl.ColumnColorOverride;
 import net.ulrice.databinding.bufferedbinding.impl.ColumnDefinition;
@@ -11,7 +15,7 @@ import net.ulrice.databinding.bufferedbinding.impl.Element;
 import net.ulrice.databinding.viewadapter.IFCellStateMarker;
 import net.ulrice.databinding.viewadapter.IFCellTooltipHandler;
 
-public abstract class AbstractUTableRenderer extends DefaultTableCellRenderer {
+public abstract class AbstractUTableRenderer extends DefaultTableCellRenderer implements UTableRenderer {
     IFCellStateMarker stateMarker;
     IFCellTooltipHandler tooltipHandler;
     static IFCellStateMarker defaultStateMarker;
@@ -26,16 +30,23 @@ public abstract class AbstractUTableRenderer extends DefaultTableCellRenderer {
 
     public JComponent adaptComponent(JTable table, boolean isSelected, int row, int column, JComponent component) {
         if (table instanceof UTable) {
-
+            
             boolean dirty = false;
             boolean valid = true;
+            
 
             UTable uTable = (UTable) table;
             UTableComponent tableComponent = uTable.getTableComponent();
             boolean readOnly = !uTable.isCellEditable(row, column);
-
+            
             String columnId = table.getColumnModel().getColumn(column).getIdentifier().toString();
+            
             ColumnDefinition< ?> colDef = tableComponent.getColumnById(columnId);
+            
+            if(colDef.getPreRendererList() != null){
+                component = adapt(table, isSelected, row,column, component, colDef.getPreRendererList());
+            }            
+            
             if (colDef.getBorder() != null) {
                 component.setBorder(colDef.getBorder());
             }
@@ -73,10 +84,23 @@ public abstract class AbstractUTableRenderer extends DefaultTableCellRenderer {
                         .getOddNormalColor());
                 }
             }
-
+            
+            if(colDef.getPostRendererList() != null){
+                component = adapt(table, isSelected, row,column, component, colDef.getPostRendererList());
+            }
+        }
+       
+        return component;
+    }
+    
+    private JComponent adapt(JTable table, boolean isSelected, int row, int column, JComponent component,
+        List<UTableRenderer> list) {
+        for(UTableRenderer renderer : list){
+            component = renderer.adaptComponent(table, isSelected, row, column, component);
         }
         return component;
     }
+  
 
     public IFCellStateMarker getStateMarker(UTableComponent tableComponent) {
         if (stateMarker != null) {
