@@ -7,7 +7,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.swing.JTable;
-import javax.swing.RowSorter;
 import javax.swing.RowSorter.SortKey;
 import javax.swing.SortOrder;
 import javax.swing.plaf.basic.BasicTableHeaderUI;
