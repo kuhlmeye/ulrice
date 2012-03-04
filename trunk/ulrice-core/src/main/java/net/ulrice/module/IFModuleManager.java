@@ -3,7 +3,7 @@ package net.ulrice.module;
 import java.util.List;
 
 import net.ulrice.module.event.IFModuleEventListener;
-import net.ulrice.module.exception.ModuleInstantiationException;
+import net.ulrice.module.impl.IFCloseCallback;
 import net.ulrice.module.impl.IFCloseHandler;
 
 /**
@@ -36,6 +36,16 @@ public interface IFModuleManager {
 	 */
 	void openModule(String moduleId, IFController parent, ControllerProviderCallback callback);
 
+	/**
+	 * Opens a module and registers a close callback. This callback is called after the module was closed. 
+	 */
+    void openModule(String moduleId, ControllerProviderCallback callback, IFCloseCallback closeCallback);
+
+    /**
+     * Opens a module as a child and registers a close callback. This callback is called after the module was closed. 
+     */
+    void openModule(String moduleId, IFController parent, ControllerProviderCallback callback, IFCloseCallback closeCallback);
+    
 	/**
 	 * Activates an instance of a module, i.e. give it the focus.
 	 */

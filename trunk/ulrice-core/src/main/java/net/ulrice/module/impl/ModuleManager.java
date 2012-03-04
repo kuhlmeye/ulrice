@@ -57,9 +57,19 @@ public class ModuleManager implements IFModuleManager, IFModuleStructureManager 
     public void openModule(final String moduleId, final ControllerProviderCallback callback) {
         openModule(moduleId, null, callback);
     }
+    
+    @Override
+    public void openModule(final String moduleId, final ControllerProviderCallback callback, final IFCloseCallback closeCallback) {
+        openModule(moduleId, null, callback, closeCallback);
+    }
 
     @Override
     public void openModule(final String moduleId, final IFController parent, final ControllerProviderCallback callback) {
+        openModule(moduleId, parent, callback, null);
+    }
+    
+    @Override
+    public void openModule(final String moduleId, final IFController parent, final ControllerProviderCallback callback, final IFCloseCallback closeCallback) {
         final IFModule module = moduleMap.get(moduleId);
 
         try {
@@ -114,7 +124,7 @@ public class ModuleManager implements IFModuleManager, IFModuleStructureManager 
                             }
                         }
 
-                        openControllers.addController(controller, parent, module);
+                        openControllers.addController(controller, parent, module, closeCallback);
 
                         for (IFModuleEventListener listener : listenerList.getListeners(IFModuleEventListener.class)) {
                             listener.openModule(controller);
@@ -263,7 +273,6 @@ public class ModuleManager implements IFModuleManager, IFModuleStructureManager 
 
     @Override
     public void closeController(final IFController controller, final IFCloseHandler closeHandler) {
-
         closeController(controller, controller, null, closeHandler);
     }
 
@@ -320,6 +329,8 @@ public class ModuleManager implements IFModuleManager, IFModuleStructureManager 
 
     private void internalCloseController(final IFController controller) {
 
+        IFCloseCallback closeCallback = openControllers.getCloseCallback(controller);
+        
         for (IFModuleEventListener listener : listenerList.getListeners(IFModuleEventListener.class)) {
             listener.closeController(controller);
         }
@@ -328,6 +339,10 @@ public class ModuleManager implements IFModuleManager, IFModuleStructureManager 
 
         if (openControllers.getActive() != null) {
             activateModule(openControllers.getActive());
+        }
+        
+        if(closeCallback != null) {
+            closeCallback.wasClosed(controller);
         }
     }
 
