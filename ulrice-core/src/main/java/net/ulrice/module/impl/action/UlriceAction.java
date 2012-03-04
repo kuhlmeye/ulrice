@@ -20,7 +20,7 @@ public abstract class UlriceAction extends AbstractAction {
 	/** The unique id of this action. */
 	private String uniqueId;
 	
-	/** Initiale state. */
+	/** Initial state. */
 	private boolean initiallyEnabled;
 
 	private ActionType type;
