@@ -20,12 +20,16 @@ class OpenControllerPool {
     private final Map<IFController, IFController> withParent = new IdentityHashMap<IFController, IFController>();
     private final Map<IFModule, List<IFController>> byModule = new IdentityHashMap<IFModule, List<IFController>>();
     private final Map<IFController, IFModule> moduleByController = new IdentityHashMap<IFController, IFModule>();
+    private final Map<IFController, IFCloseCallback> closeCallbackMap = new IdentityHashMap<IFController, IFCloseCallback>();
     
-    public void addController (IFController c, IFController parent, IFModule module) {
+    public void addController (IFController c, IFController parent, IFModule module, IFCloseCallback closeCallback) {
         ordered.add (0, c);
         withParent.put (c, parent);
         getControllers (module).add(c);
         moduleByController.put(c, module);
+        if(closeCallback != null) {
+            closeCallbackMap.put(c, closeCallback);
+        }
     }
 
     public List<IFController> getControllers (IFModule module) {
@@ -57,8 +61,13 @@ class OpenControllerPool {
         return result;
     }
     
+    public IFCloseCallback getCloseCallback(IFController c) {
+        return closeCallbackMap.get(c);
+    }
+    
     public void removeController (IFController c) {
         ordered.remove(c);
+        closeCallbackMap.remove(c);
         withParent.remove(c);
         for (List<IFController> l: byModule.values()) {
             l.remove(c);
