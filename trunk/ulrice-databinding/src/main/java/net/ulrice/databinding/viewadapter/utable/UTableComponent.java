@@ -580,11 +580,14 @@ public class UTableComponent extends JPanel {
         if (includeHeader) {
             TableCellRenderer renderer = col.getHeaderRenderer();
             if (renderer == null) {
-                renderer = table.getTableHeader().getDefaultRenderer();
+                renderer = table.getTableHeader() != null ? table.getTableHeader().getDefaultRenderer() : null;
             }
-            Component comp = renderer.getTableCellRendererComponent(table, col.getHeaderValue(), false, false, 0, 0);
-            // TODO find a clever way and place to calculate the a real value instead of setting just +15
-            maxWidth = comp.getPreferredSize().width + 15;
+            
+            if (renderer != null) {
+                Component comp = renderer.getTableCellRendererComponent(table, col.getHeaderValue(), false, false, 0, 0);
+                // TODO find a clever way and place to calculate the a real value instead of setting just +15
+                maxWidth = comp.getPreferredSize().width + 15;
+            }
         }
 
         for (int r = 0; r < table.getRowCount(); r++) {
