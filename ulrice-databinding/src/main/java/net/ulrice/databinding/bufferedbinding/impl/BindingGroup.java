@@ -177,7 +177,9 @@ public class BindingGroup extends AbstractBindingGroup {
         List<IFViewAdapter> result = new LinkedList<IFViewAdapter>();
         if (vaMap != null && !vaMap.isEmpty()) {
             List<IFViewAdapter> gaList = vaMap.get(id);
-            result.addAll(gaList);
+            if (null != gaList && !gaList.isEmpty()) {
+                result.addAll(gaList);
+            }
         }
         return result;
     }
