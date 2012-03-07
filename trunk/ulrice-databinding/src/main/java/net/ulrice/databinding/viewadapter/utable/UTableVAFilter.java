@@ -349,16 +349,17 @@ public class UTableVAFilter extends RowFilter<UTableViewAdapter, String> impleme
                 case Boolean:
                 case RegEx: {
                     String regex = text;
-                    if (regex.startsWith("+")) {
-                        regex = regex.replace("+", "\\+");
-                    }
-                    if (regex.startsWith("-")) {
-                        regex = regex.replace("-", "\\-");
-                    }
-                    regex = regex.replace(".", "\\.");
-                    regex = regex.replace("?", ".");
-                    regex = regex.replace("*", ".*");
                     if (!isCombo) {
+                        if (regex.startsWith("+")) {
+                            regex = regex.replace("+", "\\+");
+                        }
+                        if (regex.startsWith("-")) {
+                            regex = regex.replace("-", "\\-");
+                        }
+                        regex = regex.replace(".", "\\.");
+                        regex = regex.replace("?", ".");
+                        regex = regex.replace("*", ".*");
+                    
                         regex += ".*";
                     }
 
