@@ -53,6 +53,8 @@ public class MaskTextField extends JTextField {
 	private String displayedMask = null;
 
 	private int numMaskChars;
+	
+	private boolean textWasMarked = false;
 
 	public MaskTextField() {
 		super();		
@@ -119,6 +121,14 @@ public class MaskTextField extends JTextField {
 	protected Document createDefaultModel() {
 		return new MaskTextFieldDocument();
 	}
+		
+    public void replaceSelection(String content) {
+        int p0 = Math.min(getCaret().getDot(), getCaret().getMark());
+        int p1 = Math.max(getCaret().getDot(), getCaret().getMark());
+   
+        textWasMarked =  p0 != p1;
+        super.replaceSelection(content);
+    }
 
 	private class MaskTextFieldDocument extends PlainDocument {
 
@@ -135,8 +145,7 @@ public class MaskTextField extends JTextField {
 			if (str == null) {
 				return;
 			}
-
-			// Check input..
+					// Check input..
 			if (cleanedMask != null && !"".equals(cleanedMask)) {
 				StringBuilder resultStr = new StringBuilder();
 				char[] maskArr = cleanedMask.toCharArray();
@@ -172,19 +181,22 @@ public class MaskTextField extends JTextField {
 				}
 				int lenAfterInsert = maxLen - str.length() + 1;
 				String text = resultStr.toString();
-				if (lenAfterInsert < 0) {
+				if (lenAfterInsert < 0 ) {
 					text = str.substring(0, -(lenAfterInsert + 1));
 				}
-				//TODO: Verhaelt sich nicht richtig wenn was markiert wurde, es wird auch das naechste zeichen geloescht
-				if(offs < getLength()) {
+				
+				if(offs < getLength() && !textWasMarked) {
 					super.remove(offs, text.length());
 				}
 				super.insertString(offs, text, a);
 			} else {
 				super.insertString(offs, str, a);
 			}
-
 		}
+		
+		
+		
+		
 
 		private boolean validInputChar(char inputChar, char maskChar) {
 			switch (maskChar) {
