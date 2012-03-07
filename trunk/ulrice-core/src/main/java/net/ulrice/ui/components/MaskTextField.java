@@ -175,6 +175,7 @@ public class MaskTextField extends JTextField {
 				if (lenAfterInsert < 0) {
 					text = str.substring(0, -(lenAfterInsert + 1));
 				}
+				//TODO: Verhaelt sich nicht richtig wenn was markiert wurde, es wird auch das naechste zeichen geloescht
 				if(offs < getLength()) {
 					super.remove(offs, text.length());
 				}
