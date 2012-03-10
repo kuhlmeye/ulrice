@@ -8,6 +8,7 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.net.URL;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.logging.Logger;
 
@@ -101,6 +102,17 @@ public class TabbedWorkarea extends JTabbedPane implements IFWorkarea, MouseList
      */
     public void onActivateWorkarea() {
         Ulrice.getModuleManager().addModuleEventListener(this);
+        List<IFController> controllers = Ulrice.getModuleManager().getActiveControllers();
+        if(controllers != null) {
+            for(IFController controller : controllers) {
+                openModule(controller);
+            }
+
+            IFController activeController = Ulrice.getModuleManager().getCurrentController();
+            if(activeController != null) {
+                activateModule(activeController);
+            }
+        }      
     }
 
     /**
@@ -108,6 +120,8 @@ public class TabbedWorkarea extends JTabbedPane implements IFWorkarea, MouseList
      */
     public void onDeactivateWorkarea() {
         Ulrice.getModuleManager().removeModuleEventListener(this);
+        glassPanelMap.clear();
+        removeAll();
     }
 
     /**
@@ -388,7 +402,7 @@ public class TabbedWorkarea extends JTabbedPane implements IFWorkarea, MouseList
     
     @Override
     public void moduleBlockerRemoved(IFController controller, Object blocker) {
-        // Do nothing, Workarea doesnÂ´t care about the blockers, just if it is blocked or not
+        // Do nothing, Workarea doesn´t care about the blockers, just if it is blocked or not
     }
 
 
