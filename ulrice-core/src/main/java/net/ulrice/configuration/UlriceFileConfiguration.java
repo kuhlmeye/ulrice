@@ -2,6 +2,7 @@ package net.ulrice.configuration;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.List;
 import java.util.Properties;
 
 import net.ulrice.Ulrice;
@@ -12,6 +13,7 @@ import net.ulrice.message.TranslationProvider;
 import net.ulrice.module.IFModuleManager;
 import net.ulrice.module.IFModuleStructureManager;
 import net.ulrice.module.impl.ModuleManager;
+import net.ulrice.options.modules.IFOptionModule;
 import net.ulrice.profile.persister.DefaultProfilePersister;
 import net.ulrice.profile.persister.ProfilePersister;
 import net.ulrice.security.IFAuthCallback;
@@ -81,6 +83,8 @@ public class UlriceFileConfiguration extends ClassLoadingHelper implements IFUlr
 		translationProvider = (TranslationProvider) loadClass(properties.getProperty(TranslationProvider.class.getName(), EmptyTranslationProvider.class.getName()));
 		profilePersister = (ProfilePersister) loadClass(properties.getProperty(ProfilePersister.class.getName(), DefaultProfilePersister.class.getName()));
 
+		
+		
 		// Initialize ulrice.
 		Ulrice.initialize(this);
 	}
