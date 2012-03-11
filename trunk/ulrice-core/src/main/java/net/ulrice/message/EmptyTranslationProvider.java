@@ -33,4 +33,9 @@ public class EmptyTranslationProvider implements TranslationProvider {
     public String getTranslationText(Locale locale, String module, TranslationUsage usage, String key, Object... params) {
         return getTranslation(locale, module, usage, key, params).getText();
     }
+
+    @Override
+    public Translation getUlriceTranslation(TranslationUsage usage, String key, Object... params) {
+        return getTranslation(ULRICE_COMPONENT, usage, key, params);
+    }
 }
