@@ -648,18 +648,26 @@ public class UTableComponent extends JPanel {
     public int[] getSelectedRowsModelIndex() {
         int min = getSelectionModel().getMinSelectionIndex();
         int max = getSelectionModel().getMaxSelectionIndex();
-
-        int[] tmpRows = new int[max - min + 1];
-        int idx = 0;
-        for (int i = min; i <= max; i++) {
-            if (getSelectionModel().isSelectedIndex(i)) {
-                tmpRows[idx++] = getRowSorter().convertRowIndexToModel(i);
-            }
+        
+        try {
+            int[] tmpRows = new int[max - min + 1];
+            int idx = 0;
+            for (int i = min; i <= max; i++) {
+                if (getSelectionModel().isSelectedIndex(i)) {
+                    tmpRows[idx++] = getRowSorter().convertRowIndexToModel(i);
+                }
+            } 
+            int[] result = new int[idx];
+            System.arraycopy(tmpRows, 0, result, 0, idx);
+            return result;
         }
+        catch (ArrayIndexOutOfBoundsException e) {
+            return new int[0]; //if filtered and the last is deleted and selected elements are called by ListSelectionListener
+            //TODO: find a better solution
+        }
+       
 
-        int[] result = new int[idx];
-        System.arraycopy(tmpRows, 0, result, 0, idx);
-        return result;
+        
     }
 
     public void setAttributeModel(TableAM attributeModel) {
