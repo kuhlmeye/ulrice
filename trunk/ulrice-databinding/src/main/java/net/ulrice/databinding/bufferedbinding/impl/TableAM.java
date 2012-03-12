@@ -77,6 +77,8 @@ public class TableAM implements IFAttributeModel {
     
     private List<SortKey> defaultSortKeys;
     
+    protected boolean treeStayOpen = false;
+    
     public TableAM(IFIndexedModelValueAccessor tableMVA, IFAttributeInfo attributeInfo) {
         this(tableMVA, attributeInfo, false);
     }
@@ -96,6 +98,10 @@ public class TableAM implements IFAttributeModel {
 
     
     private void checkUniqueConstraint(Element element) {
+        if(element.getChildCount()>0){
+            return;
+        }
+        
         if (columnIds == null) {
             return;
         }
@@ -258,6 +264,10 @@ public class TableAM implements IFAttributeModel {
            Object child = mva.getValue(i);
            element.addChildElement(createElement(child, dirty, valid, inserted));    
        }
+       if(mva.getSize() >0){
+           element.readObject();
+       }
+       
     }
 
  
@@ -372,9 +382,22 @@ public class TableAM implements IFAttributeModel {
     public boolean isReadOnly() {
         return readOnly;
     }
-
+    
+     public boolean consumeTreeStayOpen(){
+        boolean temp = treeStayOpen;
+        treeStayOpen = false;
+        return temp;
+    }
+    
+    
     protected void elementDataChanged(final Element element, final String columnId) {
+        
+        if(isForTreeTable()){
+            treeStayOpen = true;
+        }
+        
         fireUpdateViews();
+        
         
     	if (columnIds != null) {
             checkUniqueConstraint(element);
@@ -736,7 +759,7 @@ public class TableAM implements IFAttributeModel {
             Object value = tableMVA.getValue(i);
             Element elem = createElement(value, false, true, false);
 
-            elementIdMap.put(elem.getUniqueId(), elem);
+            addElementToIdMap(elem);
             elements.add(elem);
             fireElementAdded(elem);
         }
@@ -754,7 +777,7 @@ public class TableAM implements IFAttributeModel {
             Object value = valueList.get(i);
             Element elem = createElement(value, false, true, false);
 
-            elementIdMap.put(elem.getUniqueId(), elem);
+            addElementToIdMap(elem);
             elements.add(elem);
             fireElementAdded(elem);
         }
@@ -773,7 +796,7 @@ public class TableAM implements IFAttributeModel {
             Object value = tableMVA.getValue(i);
             Element elem = createElement(value, false, true, false);
 
-            elementIdMap.put(elem.getUniqueId(), elem);
+            addElementToIdMap(elem);
             elements.add(elem);
             fireElementAdded(elem);
         }
@@ -1050,9 +1073,16 @@ public class TableAM implements IFAttributeModel {
     }
 
     private void registerNewElement(Element element) {
-        elementIdMap.put(element.getUniqueId(), element);
+        addElementToIdMap(element);
         element.setInserted(true);
         newElements.add(element);
+    }
+    
+    private void addElementToIdMap(Element element){
+        elementIdMap.put(element.getUniqueId(), element);
+        for( int i = 0; i < element.getChildCount(); i++){
+            addElementToIdMap(element.getChild(i));
+        }
     }
 
     private void fireElementDeleted(final Element element) {
