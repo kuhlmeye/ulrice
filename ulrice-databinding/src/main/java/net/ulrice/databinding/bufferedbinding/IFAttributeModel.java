@@ -13,6 +13,8 @@ public interface IFAttributeModel<T> extends IFBinding {
 
 	void addViewAdapter(IFViewAdapter viewAdapter);
 
+	void removeViewAdapter(IFViewAdapter viewAdapter);
+	
 	/**
 	 * Read the value from the model. The data accessor is used to get the value
 	 */
@@ -82,6 +84,7 @@ public interface IFAttributeModel<T> extends IFBinding {
 	 *            The listener to be removed from the list of listeners.
 	 */
 	void removeAttributeModelEventListener(IFAttributeModelEventListener<T> listener);
+	
 	
 	void setValueConverter(IFValueConverter valueConverter);		
 	
