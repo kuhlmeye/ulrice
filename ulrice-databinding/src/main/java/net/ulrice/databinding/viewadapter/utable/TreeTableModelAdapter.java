@@ -25,18 +25,28 @@ public class TreeTableModelAdapter extends AbstractTableModel {
         this.tree = tree;
         this.treeTableModel = treeTableModel;
  
+//        tree.addTreeExpansionListener(new TreeExpansionListener() {
+//            
+//            public void treeExpanded(TreeExpansionEvent event) {
+//                int rowForPath = tree.getRowForPath(event.getPath());
+//                Element elementForRow = getElementForRow(rowForPath);
+//                fireTableRowsInserted(rowForPath, rowForPath + elementForRow.getChildCount());
+//            }
+// 
+//            public void treeCollapsed(TreeExpansionEvent event) {
+//                int rowForPath = tree.getRowForPath(event.getPath());
+//                Element elementForRow = getElementForRow(rowForPath);
+//                fireTableRowsDeleted(rowForPath, rowForPath + elementForRow.getChildCount());
+//            }
+//        });
+        
         tree.addTreeExpansionListener(new TreeExpansionListener() {
-            
             public void treeExpanded(TreeExpansionEvent event) {
-                int rowForPath = tree.getRowForPath(event.getPath());
-                Element elementForRow = getElementForRow(rowForPath);
-                fireTableRowsInserted(rowForPath, rowForPath + elementForRow.getChildCount());
+                fireTableDataChanged();
             }
  
             public void treeCollapsed(TreeExpansionEvent event) {
-                int rowForPath = tree.getRowForPath(event.getPath());
-                Element elementForRow = getElementForRow(rowForPath);
-                fireTableRowsDeleted(rowForPath, rowForPath + elementForRow.getChildCount());
+                fireTableDataChanged();
             }
         });
     } 
