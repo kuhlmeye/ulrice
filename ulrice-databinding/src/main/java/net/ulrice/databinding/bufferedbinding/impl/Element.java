@@ -244,14 +244,17 @@ public class Element {
 	private void updateState() {
 		boolean oldValid = valid;
 		boolean oldDirty = dirty;
-
-		if (modelList != null) {
-			dirty = false;
-			valid = validationResult == null || validationResult.isValid();
-			for (IFAttributeModel<?> model : modelList) {
-				dirty |= model.isDirty();
-				valid &= model.isValid();
-			}
+		
+		if(childElements != null && childElements.size()>0 ){
+		    valid = true;
+		    dirty = false;
+		}else if (modelList != null) {
+		    dirty = false;
+            valid = validationResult == null || validationResult.isValid();
+            for (IFAttributeModel<?> model : modelList) {
+                dirty |= model.isDirty();
+                valid &= model.isValid();
+            }
 		}
 
 		dirty |= originalValueDirty;
@@ -534,26 +537,44 @@ public class Element {
 	}
 
 	public boolean isOriginalValueDirty() {
+	    if(getChildCount()>0){
+            return false;
+        }
 		return originalValueDirty;
 	}
 
 	public boolean isOriginalValueValid() {
+	    if(getChildCount()>0){
+            return true;
+        }
 		return originalValueValid;
 	}
 
 	public boolean isColumnValid(int column) {
+	    if(getChildCount()>0){
+	        return true;
+	    }
 		return modelList.get(column).isValid();
 	}
 
 	public boolean isColumnDirty(int column) {
+	    if(getChildCount()>0){
+            return false;
+        }
 		return modelList.get(column).isDirty();
 	}
 
     public boolean isColumnDirty(String columnId) {
+        if(getChildCount()>0){
+            return false;
+        }
         return idModelMap.containsKey(columnId) ? idModelMap.get(columnId).isDirty() : false;
     }
 
     public boolean isColumnValid(String columnId) {
+        if(getChildCount()>0){
+            return true;
+        }
         return idModelMap.containsKey(columnId) ? idModelMap.get(columnId).isValid() : true;
     }
     
@@ -584,6 +605,9 @@ public class Element {
     }
 
     public int getChildCount(){
+        if(childElements == null){
+            return 0;
+        }
         return childElements.size();
     }
     
@@ -597,6 +621,10 @@ public class Element {
         if(value == null){
             return null;
         }
-        return value.toString();   
+        Object obj =  getValueAt(0);
+        if(obj == null){
+            return "";
+        }
+        return obj.toString();
     }
 }
