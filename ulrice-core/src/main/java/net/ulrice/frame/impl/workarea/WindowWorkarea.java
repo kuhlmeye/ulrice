@@ -145,7 +145,7 @@ public class WindowWorkarea extends JDesktopPane implements IFWorkarea {
 
     @Override
     public void moduleBlockerRemoved(IFController controller, Object blocker) {
-        // Do nothing, Workarea doesn´t care about the blockers, just if it is blocked or not
+        // Do nothing, Workarea doesnt care about the blockers, just if it is blocked or not
     }
 
     @Override
