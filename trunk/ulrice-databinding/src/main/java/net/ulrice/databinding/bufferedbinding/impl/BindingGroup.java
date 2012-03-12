@@ -53,6 +53,36 @@ public class BindingGroup extends AbstractBindingGroup {
     	}    	        
     }
     
+    public void unbind(IFAttributeModel<?> attributeModel, IFViewAdapter viewAdapter){
+        if(amMap.containsValue(attributeModel)) {
+            removeAttributeModel(attributeModel);
+        }
+        
+        if(!vaMap.containsValue(viewAdapter)) {
+            removeViewAdapter(attributeModel.getId(), viewAdapter);
+        }       
+    }
+    
+    public void removeAttributeModel(IFAttributeModel<?> am){
+        if (am == null) {
+            throw new IllegalArgumentException("Could not remove null attribute model.");
+        }
+
+        String id = am.getId();
+        if (id == null) {
+            throw new IllegalStateException("Id of an attribute model must not be null.");
+        }
+        
+        List<IFViewAdapter> gaList = vaMap.get(id);
+        if (gaList != null) {
+            for (IFViewAdapter va : gaList) {
+                am.removeViewAdapter(va);
+            }
+        }
+        am.removeAttributeModelEventListener(this);
+        amMap.remove(id);        
+    }
+    
     /**
      * Add an attribute model to this data group.
      * 
@@ -103,6 +133,23 @@ public class BindingGroup extends AbstractBindingGroup {
             vaMap.put(id, gaList);
         }
         gaList.add(va);
+    }
+    
+    public void removeViewAdapter(String id, IFViewAdapter va) {
+        if (va == null) {
+            throw new IllegalArgumentException("Could not add null gui accessor.");
+        }
+
+        if (id == null) {
+            throw new IllegalStateException("Id of an attribute model must not be null.");
+        }
+
+        IFAttributeModel am = amMap.get(id);
+        if (am != null) {
+            am.removeViewAdapter(va);
+        }
+
+        vaMap.remove(id);        
     }
 
     /**
