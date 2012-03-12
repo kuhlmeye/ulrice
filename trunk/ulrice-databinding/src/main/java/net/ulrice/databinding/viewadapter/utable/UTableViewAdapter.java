@@ -40,24 +40,32 @@ public class UTableViewAdapter extends AbstractViewAdapter implements TableModel
         @Override
         public void columnValueRangeChanged(TableAM tableAM, ColumnDefinition< ?> colDef) {
             table.updateColumnModel();
-            getFilter().rebuildFilter();
+            if(getFilter() != null){
+                getFilter().rebuildFilter();
+            }
         }
 
         @Override
         public void columnFilterModeChanged(TableAM tableAM, ColumnDefinition< ?> colDef) {
-            getFilter().rebuildFilter();
+            if(getFilter() != null){
+                getFilter().rebuildFilter();
+            }
         }
 
         @Override
         public void columnRemoved(TableAM tableAM, ColumnDefinition< ?> colDef) {
             table.updateColumnModel();
-            getFilter().rebuildFilter();
+            if(getFilter() != null){
+                getFilter().rebuildFilter();
+            }
         }
 
         @Override
         public void columnAdded(TableAM tableAM, ColumnDefinition< ?> colDef) {
             table.updateColumnModel();
-            getFilter().rebuildFilter();
+            if(getFilter() != null){
+                getFilter().rebuildFilter();
+            }
         }
     };
     
@@ -95,9 +103,11 @@ public class UTableViewAdapter extends AbstractViewAdapter implements TableModel
             }
 
             this.attributeModel = attributeModel;
-            this.attributeModel.addTableAMListener(tableAMListener);
+            if(this.attributeModel != null){
+                this.attributeModel.addTableAMListener(tableAMListener);
+            }
             table.setAttributeModel(attributeModel);
-            table.updateColumnModel();
+//            table.updateColumnModel();
             fireAttributeModelBound(this.attributeModel);
             //fireTableStructureChanged();
         }
@@ -300,8 +310,10 @@ public class UTableViewAdapter extends AbstractViewAdapter implements TableModel
         		selRow = table.getSelectionModel().getMinSelectionIndex();
         	}
             int selColumn = table.getSelectedColumn();
-            getRowSorter().allRowsChanged();
+            if(getRowSorter() != null)
+                getRowSorter().allRowsChanged();
             fireTableChanged(new TableModelEvent(this));
+            
             if (selColumn >= 0) {
                 table.setSelectedColumn(selColumn);
             }
@@ -374,6 +386,11 @@ public class UTableViewAdapter extends AbstractViewAdapter implements TableModel
 
     public Element getElementAt(int viewRowIndex) {      
         return table.getElementAtViewIndex(viewRowIndex);
+    }
+    
+    public Object getCurrentValueAt(int row) {
+        Element element = getElementAt(row);
+        return element != null ? element.getCurrentValue() : null;
     }
     
     public Element getElementAtUsingModelIndex(int modelRowIndex) {
