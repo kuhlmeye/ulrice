@@ -402,7 +402,7 @@ public class TabbedWorkarea extends JTabbedPane implements IFWorkarea, MouseList
     
     @Override
     public void moduleBlockerRemoved(IFController controller, Object blocker) {
-        // Do nothing, Workarea doesn´t care about the blockers, just if it is blocked or not
+        // Do nothing, Workarea doesnt care about blockers, just if it is blocked or not
     }
 
 
