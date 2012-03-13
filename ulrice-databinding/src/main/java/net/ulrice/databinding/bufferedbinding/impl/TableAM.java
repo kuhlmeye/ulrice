@@ -9,7 +9,6 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
-import javax.swing.SwingUtilities;
 import javax.swing.RowSorter.SortKey;
 import javax.swing.event.EventListenerList;
 
@@ -361,11 +360,8 @@ public class TableAM implements IFAttributeModel {
      * @see javax.swing.table.TableModel#getValueAt(int, int)
      */
     public Object getValueAt(int rowIndex, int columnIndex) {
-        Element element = getElementAt(rowIndex);
-        if (element != null) {
-            return element.getValueAt(columnIndex);
-        }
-        return null;
+        final Element element = getElementAt(rowIndex);
+        return element == null ? null : element.getValueAt(columnIndex);
     }
 
     /**
@@ -444,37 +440,19 @@ public class TableAM implements IFAttributeModel {
     }
     
     private void fireElementChanged(final Element element, final String columnId) {
-    	ElementLifecycleListener[] listeners = listenerList.getListeners(ElementLifecycleListener.class);
+    	final ElementLifecycleListener[] listeners = listenerList.getListeners(ElementLifecycleListener.class);
         if (listeners != null) {
             for (final ElementLifecycleListener constraint : listeners) {
-                if(!SwingUtilities.isEventDispatchThread()) {
-                    SwingUtilities.invokeLater(new Runnable() {                    
-                        @Override
-                        public void run() {
-                            constraint.elementChanged(TableAM.this, element, columnId);
-                        }
-                    });
-                } else {
-                    constraint.elementChanged(TableAM.this, element, columnId);
-                }
+                constraint.elementChanged(this, element, columnId);
             }
         }
     }
 
     private void fireDataChanged() {
-        IFAttributeModelEventListener[] listeners = listenerList.getListeners(IFAttributeModelEventListener.class);
+        final IFAttributeModelEventListener[] listeners = listenerList.getListeners(IFAttributeModelEventListener.class);
         if (listeners != null && !massEditMode) {
             for (final IFAttributeModelEventListener listener : listeners) {
-                if(!SwingUtilities.isEventDispatchThread()) {
-                    SwingUtilities.invokeLater(new Runnable() {                    
-                        @Override
-                        public void run() {
-                            listener.dataChanged(null, TableAM.this);
-                        }
-                    });
-                } else {
-                    listener.dataChanged(null, this);
-                }
+                listener.dataChanged(null, this);
             }
         }
     }
@@ -483,16 +461,7 @@ public class TableAM implements IFAttributeModel {
         IFAttributeModelEventListener[] listeners = listenerList.getListeners(IFAttributeModelEventListener.class);
         if (listeners != null) {
             for (final IFAttributeModelEventListener listener : listeners) {
-                if(!SwingUtilities.isEventDispatchThread()) {
-                    SwingUtilities.invokeLater(new Runnable() {                    
-                        @Override
-                        public void run() {
-                            listener.stateChanged(null, TableAM.this);
-                        }
-                    });
-                } else {
-                    listener.stateChanged(null, this);
-                }
+                listener.stateChanged(null, this);
             }
         }
     }
@@ -546,16 +515,7 @@ public class TableAM implements IFAttributeModel {
         TableAMListener[] listeners = listenerList.getListeners(TableAMListener.class);
         if (listeners != null) {
             for (final TableAMListener listener : listeners) {
-                if(!SwingUtilities.isEventDispatchThread()) {
-                    SwingUtilities.invokeLater(new Runnable() {                    
-                        @Override
-                        public void run() {
-                            listener.columnValueRangeChanged(TableAM.this, colDef);
-                        }
-                    });
-                } else {
-                    listener.columnValueRangeChanged(this, colDef);
-                }
+                listener.columnValueRangeChanged(this, colDef);
             }
         }
     }
@@ -564,16 +524,7 @@ public class TableAM implements IFAttributeModel {
         TableAMListener[] listeners = listenerList.getListeners(TableAMListener.class);
         if (listeners != null) {
             for (final TableAMListener listener : listeners) {
-                if(!SwingUtilities.isEventDispatchThread()) {
-                    SwingUtilities.invokeLater(new Runnable() {                    
-                        @Override
-                        public void run() {
-                            listener.columnAdded(TableAM.this, colDef);
-                        }
-                    });
-                } else {
-                    listener.columnAdded(this, colDef);
-                }
+                listener.columnAdded(this, colDef);
             }
         }
     }
@@ -582,16 +533,7 @@ public class TableAM implements IFAttributeModel {
         TableAMListener[] listeners = listenerList.getListeners(TableAMListener.class);
         if (listeners != null) {
             for (final TableAMListener listener : listeners) {
-                if(!SwingUtilities.isEventDispatchThread()) {
-                    SwingUtilities.invokeLater(new Runnable() {                    
-                        @Override
-                        public void run() {
-                            listener.columnRemoved(TableAM.this, colDef);
-                        }
-                    });
-                } else {
-                    listener.columnRemoved(this, colDef);
-                }
+                listener.columnRemoved(this, colDef);
             }
         }
     }
@@ -600,16 +542,7 @@ public class TableAM implements IFAttributeModel {
         TableAMListener[] listeners = listenerList.getListeners(TableAMListener.class);
         if (listeners != null) {
             for (final TableAMListener listener : listeners) {
-                if(!SwingUtilities.isEventDispatchThread()) {
-                    SwingUtilities.invokeLater(new Runnable() {                    
-                        @Override
-                        public void run() {
-                            listener.columnFilterModeChanged(TableAM.this, colDef);
-                        }
-                    });
-                } else {
-                    listener.columnFilterModeChanged(this, colDef);
-                }
+                listener.columnFilterModeChanged(this, colDef);
             }
         }
     }
@@ -633,16 +566,7 @@ public class TableAM implements IFAttributeModel {
     public void fireUpdateViews() {
         if (viewAdapterList != null && !massEditMode) {
             for (final IFViewAdapter viewAdapter : viewAdapterList) {
-                if(!SwingUtilities.isEventDispatchThread()) {
-                    SwingUtilities.invokeLater(new Runnable() {                    
-                        @Override
-                        public void run() {
-                            viewAdapter.updateFromBinding(TableAM.this);
-                        }
-                    });
-                } else {
-                    viewAdapter.updateFromBinding(this);
-                }
+                viewAdapter.updateFromBinding(this);
             }
         }
     }
@@ -1058,16 +982,7 @@ public class TableAM implements IFAttributeModel {
         ElementLifecycleListener[] listeners = listenerList.getListeners(ElementLifecycleListener.class);
         if (listeners != null) {
             for (final ElementLifecycleListener constraint : listeners) {
-                if(!SwingUtilities.isEventDispatchThread()) {
-                    SwingUtilities.invokeLater(new Runnable() {                    
-                        @Override
-                        public void run() {
-                            constraint.elementAdded(TableAM.this, element);
-                        }
-                    });
-                } else {
-                    constraint.elementAdded(this, element);
-                }
+                constraint.elementAdded(this, element);
             }
         }
     }
@@ -1094,16 +1009,7 @@ public class TableAM implements IFAttributeModel {
         ElementLifecycleListener[] listeners = listenerList.getListeners(ElementLifecycleListener.class);
         if (listeners != null) {
             for (final ElementLifecycleListener constraint : listeners) {
-                if(!SwingUtilities.isEventDispatchThread()) {
-                    SwingUtilities.invokeLater(new Runnable() {                    
-                        @Override
-                        public void run() {
-                            constraint.elementRemoved(TableAM.this, element);
-                        }
-                    });
-                } else {
-                    constraint.elementRemoved(this, element);
-                }
+                constraint.elementRemoved(this, element);
             }
         }
     }
@@ -1119,16 +1025,7 @@ public class TableAM implements IFAttributeModel {
         ElementLifecycleListener[] listeners = listenerList.getListeners(ElementLifecycleListener.class);
         if (listeners != null) {
             for (final ElementLifecycleListener constraint : listeners) {
-                if(!SwingUtilities.isEventDispatchThread()) {
-                    SwingUtilities.invokeLater(new Runnable() {                    
-                        @Override
-                        public void run() {
-                            constraint.tableCleared(TableAM.this);
-                        }
-                    });
-                } else {
-                    constraint.tableCleared(this);
-                }
+                constraint.tableCleared(this);
             }
         }
     }
@@ -1141,16 +1038,7 @@ public class TableAM implements IFAttributeModel {
         ElementLifecycleListener[] listeners = listenerList.getListeners(ElementLifecycleListener.class);
         if (listeners != null) {
             for (final ElementLifecycleListener constraint : listeners) {
-                if(!SwingUtilities.isEventDispatchThread()) {
-                    SwingUtilities.invokeLater(new Runnable() {                    
-                        @Override
-                        public void run() {
-                            constraint.elementStateChanged(TableAM.this, element);
-                        }
-                    });
-                } else {
-                    constraint.elementStateChanged(this, element);
-                }
+                constraint.elementStateChanged(this, element);
             }
         }
     }
