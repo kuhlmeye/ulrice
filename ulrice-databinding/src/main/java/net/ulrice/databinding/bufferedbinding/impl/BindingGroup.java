@@ -44,21 +44,22 @@ public class BindingGroup extends AbstractBindingGroup {
 
     public void bind(IFAttributeModel<?> attributeModel, IFViewAdapter viewAdapter) {
 
-    	if(!amMap.containsValue(attributeModel)) {
+    	if (!amMap.containsValue(attributeModel)) {
     		addAttributeModel(attributeModel);
     	}
     	
-    	if(!vaMap.containsValue(viewAdapter)) {
+    	if (!vaMap.containsValue(viewAdapter)) {
     		addViewAdapter(attributeModel.getId(), viewAdapter);
     	}    	        
     }
     
     public void unbind(IFAttributeModel<?> attributeModel, IFViewAdapter viewAdapter){
-        if(amMap.containsValue(attributeModel)) {
+        if (amMap.containsValue(attributeModel)) {
             removeAttributeModel(attributeModel);
         }
-        
-        if(!vaMap.containsValue(viewAdapter)) {
+
+        final List<IFViewAdapter> viewAdapters = vaMap.get(attributeModel.getId());
+        if (viewAdapters != null && viewAdapters.contains(viewAdapter)) {
             removeViewAdapter(attributeModel.getId(), viewAdapter);
         }       
     }
@@ -149,7 +150,10 @@ public class BindingGroup extends AbstractBindingGroup {
             am.removeViewAdapter(va);
         }
 
-        vaMap.remove(id);        
+        final List<IFViewAdapter> viewAdapters = vaMap.get(id);
+        if (viewAdapters != null) {
+            viewAdapters.remove(va);
+        }
     }
 
     /**
