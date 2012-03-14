@@ -257,6 +257,9 @@ public class UTableComponent extends JPanel {
 
     protected void setAlteredTableHeaderListener(JTable table) {
         JTableHeader header = table.getTableHeader();
+        if (header == null) {
+            return;
+        }
         for (MouseListener ml : header.getMouseListeners()) {
             if (ml instanceof BasicTableHeaderUI.MouseInputHandler) {
                 MouseListener altered =
