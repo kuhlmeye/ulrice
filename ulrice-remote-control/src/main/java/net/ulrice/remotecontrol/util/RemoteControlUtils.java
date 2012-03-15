@@ -32,7 +32,7 @@ public class RemoteControlUtils {
      * Creates a pattern from the specified regular expression
      * 
      * @param regex the regular expression
-     * @return the matcher 
+     * @return the matcher
      */
     public static RegularMatcher toMatcher(String regex) {
         return new RegularMatcher(regex);
@@ -155,6 +155,16 @@ public class RemoteControlUtils {
     }
 
     /**
+     * Overrides the speed factor settings
+     *
+     * @param speedFactor the speed factor
+     */
+    public static void overrideSpeedFactor(double speedFactor) {
+        System.setProperty(SPEED_FACTOR_PROPERTY, String.valueOf(speedFactor));
+        RemoteControlUtils.speedFactor = null;
+    }
+
+    /**
      * Pauses the current thread for the specified amount of seconds. The value is constant and not multiplied by the
      * speed factor.
      * 
@@ -216,14 +226,14 @@ public class RemoteControlUtils {
     public static void pause() {
         pause(PAUSE_DELAY);
     }
-    
+
     /**
      * Returns true if timeouts are enabled
-     *
+     * 
      * @return true if enabled
      */
     public static boolean isTimeoutEnabled() {
         return System.getProperty(DISABLE_TIMEOUTS_PROPERTY) == null;
     }
-    
+
 }

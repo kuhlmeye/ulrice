@@ -21,5 +21,7 @@ public interface ApplicationRemoteControl {
      * @throws RemoteControlException on occasion
      */
     public byte[] screenshot() throws RemoteControlException;
+    
+    public void overrideSpeedFactor(double speedFactor);
 
 }
