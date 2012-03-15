@@ -8,7 +8,7 @@ import javax.swing.JPanel;
  * 
  * @author DL10KUH
  */
-public class HotkeyOptionModule extends JPanel implements IFOptionModule {
+public class HotkeyOptionModule implements IFOptionModule {
 
     private static final long serialVersionUID = 4603342680941008166L;
 
