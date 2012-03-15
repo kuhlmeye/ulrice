@@ -126,7 +126,7 @@ public class BorderStateMarker implements Border, ImageObserver, IFStateMarker {
             g.setColor(UIManager.getColor(BindingUI.BORDER_STATE_MARKER_CHANGED_BORDER));
             g.drawRect(x, y, width - 1, height - 1);
         }
-    	if (strategy != BorderStateMarkerStrategy.BORDER_ONLY) {
+    	if (strategy != BorderStateMarkerStrategy.BORDER_ONLY && changedIcon != null) {
     		changedIcon.paintIcon(c, g, x + width -10, 0);
     	}
     }
@@ -145,7 +145,7 @@ public class BorderStateMarker implements Border, ImageObserver, IFStateMarker {
             g.setColor(UIManager.getColor(BindingUI.BORDER_STATE_MARKER_INVALID_BORDER));
             g.drawRect(x, y, width - 1, height - 1);
         }
-    	if (strategy != BorderStateMarkerStrategy.BORDER_ONLY) {
+    	if (strategy != BorderStateMarkerStrategy.BORDER_ONLY && invalidIcon != null) {
     		invalidIcon.paintIcon(c, g, x + width -10, 0);
     	}
     }
