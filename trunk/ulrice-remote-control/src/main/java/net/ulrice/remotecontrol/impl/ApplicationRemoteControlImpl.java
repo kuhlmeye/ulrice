@@ -13,6 +13,7 @@ import javax.imageio.ImageIO;
 import net.ulrice.remotecontrol.ApplicationRemoteControl;
 import net.ulrice.remotecontrol.RemoteControlException;
 import net.ulrice.remotecontrol.util.ComponentUtils;
+import net.ulrice.remotecontrol.util.RemoteControlUtils;
 
 /**
  * Implementation of the {@link ApplicationRemoteControl}
@@ -41,6 +42,11 @@ public class ApplicationRemoteControlImpl implements ApplicationRemoteControl {
         System.exit(0);
     }
 
+    /**
+     * {@inheritDoc}
+     * 
+     * @see net.ulrice.remotecontrol.ApplicationRemoteControl#screenshot()
+     */
     @Override
     public byte[] screenshot() throws RemoteControlException {
         Window[] windows = Window.getWindows();
@@ -86,4 +92,15 @@ public class ApplicationRemoteControlImpl implements ApplicationRemoteControl {
 
         return out.toByteArray();
     }
+
+    /**
+     * {@inheritDoc}
+     * 
+     * @see net.ulrice.remotecontrol.ApplicationRemoteControl#overrideSpeedFactor(double)
+     */
+    @Override
+    public void overrideSpeedFactor(double speedFactor) {
+        RemoteControlUtils.overrideSpeedFactor(speedFactor);
+    }
+
 }
