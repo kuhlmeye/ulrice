@@ -34,7 +34,24 @@ public class UTableComboBoxCellEditor extends AbstractCellEditor implements Tabl
     }
 
     public Component getTableCellEditorComponent(JTable table, Object value, boolean isSelected, int row, int column) {
-        comboBox.setSelectedItem(value);
+    	
+    	for(int i = 0; i < comboBox.getModel().getSize(); i++) {
+    		Object element = comboBox.getModel().getElementAt(i);
+    		if(element == null && value == null) {
+    			comboBox.setSelectedIndex(i);
+    			return comboBox;
+    		} else if(element instanceof ObjectWithPresentation<?>) {
+    			ObjectWithPresentation<?> owp = (ObjectWithPresentation<?>) element;
+    			if(owp.getValue().equals(value)) {
+    				comboBox.setSelectedIndex(i);
+    				return comboBox;
+    			}
+    		} else if(element.equals(value)) {
+				comboBox.setSelectedIndex(i);
+				return comboBox;
+    		}
+    	}
+    	
         return comboBox;
     }
 
