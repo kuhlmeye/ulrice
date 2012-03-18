@@ -1,6 +1,9 @@
 package net.ulrice.module.impl;
 
 import java.awt.Cursor;
+import java.awt.KeyEventDispatcher;
+import java.awt.KeyboardFocusManager;
+import java.awt.event.KeyEvent;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -11,9 +14,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.logging.Logger;
 
+import javax.swing.KeyStroke;
 import javax.swing.SwingUtilities;
 import javax.swing.event.EventListenerList;
 
+import net.ulrice.ConfigurationListener;
 import net.ulrice.Ulrice;
 import net.ulrice.module.ControllerProviderCallback;
 import net.ulrice.module.IFController;
@@ -33,7 +38,7 @@ import net.ulrice.module.exception.ModuleInstantiationException;
  * 
  * @author ckuhlmeyer
  */
-public class ModuleManager implements IFModuleManager, IFModuleStructureManager {
+public class ModuleManager implements IFModuleManager, IFModuleStructureManager, KeyEventDispatcher {
 
     /** The logger used by the module manager. */
     private static final Logger LOG = Logger.getLogger(ModuleManager.class.getName());
@@ -50,9 +55,23 @@ public class ModuleManager implements IFModuleManager, IFModuleStructureManager 
     /** The root group of this module manager. */
     private final UlriceRootModule rootGroup = new UlriceRootModule();
 
+    private HashMap<KeyStroke, String> hotkeyModuleIdMap = new HashMap<KeyStroke, String>();
+    private HashMap<KeyStroke, IFController> openHotkeyControllerMap = new HashMap<KeyStroke, IFController>();
+    
     private final IdentityHashMap<IFController, IdentityHashMap<Object, Object>> blockers =
             new IdentityHashMap<IFController, IdentityHashMap<Object, Object>>();
-
+    
+    public ModuleManager() {
+    	Ulrice.addConfigurationListener(new ConfigurationListener() {
+			
+			@Override
+			public void initializationFinished() {
+				loadHotkeys();
+			}
+		});
+        KeyboardFocusManager.getCurrentKeyboardFocusManager().addKeyEventDispatcher(this);
+    }
+    
     @Override
     public void openModule(final String moduleId, final ControllerProviderCallback callback) {
         openModule(moduleId, null, callback);
@@ -72,14 +91,13 @@ public class ModuleManager implements IFModuleManager, IFModuleStructureManager 
     public void openModule(final String moduleId, final IFController parent, final ControllerProviderCallback callback, final IFCloseCallback closeCallback) {
         final IFModule module = moduleMap.get(moduleId);
 
+        if (module == null) {
+            callback.onFailure(new ModuleInstantiationException("Module with id (" + moduleId + ") could not be found.", null));
+            return;
+        } 
+
         try {
             Ulrice.getMainFrame().getFrame().setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
-
-            if (module == null) {
-                callback.onFailure(new ModuleInstantiationException("Module with id (" + moduleId
-                    + ") could not be found.", null));
-                return;
-            }
 
             final boolean isSingleModule = ModuleType.SingleModule.equals(module.getModuleInstanceType());
 
@@ -153,7 +171,7 @@ public class ModuleManager implements IFModuleManager, IFModuleStructureManager 
         finally {
             Ulrice.getMainFrame().getFrame().setCursor(Cursor.getDefaultCursor());
         }
-    }
+	}
 
     @Override
     public IFModule getModule(IFController controller) {
@@ -170,6 +188,12 @@ public class ModuleManager implements IFModuleManager, IFModuleStructureManager 
             return fromController;
         }
         return getModule(controller);
+    }
+
+    @Override
+    public String getModuleTitle(String moduleId, Usage usage) {
+    	final IFModule module = moduleMap.get(moduleId);    	
+        return module.getModuleTitle(usage);        
     }
 
     @Override
@@ -657,4 +681,62 @@ public class ModuleManager implements IFModuleManager, IFModuleStructureManager 
         return new ArrayList<IFModule>(moduleMap.values());
     }
 
+	@Override
+	public boolean dispatchKeyEvent(KeyEvent e) {
+		if(e.getID() == KeyEvent.KEY_LAST) {
+			final KeyStroke keyStroke = KeyStroke.getKeyStroke(e.getKeyCode(), e.getModifiers());
+			if(openHotkeyControllerMap.containsKey(keyStroke)) {
+				activateModule(openHotkeyControllerMap.get(keyStroke));				
+				e.consume();
+				return true;
+			} else if(hotkeyModuleIdMap.containsKey(keyStroke)) {
+				String moduleId = hotkeyModuleIdMap.get(keyStroke);
+				openModule(moduleId, null, new ControllerProviderCallback() {
+					
+					@Override
+					public void onControllerReady(IFController controller) {
+						super.onControllerReady(controller);
+						openHotkeyControllerMap.put(keyStroke, controller);
+					}
+					
+				}, null);
+				e.consume();
+				return true;
+			}		
+		}
+		return false;
+	}
+
+	@Override
+	public void clearHotkeys() {
+		hotkeyModuleIdMap.clear();
+		openHotkeyControllerMap.clear();
+	}
+	
+	@Override
+	public void registerHotkey(KeyStroke keyStroke, String moduleId) {
+		hotkeyModuleIdMap.put(keyStroke, moduleId);
+	}
+	
+	private void loadHotkeys() {
+		loadKeyAndAddToList("F1");
+		loadKeyAndAddToList("F2");
+		loadKeyAndAddToList("F3");
+		loadKeyAndAddToList("F4");
+		loadKeyAndAddToList("F5");
+		loadKeyAndAddToList("F6");
+		loadKeyAndAddToList("F7");
+		loadKeyAndAddToList("F8");
+		loadKeyAndAddToList("F9");
+		loadKeyAndAddToList("F10");
+		loadKeyAndAddToList("F11");
+		loadKeyAndAddToList("F12");
+	}
+
+	private void loadKeyAndAddToList(String key) {
+		String moduleId = Ulrice.getAppPrefs().getConfiguration(this, key, null);
+		if(moduleId != null) {
+			registerHotkey(KeyStroke.getKeyStroke("ctrl " + key), moduleId);			
+		}
+	}	
 }

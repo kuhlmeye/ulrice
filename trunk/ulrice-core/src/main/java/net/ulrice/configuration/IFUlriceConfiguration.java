@@ -3,6 +3,7 @@ package net.ulrice.configuration;
 import java.util.List;
 import java.util.Properties;
 
+import net.ulrice.appprefs.IFAppPrefs;
 import net.ulrice.frame.IFMainFrame;
 import net.ulrice.message.TranslationProvider;
 import net.ulrice.module.IFModuleManager;
@@ -39,13 +40,7 @@ public interface IFUlriceConfiguration {
 	 * @return The configured module structure manager.
 	 */
 	IFModuleStructureManager getModuleStructureManager();
-
-	/**
-	 * Returns the configuration properties.
-	 * 
-	 * @return The configuration properties.
-	 */
-	Properties getConfigurationProperties();
+	
 	
 	/**
 	 * Returns the callback for authentication
@@ -57,4 +52,6 @@ public interface IFUlriceConfiguration {
     TranslationProvider getTranslationProvider();
 
     ProfilePersister getProfilePersister();
+
+	IFAppPrefs getAppPrefs();
 }

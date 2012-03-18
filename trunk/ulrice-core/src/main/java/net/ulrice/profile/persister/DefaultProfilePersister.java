@@ -19,7 +19,7 @@ public class DefaultProfilePersister implements ProfilePersister {
 	private Preferences profileRoot;
 
 	public DefaultProfilePersister() {
-		String pathName = Ulrice.getConfiguration(this, "rootPath", "ulrice.profiles");
+		String pathName = Ulrice.getAppPrefs().getConfiguration(this, "rootPath", "ulrice.profiles");
 
 		Preferences userRoot = Preferences.userRoot();
 		profileRoot = userRoot.node(pathName);

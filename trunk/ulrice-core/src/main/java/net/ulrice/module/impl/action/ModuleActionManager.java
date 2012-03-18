@@ -13,12 +13,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.logging.Logger;
 
-import javax.swing.Action;
 import javax.swing.KeyStroke;
 import javax.swing.event.EventListenerList;
 
 import net.ulrice.Ulrice;
 import net.ulrice.module.IFController;
+import net.ulrice.module.IFModule;
 import net.ulrice.module.IFModuleTitleProvider.Usage;
 import net.ulrice.module.event.IFModuleActionManagerEventListener;
 import net.ulrice.module.event.IFModuleEventListener;

@@ -32,7 +32,7 @@ public class MainFrame extends JFrame implements IFMainFrame {
 	 */
 	public MainFrame() {
 		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-		setTitle(Ulrice.getConfiguration(this, "Title", ""));	
+		setTitle(Ulrice.getAppPrefs().getConfiguration(this, "Title", ""));	
 		setLayout(new BorderLayout());
 	}
 
@@ -49,7 +49,7 @@ public class MainFrame extends JFrame implements IFMainFrame {
 		ModuleTree moduleTree = new ModuleTree();
 		InstanceTree instanceTree = new InstanceTree();
 		Statusbar statusbar = new Statusbar();
-		Toolbar toolbar = new Toolbar(Ulrice.getConfiguration(this, "ActionOrder", Toolbar.MODULE_ACTIONS));
+		Toolbar toolbar = new Toolbar(Ulrice.getAppPrefs().getConfiguration(this, "ActionOrder", Toolbar.MODULE_ACTIONS));
 		Menubar menubar = new Menubar();
 		
 		setJMenuBar(menubar);

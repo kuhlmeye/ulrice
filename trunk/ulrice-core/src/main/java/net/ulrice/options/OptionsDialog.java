@@ -34,7 +34,7 @@ public class OptionsDialog extends JDialog {
         getContentPane().setLayout(new BorderLayout());
         getContentPane().add(new JScrollPane(moduleList), BorderLayout.WEST);
         
-        setMinimumSize(new Dimension(500, 400));
+        setMinimumSize(new Dimension(550, 400));
         setLocationRelativeTo(Ulrice.getMainFrame().getFrame());
 
         Translation titleTranslation = Ulrice.getTranslationProvider().getUlriceTranslation(TranslationUsage.Title, "Options");
