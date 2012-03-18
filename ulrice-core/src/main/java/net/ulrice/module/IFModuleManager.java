@@ -2,6 +2,8 @@ package net.ulrice.module;
 
 import java.util.List;
 
+import javax.swing.KeyStroke;
+
 import net.ulrice.module.event.IFModuleEventListener;
 import net.ulrice.module.impl.IFCloseCallback;
 import net.ulrice.module.impl.IFCloseHandler;
@@ -88,6 +90,11 @@ public interface IFModuleManager {
 	IFModuleTitleProvider getTitleProvider(IFController controller);
 	
 	/**
+	 * Returns the title of a module by usage and module id.
+	 */
+	String getModuleTitle(String moduleId, IFModuleTitleProvider.Usage usage);
+	
+	/**
 	 * Returns the title of a module
 	 * 
 	 * @param controller The controller of the module
@@ -166,4 +173,8 @@ public interface IFModuleManager {
 	List<IFModule> getAllModules();
 
     void fireModuleNameChanged(IFController controller);
+
+	void registerHotkey(KeyStroke keyStroke, String moduleId);
+
+	void clearHotkeys();
 }

@@ -2,6 +2,8 @@ package net.ulrice;
 
 import java.util.Properties;
 
+import net.ulrice.appprefs.DefaultAppPrefs;
+import net.ulrice.appprefs.IFAppPrefs;
 import net.ulrice.configuration.ConfigurationException;
 import net.ulrice.configuration.IFUlriceConfiguration;
 import net.ulrice.frame.IFMainFrame;
@@ -74,11 +76,6 @@ public class AbstractUlriceTest implements IFUlriceConfiguration {
 	}
 
 	@Override
-	public Properties getConfigurationProperties() {
-		return null;
-	}
-
-	@Override
 	public IFAuthCallback getAuthCallback() {
 		return new GrantAllAuthCallback();
 	}
@@ -91,6 +88,11 @@ public class AbstractUlriceTest implements IFUlriceConfiguration {
 	@Override
 	public ProfilePersister getProfilePersister() {
 		return new DefaultProfilePersister();
+	}
+
+	@Override
+	public IFAppPrefs getAppPrefs() {
+		return new DefaultAppPrefs();
 	}
 
 }

@@ -2,10 +2,11 @@ package net.ulrice.configuration;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.List;
 import java.util.Properties;
 
 import net.ulrice.Ulrice;
+import net.ulrice.appprefs.DefaultAppPrefs;
+import net.ulrice.appprefs.IFAppPrefs;
 import net.ulrice.frame.IFMainFrame;
 import net.ulrice.frame.impl.MainFrame;
 import net.ulrice.message.EmptyTranslationProvider;
@@ -13,7 +14,6 @@ import net.ulrice.message.TranslationProvider;
 import net.ulrice.module.IFModuleManager;
 import net.ulrice.module.IFModuleStructureManager;
 import net.ulrice.module.impl.ModuleManager;
-import net.ulrice.options.modules.IFOptionModule;
 import net.ulrice.profile.persister.DefaultProfilePersister;
 import net.ulrice.profile.persister.ProfilePersister;
 import net.ulrice.security.IFAuthCallback;
@@ -42,6 +42,8 @@ public class UlriceFileConfiguration extends ClassLoadingHelper implements IFUlr
     private TranslationProvider translationProvider;
 
 	private ProfilePersister profilePersister;
+
+	private IFAppPrefs appPrefs;
 
 	/**
 	 * Initialize ulrice by a file configuration.
@@ -82,20 +84,11 @@ public class UlriceFileConfiguration extends ClassLoadingHelper implements IFUlr
 		authCallback = (IFAuthCallback) loadClass(properties.getProperty(IFAuthCallback.class.getName(), null));		
 		translationProvider = (TranslationProvider) loadClass(properties.getProperty(TranslationProvider.class.getName(), EmptyTranslationProvider.class.getName()));
 		profilePersister = (ProfilePersister) loadClass(properties.getProperty(ProfilePersister.class.getName(), DefaultProfilePersister.class.getName()));
+		appPrefs = (IFAppPrefs) loadClass(properties.getProperty(IFAppPrefs.class.getName(), DefaultAppPrefs.class.getName()));
 
-		
 		
 		// Initialize ulrice.
 		Ulrice.initialize(this);
-	}
-
-    
-	/**
-	 * @see net.ulrice.configuration.IFUlriceConfiguration#getConfigurationProperties()
-	 */
-    @Override
-	public Properties getConfigurationProperties() {
-		return properties;
 	}
 
 	/**
@@ -136,5 +129,10 @@ public class UlriceFileConfiguration extends ClassLoadingHelper implements IFUlr
 	@Override
 	public ProfilePersister getProfilePersister() {
 		return profilePersister;
+	}
+
+	@Override
+	public IFAppPrefs getAppPrefs() {
+		return appPrefs;
 	}
 }

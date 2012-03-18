@@ -1,11 +1,11 @@
 package net.ulrice;
 
 import java.lang.reflect.InvocationTargetException;
-import java.util.Properties;
 
 import javax.swing.SwingUtilities;
 import javax.swing.event.EventListenerList;
 
+import net.ulrice.appprefs.IFAppPrefs;
 import net.ulrice.configuration.ConfigurationException;
 import net.ulrice.configuration.IFUlriceConfiguration;
 import net.ulrice.dialog.DialogManager;
@@ -47,9 +47,6 @@ public class Ulrice {
 
     private static ProcessManager processManager;
 
-    /** Contains all other configuration values. */
-    private static Properties configuration;
-
     private static ProfileManager profileManager;
     
     /** Contains the I18N-Support */
@@ -62,6 +59,8 @@ public class Ulrice {
 
     private static EventListenerList listenerList = new EventListenerList();
 
+	private static IFAppPrefs appPrefs;
+
     /**
      * Initializes ulrice.
      * 
@@ -70,7 +69,7 @@ public class Ulrice {
      */
     public static void initialize(IFUlriceConfiguration configuration) throws ConfigurationException {
         UI.applyDefaultUI();
-        Ulrice.configuration = configuration.getConfigurationProperties();
+        Ulrice.appPrefs = configuration.getAppPrefs();
         Ulrice.moduleManager = configuration.getModuleManager();
         Ulrice.moduleStructureManager = configuration.getModuleStructureManager();
         Ulrice.messageHandler = new MessageHandler();
@@ -79,7 +78,7 @@ public class Ulrice {
         Ulrice.dialogManager = new DialogManager();
         Ulrice.translationProvider = configuration.getTranslationProvider();
         Ulrice.profileManager = new ProfileManager(configuration.getProfilePersister());
-
+        
         if (configuration.getAuthCallback() != null) {
             Ulrice.securityManager = configuration.getAuthCallback();
         }
@@ -241,24 +240,9 @@ public class Ulrice {
     public static DialogManager getDialogManager() {
         return dialogManager;
     }
-
-    /**
-     * Returns a configuration value.
-     * 
-     * @param requestingObject The class name of the requestingObject is used as key prefix.
-     * @param key The parameter key.
-     * @param defaultValue The default value returned, if the value was not found.
-     * @return The configuration parameter value.
-     */
-    public static String getConfiguration(Object requestingObject, String key, String defaultValue) {
-        StringBuilder builder = new StringBuilder();
-        builder.append(requestingObject.getClass().getName());
-        builder.append('.');
-        builder.append(key);
-        if (Ulrice.configuration == null) {
-            return defaultValue;
-        }
-        return Ulrice.configuration.getProperty(builder.toString(), defaultValue);
+    
+    public static IFAppPrefs getAppPrefs() {
+    	return appPrefs;
     }
 
     /**
