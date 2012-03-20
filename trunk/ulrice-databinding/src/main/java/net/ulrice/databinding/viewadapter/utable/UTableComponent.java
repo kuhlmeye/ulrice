@@ -208,6 +208,9 @@ public class UTableComponent extends JPanel {
         scrollTable.setSelectionModel(rowSelModel);
         
         sorter = new UTableRowSorter(viewAdapter, UTableComponent.this.fixedColumns, staticTableModel, scrollTableModel);
+        if (viewAdapter.getAttributeModel().getMandatorySortKeys() != null) {
+            sorter.setMandatorySortKeys(viewAdapter.getAttributeModel().getMandatorySortKeys());
+        }
         if(viewAdapter.getAttributeModel().getDefaultSortKeys() != null){
             sorter.setGlobalSortKeys(viewAdapter.getAttributeModel().getDefaultSortKeys());
         }

@@ -76,6 +76,7 @@ public class TableAM implements IFAttributeModel {
     private boolean displayRemovedEntries = true;
     
     private List<SortKey> defaultSortKeys;
+    private List<SortKey> mandatorySortKeys;
     
     protected boolean treeStayOpen = false;
     
@@ -1251,5 +1252,13 @@ public class TableAM implements IFAttributeModel {
     
     public String toString(){
         return elements.size() + " Elements";
+    }
+
+    public List<SortKey> getMandatorySortKeys() {
+        return mandatorySortKeys;
+    }
+
+    public void setMandatorySortKeys(List<SortKey> mandatorySortKeys) {
+        this.mandatorySortKeys = mandatorySortKeys;
     }
 }
