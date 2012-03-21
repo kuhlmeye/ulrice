@@ -273,12 +273,20 @@ public class UTableComponent extends JPanel {
         }
     }
 
+    public MouseListener[] getMouseListeners() {
+        return listenerList.getListeners(MouseListener.class);
+    }
+
     public void addMouseListener(MouseListener l) {
         listenerList.add(MouseListener.class, l);
     }
 
     public void removeMouseListener(MouseListener l) {
         listenerList.remove(MouseListener.class, l);
+    }
+
+    public ListSelectionListener[] getListSelectionListeners() {
+        return listenerList.getListeners(ListSelectionListener.class);
     }
 
     public void addListSelectionListener(ListSelectionListener l) {
