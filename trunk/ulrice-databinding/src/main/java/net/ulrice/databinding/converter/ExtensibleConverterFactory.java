@@ -18,6 +18,7 @@ public class ExtensibleConverterFactory implements IFConverterFactory {
 			GenericStringToNumberConverter.INT,
 			GenericStringToNumberConverter.LONG,
 			GenericStringToNumberConverter.DOUBLE,
+			GenericStringToNumberConverter.SHORT,
 			new StringToBooleanConverter()
 			);
 	
