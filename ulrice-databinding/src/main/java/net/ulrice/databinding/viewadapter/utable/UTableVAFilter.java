@@ -1,7 +1,5 @@
 package net.ulrice.databinding.viewadapter.utable;
 
-import java.text.NumberFormat;
-import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
@@ -200,6 +198,12 @@ public class UTableVAFilter extends RowFilter<UTableViewAdapter, String> impleme
                             return false;
                         }
                     }
+                }
+            }
+            if (element.getCurrentValue() instanceof HeaderCapable) {
+                HeaderCapable item = (HeaderCapable) element.getCurrentValue();
+                if (item.isHeader()) {
+                    return true;
                 }
             }
 
