@@ -19,10 +19,11 @@ public class IntegerLengthValidator extends AbstractValidator<Integer> {
 
     @Override
     protected ValidationResult validate(IFBinding bindingId, Integer attribute) {
+        ValidationResult result = new ValidationResult();
         if (attribute != null) {
-            validator.validate(bindingId, attribute.toString());
+            result = validator.validate(bindingId, attribute.toString());
         }
-        return null;
+        return result;
     }
 
 }
