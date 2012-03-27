@@ -8,6 +8,8 @@ import javax.swing.DefaultRowSorter;
 import javax.swing.RowSorter;
 import javax.swing.SortOrder;
 
+import net.ulrice.databinding.bufferedbinding.impl.Element;
+
 public class UTableRowSorter extends DefaultRowSorter<UTableViewAdapter, String> {
 
     private UTableModelRowSorter scrollTableRS;
@@ -55,6 +57,20 @@ public class UTableRowSorter extends DefaultRowSorter<UTableViewAdapter, String>
                 return model.getElementAtUsingModelIndex(row).getUniqueId();
             }
         });
+    }
+    
+    
+    /**
+     * returns a list of the visible filtered elements
+     * 
+     */
+    public List<Element> getVisibleElements() {
+        int rows = getViewRowCount();
+        List<Element> visibleElements = new ArrayList<Element>(rows);
+        for (int i = 0; i < rows; i++) {
+            visibleElements.add(getModel().getElementAt(i));
+        }
+        return visibleElements;
     }
 
     @Override
