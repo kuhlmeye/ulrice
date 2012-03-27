@@ -444,12 +444,6 @@ public class ModuleManager implements IFModuleManager, IFModuleStructureManager,
      */
     @Override
     public void addModule(IFModule module) {
-        if (!Ulrice.getSecurityManager().allowRegisterModule(module)) {
-            LOG.info("Module [Id: " + module.getUniqueId() + ", Name: " + module.getModuleTitle(Usage.Default)
-                + "] will not be added. Not authorized by ulrice security manager.");
-            return;
-        }
-
         rootGroup.addModule(module);
     }
 
@@ -523,6 +517,13 @@ public class ModuleManager implements IFModuleManager, IFModuleStructureManager,
          */
         @Override
         public void addModule(IFModule module) {
+
+            if (!Ulrice.getSecurityManager().allowRegisterModule(module)) {
+                LOG.info("Module [Id: " + module.getUniqueId() + ", Name: " + module.getModuleTitle(Usage.Default)
+                    + "] will not be added. Not authorized by ulrice security manager.");
+                return;
+            }
+
             modules.add(module);
         }
 
