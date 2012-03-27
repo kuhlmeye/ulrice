@@ -3,12 +3,17 @@ package net.ulrice.module.impl;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.logging.Logger;
 
+import net.ulrice.Ulrice;
 import net.ulrice.module.IFModule;
 import net.ulrice.module.IFModuleGroup;
+import net.ulrice.module.IFModuleTitleProvider.Usage;
 
 public class ModuleGroup implements IFModuleGroup {
 
+	private static final Logger LOG = Logger.getLogger(ModuleGroup.class.getName());
+	
 	/** The list of contained module groups. */
 	private List<IFModuleGroup> moduleGroups = new ArrayList<IFModuleGroup>();
 
@@ -67,6 +72,13 @@ public class ModuleGroup implements IFModuleGroup {
 	 *            The module that should be added to this group.
 	 */
 	public void addModule(IFModule module) {
+
+        if (!Ulrice.getSecurityManager().allowRegisterModule(module)) {
+            LOG.info("Module [Id: " + module.getUniqueId() + ", Name: " + module.getModuleTitle(Usage.Default)
+                + "] will not be added. Not authorized by ulrice security manager.");
+            return;
+        }
+
 		modules.add(module);
 	}
 
