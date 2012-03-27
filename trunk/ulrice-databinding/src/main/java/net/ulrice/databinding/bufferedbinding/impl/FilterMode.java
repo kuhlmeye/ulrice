@@ -17,6 +17,8 @@ public enum FilterMode {
     
     Boolean,
     
-    ComboBox;
+    ComboBox,
+
+    Percent;
 
 }

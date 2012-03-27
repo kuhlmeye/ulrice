@@ -1,5 +1,6 @@
 package net.ulrice.databinding.viewadapter.utable;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
@@ -123,6 +124,7 @@ public class UTableVAFilter extends RowFilter<UTableViewAdapter, String> impleme
                 switch (filterMode) {
                     case RegEx:
                     case Numeric:
+                    case Percent:
                         JTextField field = new JTextField();
                         field.setName(columnDefinition.getId());
                         field.getDocument().putProperty(DOCUMENT_PROPERTY_FIELD_ID, columnDefinition.getId());
@@ -243,6 +245,7 @@ public class UTableVAFilter extends RowFilter<UTableViewAdapter, String> impleme
      */
     private boolean includeValue(String columnId, String identifier, Object value) {
         String strValue = value == null ? "" : value.toString();
+        boolean isPercentMode = false;
         if (columnFilterModes != null && columnFilterModes.containsKey(columnId)) {
             boolean isCombo = false;
             switch (columnFilterModes.get(columnId)) {
@@ -268,6 +271,8 @@ public class UTableVAFilter extends RowFilter<UTableViewAdapter, String> impleme
                                 return pattern.matcher(strValue).matches();
                         }
                     }
+                case Percent:
+                    isPercentMode = true;
                 case Numeric:
                     NumericPattern numericPattern = numericPatternExpressionMap.get(columnId);
                     if (numericPattern != null) {
@@ -280,6 +285,14 @@ public class UTableVAFilter extends RowFilter<UTableViewAdapter, String> impleme
                         // else {
                         LOG.finest("ColumnId: " + columnId + ", Value: " + strValue + ", Pattern: "
                             + numericPattern.toString());
+                        if (isPercentMode) {
+                            try {
+                                value = new BigDecimal(strValue).multiply(new BigDecimal(100)).toString();
+                            }
+                            catch (NumberFormatException e) {
+                                // no problem
+                            }
+                        }
                         return value == null ? false : numericPattern.matches(value);
                         // }
                     }
@@ -375,6 +388,7 @@ public class UTableVAFilter extends RowFilter<UTableViewAdapter, String> impleme
                     }
                     break;
                 }
+                case Percent:
                 case Numeric: {
                     
                     // Allowed:
