@@ -85,6 +85,8 @@ public class UTableViewAdapter extends AbstractViewAdapter implements TableModel
     }
 
     
+   
+    
     /**
      * @see net.ulrice.databinding.IFGuiAccessor#getAttributeModel()
      */
@@ -383,7 +385,16 @@ public class UTableViewAdapter extends AbstractViewAdapter implements TableModel
     public boolean isCellValid(int row, int col) {
         return table.isCellValid(row, col);
     }
-
+    
+    public List<Element> getVisibleElements(){
+        if(getRowSorter() != null){
+           return getRowSorter().getVisibleElements();
+        }else{
+            return getAttributeModel().getElements();
+        }
+    }
+    
+    
     public Element getElementAt(int viewRowIndex) {      
         return table.getElementAtViewIndex(viewRowIndex);
     }
