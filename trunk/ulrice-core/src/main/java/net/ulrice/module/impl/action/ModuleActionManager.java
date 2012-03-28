@@ -18,7 +18,6 @@ import javax.swing.event.EventListenerList;
 
 import net.ulrice.Ulrice;
 import net.ulrice.module.IFController;
-import net.ulrice.module.IFModule;
 import net.ulrice.module.IFModuleTitleProvider.Usage;
 import net.ulrice.module.event.IFModuleActionManagerEventListener;
 import net.ulrice.module.event.IFModuleEventListener;
@@ -377,6 +376,27 @@ public class ModuleActionManager implements IFModuleEventListener, PropertyChang
 	        if(state.getAction().getUniqueId().equals(actionId)) {
 	            state.setEnabled(enabled);
 	            break;
+	        }
+	    }
+	    
+	    adaptActionStates();
+	    fireApplicationActionsChanged();
+	}
+	
+	public void setActionStates(final IFController controller, final List<String> actionIds, final boolean enabled) {
+	    
+	    final Map<UlriceAction, ModuleActionState> map = controllerActionStateMap.get(controller);
+	    if (map == null) {
+	        return;
+	    }
+	    
+	    final Collection<ModuleActionState> values = map.values();
+	    
+	    for(ModuleActionState state : values) {
+	        for (String actionId : actionIds) {
+	            if(state.getAction().getUniqueId().equals(actionId)) {
+	                state.setEnabled(enabled);
+	            }
 	        }
 	    }
 	    
