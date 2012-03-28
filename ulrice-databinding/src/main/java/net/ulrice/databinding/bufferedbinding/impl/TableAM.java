@@ -265,6 +265,9 @@ public class TableAM implements IFAttributeModel {
            Object child = mva.getValue(i);
            element.addChildElement(createElement(child, dirty, valid, inserted));    
        }
+       if(mva.getSize() >0){ //reset dirty flag
+           element.clearElementValidationErrors();
+       }
     }
 
  
