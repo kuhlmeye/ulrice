@@ -20,6 +20,10 @@ public class UTableRowSorter extends DefaultRowSorter<UTableViewAdapter, String>
     private int fixedColumns;
     private UTableViewAdapter model;
 
+    private boolean disabled = false;
+    private int counter = 0;
+    private int savedCounter = 0;
+
     public UTableRowSorter(final UTableViewAdapter model, int fixedColumns, UTableModel staticTableModel,
         UTableModel scrollTableModel) {
         this.staticSortKeys = Collections.emptyList();
@@ -322,4 +326,25 @@ public class UTableRowSorter extends DefaultRowSorter<UTableViewAdapter, String>
         }
         return false;
     }
+
+    public void disableRowSorter() {
+        disabled = true;
+    }
+
+    public void reEnableRowSorter() {
+        disabled = false;
+        sort();
+    }
+
+    @Override
+    public void sort() {
+        if (!disabled) {
+            System.out.println("RowSorter.sort() " + counter++ + " " + toString());
+            super.sort();
+        }
+        else {
+            System.out.println("RowSorter disabled " + savedCounter++ + " " + toString());
+        }
+    }
+
 }
