@@ -274,7 +274,7 @@ public class Element {
 	 *            The old state
 	 */
 	private void fireStateChanged() {
-		tableAM.elementStateChanged(this);
+		tableAM.handleElementStateChange(this);
 	}
 
 	/**
@@ -284,7 +284,7 @@ public class Element {
 	 * @param oldValue
 	 */
 	private void fireValueChanged(String columnId) {
-		tableAM.elementDataChanged(this, columnId);
+		tableAM.handleElementDataChanged(this, columnId);
 	}
 
 	/**
