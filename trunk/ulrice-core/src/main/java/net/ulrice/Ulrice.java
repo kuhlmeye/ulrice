@@ -28,7 +28,7 @@ import net.ulrice.ui.UI;
  */
 public class Ulrice {
 
-    private static final int DEFAULT_REMOTE_CONTROL_PORT = 2103;
+    public static final int DEFAULT_REMOTE_CONTROL_PORT = 62103;
 
     /** The module manager used by this application. */
     private static IFModuleManager moduleManager;

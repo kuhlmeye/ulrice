@@ -5,10 +5,12 @@ import static net.ulrice.remotecontrol.RemoteControlCenter.*;
 import java.io.FileOutputStream;
 import java.io.IOException;
 
+import net.ulrice.Ulrice;
+
 public class TestClientConnection {
 
     public static void main(String[] args) throws RemoteControlException, IOException {
-        connectClient("localhost", 2103, 1);
+        connectClient("localhost", Ulrice.DEFAULT_REMOTE_CONTROL_PORT, 1);
 
         byte[] bytes = applicationRC().screenshot();
 
