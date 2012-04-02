@@ -13,6 +13,7 @@ import javax.swing.JDialog;
 import javax.swing.JRadioButton;
 import javax.swing.JTextArea;
 
+import net.ulrice.Ulrice;
 import net.ulrice.databinding.viewadapter.utable.UTableComponent;
 import net.ulrice.remotecontrol.ActionMatcher;
 import net.ulrice.remotecontrol.ComponentState;
@@ -43,7 +44,7 @@ public class BehaviorJBehaveSteps {
         }
 
         try {
-            connectClient("localhost", 2103, 1);
+            connectClient("localhost", Ulrice.DEFAULT_REMOTE_CONTROL_PORT, 1);
             return;
         }
         catch (RemoteControlException e) {
@@ -51,7 +52,7 @@ public class BehaviorJBehaveSteps {
         }
 
         launchApplication(null, UlriceSampleApplication.class, null);
-        connectClient("localhost", 2103, 60);
+        connectClient("localhost", Ulrice.DEFAULT_REMOTE_CONTROL_PORT, 60);
         RemoteControlUtils.pause(0.25);
     }
 
