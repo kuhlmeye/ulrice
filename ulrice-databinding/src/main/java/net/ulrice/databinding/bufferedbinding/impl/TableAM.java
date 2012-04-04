@@ -1085,6 +1085,34 @@ public class TableAM implements IFAttributeModel {
         fireUpdateViews();
         return true;
     }
+    
+
+    /**
+     * Move the element one position up.
+     */
+    public void moveElementUp(Element element) {
+        int idx = getIndexOfElement(element);
+        if(idx > 0) {
+            elements.remove(idx);
+            idx--;
+            elements.add(idx, element);
+        }
+        fireUpdateViews();
+    }
+
+    /**
+     * Move the element one position down.
+     * @param element
+     */
+    public void moveElementDown(Element element) {
+        int idx = getIndexOfElement(element);
+        if(idx < elements.size() - 1) {
+            elements.remove(idx);
+            idx++;
+            elements.add(idx, element);
+        }
+        fireUpdateViews();
+    }
 
     /**
      * Returns the list of objects marked as deleted

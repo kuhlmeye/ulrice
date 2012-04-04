@@ -658,6 +658,16 @@ public class UTableComponent extends JPanel {
             }
         }
     }
+    
+    public void moveElementUp(Element element) {
+        checkAttributeModelSet();
+        attributeModel.moveElementUp(element);
+    }
+    
+    public void moveElementDown(Element element) {
+        checkAttributeModelSet();
+        attributeModel.moveElementDown(element);
+    }
 
     @SuppressWarnings({ "rawtypes", "unchecked" })
     public List getSelectedObjects() {
