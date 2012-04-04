@@ -1,0 +1,1529 @@
+package net.ulrice.databinding.bufferedbinding.impl;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Set;
+
+import javax.swing.RowSorter.SortKey;
+import javax.swing.SwingUtilities;
+import javax.swing.event.EventListenerList;
+
+import net.ulrice.databinding.bufferedbinding.IFAttributeInfo;
+import net.ulrice.databinding.bufferedbinding.IFAttributeModel;
+import net.ulrice.databinding.bufferedbinding.IFAttributeModelEventListener;
+import net.ulrice.databinding.converter.IFValueConverter;
+import net.ulrice.databinding.modelaccess.IFIndexedModelValueAccessor;
+import net.ulrice.databinding.modelaccess.impl.IndexedReflectionMVA;
+import net.ulrice.databinding.validation.IFValidator;
+import net.ulrice.databinding.validation.ValidationError;
+import net.ulrice.databinding.validation.ValidationResult;
+import net.ulrice.databinding.viewadapter.IFViewAdapter;
+import net.ulrice.databinding.viewadapter.utable.TreeTableModel;
+
+/**
+ * Table attribute model. Model for all UTableComponents
+ * 
+ * @author christof
+ */
+@SuppressWarnings("rawtypes")
+public class TableAM implements IFAttributeModel {
+
+    private IFIndexedModelValueAccessor tableMVA;
+
+    private List<ColumnDefinition< ? extends Object>> columns = new ArrayList<ColumnDefinition< ? extends Object>>();
+    private Map<String, ColumnDefinition> columnIdMap = new HashMap<String, ColumnDefinition>();
+
+    protected List<Element> elements = new ArrayList<Element>();
+    protected Map<String, Element> elementIdMap = new HashMap<String, Element>();
+
+    private List<IFValidator> validators = new ArrayList<IFValidator>();
+    private EventListenerList listenerList = new EventListenerList();
+    private String id;
+    private boolean readOnly;
+    private long nextUniqueId;
+
+    private Set<Element> newElements = new HashSet<Element>();
+    private Set<Element> modElements = new HashSet<Element>();
+    private Set<Element> delElements = new HashSet<Element>();
+    private Set<Element> invElements = new HashSet<Element>();
+    
+    private List<IFViewAdapter> viewAdapterList = new ArrayList<IFViewAdapter>();
+
+    private IFValueConverter valueConverter;
+
+    private IFAttributeInfo attributeInfo;
+
+    private boolean initialized = false;
+    private boolean dirty = false;
+    private boolean valid = true;
+    
+    //prevent update ui, for mass editing
+    private boolean massEditMode = false;
+
+    // unique constraint handling
+    private String[] uniqueKeyColumnIds = null;    
+    private Map<List< ?>, Set<String>> uniqueMap = new HashMap<List< ?>, Set<String>>();
+    private Map<List< ?>, Set<String>> uniqueDeleteMap = new HashMap<List< ?>, Set<String>>();
+    private Map<String, List< ?>> keyMap = new HashMap<String, List< ?>>();
+    private Map<String, List< ?>> keyDeleteMap = new HashMap<String, List< ?>>();
+    private Map<List< ?>, ValidationError> currentErrorMap = new HashMap<List< ?>, ValidationError>();
+
+    private String pathToChildren;
+    
+    private boolean displayRemovedEntries = true;
+    
+    private List<SortKey> defaultSortKeys;
+    private List<SortKey> mandatorySortKeys;
+    
+    protected boolean treeStayOpen = false;
+    
+    /**
+     * Create a table attribute model  
+     * 
+     * @param tableMVA the model value accessor used to get the list data
+     * @param attributeInfo additional information about the attribute (validation rules,...)
+     */
+    public TableAM(IFIndexedModelValueAccessor tableMVA, IFAttributeInfo attributeInfo) {
+        this(tableMVA, attributeInfo, false);
+    }
+
+    /**
+     * Create a table attribute model  
+     * 
+     * @param tableMVA the model value accessor used to get the list data
+     * @param attributeInfo additional information about the attribute (validation rules,...)
+     * @param readOnly true, if this table attribute model should be read only
+     */
+    public TableAM(IFIndexedModelValueAccessor tableMVA, IFAttributeInfo attributeInfo, boolean readOnly) {
+        this(tableMVA.getAttributeId(), tableMVA, attributeInfo, readOnly);
+    }
+    
+    /**
+     * Create a table attribute model.
+     * 
+     * @param id Identifier for this binding  
+     * @param tableMVA the model value accessor used to get the list data
+     * @param attributeInfo additional information about the attribute (validation rules,...)
+     * @param readOnly true, if this table attribute model should be read only
+     */
+    public TableAM(String id, IFIndexedModelValueAccessor tableMVA, IFAttributeInfo attributeInfo, boolean readOnly) {
+        this.id = id;
+        this.tableMVA = tableMVA;
+        this.readOnly = readOnly;
+        this.attributeInfo = attributeInfo;
+
+        nextUniqueId = System.currentTimeMillis();
+    }
+
+    /**
+     * Checks the unique constraints for an element. This method is called after an element was changed or added.
+     */
+    private void checkUniqueConstraint(Element element) {
+        if(element.getChildCount()>0){
+            return;
+        }
+        
+        if (uniqueKeyColumnIds == null) {
+            return;
+        }
+
+        List< ?> key = buildKey(element);
+        if (checkKeyChangeAndUpdateDatastructure(element.getUniqueId(), key)) {
+            if (uniqueMap.containsKey(key)) {
+                Set<String> uniqueIdSet = uniqueMap.get(key);
+                uniqueIdSet.add(element.getUniqueId());
+                if (uniqueIdSet.size() > 1) {
+                    ValidationError uniqueConstraintError =
+                            new ValidationError(this, "Unique key constraint error", null);
+                    currentErrorMap.put(key, uniqueConstraintError);
+                    for (String uniqueId : uniqueIdSet) {
+                        Element elementById = getElementById(uniqueId);
+                        elementById.addElementValidationError(uniqueConstraintError);
+                    }
+                }
+            }
+            else {
+                Set<String> uniqueIdSet = new HashSet<String>();
+                uniqueIdSet.add(element.getUniqueId());
+                uniqueMap.put(key, uniqueIdSet);
+            }
+        }
+    }
+
+    /**
+     * Update the data structures for the unique key handling in case that the key of the element was changed
+     * 
+     * @param uniqueId The unique id of the referenced element.
+     * @param key The unique key of the element as list of values.
+     * @return true, if key was changed, false otherwise
+     */
+    private boolean checkKeyChangeAndUpdateDatastructure(String uniqueId, List< ?> key) {
+        List< ?> oldKey = keyMap.get(uniqueId);
+        if (oldKey == null && key != null) {
+            // String oldUniqueId = checkForOldUniqueId(key, uniqueId);
+            keyMap.put(uniqueId, key);
+            return true;
+        }
+
+        if (key == null || !oldKey.equals(key)) {
+            if (oldKey != null) {
+                Set<String> uniqueKeySet = uniqueMap.get(oldKey);
+                uniqueKeySet.remove(uniqueId);
+                // should not happen
+                if (uniqueDeleteMap.containsKey(oldKey)) {
+                    Set<String> uniqueDeleteKeySet = uniqueDeleteMap.get(oldKey);
+                    uniqueDeleteKeySet.add(uniqueId);
+                }
+                else {
+                    Set<String> uniqueIdSet = new HashSet<String>();
+                    uniqueIdSet.add(uniqueId);
+                    uniqueDeleteMap.put(oldKey, uniqueIdSet);
+                }
+                if (uniqueKeySet.size() <= 1 && currentErrorMap.containsKey(oldKey)) {
+                    ValidationError validationError = currentErrorMap.remove(oldKey);
+                    getElementById(uniqueId).removeElementValidationError(validationError);
+                    for (String uniqueElementId : uniqueKeySet) {
+                        getElementById(uniqueElementId).removeElementValidationError(validationError);
+                    }
+
+                }
+                keyDeleteMap.put(uniqueId, oldKey);
+                keyMap.put(uniqueId, key);
+            }
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * Returns the key of an element.
+     */
+    private List< ?> buildKey(Element element) {
+        List<Object> key = new ArrayList<Object>(uniqueKeyColumnIds != null ? uniqueKeyColumnIds.length : 0);
+        if(uniqueKeyColumnIds != null) {
+            for (String columnId : uniqueKeyColumnIds) {
+                key.add(element.getValueAt(columnId));
+            }
+        }
+        return key;
+    }
+    
+    /**
+     * Checks added or changed elements against the list of deleted elements. If there is already a deleted 
+     * element with the same unique key, change the unique id of the added or changed element to the
+     * unique id of the deleted element => After that the added/changed element is known as the removed one.
+     * 
+     * @param element The added/changed element.
+     * 
+     * @return The orignal element, if key is not known in the list of removed elements or the removed element with the values of the added/changed element.
+     */
+    private Element checkAddedOrChangedElementAgainstDeletedElements(Element element) { 
+    	Element oldElement = null;
+    	String oldUniqueId = checkForOldUniqueId(buildKey(element), element.getUniqueId());
+
+        if (oldUniqueId == null) {
+            return element;
+        }
+        else {
+            // delete old element from delElements
+            // how to find old element?
+            Iterator<Element> iter = delElements.iterator();
+            while (iter.hasNext()) {
+                Element el = iter.next();
+                if (oldUniqueId.equals(el.getUniqueId())) {
+                    oldElement = el;
+                    oldElement.setRemoved(false);
+                    iter.remove();
+                    break;
+                }
+            }
+            if (oldElement != null) {
+                oldElement.setCurrentValue(element.getCurrentValue());
+            }
+            else {
+                oldElement = element;
+            }
+
+            elementIdMap.put(oldUniqueId, oldElement);
+            return oldElement;
+        }
+    }
+
+
+    /**
+     * Check, if a newly created or changed element with a given unique key is already known in the datastructures with a different unique id. 
+     * @param key The list of value of the element defining the unique key
+     * @param newUniqueId The generated unique id of the newly created or changed element
+     * @return null, if there is no unique id available for the key or the unique id of the already known element
+     */
+    private String checkForOldUniqueId(List< ?> key, String newUniqueId) {
+        String oldUniqueId = null;
+        if (keyDeleteMap.containsValue(key)) {
+            for (Entry<String, List< ?>> entry : keyDeleteMap.entrySet()) {
+                if (key.equals(entry.getValue())) {
+                    oldUniqueId = entry.getKey();
+                    // remove Element from new Elements and replace it with the former deleted one
+                    // newElements.remove(getElementById(newUniqueId));
+//                    keyDeleteMap.remove(oldUniqueId);
+                }
+            }
+        }
+        return oldUniqueId;
+    }
+
+    // end of unique constraint handling
+
+    /**
+     * @see net.ulrice.databinding.bufferedbinding.IFAttributeModel#getId()
+     */
+    @Override
+    public String getId() {
+        return id;
+    }
+
+    /**
+     * Returns, if a table cell is valid.
+     */
+    public boolean isCellValid(int row, int column) {
+        return getElementAt(row).isColumnValid(column);
+    }
+
+    /**
+     * Returns, if a table cell is dirty.
+     */
+    public boolean isCellDirty(int row, int column) {
+        return getElementAt(row).isColumnDirty(column);
+    }
+
+    /**
+     * Internal method for creating a new element with a new unique identifier
+     */
+    protected Element createElement(Object value, boolean dirty, boolean valid, boolean inserted) {
+        String uniqueId = Long.toHexString(nextUniqueId++);
+        Element elem = new Element(this, uniqueId, columns, value, isReadOnly(), dirty, valid, inserted);
+        
+        if(isForTreeTable()){
+            addChildsToElement(value, dirty, valid, inserted, elem);
+        }
+        
+        return elem;
+    }
+       
+    /**
+     * Internal method for adding a child to an element.
+     */
+    protected void addChildsToElement(Object value, boolean dirty, boolean valid, boolean inserted, Element element){
+       IFIndexedModelValueAccessor mva = new IndexedReflectionMVA(value,getPathToChildren());
+       for(int i = 0; i < mva.getSize(); i++){           
+           Object child = mva.getValue(i);
+           element.addChildElement(createElement(child, dirty, valid, inserted));    
+       }
+       if(mva.getSize() >0){ //reset dirty flag
+           element.clearElementValidationErrors();
+       }
+    }
+
+    /**
+     * @see net.ulrice.databinding.bufferedbinding.IFAttributeModel#addAttributeModelEventListener(net.ulrice.databinding.bufferedbinding.IFAttributeModelEventListener)
+     */
+    @Override
+    public void addAttributeModelEventListener(IFAttributeModelEventListener listener) {
+        listenerList.add(IFAttributeModelEventListener.class, listener);
+    }
+
+    /**
+     * @see net.ulrice.databinding.bufferedbinding.IFAttributeModel#removeAttributeModelEventListener(net.ulrice.databinding.bufferedbinding.IFAttributeModelEventListener)
+     */
+    @Override
+    public void removeAttributeModelEventListener(IFAttributeModelEventListener listener) {
+        listenerList.remove(IFAttributeModelEventListener.class, listener);
+    }
+
+    /**
+     * @see net.ulrice.databinding.bufferedbinding.IFAttributeModel#setValidator(net.ulrice.databinding.validation.IFValidator)
+     */
+    @Override
+    public void addValidator(IFValidator validator) {
+        this.validators.add(validator);
+    }
+
+    /**
+     * @see net.ulrice.databinding.bufferedbinding.IFAttributeModel#getValidator()
+     */
+    @Override
+    public List<IFValidator> getValidators() {
+        return validators;
+    }
+
+    /**
+     * Returns the element at the model index.
+     */
+    public Element getElementAt(int index) {
+        if (index >= 0 && index < elements.size()) {
+            return elements.get(index);
+        }
+        return null;
+    }
+
+    /**
+     * @see javax.swing.table.TableModel#getColumnCount()
+     */
+    public int getColumnCount() {
+        return columns == null ? 0 : columns.size();
+    }
+
+    /**
+     * @see javax.swing.table.TableModel#getColumnClass(int)
+     */
+    public Class< ?> getColumnClass(int columnIndex) {
+        if(isForTreeTable() && columnIndex == 0){
+            return TreeTableModel.class;
+        }
+        return columns.get(columnIndex).getColumnClass();
+    }
+
+    /**
+     * @see javax.swing.table.TableModel#getColumnName(int)
+     */
+    public String getColumnName(int columnIndex) {
+        return columns.get(columnIndex).getColumnName();
+    }
+
+    /**
+     * @see javax.swing.table.TableModel#getRowCount()
+     */
+    public int getRowCount() {
+        return elements == null ? 0 : elements.size();
+    }
+
+    /**
+     * Returns true, if the element is in "new" state. This means, it was newly created and is not yet saved.
+     */
+    public boolean isNew(Element element) {
+        return newElements.contains(element);
+    }
+
+    /**
+     * Returns true, if the element is in "removed" state. This means, it was deleted from the table and is not yet saved.
+     */
+    public boolean isRemoved(Element element) {
+        return delElements.contains(element);
+    }
+
+    /**
+     * @see javax.swing.table.TableModel#isCellEditable(int, int)
+     */
+    public boolean isCellEditable(int rowIndex, int columnIndex) {
+        return !isReadOnly() && getElementAt(rowIndex) != null && !getElementAt(rowIndex).isReadOnly(columnIndex) && !getElementAt(rowIndex).isRemoved();
+    }
+
+    /**
+     * @see javax.swing.table.TableModel#getValueAt(int, int)
+     */
+    public Object getValueAt(int rowIndex, int columnIndex) {
+        final Element element = getElementAt(rowIndex);
+        return element == null ? null : element.getValueAt(columnIndex);
+    }
+
+    /**
+     * @see javax.swing.table.TableModel#setValueAt(java.lang.Object, int, int)
+     */
+    public void setValueAt(Object aValue, int rowIndex, int columnIndex) {
+        getElementAt(rowIndex).setValueAt(columnIndex, aValue);
+    }
+
+    /**
+     * @see net.ulrice.databinding.bufferedbinding.IFAttributeModel#isReadOnly()
+     */
+    @Override
+    public boolean isReadOnly() {
+        return readOnly;
+    }
+    
+    /**
+     * TODO RAD Comment me..
+     */
+    public boolean consumeTreeStayOpen(){
+        boolean temp = treeStayOpen;
+        treeStayOpen = false;
+        return temp;
+    }
+    
+    /**
+     * This method is called by the element after a value was changed. It triggers the events..
+     * 
+     * @param element The element that was changed.
+     * @param columnId The id of the column in which the value was changed.
+     */
+    protected void handleElementDataChanged(final Element element, final String columnId) {
+        
+        if(isForTreeTable()){
+            treeStayOpen = true;
+        }
+        
+        fireUpdateViews();
+        
+        
+    	if (uniqueKeyColumnIds != null) {
+            checkUniqueConstraint(element);
+            if (keyDeleteMap.containsValue(buildKey(element))) {
+            	checkAddedOrChangedElementAgainstDeletedElements(element);
+            }
+            checkAddedOrChangedElementAgainstDeletedElements(element);
+        }
+        
+    	// Inform the event listeners.
+        ElementLifecycleListener[] listeners = listenerList.getListeners(ElementLifecycleListener.class);
+        if (listeners != null) {
+            for (final ElementLifecycleListener constraint : listeners) {
+                if(!SwingUtilities.isEventDispatchThread()) {
+                    SwingUtilities.invokeLater(new Runnable() {                    
+                        @Override
+                        public void run() {
+                            constraint.elementChanged(TableAM.this, element, columnId);
+                        }
+                    });
+                } else {
+                    constraint.elementChanged(TableAM.this, element, columnId);
+                }
+            }
+        }
+		
+		fireDataChanged();
+    }
+
+    /**
+     * This method is called by the element after the state of the element was changed. 
+     * It updates the data structures in which the element states are tracked and fires the needed events. 
+     * 
+     * @param element The element with the changed state.
+     */
+    protected void handleElementStateChange(final Element element) {
+        if (element.isValid() || element.isRemoved()) {
+            invElements.remove(element);
+        }
+        else {
+            invElements.add(element);
+        }
+
+        if (element.isDirty() && !element.isInsertedOrRemoved() && elementIdMap.containsKey(element.getUniqueId())
+            && !newElements.contains(element) && !delElements.contains(element)) {
+            modElements.add(element);
+        }
+
+        if (!element.isDirty() && elementIdMap.containsKey(element.getUniqueId())) {
+            modElements.remove(element);
+        }
+
+        boolean oldValid = valid;
+        boolean oldDirty = dirty;
+
+        valid = invElements.isEmpty();
+        dirty = !modElements.isEmpty() || !delElements.isEmpty() || !newElements.isEmpty();
+
+        fireElementStatusChanged(element);
+
+        if (oldValid != valid || oldDirty != dirty) {
+        	fireStateChanged();
+        }
+    }
+
+    /**
+     * Inform the model event listeners about a data change.
+     */
+    @SuppressWarnings("unchecked")
+    private void fireDataChanged() {
+        IFAttributeModelEventListener[] listeners = listenerList.getListeners(IFAttributeModelEventListener.class);
+        if (listeners != null && !massEditMode) {
+            for (final IFAttributeModelEventListener listener : listeners) {
+                if(!SwingUtilities.isEventDispatchThread()) {
+                    SwingUtilities.invokeLater(new Runnable() {                    
+                        @Override
+                        public void run() {
+                            listener.dataChanged(null, TableAM.this);
+                        }
+                    });
+                } else {
+                    listener.dataChanged(null, this);
+                }
+            }
+        }
+    }
+
+    /**
+     * Inform the model event listeners about a state change
+     */
+    @SuppressWarnings("unchecked")
+    private void fireStateChanged() {
+        IFAttributeModelEventListener[] listeners = listenerList.getListeners(IFAttributeModelEventListener.class);
+        if (listeners != null) {
+            for (final IFAttributeModelEventListener listener : listeners) {
+                if(!SwingUtilities.isEventDispatchThread()) {
+                    SwingUtilities.invokeLater(new Runnable() {                    
+                        @Override
+                        public void run() {
+                            listener.stateChanged(null, TableAM.this);
+                        }
+                    });
+                } else {
+                    listener.stateChanged(null, this);
+                }
+            }
+        }
+    }
+
+    /**
+     * Add a column to this table model
+     * 
+     * @param columnDefinition The definition of the column that should be added.
+     */
+    public void addColumn(final ColumnDefinition< ?> columnDefinition) {
+        columnDefinition.addChangeListener(new ColumnDefinitionChangedListener() {
+            @Override
+            public void valueRangeChanged(final ColumnDefinition< ?> colDef) {
+                TableAMListener[] listeners = listenerList.getListeners(TableAMListener.class);
+                if (listeners != null) {
+                    for (final TableAMListener listener : listeners) {
+                        if(!SwingUtilities.isEventDispatchThread()) {
+                            SwingUtilities.invokeLater(new Runnable() {                    
+                                @Override
+                                public void run() {
+                                    listener.columnValueRangeChanged(TableAM.this, colDef);
+                                }
+                            });
+                        } else {
+                            listener.columnValueRangeChanged(TableAM.this, colDef);
+                        }
+                    }
+                }
+            }
+
+            @Override
+            public void filterModeChanged(final ColumnDefinition< ?> colDef) {
+
+
+                TableAMListener[] listeners = listenerList.getListeners(TableAMListener.class);
+                if (listeners != null) {
+                    for (final TableAMListener listener : listeners) {
+                        if(!SwingUtilities.isEventDispatchThread()) {
+                            SwingUtilities.invokeLater(new Runnable() {                    
+                                @Override
+                                public void run() {
+                                    listener.columnFilterModeChanged(TableAM.this, colDef);
+                                }
+                            });
+                        } else {
+                            listener.columnFilterModeChanged(TableAM.this, colDef);
+                        }
+                    }
+                }
+            }
+        });
+        columns.add(columnDefinition);
+        columnIdMap.put(columnDefinition.getId(), columnDefinition);
+
+        TableAMListener[] listeners = listenerList.getListeners(TableAMListener.class);
+        if (listeners != null) {
+            for (final TableAMListener listener : listeners) {
+                if(!SwingUtilities.isEventDispatchThread()) {
+                    SwingUtilities.invokeLater(new Runnable() {                    
+                        @Override
+                        public void run() {
+                            listener.columnAdded(TableAM.this, columnDefinition);
+                        }
+                    });
+                } else {
+                    listener.columnAdded(TableAM.this, columnDefinition);
+                }
+            }
+        }
+    }
+
+    /**
+     * Returns true, if a column definition is managed by this table attribute model
+     */
+    public boolean containsColumn(ColumnDefinition< ?> column) {
+        return columns.contains(column);
+    }    
+
+    /**
+     * Delete a column from this table model.
+     * 
+     * @param columnDefinition The definition of the column that should be removed.
+     */
+    public void delColumn(final ColumnDefinition< ?> columnDefinition) {
+        columns.remove(columnDefinition);
+        columnIdMap.remove(columnDefinition.getId());
+
+        TableAMListener[] listeners = listenerList.getListeners(TableAMListener.class);
+        if (listeners != null) {
+            for (final TableAMListener listener : listeners) {
+                if(!SwingUtilities.isEventDispatchThread()) {
+                    SwingUtilities.invokeLater(new Runnable() {                    
+                        @Override
+                        public void run() {
+                            listener.columnRemoved(TableAM.this, columnDefinition);
+                        }
+                    });
+                } else {
+                    listener.columnRemoved(TableAM.this, columnDefinition);
+                }
+            }
+        }
+    }
+
+    /**
+     * Delete all columns from this table model.
+     */
+    public void delAllColumns() {
+        List<ColumnDefinition< ? extends Object>> list = new ArrayList<ColumnDefinition< ?>>(columns);
+        for (ColumnDefinition< ?> colDef : list) {
+            delColumn(colDef);
+        }
+    }
+
+    /**
+     * Add a table attribute model listener to the list of listeners.
+     */
+    public void addTableAMListener(TableAMListener listener) {
+        listenerList.add(TableAMListener.class, listener);
+    }
+
+    /**
+     * Remove a table attribute model listener from the list of listeners.
+     */
+    public void removeTableAMListener(TableAMListener listener) {
+        listenerList.add(TableAMListener.class, listener);
+    }
+
+
+    /**
+     * Returns the list of all column definitions
+     */
+    public List<ColumnDefinition< ? extends Object>> getColumns() {
+        return columns;
+    }
+
+    /**
+     * @see net.ulrice.databinding.bufferedbinding.IFAttributeModel#gaChanged(net.ulrice.databinding.IFGuiAccessor, java.lang.Object)
+     */
+    @Override
+    public void gaChanged(IFViewAdapter viewAdapter, Object value) {
+        fireUpdateViews();
+    }
+
+    /**
+     * Inform the connected view adapters about a change in the attribute model.
+     */
+    public void fireUpdateViews() {
+        if (viewAdapterList != null && !massEditMode) {
+            for (final IFViewAdapter viewAdapter : viewAdapterList) {
+                if(!SwingUtilities.isEventDispatchThread()) {
+                    SwingUtilities.invokeLater(new Runnable() {                    
+                        @Override
+                        public void run() {
+                            viewAdapter.updateFromBinding(TableAM.this);
+                        }
+                    });
+                } else {
+                    viewAdapter.updateFromBinding(this);
+                }
+            }
+        }
+    }
+
+    /**
+     * Connect a view adapter to this table attribute model
+     */
+    @Override
+    public void addViewAdapter(IFViewAdapter viewAdapter) {
+        viewAdapterList.add(viewAdapter);
+        viewAdapter.bind(this);
+        viewAdapter.updateFromBinding(this);
+    }
+
+    /**
+     * Detach a view adapter from this attribute model.
+     */
+    public void removeViewAdapter(IFViewAdapter viewAdapter) {
+        viewAdapterList.remove(viewAdapter);
+        viewAdapter.detach(this);
+    }
+
+    /**
+     * Returns the index of an element in the table attribute model.
+     */
+    public int getIndexOfElement(Element element) {
+        return elements.indexOf(element);
+    }
+
+    public IFValueConverter getValueConverter() {
+        // TODO KUH Currently not used.
+        return valueConverter;
+    }
+
+    @Override
+    public void setValueConverter(IFValueConverter valueConverter) {
+        this.valueConverter = valueConverter;
+    }
+
+    /**
+     * True, if this table attribute model is initialized (data was read from the model)
+     */
+    @Override
+    public boolean isInitialized() {
+        return initialized;
+    }
+    
+    /**
+     * True, if this table attribute model is dirty.
+     */
+    @Override
+    public boolean isDirty() {
+        return dirty;
+    }
+    
+    /**
+     * True, if this table attribute model is valid.
+     */
+    @Override
+    public boolean isValid() {
+        return valid;
+    }
+
+    /**
+     * Returns the validation results. If table model is not valid, the validation result contains all validation errors
+     */
+    @Override
+    public ValidationResult getValidationResult() {
+        ValidationResult result = new ValidationResult();
+        if (invElements != null) {
+            for (Element element : invElements) {
+                result.addValidationErrors(element.getValidationErrors());
+            }
+        }
+
+        return result;
+    }
+
+    /**
+     * Returns the validation results as list of string. 
+     */
+    @Override
+    public List<String> getValidationFailures() {
+        List<String> result = new ArrayList<String>();
+        if (invElements != null) {
+            for (Element element : invElements) {
+                result.addAll(element.getValidationFailures());
+            }
+        }
+
+        return result;
+    }
+
+    /**
+     * Returns the list of current objects managed by this table attribute model.
+     */
+    @Override
+    public Object getCurrentValue() {
+        List<Object> result = new ArrayList<Object>(elements == null ? 0 : elements.size());
+
+        for (Element element : elements) {
+            result.add(element.getCurrentValue());
+        }
+
+        return result;
+    }
+
+    
+    /**
+     * Returns the list of objects originally read from the model.
+     */
+    @Override
+    public Object getOriginalValue() {
+        List<Object> result = new ArrayList<Object>(elements == null ? 0 : elements.size());
+
+        for (Element element : elements) {
+            result.add(element.getOriginalValue());
+        }
+
+        return result;
+    }
+
+    /**
+     * Read the data from the model.
+     */
+    @Override
+    public void read() {
+        clear();
+        initialized = true;
+
+        int numRows = tableMVA.getSize();
+        for (int i = 0; i < numRows; i++) {
+
+            Object value = tableMVA.getValue(i);
+            Element elem = createElement(value, false, true, false);
+
+            addElementToIdMap(elem);
+            elements.add(elem);
+            fireElementAdded(elem);
+        }
+        fireUpdateViews();
+    }
+
+    /**
+     * Read the data from a given list.
+     * 
+     * @param valueList The list of data
+     * @param append true, if data should be appended to the current list of data
+     */
+    public void read(List< ?> valueList, boolean append) {
+        if (!append) {
+            clear();
+        }
+        initialized = true;
+
+        for (int i = 0; i < valueList.size(); i++) {
+
+            Object value = valueList.get(i);
+            Element elem = createElement(value, false, true, false);
+
+            addElementToIdMap(elem);
+            elements.add(elem);
+            fireElementAdded(elem);
+        }
+        fireUpdateViews();
+    }
+
+    /**
+     * Read the data from the model.
+     * 
+     * @param append true, if data should be appended
+     * @param firstRow Index of first row that should be read from the model.
+     */
+    public void read(boolean append, int firstRow) {
+
+        if (!append) {
+            clear();
+        }
+        initialized = true;
+
+        for (int i = firstRow; i < tableMVA.getSize(); i++) {
+
+            Object value = tableMVA.getValue(i);
+            Element elem = createElement(value, false, true, false);
+
+            addElementToIdMap(elem);
+            elements.add(elem);
+            fireElementAdded(elem);
+        }
+        fireUpdateViews();
+    }
+
+    /**
+     * Clear the data from the model. The model is not initialized after execution of this method
+     */
+    public void clear() {
+        boolean oldValid = valid;
+        boolean oldDirty = dirty;
+
+        initialized = false;
+        dirty = false;
+        valid = true;
+
+        elementIdMap.clear();
+        newElements.clear();
+        modElements.clear();
+        delElements.clear();
+        invElements.clear();
+        elements.clear();
+
+        fireUpdateViews();
+        fireTableCleared();
+        fireDataChanged();
+        
+        if (oldValid != valid || oldDirty != dirty) {
+            fireStateChanged();
+        }
+    }
+
+    /**
+     * Write the current data into the model.
+     */
+    @Override
+    public void write() {
+        final List<Object> values = new ArrayList<Object>();
+
+        for (Element elem : elements) {
+            if(!elem.isRemoved()) { 
+                elem.writeObject();
+                values.add(elem.getOriginalValue());
+            }
+        }
+
+        tableMVA.setValues(values);
+    }
+   
+    /**
+     * Create an empty object for a newly created element. The object is set as the original value in the element.
+     * This method delegates to the table mva and can be overridden in special cases.
+     */
+    protected Object createEmptyElementObject() {
+        return tableMVA.newObjectInstance();
+    }
+
+    /**
+     * Add a new element 
+     * @param value The original value of the element.
+     * @return The newly created element
+     */
+    public Element addElement(Object value) {
+        return addElement(value, false, true);
+    }
+
+    /**
+     * Add a new element with a given state
+     * 
+     * @param value The original value.
+     * @param dirty True, if the added value should be marked as dirty.
+     * @param valid True, if the added value should be marked as valid.
+     * @return The newly created element
+     */
+    public Element addElement(Object value, boolean dirty, boolean valid) {
+        return addElement(-1, value, dirty, valid);
+    }
+
+    /**
+     * Add a new element with a given index.
+     * 
+     * @param index The index at which the element should be added.
+     * @param value The original value.
+     * @return The newly created element
+     */
+    public Element addElement(int index, Object value) {
+        return addElement(index, value, false, true);
+    }
+
+    /**
+     * Add an element
+     * 
+     * @param index The index at which the element should be added.* 
+     * @param value The original value.
+     * @param dirty True, if the added value should be marked as dirty.
+     * @param valid True, if the added value should be marked as valid.
+     * @return The newly created element
+     */
+    public Element addElement(int index, Object value, boolean dirty, boolean valid) {
+        if (value == null) {
+            value = createEmptyElementObject();
+        }
+
+        Element element = createElement(value, dirty, valid, true);
+
+        // unique constraint handling
+        Element oldElement = element;
+        if (keyDeleteMap.containsValue(buildKey(element))) {
+        	oldElement = checkAddedOrChangedElementAgainstDeletedElements(element);
+        }
+        else {        
+            addElementToIdMap(element);
+            element.setInserted(true);
+            newElements.add(element);
+        }
+        
+        // end of unique constraint handling
+
+        if (index >= 0) {
+            elements.add(index, oldElement);
+        }
+        else {
+            elements.add(oldElement);
+        }
+
+        fireElementAdded(oldElement);
+        handleElementStateChange(oldElement);
+        fireUpdateViews();
+        return oldElement;
+    }
+
+    /**
+     * Delete an element from this model.
+     */
+    public boolean delElement(int index) {
+        return delElement(elements.get(index));
+    }
+
+    /**
+     * Delete an element from this model.
+     */
+    public boolean delElement(Element element) {
+        if (element == null) {
+            return false;
+        }
+
+        if(!isDisplayRemovedEntries() || element.isInserted()) {
+            boolean removed = elements.remove(element);
+            if (!removed) {
+                return false;
+            }
+        }
+        
+        if (!newElements.contains(element)) {
+            delElements.add(element);
+        }
+        invElements.remove(element);
+        newElements.remove(element);
+        modElements.remove(element);
+        element.setRemoved(true);
+        handleElementStateChange(element);
+        fireElementDeleted(element);
+        fireUpdateViews();
+        return true;
+    }
+
+    /**
+     * Returns the list of objects marked as deleted
+     */
+    @SuppressWarnings("unchecked")
+    public List getDeletedObjects() {
+        List result = new ArrayList();
+        for (Element element : delElements) {
+            result.add(element.getCurrentValue());
+        }
+        return result;
+    }
+
+    /**
+     * Returns the list of objects marked as created
+     */
+    @SuppressWarnings("unchecked")
+    public List getCreatedObjects() {
+        List result = new ArrayList();
+        for (Element element : newElements) {
+            result.add(element.getCurrentValue());
+        }
+        return result;
+    }
+
+    /**
+     * Returns the list of objects marked as modified
+     */
+    @SuppressWarnings("unchecked")
+    public List getModifiedObjects() {
+        List result = new ArrayList();
+        for (Element element : modElements) {
+            result.add(element.getCurrentValue());
+        }
+        return result;
+    }
+
+    /**
+     * Returns the list of objects marked as invalid
+     */
+    @SuppressWarnings("unchecked")
+    public List getInvalidObjects() {
+        List result = new ArrayList();
+        for (Element element : invElements) {
+            result.add(element.getCurrentValue());
+        }
+        return result;
+    }
+
+    /**
+     * Returns the number of objects marked as new.
+     */
+    public int getCreatedCount() {
+        return newElements.size();
+    }
+
+    /**
+     * Returns the number of objects marked as modified.
+     */
+    public int getModifiedCount() {
+        return modElements.size();
+    }
+
+    /**
+     * Returns the number of objects marked as deleted.
+     */
+    public int getDeletedCount() {
+        return delElements.size();
+    }
+
+    /**
+     * Returns the number of objects marked as invalid.
+     */
+    public int getInvalidCount() {
+        return invElements.size();
+    }
+
+    /**
+     * Returns the element by the unique id.
+     */
+    public Element getElementById(String uniqueId) {
+        return elementIdMap.get(uniqueId);
+    }
+
+    /**
+     * Clones an original objects of an element. This is used during the copy process of an element. This method delegates to the table model accessor
+     */
+    protected Object cloneObject(Object value) {
+        return tableMVA.cloneObject(value);
+    }
+
+    /**
+     * Sets this table attribute model to read only
+     */
+    public void setReadOnly(boolean readOnly) {
+        this.readOnly = readOnly;
+    }
+
+    /**
+     * Returns the list of elements marked as new.
+     */
+    public List<Element> getCreatedElements() {
+        return new ArrayList<Element>(newElements);
+    }
+
+    /**
+     * Returns the list of elements marked as modified.
+     */
+    public List<Element> getModifiedElements() {
+        return new ArrayList<Element>(modElements);
+    }
+
+    /**
+     * Returns the list of elements marked as deleted.
+     */
+    public List<Element> getDeletedElements() {
+        return new ArrayList<Element>(delElements);
+    }
+
+    /**
+     * Returns the list of elements
+     */
+    public List<Element> getElements() {
+        return new ArrayList<Element>(elements);
+    }
+
+    /**
+     * Commit an element. This accepts all changes that were made in this object
+     */
+    public void commitElement(Element element) {
+        
+        if(element.isRemoved() && isDisplayRemovedEntries()) {
+            elements.remove(element);
+        }
+        
+        element.writeObject();
+        element.readObject();
+        newElements.remove(element);
+        delElements.remove(element);
+        handleElementStateChange(element);
+        element.setInserted(false);
+        element.setRemoved(false);
+        fireUpdateViews();
+    }
+
+    /**
+     * Rollback the element. This discards all changes that were made in this object
+     */
+    public void rollbackElement(Element element) {
+        boolean wasInserted = element.isInserted(); 
+        if(wasInserted) {            
+            delElement(element);
+        }
+        
+        element.readObject();
+        if(!wasInserted && element.isRemoved() && isDisplayRemovedEntries()) {
+            element.setRemoved(false);
+            delElements.remove(element);
+        }
+        
+        handleElementStateChange(element);
+        fireUpdateViews();
+    }
+
+    /**
+     * Marks an element as faulty.
+     */
+    public void markAsFaulty(Element element, String message, Throwable th) {
+        element.addElementValidationError(new ValidationError(null, message, th));
+    }
+
+    /**
+     * Returns the current value from the element located at a given row.
+     */
+    public Object getCurrentValueAt(int row) {
+        Element element = getElementAt(row);
+        return element != null ? element.getCurrentValue() : null;
+    }
+
+    /**
+     * Set the names of the columns which are the unique key.
+     */
+    public void setUniqueConstraint(String... uniqueKeyColumnIds) {
+        this.uniqueKeyColumnIds = uniqueKeyColumnIds;
+    }
+
+    /**
+     * Add an element lifecycle listener to the list of listeners.
+     */
+    public void addElementLifecycleListener(ElementLifecycleListener constraint) {
+        listenerList.add(ElementLifecycleListener.class, constraint);
+    }
+
+    /**
+     * Remove an element lifecycle listener from the list of listeners.
+     */
+    public void removeElementLifecycleListener(ElementLifecycleListener constraint) {
+        listenerList.remove(ElementLifecycleListener.class, constraint);
+    }
+
+    /**
+     * Inform the element lifecycle listeners about an added element.
+     */
+    private void fireElementAdded(final Element element) {
+        if (uniqueKeyColumnIds != null) {
+            checkUniqueConstraint(element);
+        }
+
+        ElementLifecycleListener[] listeners = listenerList.getListeners(ElementLifecycleListener.class);
+        if (listeners != null) {
+            for (final ElementLifecycleListener constraint : listeners) {
+                if(!SwingUtilities.isEventDispatchThread()) {
+                    SwingUtilities.invokeLater(new Runnable() {                    
+                        @Override
+                        public void run() {
+                            constraint.elementAdded(TableAM.this, element);
+                        }
+                    });
+                } else {
+                    constraint.elementAdded(this, element);
+                }
+            }
+        }
+    }
+    
+    /**
+     * Add an element to the internal data structures
+     * 
+     * 
+     * @param element
+     */
+    private void addElementToIdMap(Element element){
+        elementIdMap.put(element.getUniqueId(), element);
+        for( int i = 0; i < element.getChildCount(); i++){
+            addElementToIdMap(element.getChild(i));
+        }
+    }
+
+    /**
+     * Inform the element lifecycle listeners about a removed element
+     */
+    private void fireElementDeleted(final Element element) {
+        if (uniqueKeyColumnIds != null) {
+            checkKeyChangeAndUpdateDatastructure(element.getUniqueId(), null);
+            // uniqueConstraint.elementRemoved(this, element);
+        }
+
+        ElementLifecycleListener[] listeners = listenerList.getListeners(ElementLifecycleListener.class);
+        if (listeners != null) {
+            for (final ElementLifecycleListener constraint : listeners) {
+                if(!SwingUtilities.isEventDispatchThread()) {
+                    SwingUtilities.invokeLater(new Runnable() {                    
+                        @Override
+                        public void run() {
+                            constraint.elementRemoved(TableAM.this, element);
+                        }
+                    });
+                } else {
+                    constraint.elementRemoved(this, element);
+                }
+            }
+        }
+    }
+
+    /**
+     * Inform element lifecycle listeners about the clear event.
+     */
+    private void fireTableCleared() {
+        if (uniqueKeyColumnIds != null) {
+            uniqueMap.clear();
+            keyMap.clear();
+            uniqueDeleteMap.clear();
+            keyDeleteMap.clear();
+        }
+
+        ElementLifecycleListener[] listeners = listenerList.getListeners(ElementLifecycleListener.class);
+        if (listeners != null) {
+            for (final ElementLifecycleListener constraint : listeners) {
+                if(!SwingUtilities.isEventDispatchThread()) {
+                    SwingUtilities.invokeLater(new Runnable() {                    
+                        @Override
+                        public void run() {
+                            constraint.tableCleared(TableAM.this);
+                        }
+                    });
+                } else {
+                    constraint.tableCleared(this);
+                }
+            }
+        }
+    }
+
+    /**
+     * Inform the element lifecycle listeners about the status change of an element
+     */
+    private void fireElementStatusChanged(final Element element) {
+        if (uniqueKeyColumnIds != null) {
+            // uniqueConstraint.elementStateChanged(this, element);
+        }
+
+        ElementLifecycleListener[] listeners = listenerList.getListeners(ElementLifecycleListener.class);
+        if (listeners != null) {
+            for (final ElementLifecycleListener constraint : listeners) {
+                if(!SwingUtilities.isEventDispatchThread()) {
+                    SwingUtilities.invokeLater(new Runnable() {                    
+                        @Override
+                        public void run() {
+                            constraint.elementStateChanged(TableAM.this, element);
+                        }
+                    });
+                } else {
+                    constraint.elementStateChanged(this, element);
+                }
+            }
+        }
+    }
+
+    @Override
+    public IFAttributeInfo getAttributeInfo() {
+        return attributeInfo;
+    }
+
+    public ColumnDefinition getColumnById(String key) {
+        return columnIdMap.get(key);
+    }
+
+    public ColumnDefinition getColumnByIndex(int index) {
+        return columns.get(index);
+    }
+
+    /**
+     * Return an element of a current value or null, if element is not available
+     */
+    public Element getElementOfObject(Object object) {
+        if(uniqueKeyColumnIds != null) {
+            Element tempElement = createElement(object, false, false, true);
+            List<?> key = buildKey(tempElement);
+            Set<String> idSet = uniqueMap.get(key);
+            if(idSet != null) {
+                if(idSet.size() == 1) {
+                    return getElementById(idSet.iterator().next());
+                }
+                for(String id : idSet) {
+                    Element element = getElementById(id);
+                    if(element.getCurrentValue().equals(object)) {
+                        return element;
+                    }
+                }
+            }
+        } else {
+            if(elements != null) {
+                for(Element element : elements) {
+                    if(element.getCurrentValue().equals(object)) {
+                        return element;
+                    }
+                }
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Activate the mass edit mode, where fireUpdateViews and fireDataChanged are not active
+     */
+    public void activateMassEditMode() {
+        this.massEditMode = true;
+    }    
+    
+    /**
+     * Deactivate the mass edit mode, where fireUpdateViews and fireDataChanged are active
+     * and execute fireUpdateViews and fireDataChanged
+     */
+    public void deactivateMassEditModeAndUpdate(){
+        this.massEditMode = false;
+        fireUpdateViews();
+        fireDataChanged();
+    }
+
+    @Override
+    public void addExternalValidationError(String translatedMessage) {
+        // TODO Implement me..       
+    }
+
+    @Override
+    public void clearExternalValidationErrors() {
+        // TODO Implement me..        
+    }
+
+    @Override
+    public void addExternalValidationError(ValidationError validationError) {
+        // TODO Implement me..        
+    }
+
+    public String getPathToChildren() {
+        return pathToChildren;
+    }
+
+    public void setPathToChildren(String pathToChildren) {
+        this.pathToChildren = pathToChildren;
+    }
+    
+    public boolean isForTreeTable() {
+        return pathToChildren != null;
+    }
+   
+    public List<SortKey> getDefaultSortKeys() {
+        return defaultSortKeys;
+    }
+
+    /**
+     * TODO RAD Comment me..
+     */
+    public void setDefaultSortKeys(List<SortKey> defaultSortKeys) {
+        this.defaultSortKeys = defaultSortKeys;
+    }
+
+    public boolean isDisplayRemovedEntries() {
+        return displayRemovedEntries;
+    }
+    
+    /**
+     * True, if removed entries should be still displayed in the table.
+     */
+    public void setDisplayRemovedEntries(boolean displayRemovedEntries) {
+        this.displayRemovedEntries = displayRemovedEntries;
+    }
+    
+    public String toString(){
+        return elements.size() + " Elements";
+    }
+
+    public List<SortKey> getMandatorySortKeys() {
+        return mandatorySortKeys;
+    }
+
+    /**
+     * TODO RAD Comment me..
+     */
+    public void setMandatorySortKeys(List<SortKey> mandatorySortKeys) {
+        this.mandatorySortKeys = mandatorySortKeys;
+    }
+}
