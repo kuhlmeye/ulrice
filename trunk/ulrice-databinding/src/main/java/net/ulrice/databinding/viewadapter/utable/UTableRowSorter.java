@@ -339,11 +339,11 @@ public class UTableRowSorter extends DefaultRowSorter<UTableViewAdapter, String>
     @Override
     public void sort() {
         if (!disabled) {
-            System.out.println("RowSorter.sort() " + counter++ + " " + toString());
+            //System.out.println("RowSorter.sort() " + counter++ + " " + toString());
             super.sort();
         }
         else {
-            System.out.println("RowSorter disabled " + savedCounter++ + " " + toString());
+            //System.out.println("RowSorter disabled " + savedCounter++ + " " + toString());
         }
     }
 
