@@ -666,7 +666,8 @@ public class ModuleManager implements IFModuleManager, IFModuleStructureManager,
         });
     }
     
-    private boolean isBlockedByBlocker(IFController controller, Object blocker) {
+    @Override
+    public boolean isBlockedByBlocker(IFController controller, Object blocker) {
         final IdentityHashMap<Object, Object> m = blockers.get(controller);
         return (m != null && !m.isEmpty() && m.containsKey(blocker));
     }

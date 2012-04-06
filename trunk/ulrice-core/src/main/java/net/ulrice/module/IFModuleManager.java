@@ -156,7 +156,7 @@ public interface IFModuleManager {
 	void removeBlocker(IFController controller, Object blocker);
 
 	/**
-	 * Returns, if the module is blocked. If a module is blocked, the user
+	 * Returns true, if the module is blocked. If a module is blocked, the user
 	 * cannot click on gui elements in the module. Also the actions of the
 	 * controller are disabled.
 	 * 
@@ -164,6 +164,17 @@ public interface IFModuleManager {
 	 * @return true, if the module is blocked, false otherwise.
 	 */
 	boolean isBlocked(IFController controller);
+
+    /**
+     * Returns true, it the module is blocked by the specified blocker. If a module is 
+     * blocked, the user cannot click on gui elements in the module. Also the actions of 
+     * the controller are disabled.
+     * 
+     * @param controller The controller of the module.
+     * @param blocker The blocking object.
+     * @return true, if the module is blocked, false otherwise.
+     */
+    boolean isBlockedByBlocker(IFController controller, Object blocker);
 
 	/**
 	 * Returns a list of all known modules.
