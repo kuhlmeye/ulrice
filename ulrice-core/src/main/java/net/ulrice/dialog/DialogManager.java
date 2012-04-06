@@ -220,6 +220,11 @@ public class DialogManager {
 
         @Override
         public void windowClosing(WindowEvent e) {
+            if (e.getSource() instanceof JDialog) {
+                // linux only fires windowClosing on dialogs
+                unblockParent((JDialog) e.getSource());
+            }
+            
             if (e.getWindow() != Ulrice.getMainFrame().getFrame()) {
                 e.getWindow().dispose();
             }
@@ -228,22 +233,29 @@ public class DialogManager {
         @Override
         public void windowClosed(WindowEvent e) {
             if (e.getSource() instanceof JDialog) {
-                JDialog dialog = (JDialog) e.getSource();
-                DialogInformation dlgInfo = dlgInfoDialogMap.remove(dialog);
-                if (dlgInfo != null) {
-                    // Dialog was already removed by closeModule
-                    switch (dlgInfo.mode) {
-                        case ApplicationModal:
-                        case ModuleModal:
-                            Ulrice.getModuleManager().removeBlocker(dlgInfo.ctrl, dialog);
-                            break;
-                        default:
-                            break;
-                    }
-                    ctrlDialogMap.get(dlgInfo.ctrl).remove(dlgInfo);
-                }
+                // windows only fires window closed on dialogs
+                unblockParent((JDialog) e.getSource());
             }
         }
+        
+        private void unblockParent(JDialog dialog) {
+            DialogInformation dlgInfo = dlgInfoDialogMap.remove(dialog);
+            if (dlgInfo != null) {
+                // Dialog was already removed by closeModule
+                switch (dlgInfo.mode) {
+                    case ApplicationModal:
+                    case ModuleModal:
+                        if (Ulrice.getModuleManager().isBlockedByBlocker(dlgInfo.ctrl, dialog)) {
+                            Ulrice.getModuleManager().removeBlocker(dlgInfo.ctrl, dialog);
+                        }
+                        break;
+                    default:
+                        break;
+                }
+                ctrlDialogMap.get(dlgInfo.ctrl).remove(dlgInfo);
+            }
+        }
+        
     }
 
     private boolean isMainFrameEvent(ComponentEvent e) {
