@@ -129,6 +129,36 @@ public class GenericAM<T> implements IFAttributeModel<T>, IFViewChangeListener {
         calculateState(viewAdapter);
         fireDataChanged(viewAdapter);
     }
+    
+    public void recalculateStateForThisValidator(IFValidator caller, boolean newValid) {
+        boolean stateChanged = false;
+
+        try {
+            if (getValidators() != null || !externalValidationErrors.isEmpty()) {
+                for (IFValidator<T> validator : getValidators()) {
+                    if (validator.getClass().equals(caller.getClass())) {
+                        continue;
+                    }
+                    ValidationResult errors = validator.isValid(this, getCurrentValue());
+                    if (errors != null && !errors.isValid()) {
+                        newValid &= false;
+                    }
+                    else {
+                        validator.clearValidationErrors();
+                        newValid &= true;
+                    }
+                }
+                newValid &= externalValidationErrors.isEmpty();
+                stateChanged = (valid != newValid);
+                valid = newValid;
+            }
+        }
+        finally {
+            if (stateChanged) {
+                fireStateChanged(null);
+            }
+        }        
+    }
 
     /**
 	 * 
