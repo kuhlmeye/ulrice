@@ -5,6 +5,8 @@ import java.awt.Robot;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 import javax.swing.SwingUtilities;
 
@@ -19,12 +21,16 @@ public class RemoteControlUtils {
 
     public static final String SPEED_FACTOR_PROPERTY = "RCSpeedFactor";
     public static final String DISABLE_TIMEOUTS_PROPERTY = "RCDisableTimeouts";
+    public static final String DISABLE_CONTROLLER_PROPERTY = "RCDisableController";
+    public static final String PAUSE_ON_ERROR_PROPERTY = "RCPauseOnError";
 
     public static final double ROBOT_DELAY = 0.001;
 
     public static final double PAUSE_DELAY = 0.1;
 
     public static final double WAIT_DELAY = 0.1;
+
+    private static ExecutorService EXECUTOR_SERVICE = Executors.newFixedThreadPool(4);
 
     private static Double speedFactor;
 
@@ -53,15 +59,60 @@ public class RemoteControlUtils {
     }
 
     /**
-     * Stars a new thread that executes the runnable
+     * Starts a new thread that executes the runnable
      * 
      * @param runnable the runnable
      */
     public static void invokeInThread(Runnable runnable) {
-        Thread thread = new Thread(runnable, "RemoteControl");
+        EXECUTOR_SERVICE.execute(runnable);
+//        Thread thread = new Thread(runnable, "RemoteControl");
+//
+//        thread.setDaemon(true);
+//        thread.start();
+    }
 
-        thread.setDaemon(true);
-        thread.start();
+    /**
+     * Constantly invokes the specified closure until the closure fires a result or the timeout is reached. Block the
+     * current thread for a result.
+     * 
+     * @param timeoutInSeconds the timeout the timeout
+     * @param closure the closure
+     */
+    public static <TYPE> TYPE repeatInThread(final double timeoutInSeconds, final ResultClosure<TYPE> closure)
+        throws RemoteControlException {
+
+        final Result<TYPE> result = new Result<TYPE>(timeoutInSeconds);
+
+        invokeInThread(new Runnable() {
+
+            @Override
+            public void run() {
+                long waitDelay = RemoteControlUtils.getWaitDelay();
+
+                while (true) {
+                    try {
+                        closure.invoke(result);
+                    }
+                    catch (Exception e) {
+                        result.fireException(e);
+                        return;
+                    }
+
+                    if (result.isFinished()) {
+                        return;
+                    }
+
+                    try {
+                        Thread.sleep(waitDelay);
+                    }
+                    catch (InterruptedException e) {
+                        // ignore
+                    }
+                }
+            }
+        });
+
+        return result.aquireResult();
     }
 
     /**
@@ -156,7 +207,7 @@ public class RemoteControlUtils {
 
     /**
      * Overrides the speed factor settings
-     *
+     * 
      * @param speedFactor the speed factor
      */
     public static void overrideSpeedFactor(double speedFactor) {

@@ -15,6 +15,7 @@ import net.ulrice.remotecontrol.RemoteControlException;
 import net.ulrice.remotecontrol.util.ComponentUtils;
 import net.ulrice.remotecontrol.util.RemoteControlUtils;
 import net.ulrice.remotecontrol.util.Result;
+import net.ulrice.remotecontrol.util.ResultClosure;
 
 public class ComponentRemoteControlImpl implements ComponentRemoteControl {
 
@@ -122,49 +123,19 @@ public class ComponentRemoteControlImpl implements ComponentRemoteControl {
     @Override
     public Collection<ComponentState> waitForAll(final double seconds, final ComponentMatcher... matchers)
         throws RemoteControlException {
-        final Result<Collection<ComponentState>> result = new Result<Collection<ComponentState>>(seconds);
 
-        RemoteControlUtils.invokeInThread(new Runnable() {
+        return RemoteControlUtils.repeatInThread(seconds, new ResultClosure<Collection<ComponentState>>() {
+
             @Override
-            public void run() {
-                long start = System.currentTimeMillis();
-                long timeToWait = (long) (seconds * 1000);
-                long end = start + timeToWait;
-                long waitDelay = RemoteControlUtils.getWaitDelay();
+            public void invoke(Result<Collection<ComponentState>> result) throws RemoteControlException {
+                Collection<ComponentState> states = statesOf(matchers);
 
-                while (true) {
-                    Collection<ComponentState> states;
-                    try {
-                        states = statesOf(matchers);
-                    }
-                    catch (Exception e) {
-                        result.fireException(e);
-                        return;
-                    }
-
-                    if ((states != null) && (states.size() > 0)) {
-                        result.fireResult(states);
-                        return;
-                    }
-
-                    timeToWait = end - System.currentTimeMillis();
-
-                    if (timeToWait <= 0) {
-                        // timeout will be managed outside
-                        return;
-                    }
-
-                    try {
-                        Thread.sleep((timeToWait > waitDelay) ? waitDelay : timeToWait);
-                    }
-                    catch (InterruptedException e) {
-                        // ignore
-                    }
+                if ((states != null) && (states.size() > 0)) {
+                    result.fireResult(states);
                 }
             }
+            
         });
-
-        return result.aquireResult();
     }
 
     /**

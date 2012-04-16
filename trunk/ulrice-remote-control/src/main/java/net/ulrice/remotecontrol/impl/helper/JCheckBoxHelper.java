@@ -26,7 +26,7 @@ public class JCheckBoxHelper extends AbstractJComponentHelper<JCheckBox> {
     }
 
     @Override
-    public String getText(JCheckBox component) {
+    public String getText(JCheckBox component) throws RemoteControlException {
         return String.valueOf(component.isSelected());
     }
 

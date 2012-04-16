@@ -25,7 +25,7 @@ public class JListHelper extends AbstractJComponentHelper<JList> {
      * {@inheritDoc}
      */
     @Override
-    public Object getData(JList component) {
+    public Object getData(JList component) throws RemoteControlException {
         ComponentListData data = new ComponentListData();
         ListModel model = component.getModel();
 

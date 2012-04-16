@@ -22,7 +22,7 @@ public class WindowHelper extends AbstractComponentHelper<Window>
 	 * {@inheritDoc}
 	 */
 	@Override
-	public boolean isActive(Window component)
+	public boolean isActive(Window component) throws RemoteControlException
 	{
 		return component.isActive();
 	}

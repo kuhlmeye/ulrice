@@ -23,7 +23,7 @@ public class JTableHelper extends AbstractJComponentHelper<JTable> {
      * {@inheritDoc}
      */
     @Override
-    public Object getData(JTable component) {
+    public Object getData(JTable component) throws RemoteControlException {
         ComponentTableData data = new ComponentTableData();
 
         for (int column = 0; column < component.getColumnCount(); column += 1) {

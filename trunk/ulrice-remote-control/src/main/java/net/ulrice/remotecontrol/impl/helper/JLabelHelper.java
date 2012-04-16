@@ -4,6 +4,8 @@ import java.awt.Component;
 
 import javax.swing.JLabel;
 
+import net.ulrice.remotecontrol.RemoteControlException;
+
 public class JLabelHelper extends AbstractJComponentHelper<JLabel>
 {
 
@@ -20,7 +22,7 @@ public class JLabelHelper extends AbstractJComponentHelper<JLabel>
 	 * {@inheritDoc}
 	 */
 	@Override
-	public Component getLabelFor(JLabel component)
+	public Component getLabelFor(JLabel component) throws RemoteControlException
 	{
 		return component.getLabelFor();
 	}

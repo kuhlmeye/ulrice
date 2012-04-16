@@ -17,6 +17,7 @@ public class Result<RESULT_TYPE> {
     private final long endMillis;
 
     private boolean gotResult = false;
+    private boolean finished = false;
     private RESULT_TYPE result;
     private Exception exception;
 
@@ -31,6 +32,28 @@ public class Result<RESULT_TYPE> {
         startMillis = System.currentTimeMillis();
         timeout = (long) (timeoutInSeconds * 1000);
         endMillis = startMillis + timeout;
+    }
+
+    /**
+     * Returns true if the result or exception was fired
+     * 
+     * @return true if the result or exception was fired
+     */
+    public boolean gotResult() {
+        synchronized (semaphore) {
+            return gotResult;
+        }
+    }
+
+    /**
+     * Returns true if there is a result or a timeout occured
+     * 
+     * @return true if there is a result or a timeout occured
+     */
+    public boolean isFinished() {
+        synchronized (semaphore) {
+            return gotResult || finished;
+        }
     }
 
     /**
@@ -49,15 +72,17 @@ public class Result<RESULT_TYPE> {
 
             long maximumWaitFor = (long) (waitForSeconds * 1000);
             long waitFor = maximumWaitFor;
-            
+
             if (RemoteControlUtils.isTimeoutEnabled()) {
                 waitFor = endMillis - System.currentTimeMillis();
-    
+
                 if (waitFor < 1) {
+                    finished = true;
+
                     throw new RemoteControlException(String.format("Action timed out: %,.3f seconds",
                         (double) timeout / 1000));
                 }
-    
+
                 waitFor = Math.min(waitFor, maximumWaitFor);
             }
 
@@ -66,6 +91,8 @@ public class Result<RESULT_TYPE> {
                     semaphore.wait(waitFor);
                 }
                 catch (InterruptedException e) {
+                    finished = true;
+
                     throw new RemoteControlException("Action interrupted", e);
                 }
             }
@@ -84,31 +111,39 @@ public class Result<RESULT_TYPE> {
     public RESULT_TYPE aquireResult() throws RemoteControlException {
         synchronized (semaphore) {
             long waitFor = 0;
-            
+
             if (RemoteControlUtils.isTimeoutEnabled()) {
                 waitFor = endMillis - System.currentTimeMillis();
-    
+
                 if (waitFor < 1) {
+                    finished = true;
+
                     throw new RemoteControlException(String.format("Action timed out: %,.3f seconds",
                         (double) timeout / 1000));
                 }
             }
-            
+
             if (!gotResult) {
                 try {
                     semaphore.wait(waitFor);
                 }
                 catch (InterruptedException e) {
+                    finished = true;
+
                     throw new RemoteControlException("Action interrupted", e);
                 }
             }
 
             if (!gotResult) {
+                finished = true;
+
                 throw new RemoteControlException(String.format("Action timed out: %,.3f seconds",
                     (double) timeout / 1000));
             }
 
             if (exception != null) {
+                finished = true;
+
                 throw new RemoteControlException("Unhandled exception", exception);
             }
 
@@ -126,6 +161,7 @@ public class Result<RESULT_TYPE> {
             this.exception = exception;
 
             gotResult = true;
+            finished = true;
 
             semaphore.notifyAll();
         }
@@ -141,6 +177,7 @@ public class Result<RESULT_TYPE> {
             this.result = result;
 
             gotResult = true;
+            finished = true;
 
             semaphore.notifyAll();
         }

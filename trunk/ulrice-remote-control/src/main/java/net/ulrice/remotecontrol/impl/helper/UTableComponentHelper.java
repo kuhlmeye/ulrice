@@ -22,7 +22,7 @@ public class UTableComponentHelper extends AbstractJComponentHelper<UTableCompon
      * {@inheritDoc}
      */
     @Override
-    public Object getData(UTableComponent component) {
+    public Object getData(UTableComponent component) throws RemoteControlException {
         ComponentTableData data = new ComponentTableData();
 
         for (int column = 0; column < component.getColumnCount(); column += 1) {
