@@ -504,7 +504,7 @@ public class RemoteControlCenter {
      */
     public static void activateControlWindow() {
         if (remoteControlWindow == null) {
-            if (!"true".equalsIgnoreCase(System.getProperty(RemoteControlUtils.DISABLE_CONTROLLER_PROPERTY))) {
+            if (System.getProperty(RemoteControlUtils.DISABLE_CONTROLLER_PROPERTY) == null) {
                 try {
                     UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
                 }
