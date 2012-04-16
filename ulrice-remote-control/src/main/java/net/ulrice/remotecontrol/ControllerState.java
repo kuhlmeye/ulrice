@@ -22,8 +22,9 @@ public class ControllerState extends ModuleState {
      * 
      * @param controller the controller
      * @return the state of the controller
+     * @throws RemoteControlException TODO
      */
-    public static ControllerState inspect(IFController controller) {
+    public static ControllerState inspect(IFController controller) throws RemoteControlException {
         if (controller == null) {
             return null;
         }
@@ -43,8 +44,9 @@ public class ControllerState extends ModuleState {
      * 
      * @param controllers the controllers
      * @return a collection of controller states
+     * @throws RemoteControlException TODO
      */
-    public static Collection<ControllerState> inspect(Collection<IFController> controllers) {
+    public static Collection<ControllerState> inspect(Collection<IFController> controllers) throws RemoteControlException {
         Collection<ControllerState> results = new ArrayList<ControllerState>();
 
         for (IFController controller : controllers) {
@@ -64,7 +66,7 @@ public class ControllerState extends ModuleState {
     private final ComponentState view;
     private final boolean current;
 
-    protected ControllerState(IFModule module, IFController controller, boolean current) {
+    protected ControllerState(IFModule module, IFController controller, boolean current) throws RemoteControlException {
         super(module);
 
         this.controller = controller;

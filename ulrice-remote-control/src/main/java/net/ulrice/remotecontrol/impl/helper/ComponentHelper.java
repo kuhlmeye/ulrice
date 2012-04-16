@@ -12,19 +12,19 @@ public interface ComponentHelper<TYPE extends Component>
 
 	Class<TYPE> getType();
 
-	String getText(TYPE component);
+	String getText(TYPE component) throws RemoteControlException;
 
-	String getTitle(TYPE component);
+	String getTitle(TYPE component) throws RemoteControlException;
 
-	String getToolTipText(TYPE component);
+	String getToolTipText(TYPE component) throws RemoteControlException;
 
-	Component getLabelFor(TYPE component);
+	Component getLabelFor(TYPE component) throws RemoteControlException;
 
-	boolean isSelected(TYPE component);
+	boolean isSelected(TYPE component) throws RemoteControlException;
 	
-	boolean isActive(TYPE component);
+	boolean isActive(TYPE component) throws RemoteControlException;
 
-	Object getData(TYPE component);
+	Object getData(TYPE component) throws RemoteControlException;
 
 	boolean click(Robot robot, TYPE component) throws RemoteControlException;
 

@@ -30,8 +30,9 @@ public class ComponentState implements Serializable, Iterable<ComponentState> {
      * 
      * @param component the component
      * @return the state
+     * @throws RemoteControlException TODO
      */
-    public static ComponentState inspect(Component component) {
+    public static ComponentState inspect(Component component) throws RemoteControlException {
         if (component == null) {
             return null;
         }
@@ -43,8 +44,9 @@ public class ComponentState implements Serializable, Iterable<ComponentState> {
      * Creates states for all specified components. Null values are ignored
      * @param components the component
      * @return a collection of all states
+     * @throws RemoteControlException TODO
      */
-    public static Collection<ComponentState> inspect(Collection<Component> components) {
+    public static Collection<ComponentState> inspect(Collection<Component> components) throws RemoteControlException {
         Collection<ComponentState> results = new ArrayList<ComponentState>();
 
         for (Component component : components) {
@@ -77,7 +79,7 @@ public class ComponentState implements Serializable, Iterable<ComponentState> {
     private final Rectangle bounds;
     private final Map<Class< ?>, Object> datas;
 
-    private ComponentState(Component component) {
+    private ComponentState(Component component) throws RemoteControlException {
         super();
 
         this.component = component;

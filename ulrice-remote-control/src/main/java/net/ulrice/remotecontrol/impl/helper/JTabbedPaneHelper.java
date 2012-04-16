@@ -3,6 +3,7 @@ package net.ulrice.remotecontrol.impl.helper;
 import javax.swing.JTabbedPane;
 
 import net.ulrice.remotecontrol.ComponentListData;
+import net.ulrice.remotecontrol.RemoteControlException;
 
 public class JTabbedPaneHelper extends AbstractJComponentHelper<JTabbedPane>
 {
@@ -20,7 +21,7 @@ public class JTabbedPaneHelper extends AbstractJComponentHelper<JTabbedPane>
 	 * {@inheritDoc}
 	 */
 	@Override
-	public Object getData(JTabbedPane component)
+	public Object getData(JTabbedPane component) throws RemoteControlException
 	{
 		ComponentListData result = new ComponentListData();
 

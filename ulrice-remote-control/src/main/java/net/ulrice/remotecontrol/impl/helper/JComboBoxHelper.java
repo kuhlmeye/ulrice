@@ -29,7 +29,7 @@ public class JComboBoxHelper extends AbstractJComponentHelper<JComboBox> {
      * @see net.ulrice.remotecontrol.impl.helper.AbstractComponentHelper#getText(java.awt.Component)
      */
     @Override
-    public String getText(JComboBox component) {
+    public String getText(JComboBox component) throws RemoteControlException {
         Object selectedItem = component.getSelectedItem();
 
         return (selectedItem != null) ? String.valueOf(selectedItem) : null;
@@ -41,7 +41,7 @@ public class JComboBoxHelper extends AbstractJComponentHelper<JComboBox> {
      * @see net.ulrice.remotecontrol.impl.helper.AbstractComponentHelper#getData(java.awt.Component)
      */
     @Override
-    public Object getData(JComboBox component) {
+    public Object getData(JComboBox component) throws RemoteControlException {
         ComponentListData data = new ComponentListData();
         ComboBoxModel model = component.getModel();
 

@@ -23,7 +23,7 @@ public abstract class AbstractComponentHelper<TYPE extends Component> implements
      * {@inheritDoc}
      */
     @Override
-    public String getText(TYPE component) {
+    public String getText(TYPE component) throws RemoteControlException {
         try {
             return (String) component.getClass().getMethod("getText").invoke(component);
         }
@@ -36,7 +36,7 @@ public abstract class AbstractComponentHelper<TYPE extends Component> implements
      * {@inheritDoc}
      */
     @Override
-    public String getTitle(TYPE component) {
+    public String getTitle(TYPE component) throws RemoteControlException {
         try {
             return (String) component.getClass().getMethod("getTitle").invoke(component);
         }
@@ -49,7 +49,7 @@ public abstract class AbstractComponentHelper<TYPE extends Component> implements
      * {@inheritDoc}
      */
     @Override
-    public String getToolTipText(TYPE component) {
+    public String getToolTipText(TYPE component) throws RemoteControlException {
         if (component instanceof JComponent) {
             return ((JComponent) component).getToolTipText();
         }
@@ -61,7 +61,7 @@ public abstract class AbstractComponentHelper<TYPE extends Component> implements
      * {@inheritDoc}
      */
     @Override
-    public Component getLabelFor(TYPE component) {
+    public Component getLabelFor(TYPE component) throws RemoteControlException {
         return null;
     }
 
@@ -69,7 +69,7 @@ public abstract class AbstractComponentHelper<TYPE extends Component> implements
      * {@inheritDoc}
      */
     @Override
-    public boolean isSelected(TYPE component) {
+    public boolean isSelected(TYPE component) throws RemoteControlException {
         try {
             return (Boolean) component.getClass().getMethod("isSelected").invoke(component);
         }
@@ -82,7 +82,7 @@ public abstract class AbstractComponentHelper<TYPE extends Component> implements
      * {@inheritDoc}
      */
     @Override
-    public boolean isActive(TYPE component) {
+    public boolean isActive(TYPE component) throws RemoteControlException {
         return component.isEnabled();
     }
 
@@ -90,7 +90,7 @@ public abstract class AbstractComponentHelper<TYPE extends Component> implements
      * {@inheritDoc}
      */
     @Override
-    public Object getData(TYPE component) {
+    public Object getData(TYPE component) throws RemoteControlException {
         return null;
     }
 

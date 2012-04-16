@@ -15,6 +15,7 @@ import net.ulrice.remotecontrol.ActionState;
 import net.ulrice.remotecontrol.RemoteControlException;
 import net.ulrice.remotecontrol.util.RemoteControlUtils;
 import net.ulrice.remotecontrol.util.Result;
+import net.ulrice.remotecontrol.util.ResultClosure;
 
 /**
  * Implementation of the {@link ActionRemoteControl}
@@ -76,49 +77,19 @@ public class ActionRemoteControlImpl implements ActionRemoteControl {
     @Override
     public Collection<ActionState> waitForAll(final double seconds, final ActionMatcher... matchers)
         throws RemoteControlException {
-        final Result<Collection<ActionState>> result = new Result<Collection<ActionState>>(seconds);
 
-        RemoteControlUtils.invokeInThread(new Runnable() {
+        return RemoteControlUtils.repeatInThread(seconds, new ResultClosure<Collection<ActionState>>() {
+
             @Override
-            public void run() {
-                long start = System.currentTimeMillis();
-                long timeToWait = (long) (seconds * 1000);
-                long end = start + timeToWait;
-                long waitDelay = RemoteControlUtils.getWaitDelay();
+            public void invoke(Result<Collection<ActionState>> result) throws RemoteControlException {
+                Collection<ActionState> states = statesOf(matchers);
 
-                while (true) {
-                    Collection<ActionState> states;
-                    try {
-                        states = statesOf(matchers);
-                    }
-                    catch (Exception e) {
-                        result.fireException(e);
-                        return;
-                    }
-
-                    if ((states != null) && (states.size() > 0)) {
-                        result.fireResult(states);
-                        return;
-                    }
-
-                    timeToWait = end - System.currentTimeMillis();
-
-                    if (timeToWait <= 0) {
-                        // timeout will be managed outside
-                        return;
-                    }
-
-                    try {
-                        Thread.sleep((timeToWait > waitDelay) ? waitDelay : timeToWait);
-                    }
-                    catch (InterruptedException e) {
-                        // ignore
-                    }
+                if ((states != null) && (states.size() > 0)) {
+                    result.fireResult(states);
                 }
             }
+            
         });
-
-        return result.aquireResult();
     }
 
     /**

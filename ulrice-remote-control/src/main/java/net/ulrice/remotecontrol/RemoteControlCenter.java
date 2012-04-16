@@ -25,12 +25,14 @@ import javax.management.remote.JMXConnectorFactory;
 import javax.management.remote.JMXConnectorServer;
 import javax.management.remote.JMXConnectorServerFactory;
 import javax.management.remote.JMXServiceURL;
+import javax.swing.UIManager;
 
 import net.ulrice.remotecontrol.impl.ActionRemoteControlImpl;
 import net.ulrice.remotecontrol.impl.ApplicationRemoteControlImpl;
 import net.ulrice.remotecontrol.impl.ComponentRemoteControlImpl;
 import net.ulrice.remotecontrol.impl.ControllerRemoteControlImpl;
 import net.ulrice.remotecontrol.impl.ModuleRemoteControlImpl;
+import net.ulrice.remotecontrol.ui.RemoteControlWindow;
 import net.ulrice.remotecontrol.util.RemoteControlUtils;
 import net.ulrice.remotecontrol.util.StreamConsumer;
 
@@ -44,10 +46,16 @@ public class RemoteControlCenter {
     public static final String OBJECT_NAME_PREFIX = "net.ulrice.mbeans:type=";
 
     private static final Map<Class< ?>, Object> BEANS = new HashMap<Class< ?>, Object>();
+    private static final Object SEMAPHORE = new Object();
 
     private static Process process;
     private static JMXConnectorServer serverConnector;
     private static JMXConnector clientConnector;
+    private static RemoteControlWindow remoteControlWindow;
+
+    private static boolean pausing = false;
+    private static boolean pauseOnError = false;
+    private static boolean waiting = false;
 
     static {
         try {
@@ -60,6 +68,8 @@ public class RemoteControlCenter {
         catch (RemoteControlException e) {
             throw new ExceptionInInitializerError("Failed to register default beans");
         }
+
+        pauseOnError = System.getProperty(RemoteControlUtils.PAUSE_ON_ERROR_PROPERTY) != null;
     }
 
     /**
@@ -84,35 +94,36 @@ public class RemoteControlCenter {
 
                 String osName = System.getProperty("os.name").toLowerCase();
                 List<String> command = new ArrayList<String>();
-                
+
                 if (osName.contains("linux")) {
-                	command.add(System.getProperty("java.home") + "/bin/java");
+                    command.add(System.getProperty("java.home") + "/bin/java");
                 }
                 else {
-                	command.add(System.getProperty("java.home") + "\\bin\\java.exe");
+                    command.add(System.getProperty("java.home") + "\\bin\\java.exe");
                 }
-                
+
                 if (RemoteControlUtils.speedFactor() != 1) {
-                	command.add("-D" + RemoteControlUtils.SPEED_FACTOR_PROPERTY + "=" + RemoteControlUtils.speedFactor());
+                    command.add("-D" + RemoteControlUtils.SPEED_FACTOR_PROPERTY + "="
+                        + RemoteControlUtils.speedFactor());
                 }
-                
+
                 command.add("-classpath");
-            	command.add(System.getProperty("java.class.path"));
+                command.add(System.getProperty("java.class.path"));
 
-            	if (vmArguments != null) {
-            		for (String vmArgument : vmArguments) {
-            			command.add(vmArgument);
-            		}
-            	}
+                if (vmArguments != null) {
+                    for (String vmArgument : vmArguments) {
+                        command.add(vmArgument);
+                    }
+                }
 
-            	command.add(mainClass.getName());
+                command.add(mainClass.getName());
 
-            	if (programArguments != null) {
-            		for (String programArgument : programArguments) {
-            			command.add(programArgument);
-            		}
-            	}	
-                
+                if (programArguments != null) {
+                    for (String programArgument : programArguments) {
+                        command.add(programArgument);
+                    }
+                }
+
                 ProcessBuilder builder = new ProcessBuilder(command);
 
                 try {
@@ -486,6 +497,105 @@ public class RemoteControlCenter {
      */
     public static ModuleRemoteControl moduleRC() throws RemoteControlException {
         return get(ModuleRemoteControl.class);
+    }
+
+    /**
+     * Activates the control window
+     */
+    public static void activateControlWindow() {
+        if (remoteControlWindow == null) {
+            if (!"true".equalsIgnoreCase(System.getProperty(RemoteControlUtils.DISABLE_CONTROLLER_PROPERTY))) {
+                try {
+                    UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+                }
+                catch (Exception e) {
+                    // ignore
+                }
+
+                remoteControlWindow = new RemoteControlWindow();
+
+                remoteControlWindow.activate();
+            }
+        }
+    }
+
+    public static void info(String info) {
+        if (remoteControlWindow != null) {
+            remoteControlWindow.info(info);
+        }
+    }
+
+    public static void warning(String info) {
+        if (remoteControlWindow != null) {
+            remoteControlWindow.warning(info);
+        }
+    }
+
+    public static void error(String info) {
+        if (remoteControlWindow != null) {
+            remoteControlWindow.error(info);
+        }
+    }
+
+    public static void step() {
+        if (remoteControlWindow != null) {
+            synchronized (SEMAPHORE) {
+                if (isPausing()) {
+                    waiting = true;
+                    remoteControlWindow.updateState();
+
+                    try {
+                        SEMAPHORE.wait();
+                    }
+                    catch (InterruptedException e) {
+                        // intentionally left blank
+                    }
+
+                    waiting = false;
+                    remoteControlWindow.updateState();
+                }
+            }
+        }
+
+        RemoteControlUtils.pause(0.5);
+    }
+
+    public static void nextStep() {
+        synchronized (SEMAPHORE) {
+            SEMAPHORE.notifyAll();
+        }
+    }
+
+    public static boolean isPausing() {
+        return pausing;
+    }
+
+    public static void setPausing(boolean pausing) {
+        synchronized (SEMAPHORE) {
+            RemoteControlCenter.pausing = pausing;
+
+            if (remoteControlWindow != null) {
+                remoteControlWindow.updateState();
+            }
+        }
+    }
+
+    public static boolean isPauseOnError() {
+        return pauseOnError;
+    }
+
+    public static void setPauseOnError(boolean pauseOnError) {
+        synchronized (SEMAPHORE) {
+            RemoteControlCenter.pauseOnError = pauseOnError;
+
+            if (remoteControlWindow != null) {
+                remoteControlWindow.updateState();
+            }
+        }
+    }
+
+    public static boolean isWaiting() {
+        return waiting;
     }
 
 }
