@@ -310,11 +310,12 @@ public class UTableViewAdapter extends AbstractViewAdapter implements TableModel
         	int selRow = -1;
         	if(table != null && table.getSelectionModel() != null) {
         		selRow = table.getSelectionModel().getMinSelectionIndex();
-        	}
+        	}        	
             int selColumn = table.getSelectedColumn();
-            if(getRowSorter() != null)
-                getRowSorter().allRowsChanged();
-            fireTableChanged(new TableModelEvent(this));
+            // TODO Not very performant
+//            if(getRowSorter() != null)
+//                getRowSorter().allRowsChanged();
+            fireTableDataChanged();
             
             if (selColumn >= 0) {
                 table.setSelectedColumn(selColumn);

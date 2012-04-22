@@ -13,6 +13,7 @@ import javax.swing.RowSorter.SortKey;
 import javax.swing.SwingUtilities;
 import javax.swing.event.EventListenerList;
 
+import net.ulrice.Ulrice;
 import net.ulrice.databinding.bufferedbinding.IFAttributeInfo;
 import net.ulrice.databinding.bufferedbinding.IFAttributeModel;
 import net.ulrice.databinding.bufferedbinding.IFAttributeModelEventListener;
@@ -24,6 +25,9 @@ import net.ulrice.databinding.validation.ValidationError;
 import net.ulrice.databinding.validation.ValidationResult;
 import net.ulrice.databinding.viewadapter.IFViewAdapter;
 import net.ulrice.databinding.viewadapter.utable.TreeTableModel;
+import net.ulrice.databinding.viewadapter.utable.UTableViewAdapter;
+import net.ulrice.module.IFController;
+import net.ulrice.process.AbstractProcess;
 
 /**
  * Table attribute model. Model for all UTableComponents
@@ -876,6 +880,89 @@ public class TableAM implements IFAttributeModel {
         fireUpdateViews();
     }
 
+    
+    public AbstractProcess<Void, Void> createIncrementalLoader(final IFController controller, final TableDataProvider provider) {
+        
+        for(IFViewAdapter viewAdapter : viewAdapterList) {
+            if(viewAdapter instanceof UTableViewAdapter) {
+                UTableViewAdapter tableViewAdapter = (UTableViewAdapter) viewAdapter;
+                tableViewAdapter.getComponent().getRowSorter().disableRowSorter();
+            }
+        }        
+      
+        return new AbstractProcess<Void, Void>(controller, provider.isBlocking()) {
+            
+            private boolean cancelled = false;
+            int numLoaded = 0;            
+            
+            @Override
+            public boolean hasProgressInformation() {
+                return true;
+            }
+
+            @Override
+            public boolean supportsCancel() {
+                return true;
+            }
+
+            @Override
+            public void cancelProcess() {
+                cancelled = true;
+            }
+
+            @Override
+            protected Void work() throws Exception {   
+                clear();
+                
+                initialized = true;
+                int totalNumRows = provider.getNumRows();
+                int chunkSize = provider.getChunkSize();
+                int upperBound = provider.getUpperBound();
+                final int max = Math.min (upperBound, totalNumRows);
+                
+                while (numLoaded < max && !cancelled && !isCancelled()) {
+                    final List chunk = provider.getNextChunk(numLoaded, chunkSize);
+
+                    if(chunk != null) {
+                        for(Object item : chunk) {
+                            Element elem = createElement(item, false, true, false);
+                            addElementToIdMap(elem);
+                            elements.add(elem);
+                            fireElementAdded(elem);
+                        }
+                        fireUpdateViews();
+                    }
+
+                    numLoaded += chunk.size();
+                    int loadedPercent = Math.round(100.0f / totalNumRows * numLoaded);
+                    setProgress(loadedPercent > 100 ? 100 : loadedPercent);
+                    fireProgressChanged();
+                    
+                    if(chunk.size() == 0) {
+                        break;
+                    }
+                }
+                return null;
+            }
+
+            @Override
+            protected void finished(Void result) {  
+                for(IFViewAdapter viewAdapter : viewAdapterList) {
+                    if(viewAdapter instanceof UTableViewAdapter) {
+                        UTableViewAdapter tableViewAdapter = (UTableViewAdapter) viewAdapter;
+                        tableViewAdapter.getComponent().getRowSorter().reEnableRowSorter();
+                        tableViewAdapter.getComponent().sizeColumns(true);
+                    }
+                }
+            }
+
+            @Override
+            protected void failed(Throwable t) {
+                Ulrice.getMessageHandler().handleException(getOwningController(), t);
+            }
+        };                
+    }
+    
     /**
      * Read the data from a given list.
      * 

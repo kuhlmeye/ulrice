@@ -109,8 +109,7 @@ public class ColumnDefinition<T extends Object> implements PropertyChangeListene
     }
 
     public GenericAM<T> createAM() {
-        GenericAM<T> genericAM = new GenericAM<T>(id, attributeInfo);
-        genericAM.setReadOnly(getColumnType().equals(ColumnType.ReadOnly));        
+        GenericAM<T> genericAM = new GenericAM<T>(id, attributeInfo, getColumnType().equals(ColumnType.ReadOnly));
         
         genericAM.setValueConverter(getValueConverter());
                        

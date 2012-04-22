@@ -67,9 +67,10 @@ public class GenericAM<T> implements IFAttributeModel<T>, IFViewChangeListener {
 
     }
     
-    public GenericAM(String id, IFAttributeInfo attributeInfo) {
+    public GenericAM(String id, IFAttributeInfo attributeInfo, boolean readOnly) {
         this.id = id;
         this.attributeInfo = attributeInfo;
+        this.readOnly = readOnly;
     }
 
     /**
@@ -423,8 +424,11 @@ public class GenericAM<T> implements IFAttributeModel<T>, IFViewChangeListener {
     }
 
     public void setReadOnly(boolean readOnly) {
+        boolean oldReadOnly = this.readOnly;
         this.readOnly = readOnly;
-        fireUpdateViews();
+        if(oldReadOnly != this.readOnly) {
+            fireUpdateViews();
+        }
     }
 
     @Override
