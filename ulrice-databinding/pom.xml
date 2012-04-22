@@ -35,6 +35,10 @@
 	
 	<dependencies>
 	    <dependency>
+	        <groupId>net.ulrice</groupId>
+	        <artifactId>ulrice-core</artifactId>
+	    </dependency>
+	    <dependency>
 	        <groupId>ognl</groupId>
 	        <artifactId>ognl</artifactId>
 	    </dependency>
