@@ -164,6 +164,7 @@ public class UTableComponent extends JPanel {
         };
         staticTable.addMouseListener(mouseListener);
         scrollTable.addMouseListener(mouseListener);
+        scrollPane.addMouseListener(mouseListener);
         
     }
 
