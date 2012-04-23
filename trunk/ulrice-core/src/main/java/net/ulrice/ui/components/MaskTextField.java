@@ -62,7 +62,10 @@ public class MaskTextField extends JTextField {
 
     public void setMask(String mask) {
         String oldMask = this.mask;
-        if (oldMask == null && mask != null || oldMask != null && !oldMask.equals(mask)) {
+        if (mask == null) {
+            return;
+        }
+        if ((oldMask == null && mask != null) || (oldMask != null && !oldMask.equals(mask))) {
 
             StringBuilder builderDisplay = new StringBuilder();
             StringBuilder builderMask = new StringBuilder();
