@@ -2,7 +2,7 @@ package net.ulrice.databinding.bufferedbinding.impl;
 
 import java.util.List;
 
-public interface TableDataProvider {
+public interface IncrementalTableDataProvider {
 
     boolean isBlocking();
     int getUpperBound();

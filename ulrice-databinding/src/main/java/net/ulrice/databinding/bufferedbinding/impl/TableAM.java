@@ -880,8 +880,81 @@ public class TableAM implements IFAttributeModel {
         fireUpdateViews();
     }
 
+
+    public AbstractProcess<Void, Void> createLoader(final IFController controller, final boolean blocking, final ListDataProvider<?> provider) {
+        for(IFViewAdapter viewAdapter : viewAdapterList) {
+            if(viewAdapter instanceof UTableViewAdapter) {
+                UTableViewAdapter tableViewAdapter = (UTableViewAdapter) viewAdapter;
+                tableViewAdapter.getComponent().getRowSorter().disableRowSorter();
+            }
+        }        
+      
+        return new AbstractProcess<Void, Void>(controller, blocking) {
+            
+            private boolean cancelled = false;  
+            
+            @Override
+            public boolean hasProgressInformation() {
+                return true;
+            }
+
+            @Override
+            public boolean supportsCancel() {
+                return true;
+            }
+
+            @Override
+            public void cancelProcess() {
+                cancelled = true;
+            }
+
+            @Override
+            protected Void work() throws Exception {   
+                clear();
+                
+                initialized = true;
+                
+                final List data = provider.getData();
+                int numLoaded = 0;
+                if(data != null) {
+                    for(Object item : data) {
+                        Element elem = createElement(item, false, true, false);
+                        addElementToIdMap(elem);
+                        elements.add(elem);
+                        fireElementAdded(elem);
+                        int loadedPercent = Math.round(100.0f / data.size() * numLoaded);
+                        setProgress(loadedPercent > 100 ? 100 : loadedPercent);
+                        fireProgressChanged();
+                        
+                        if(cancelled) {
+                            break;
+                        }
+                    }                    
+                    fireUpdateViews();
+                }
+            
+                return null;
+            }
+
+            @Override
+            protected void finished(Void result) {  
+                for(IFViewAdapter viewAdapter : viewAdapterList) {
+                    if(viewAdapter instanceof UTableViewAdapter) {
+                        UTableViewAdapter tableViewAdapter = (UTableViewAdapter) viewAdapter;
+                        tableViewAdapter.getComponent().getRowSorter().reEnableRowSorter();
+                        tableViewAdapter.getComponent().sizeColumns(true);
+                    }
+                }
+            }
+
+            @Override
+            protected void failed(Throwable t) {
+                Ulrice.getMessageHandler().handleException(getOwningController(), t);
+            }
+        };   
+    }
     
-    public AbstractProcess<Void, Void> createIncrementalLoader(final IFController controller, final TableDataProvider provider) {
+    public AbstractProcess<Void, Void> createIncrementalLoader(final IFController controller, final IncrementalTableDataProvider provider) {
         
         for(IFViewAdapter viewAdapter : viewAdapterList) {
             if(viewAdapter instanceof UTableViewAdapter) {
