@@ -930,7 +930,6 @@ public class TableAM implements IFAttributeModel {
                             break;
                         }
                     }                    
-                    fireUpdateViews();
                 }
             
                 return null;
@@ -945,6 +944,7 @@ public class TableAM implements IFAttributeModel {
                         tableViewAdapter.getComponent().sizeColumns(true);
                     }
                 }
+                fireUpdateViews();
             }
 
             @Override
