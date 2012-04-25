@@ -450,7 +450,14 @@ public class TableAM implements IFAttributeModel {
     }
     
     /**
-     * TODO RAD Comment me..
+     * a fireUpdateView which is executed very often leads to  updateFromBinding, which executes a fireTableDataChanged.
+     * a fireTableDataChanged rebuilds the tree structure, because its to unspecific about the change.
+     * 
+     * the treestay open flag, prevents the tree from rebuilding its structure.
+     * consumeTreeStayOpen is called by the UTreeTableComponent
+     * 
+     * if true it ignores the tableChanged event
+     *  
      */
     public boolean consumeTreeStayOpen(){
         boolean temp = treeStayOpen;
@@ -508,6 +515,12 @@ public class TableAM implements IFAttributeModel {
      * @param element The element with the changed state.
      */
     protected void handleElementStateChange(final Element element) {
+        if(element.getChildCount() !=0){
+            invElements.remove(element);
+            modElements.remove(element);
+            delElements.remove(element);
+            return;
+        }
         if (element.isValid() || element.isRemoved()) {
             invElements.remove(element);
         }
@@ -1647,6 +1660,10 @@ public class TableAM implements IFAttributeModel {
      */
     public void deactivateMassEditModeAndUpdate(){
         this.massEditMode = false;
+        if(isForTreeTable()){
+            treeStayOpen = true;
+        }
+        
         fireUpdateViews();
         fireDataChanged();
     }
