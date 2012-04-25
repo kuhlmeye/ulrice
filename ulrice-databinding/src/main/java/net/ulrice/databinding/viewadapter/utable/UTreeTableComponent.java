@@ -1,19 +1,31 @@
 package net.ulrice.databinding.viewadapter.utable;
 
+import java.awt.BorderLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import javax.swing.JButton;
+import javax.swing.JMenuItem;
+import javax.swing.JPanel;
+import javax.swing.JPopupMenu;
+import javax.swing.JTree;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
 import javax.swing.tree.TreePath;
 
+import net.ulrice.Ulrice;
 import net.ulrice.databinding.bufferedbinding.impl.Element;
 import net.ulrice.databinding.bufferedbinding.impl.TableAM;
+import net.ulrice.module.impl.action.ModuleActionManager;
 
 public class UTreeTableComponent extends UTableComponent {
 
@@ -21,9 +33,13 @@ public class UTreeTableComponent extends UTableComponent {
     protected UTableViewAdapter viewAdapter;
     protected UTreeTableModel treeTableModel;
 
+    protected TreeTableCellRenderer tree;
+
     public UTreeTableComponent() {
         super(0);
     }
+    
+   
 
     /**
      * TODO: doppelten Code aus UTableComponent zusammen fassen
@@ -37,10 +53,12 @@ public class UTreeTableComponent extends UTableComponent {
 
         staticTable.setDefaultRenderer(Object.class, new UTableVADefaultRenderer());
         scrollTable.setDefaultRenderer(Object.class, new UTableVADefaultRenderer());
-        
+
         treeTableModel = new UTreeTableModel(viewAdapter.getAttributeModel());
-        final TreeTableCellRenderer tree = new TreeTableCellRenderer(scrollTable, treeTableModel);
+        tree = new TreeTableCellRenderer(scrollTable, treeTableModel);
         tree.setRootVisible(false);
+        setUpperInfoArea(new ExpandColapsePanel(this));
+        
         viewAdapter.addTableModelListener(new TableModelListener() {
 
             @Override
@@ -121,7 +139,8 @@ public class UTreeTableComponent extends UTableComponent {
                 }
 
                 Set<String> selUniqueIds = new HashSet<String>();
-                List<Element> selElements = UTreeTableComponent.this.getSelectedElementsTreeIntern(getSelectedRowsModelIndex());
+                List<Element> selElements =
+                        UTreeTableComponent.this.getSelectedElementsTreeIntern(getSelectedRowsModelIndex());
                 for (Element elem : selElements) {
 
                     testForUniqueSelection(selUniqueIds, elem, e);
@@ -134,7 +153,8 @@ public class UTreeTableComponent extends UTableComponent {
 
                     if (selUniqueIds.contains(element.getUniqueId())) {
                         // TODO: error handling
-                        UTreeTableComponent.this.rowSelModel.removeSelectionInterval(e.getFirstIndex(), e.getLastIndex());
+                        UTreeTableComponent.this.rowSelModel.removeSelectionInterval(e.getFirstIndex(),
+                            e.getLastIndex());
                     }
                     else {
                         selUniqueIds.add(element.getUniqueId());
@@ -152,31 +172,29 @@ public class UTreeTableComponent extends UTableComponent {
         // Editor fuer die TreeTable
         scrollTable.setDefaultEditor(TreeTableModel.class, new TreeTableCellEditor(tree, scrollTable));
 
-       //  sorter = new UTableRowSorter(viewAdapter, 0, staticTableModel, scrollTableModel);
+        // sorter = new UTableRowSorter(viewAdapter, 0, staticTableModel, scrollTableModel);
         // staticTable.setRowSorter(sorter.getStaticTableRowSorter());
         // scrollTable.setRowSorter(sorter.getScrollTableRowSorter());
-        
-       //  filter = new UTableVAFilter(sorter, staticTable.getUTableHeader(), scrollTable.getUTableHeader());
-       //  sorter.setRowFilter(filter);
-        
+
+        // filter = new UTableVAFilter(sorter, staticTable.getUTableHeader(), scrollTable.getUTableHeader());
+        // sorter.setRowFilter(filter);
+
         staticTableModel = new UTableModel(false, UTreeTableComponent.this.fixedColumns, viewAdapter);
         staticTable.setModel(staticTableModel);
         staticTable.setSelectionModel(rowSelModel);
-       
 
     }
-
+ 
     public void rebuildTreeTableStructure() {
         TableAM tableAM = viewAdapter.getAttributeModel();
         treeTableModel.fireTreeStructureChanged(tableAM, new Object[] { tableAM }, null, null);
     }
 
-   
     @SuppressWarnings({ "rawtypes", "unchecked" })
     public List getSelectedObjects() {
         checkAttributeModelSet();
         int[] rowsInModel = getSelectedRowsModelIndex();
-            return getSelectedObjectsTreeIntern(rowsInModel);
+        return getSelectedObjectsTreeIntern(rowsInModel);
     }
 
     protected List getSelectedObjectsTreeIntern(int[] rowsInModel) {
@@ -189,13 +207,13 @@ public class UTreeTableComponent extends UTableComponent {
     }
 
     public List<Element> getSelectedElements() {
-        
-        if(attributeModel == null){
-         return new ArrayList<Element>();   
+
+        if (attributeModel == null) {
+            return new ArrayList<Element>();
         }
         int[] rowsInModel = getSelectedRowsModelIndex();
-            return reduceDoubleElements(getSelectedElementsTreeIntern(rowsInModel));
-   }
+        return reduceDoubleElements(getSelectedElementsTreeIntern(rowsInModel));
+    }
 
     public List<Element> getSelectedElementsTreeIntern(int[] rowsInModel) {
         List<Element> result = new ArrayList<Element>(rowsInModel.length);
@@ -207,7 +225,7 @@ public class UTreeTableComponent extends UTableComponent {
 
     private List<Element> reduceDoubleElements(List<Element> elements) {
         HashMap<String, Element> elementsByUniquId = new HashMap<String, Element>();
-        for(Element element :elements) {
+        for (Element element : elements) {
             mapDoubleElement(elementsByUniquId, element);
         }
         return new ArrayList<Element>(elementsByUniquId.values());
@@ -246,6 +264,21 @@ public class UTreeTableComponent extends UTableComponent {
         return viewAdapter.getRowCount();
     }
 
-    
+    public void expandAll() {
+        int row = 0;
+        while (row < tree.getRowCount()) {
+            tree.expandRow(row);
+            row++;
+        }
 
+    }
+
+    public void collapseAll() {
+        int row = tree.getRowCount() - 1;
+        while (row >= 0) {
+            tree.collapseRow(row);
+            row--;
+        }
+
+    }
 }

@@ -46,14 +46,28 @@ public class UTreeTableModel extends AbstractTreeTableModel {
 
     @Override
     public boolean isCellEditable(Object node, int column) {
-        return true;
+        if(column == 0){
+            return true;
+        }
+       
+        Element element = (Element) node;
+        return !tableAM.isReadOnly() && element != null && !element.isReadOnly(column) && !element.isRemoved();
+        
     }
 
     @Override
     public void setValueAt(Object aValue, Object node, int column) {
         if (node instanceof Element) {
             Element element = (Element) node;
-            element.setValueAt(column, aValue);
+            
+            tableAM.activateMassEditMode();
+            try {
+                element.setValueAt(column, aValue);
+            }
+            finally {
+                tableAM.deactivateMassEditModeAndUpdate();
+            }
+            
         }
     }
 
