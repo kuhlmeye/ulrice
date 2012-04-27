@@ -296,11 +296,28 @@ public class TableAMTest {
         Assert.assertEquals(0, tableAM.getElementAt(2).getValueAt(1));
                         
         tableAM.delElement(element);
-        
+                
         Assert.assertEquals(0, tableAM.getCreatedObjects().size());
         Assert.assertEquals(0, tableAM.getModifiedObjects().size());
         Assert.assertEquals(0, tableAM.getDeletedObjects().size());             
     }
+    
+    @Test
+    public void addAddRowAndAdd() {
+        tableAM.read();
+        Assert.assertEquals(2, tableAM.getRowCount());
+
+        Element elementA = tableAM.addElement(null);
+        Element elementB = tableAM.addElement(null);
+        tableAM.delElement(elementA);
+        Element elementC = tableAM.addElement(null);
+                
+        Assert.assertEquals(2, tableAM.getCreatedObjects().size());
+        Assert.assertEquals(0, tableAM.getModifiedObjects().size());
+        Assert.assertEquals(0, tableAM.getDeletedObjects().size());             
+    }
+    
+    
     
     @Test
     public void addRowAndModifyAndRemove() {
