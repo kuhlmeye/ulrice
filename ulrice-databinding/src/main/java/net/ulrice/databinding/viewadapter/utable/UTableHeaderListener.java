@@ -48,6 +48,10 @@ public class UTableHeaderListener implements MouseListener, MouseMotionListener 
         if(table == uTable.getScrollTable()){
             colView = colView+uTable.getFixedColumns();
         }
+        if(colView == -1){
+            return;
+        }
+        
         int colModel = uTable.convertColumnIndexToModel(colView);
          
         UTableRowSorter sorter = uTable.getRowSorter();  table.getRowSorter();
