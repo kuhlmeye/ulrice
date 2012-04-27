@@ -6,6 +6,7 @@ import java.util.Set;
 import java.util.prefs.BackingStoreException;
 import java.util.prefs.Preferences;
 
+import net.ulrice.ConfigurationListener;
 import net.ulrice.Ulrice;
 import net.ulrice.profile.Profile;
 
@@ -19,10 +20,16 @@ public class DefaultProfilePersister implements ProfilePersister {
 	private Preferences profileRoot;
 
 	public DefaultProfilePersister() {
-		String pathName = Ulrice.getAppPrefs().getConfiguration(this, "rootPath", "ulrice.profiles");
+		Ulrice.addConfigurationListener(new ConfigurationListener() {
+			
+			@Override
+			public void initializationFinished() {
+				String pathName = Ulrice.getAppPrefs().getConfiguration(this, "rootPath", "ulrice.profiles");
 
-		Preferences userRoot = Preferences.userRoot();
-		profileRoot = userRoot.node(pathName);
+				Preferences userRoot = Preferences.userRoot();
+				profileRoot = userRoot.node(pathName);
+			}
+		});
 	}
 
 	@Override
