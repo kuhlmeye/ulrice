@@ -3,10 +3,16 @@
  */
 package net.ulrice.sample.module.databinding;
 
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.util.ArrayList;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.UUID;
 
 import javax.swing.JComponent;
+import javax.swing.SwingWorker;
+import javax.swing.Timer;
 
 import net.ulrice.module.impl.AbstractController;
 import net.ulrice.module.impl.IFClosing;
@@ -37,12 +43,39 @@ public class CDataBinding extends AbstractController {
         model.getTableAM().addViewAdapter(view.getListGA());
 
         model.personList = new LinkedList<Person>();
-        for (int i = 0; i < 10000; i++) {
-            model.personList.add(createPerson());
-        }
 
         model.getNameAM().read();
+        
         model.getTableAM().read();
+        
+        SwingWorker<List<Person>, List<Person>> worker = new SwingWorker<List<Person>, List<Person>>() {
+
+			@Override
+			protected List<Person> doInBackground() throws Exception {
+
+		        List<List<Person>> list = new ArrayList<List<Person>>();
+		        for (int i = 0; i < 100; i++) {
+		        	list.add(new ArrayList<Person>(1000));
+		            for (int j = 0; j < 1000; j++) {
+		            	list.get(i).add(createPerson());
+		            }
+					System.out.println("Publish #" + i);
+		        	publish(list.get(i));
+		        }   
+
+				return null;
+			}
+			
+			@Override
+			protected void process(List<List<Person>> chunks) {
+		        for (int i = 0; i < chunks.size(); i++) {
+		        	model.getTableAM().read(chunks.get(i), true);
+				}				
+			}        	
+        };
+
+        worker.execute();
+
 
         view.getListGA().sizeColumns(false);
     }
