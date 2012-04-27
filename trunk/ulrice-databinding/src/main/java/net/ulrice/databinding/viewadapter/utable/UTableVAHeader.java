@@ -7,6 +7,7 @@ import java.awt.Insets;
 import java.awt.LayoutManager;
 import java.awt.LayoutManager2;
 import java.awt.Rectangle;
+import java.awt.event.KeyEvent;
 import java.io.Serializable;
 import java.util.Collection;
 import java.util.HashMap;
@@ -14,6 +15,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import javax.swing.JLabel;
+import javax.swing.KeyStroke;
 import javax.swing.SwingConstants;
 import javax.swing.event.TableColumnModelEvent;
 import javax.swing.table.JTableHeader;
@@ -61,6 +63,17 @@ public class UTableVAHeader extends JTableHeader {
             revalidate();
             repaint();
         }
+    }
+    
+    /**
+     * @see javax.swing.JComponent#processKeyBinding(javax.swing.KeyStroke, java.awt.event.KeyEvent, int, boolean)
+     */
+    @Override
+    protected boolean processKeyBinding(KeyStroke ks, KeyEvent e, int condition, boolean pressed) {
+        if(ks.getKeyCode() == KeyEvent.VK_SPACE && ks.getKeyEventType() == KeyEvent.KEY_PRESSED){ 
+            return true; //BUG: 2896 catch space event for preventing sort toggle
+        }
+        return super.processKeyBinding(ks, e, condition, pressed);
     }
 
     /**
