@@ -5,6 +5,7 @@ import java.awt.BorderLayout;
 import javax.swing.JFrame;
 import javax.swing.JScrollPane;
 
+import net.ulrice.ConfigurationListener;
 import net.ulrice.Ulrice;
 import net.ulrice.frame.IFMainFrame;
 import net.ulrice.frame.IFWorkarea;
@@ -32,8 +33,14 @@ public class MainFrame extends JFrame implements IFMainFrame {
 	 */
 	public MainFrame() {
 		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-		setTitle(Ulrice.getAppPrefs().getConfiguration(this, "Title", ""));	
 		setLayout(new BorderLayout());
+		Ulrice.addConfigurationListener(new ConfigurationListener() {
+			
+			@Override
+			public void initializationFinished() {
+				setTitle(Ulrice.getAppPrefs().getConfiguration(this, "Title", ""));	
+			}
+		});
 	}
 
 	/**

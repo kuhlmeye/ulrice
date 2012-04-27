@@ -78,13 +78,13 @@ public class UlriceFileConfiguration extends ClassLoadingHelper implements IFUlr
         }
         
 		// Load the needed configuration parameters.
+		appPrefs = (IFAppPrefs) loadClass(properties.getProperty(IFAppPrefs.class.getName(), DefaultAppPrefs.class.getName()));
 		moduleManager = (IFModuleManager) loadClass(properties.getProperty(IFModuleManager.class.getName(),  ModuleManager.class.getName()));
 		moduleStructureManager = (IFModuleStructureManager) loadClass(properties.getProperty(IFModuleStructureManager.class.getName(), ModuleManager.class.getName()));
 		mainFrame = (IFMainFrame) loadClass(properties.getProperty(IFMainFrame.class.getName(), MainFrame.class.getName()));
 		authCallback = (IFAuthCallback) loadClass(properties.getProperty(IFAuthCallback.class.getName(), null));		
 		translationProvider = (TranslationProvider) loadClass(properties.getProperty(TranslationProvider.class.getName(), EmptyTranslationProvider.class.getName()));
 		profilePersister = (ProfilePersister) loadClass(properties.getProperty(ProfilePersister.class.getName(), DefaultProfilePersister.class.getName()));
-		appPrefs = (IFAppPrefs) loadClass(properties.getProperty(IFAppPrefs.class.getName(), DefaultAppPrefs.class.getName()));
 
 		
 		// Initialize ulrice.
