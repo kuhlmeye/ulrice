@@ -48,7 +48,7 @@ public class BorderStateMarker implements Border, ImageObserver, IFStateMarker {
     
 
     public BorderStateMarker(BorderStateMarkerStrategy strategy, Border normalBorder) {
-        this(strategy, normalBorder, UIManager.get(BindingUI.BORDER_STATE_MARKER_INSETS) != null ? UIManager.getInsets(BindingUI.BORDER_STATE_MARKER_INSETS) : new Insets(2, 3, 2, 3));        
+        this(strategy, normalBorder, UIManager.getInsets(BindingUI.BORDER_STATE_MARKER_INSETS) != null ? UIManager.getInsets(BindingUI.BORDER_STATE_MARKER_INSETS) : new Insets(2, 3, 2, 3));        
     }
     
         /**
