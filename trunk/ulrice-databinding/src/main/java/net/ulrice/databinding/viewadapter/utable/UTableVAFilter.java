@@ -202,13 +202,14 @@ public class UTableVAFilter extends RowFilter<UTableViewAdapter, String> impleme
                     }
                 }
             }
-            if (element.getCurrentValue() instanceof HeaderCapable) {
-                HeaderCapable item = (HeaderCapable) element.getCurrentValue();
+            
+            if (element != null && element.getOriginalValue() instanceof HeaderCapable) {
+                HeaderCapable item = (HeaderCapable) element.getOriginalValue();
                 if (item.isHeader()) {
                     return true;
                 }
             }
-
+            
             UTableComponent uTableComponent = entry.getModel().getComponent();
             @SuppressWarnings("rawtypes")
             ColumnDefinition colDef = uTableComponent.getColumnById(columnId);
@@ -470,6 +471,7 @@ public class UTableVAFilter extends RowFilter<UTableViewAdapter, String> impleme
 			}
 		}
         rowSorter.getModel().fireTableDataChanged();
+       // rowSorter.getModel().fireTableDataChanged(); //TODO: fixme notwendig da immer um einen tastendruck hinten 
 	}
 
     private String correctRegEx(String regex) {
