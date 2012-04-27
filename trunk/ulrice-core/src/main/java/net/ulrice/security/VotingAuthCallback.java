@@ -67,4 +67,13 @@ public class VotingAuthCallback implements IFAuthCallback {
 		return result;
 	}
 
+    @Override
+    public boolean allowRegisterApplicationAction(UlriceAction moduleAction) {
+        boolean result = true;
+        for(IFAuthCallback securityCallback : securityCallbackList) {
+            result &= securityCallback.allowRegisterApplicationAction(moduleAction);
+        }
+        return result;
+    }
+
 }
