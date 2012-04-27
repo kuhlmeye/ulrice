@@ -607,14 +607,13 @@ public class ModuleManager implements IFModuleManager, IFModuleStructureManager,
 
     private void fireControllerBlocked(IFController controller, Object blocker) {
         for (final IFModuleEventListener listener : listenerList.getListeners(IFModuleEventListener.class)) {
-//            listener.moduleBlocked(openControllers.getActive(), blocker);
             listener.moduleBlocked(controller, blocker);
         }
     }
 
     private void fireControllerUnblocked(IFController controller, Object blocker) {
         for (final IFModuleEventListener listener : listenerList.getListeners(IFModuleEventListener.class)) {
-            listener.moduleUnblocked(openControllers.getActive(), blocker);
+            listener.moduleUnblocked(controller, blocker);
         }
     }
     
