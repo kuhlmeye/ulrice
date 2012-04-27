@@ -177,7 +177,7 @@ public class ModuleActionManager implements IFModuleEventListener, PropertyChang
 	 */
 	public void addApplicationAction(UlriceAction moduleAction) {		
 
-		if (!Ulrice.getSecurityManager().allowRegisterAction(activeController, moduleAction)) {
+		if (!Ulrice.getSecurityManager().allowRegisterApplicationAction(moduleAction)) {
 			LOG.info("Application-Action [Id: " + moduleAction.getUniqueId() + "] will not be added. Not authorized by ulrice security manager.");
 			return;
 		}
@@ -294,15 +294,14 @@ public class ModuleActionManager implements IFModuleEventListener, PropertyChang
 		if (moduleActionStates != null) {
 			for (ModuleActionState moduleActionState : moduleActionStates) {
 				UlriceAction moduleAction = moduleActionState.getAction();
-				if (!Ulrice.getSecurityManager().allowRegisterAction(activeController, moduleAction)) {
-					LOG.info("Action [Id: " + moduleAction.getUniqueId() + ", Module: "
-							+ Ulrice.getModuleManager().getModule(activeController).getModuleTitle(Usage.Default)
-							+ "] will not be added. Not authorized by ulrice security manager.");
-					return;
+				if (Ulrice.getSecurityManager().allowRegisterAction(activeController, moduleAction)) {
+	                actionOrder.add(moduleAction);
+	                actionStateMap.put(moduleActionState.getAction(), moduleActionState);
+				} else {
+                    LOG.info("Action [Id: " + moduleAction.getUniqueId() + ", Module: "
+                            + Ulrice.getModuleManager().getModule(activeController).getModuleTitle(Usage.Default)
+                            + "] will not be added. Not authorized by ulrice security manager.");
 				}
-
-				actionOrder.add(moduleAction);
-				actionStateMap.put(moduleActionState.getAction(), moduleActionState);
 			}
 		}
 		controllerActionOrderMap.put(activeController, actionOrder);

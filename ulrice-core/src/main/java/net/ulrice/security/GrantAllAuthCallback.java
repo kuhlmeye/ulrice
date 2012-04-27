@@ -31,4 +31,9 @@ public class GrantAllAuthCallback implements IFAuthCallback {
 		return true;
 	}
 
+    @Override
+    public boolean allowRegisterApplicationAction(UlriceAction moduleAction) {
+        return true;
+    }
+
 }

@@ -65,4 +65,6 @@ public interface IFAuthCallback {
 	 * @return True, if permission is granted, false otherwise.
 	 */
 	boolean allowRegisterModule(IFModule module);
+
+    boolean allowRegisterApplicationAction(UlriceAction moduleAction);
 }
