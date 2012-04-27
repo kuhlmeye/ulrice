@@ -163,7 +163,7 @@ public class TableAM implements IFAttributeModel {
      * Update the data structures for the unique key handling in case that the key of the element was changed
      * 
      * @param uniqueId The unique id of the referenced element.
-     * @param key The unique key of the element as list of values.
+     * @param key The unique key of the element as list of values, if key is null the element will be deleted
      * @return true, if key was changed, false otherwise
      */
     private boolean checkKeyChangeAndUpdateDatastructure(String uniqueId, List< ?> key) {
@@ -178,6 +178,11 @@ public class TableAM implements IFAttributeModel {
             if (oldKey != null) {
                 Set<String> uniqueKeySet = uniqueMap.get(oldKey);
                 uniqueKeySet.remove(uniqueId);
+                
+                if(uniqueKeySet.isEmpty()) {
+                    uniqueMap.remove(oldKey);
+                }
+                
                 // should not happen
                 if (uniqueDeleteMap.containsKey(oldKey)) {
                     Set<String> uniqueDeleteKeySet = uniqueDeleteMap.get(oldKey);
@@ -1255,6 +1260,15 @@ public class TableAM implements IFAttributeModel {
         element.setRemoved(true);
         handleElementStateChange(element);
         fireElementDeleted(element);
+
+        if(element.isInserted()) {
+            elementIdMap.remove(element.getUniqueId());
+            keyDeleteMap.remove(element.getUniqueId());
+            keyMap.remove(element.getUniqueId());
+            List< ?> functionalKey = buildKey(element);
+            uniqueDeleteMap.remove(functionalKey);           
+        }
+        
         fireUpdateViews();
         return true;
     }
@@ -1530,6 +1544,7 @@ public class TableAM implements IFAttributeModel {
     private void fireElementDeleted(final Element element) {
         if (uniqueKeyColumnIds != null) {
             checkKeyChangeAndUpdateDatastructure(element.getUniqueId(), null);
+
             // uniqueConstraint.elementRemoved(this, element);
         }
 
