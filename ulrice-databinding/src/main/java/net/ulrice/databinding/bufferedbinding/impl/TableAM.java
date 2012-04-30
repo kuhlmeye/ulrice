@@ -470,6 +470,13 @@ public class TableAM implements IFAttributeModel {
         return temp;
     }
     
+    public void setTreeStayOpen(){
+        if(isForTreeTable()){
+            treeStayOpen = true;
+        }
+        
+    }
+    
     /**
      * This method is called by the element after a value was changed. It triggers the events..
      * 
@@ -478,9 +485,7 @@ public class TableAM implements IFAttributeModel {
      */
     protected void handleElementDataChanged(final Element element, final String columnId) {
         
-        if(isForTreeTable()){
-            treeStayOpen = true;
-        }
+        setTreeStayOpen();
         
         fireUpdateViews();
         
@@ -1442,6 +1447,7 @@ public class TableAM implements IFAttributeModel {
         handleElementStateChange(element);
         element.setInserted(false);
         element.setRemoved(false);
+        setTreeStayOpen();
         fireUpdateViews();
     }
 
@@ -1675,9 +1681,6 @@ public class TableAM implements IFAttributeModel {
      */
     public void deactivateMassEditModeAndUpdate(){
         this.massEditMode = false;
-        if(isForTreeTable()){
-            treeStayOpen = true;
-        }
         
         fireUpdateViews();
         fireDataChanged();
