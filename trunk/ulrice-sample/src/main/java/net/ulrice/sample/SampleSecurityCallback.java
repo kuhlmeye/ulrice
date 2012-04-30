@@ -2,7 +2,6 @@ package net.ulrice.sample;
 
 import java.util.logging.Logger;
 
-import net.ulrice.Ulrice;
 import net.ulrice.module.IFController;
 import net.ulrice.module.IFModule;
 import net.ulrice.module.IFModuleTitleProvider;
@@ -48,5 +47,11 @@ public class SampleSecurityCallback implements IFAuthCallback {
 		LOG.info("Checking authorization to register module " + module.getModuleTitle(IFModuleTitleProvider.Usage.Default));
 		return true;
 	}
+
+    @Override
+    public boolean allowRegisterApplicationAction(UlriceAction moduleAction) {
+        LOG.info("Allow Register Application Action " + moduleAction.getUniqueId());
+        return true;
+    }
 
 }
