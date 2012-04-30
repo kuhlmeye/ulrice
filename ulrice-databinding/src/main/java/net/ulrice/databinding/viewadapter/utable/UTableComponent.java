@@ -540,6 +540,9 @@ public class UTableComponent extends JPanel {
 
     public int getSelectedRowModelIndex() {
         int viewIndex = getSelectedRowViewIndex();
+        if(getRowSorter() == null){
+            return viewIndex;
+        }
         if (viewIndex >= 0) {
             return getRowSorter().convertRowIndexToModel(viewIndex);
         }
