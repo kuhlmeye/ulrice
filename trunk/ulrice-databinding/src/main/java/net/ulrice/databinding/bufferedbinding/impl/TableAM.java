@@ -55,7 +55,7 @@ public class TableAM implements IFAttributeModel {
     private Set<Element> modElements = new HashSet<Element>();
     private Set<Element> delElements = new HashSet<Element>();
     private Set<Element> invElements = new HashSet<Element>();
-    
+
     private List<IFViewAdapter> viewAdapterList = new ArrayList<IFViewAdapter>();
 
     private IFValueConverter valueConverter;
@@ -65,12 +65,12 @@ public class TableAM implements IFAttributeModel {
     private boolean initialized = false;
     private boolean dirty = false;
     private boolean valid = true;
-    
-    //prevent update ui, for mass editing
+
+    // prevent update ui, for mass editing
     private boolean massEditMode = false;
 
     // unique constraint handling
-    private String[] uniqueKeyColumnIds = null;    
+    private String[] uniqueKeyColumnIds = null;
     private Map<List< ?>, Set<String>> uniqueMap = new HashMap<List< ?>, Set<String>>();
     private Map<List< ?>, Set<String>> uniqueDeleteMap = new HashMap<List< ?>, Set<String>>();
     private Map<String, List< ?>> keyMap = new HashMap<String, List< ?>>();
@@ -78,16 +78,16 @@ public class TableAM implements IFAttributeModel {
     private Map<List< ?>, ValidationError> currentErrorMap = new HashMap<List< ?>, ValidationError>();
 
     private String pathToChildren;
-    
+
     private boolean displayRemovedEntries = true;
-    
+
     private List<SortKey> defaultSortKeys;
     private List<SortKey> mandatorySortKeys;
-    
+
     protected boolean treeStayOpen = false;
-    
+
     /**
-     * Create a table attribute model  
+     * Create a table attribute model
      * 
      * @param tableMVA the model value accessor used to get the list data
      * @param attributeInfo additional information about the attribute (validation rules,...)
@@ -97,7 +97,7 @@ public class TableAM implements IFAttributeModel {
     }
 
     /**
-     * Create a table attribute model  
+     * Create a table attribute model
      * 
      * @param tableMVA the model value accessor used to get the list data
      * @param attributeInfo additional information about the attribute (validation rules,...)
@@ -106,11 +106,11 @@ public class TableAM implements IFAttributeModel {
     public TableAM(IFIndexedModelValueAccessor tableMVA, IFAttributeInfo attributeInfo, boolean readOnly) {
         this(tableMVA.getAttributeId(), tableMVA, attributeInfo, readOnly);
     }
-    
+
     /**
      * Create a table attribute model.
      * 
-     * @param id Identifier for this binding  
+     * @param id Identifier for this binding
      * @param tableMVA the model value accessor used to get the list data
      * @param attributeInfo additional information about the attribute (validation rules,...)
      * @param readOnly true, if this table attribute model should be read only
@@ -128,10 +128,10 @@ public class TableAM implements IFAttributeModel {
      * Checks the unique constraints for an element. This method is called after an element was changed or added.
      */
     private void checkUniqueConstraint(Element element) {
-        if(element.getChildCount()>0){
+        if (element.getChildCount() > 0) {
             return;
         }
-        
+
         if (uniqueKeyColumnIds == null) {
             return;
         }
@@ -178,11 +178,11 @@ public class TableAM implements IFAttributeModel {
             if (oldKey != null) {
                 Set<String> uniqueKeySet = uniqueMap.get(oldKey);
                 uniqueKeySet.remove(uniqueId);
-                
-                if(uniqueKeySet.isEmpty()) {
+
+                if (uniqueKeySet.isEmpty()) {
                     uniqueMap.remove(oldKey);
                 }
-                
+
                 // should not happen
                 if (uniqueDeleteMap.containsKey(oldKey)) {
                     Set<String> uniqueDeleteKeySet = uniqueDeleteMap.get(oldKey);
@@ -214,26 +214,26 @@ public class TableAM implements IFAttributeModel {
      */
     private List< ?> buildKey(Element element) {
         List<Object> key = new ArrayList<Object>(uniqueKeyColumnIds != null ? uniqueKeyColumnIds.length : 0);
-        if(uniqueKeyColumnIds != null) {
+        if (uniqueKeyColumnIds != null) {
             for (String columnId : uniqueKeyColumnIds) {
                 key.add(element.getValueAt(columnId));
             }
         }
         return key;
     }
-    
+
     /**
-     * Checks added or changed elements against the list of deleted elements. If there is already a deleted 
-     * element with the same unique key, change the unique id of the added or changed element to the
-     * unique id of the deleted element => After that the added/changed element is known as the removed one.
+     * Checks added or changed elements against the list of deleted elements. If there is already a deleted element
+     * with the same unique key, change the unique id of the added or changed element to the unique id of the deleted
+     * element => After that the added/changed element is known as the removed one.
      * 
      * @param element The added/changed element.
-     * 
-     * @return The orignal element, if key is not known in the list of removed elements or the removed element with the values of the added/changed element.
+     * @return The orignal element, if key is not known in the list of removed elements or the removed element with the
+     *         values of the added/changed element.
      */
-    private Element checkAddedOrChangedElementAgainstDeletedElements(Element element) { 
-    	Element oldElement = null;
-    	String oldUniqueId = checkForOldUniqueId(buildKey(element), element.getUniqueId());
+    private Element checkAddedOrChangedElementAgainstDeletedElements(Element element) {
+        Element oldElement = null;
+        String oldUniqueId = checkForOldUniqueId(buildKey(element), element.getUniqueId());
 
         if (oldUniqueId == null) {
             return element;
@@ -263,9 +263,10 @@ public class TableAM implements IFAttributeModel {
         }
     }
 
-
     /**
-     * Check, if a newly created or changed element with a given unique key is already known in the datastructures with a different unique id. 
+     * Check, if a newly created or changed element with a given unique key is already known in the datastructures
+     * with a different unique id.
+     * 
      * @param key The list of value of the element defining the unique key
      * @param newUniqueId The generated unique id of the newly created or changed element
      * @return null, if there is no unique id available for the key or the unique id of the already known element
@@ -278,7 +279,7 @@ public class TableAM implements IFAttributeModel {
                     oldUniqueId = entry.getKey();
                     // remove Element from new Elements and replace it with the former deleted one
                     // newElements.remove(getElementById(newUniqueId));
-//                    keyDeleteMap.remove(oldUniqueId);
+                    // keyDeleteMap.remove(oldUniqueId);
                 }
             }
         }
@@ -315,26 +316,26 @@ public class TableAM implements IFAttributeModel {
     protected Element createElement(Object value, boolean dirty, boolean valid, boolean inserted) {
         String uniqueId = Long.toHexString(nextUniqueId++);
         Element elem = new Element(this, uniqueId, columns, value, isReadOnly(), dirty, valid, inserted);
-        
-        if(isForTreeTable()){
+
+        if (isForTreeTable()) {
             addChildsToElement(value, dirty, valid, inserted, elem);
         }
-        
+
         return elem;
     }
-       
+
     /**
      * Internal method for adding a child to an element.
      */
-    protected void addChildsToElement(Object value, boolean dirty, boolean valid, boolean inserted, Element element){
-       IFIndexedModelValueAccessor mva = new IndexedReflectionMVA(value,getPathToChildren());
-       for(int i = 0; i < mva.getSize(); i++){           
-           Object child = mva.getValue(i);
-           element.addChildElement(createElement(child, dirty, valid, inserted));    
-       }
-       if(mva.getSize() >0){ //reset dirty flag
-           element.clearElementValidationErrors();
-       }
+    protected void addChildsToElement(Object value, boolean dirty, boolean valid, boolean inserted, Element element) {
+        IFIndexedModelValueAccessor mva = new IndexedReflectionMVA(value, getPathToChildren());
+        for (int i = 0; i < mva.getSize(); i++) {
+            Object child = mva.getValue(i);
+            element.addChildElement(createElement(child, dirty, valid, inserted));
+        }
+        if (mva.getSize() > 0) { // reset dirty flag
+            element.clearElementValidationErrors();
+        }
     }
 
     /**
@@ -390,7 +391,7 @@ public class TableAM implements IFAttributeModel {
      * @see javax.swing.table.TableModel#getColumnClass(int)
      */
     public Class< ?> getColumnClass(int columnIndex) {
-        if(isForTreeTable() && columnIndex == 0){
+        if (isForTreeTable() && columnIndex == 0) {
             return TreeTableModel.class;
         }
         return columns.get(columnIndex).getColumnClass();
@@ -418,7 +419,8 @@ public class TableAM implements IFAttributeModel {
     }
 
     /**
-     * Returns true, if the element is in "removed" state. This means, it was deleted from the table and is not yet saved.
+     * Returns true, if the element is in "removed" state. This means, it was deleted from the table and is not yet
+     * saved.
      */
     public boolean isRemoved(Element element) {
         return delElements.contains(element);
@@ -428,7 +430,8 @@ public class TableAM implements IFAttributeModel {
      * @see javax.swing.table.TableModel#isCellEditable(int, int)
      */
     public boolean isCellEditable(int rowIndex, int columnIndex) {
-        return !isReadOnly() && getElementAt(rowIndex) != null && !getElementAt(rowIndex).isReadOnly(columnIndex) && !getElementAt(rowIndex).isRemoved();
+        return !isReadOnly() && getElementAt(rowIndex) != null && !getElementAt(rowIndex).isReadOnly(columnIndex)
+            && !getElementAt(rowIndex).isRemoved();
     }
 
     /**
@@ -453,30 +456,26 @@ public class TableAM implements IFAttributeModel {
     public boolean isReadOnly() {
         return readOnly;
     }
-    
+
     /**
-     * a fireUpdateView which is executed very often leads to  updateFromBinding, which executes a fireTableDataChanged.
-     * a fireTableDataChanged rebuilds the tree structure, because its to unspecific about the change.
-     * 
-     * the treestay open flag, prevents the tree from rebuilding its structure.
-     * consumeTreeStayOpen is called by the UTreeTableComponent
-     * 
-     * if true it ignores the tableChanged event
-     *  
+     * a fireUpdateView which is executed very often leads to updateFromBinding, which executes a
+     * fireTableDataChanged. a fireTableDataChanged rebuilds the tree structure, because its to unspecific about the
+     * change. the treestay open flag, prevents the tree from rebuilding its structure. consumeTreeStayOpen is called
+     * by the UTreeTableComponent if true it ignores the tableChanged event
      */
-    public boolean consumeTreeStayOpen(){
+    public boolean consumeTreeStayOpen() {
         boolean temp = treeStayOpen;
         treeStayOpen = false;
         return temp;
     }
-    
-    public void setTreeStayOpen(){
-        if(isForTreeTable()){
+
+    public void setTreeStayOpen() {
+        if (isForTreeTable()) {
             treeStayOpen = true;
         }
-        
+
     }
-    
+
     /**
      * This method is called by the element after a value was changed. It triggers the events..
      * 
@@ -484,48 +483,48 @@ public class TableAM implements IFAttributeModel {
      * @param columnId The id of the column in which the value was changed.
      */
     protected void handleElementDataChanged(final Element element, final String columnId) {
-        
+
         setTreeStayOpen();
-        
+
         fireUpdateViews();
-        
-        
-    	if (uniqueKeyColumnIds != null) {
+
+        if (uniqueKeyColumnIds != null) {
             checkUniqueConstraint(element);
             if (keyDeleteMap.containsValue(buildKey(element))) {
-            	checkAddedOrChangedElementAgainstDeletedElements(element);
+                checkAddedOrChangedElementAgainstDeletedElements(element);
             }
             checkAddedOrChangedElementAgainstDeletedElements(element);
         }
-        
-    	// Inform the event listeners.
+
+        // Inform the event listeners.
         ElementLifecycleListener[] listeners = listenerList.getListeners(ElementLifecycleListener.class);
         if (listeners != null) {
             for (final ElementLifecycleListener constraint : listeners) {
-                if(!SwingUtilities.isEventDispatchThread()) {
-                    SwingUtilities.invokeLater(new Runnable() {                    
+                if (!SwingUtilities.isEventDispatchThread()) {
+                    SwingUtilities.invokeLater(new Runnable() {
                         @Override
                         public void run() {
                             constraint.elementChanged(TableAM.this, element, columnId);
                         }
                     });
-                } else {
+                }
+                else {
                     constraint.elementChanged(TableAM.this, element, columnId);
                 }
             }
         }
-		
-		fireDataChanged();
+
+        fireDataChanged();
     }
 
     /**
-     * This method is called by the element after the state of the element was changed. 
-     * It updates the data structures in which the element states are tracked and fires the needed events. 
+     * This method is called by the element after the state of the element was changed. It updates the data structures
+     * in which the element states are tracked and fires the needed events.
      * 
      * @param element The element with the changed state.
      */
     protected void handleElementStateChange(final Element element) {
-        if(element.getChildCount() !=0){
+        if (element.getChildCount() != 0) {
             invElements.remove(element);
             modElements.remove(element);
             delElements.remove(element);
@@ -556,7 +555,7 @@ public class TableAM implements IFAttributeModel {
         fireElementStatusChanged(element);
 
         if (oldValid != valid || oldDirty != dirty) {
-        	fireStateChanged();
+            fireStateChanged();
         }
     }
 
@@ -568,14 +567,15 @@ public class TableAM implements IFAttributeModel {
         IFAttributeModelEventListener[] listeners = listenerList.getListeners(IFAttributeModelEventListener.class);
         if (listeners != null && !massEditMode) {
             for (final IFAttributeModelEventListener listener : listeners) {
-                if(!SwingUtilities.isEventDispatchThread()) {
-                    SwingUtilities.invokeLater(new Runnable() {                    
+                if (!SwingUtilities.isEventDispatchThread()) {
+                    SwingUtilities.invokeLater(new Runnable() {
                         @Override
                         public void run() {
                             listener.dataChanged(null, TableAM.this);
                         }
                     });
-                } else {
+                }
+                else {
                     listener.dataChanged(null, this);
                 }
             }
@@ -590,14 +590,15 @@ public class TableAM implements IFAttributeModel {
         IFAttributeModelEventListener[] listeners = listenerList.getListeners(IFAttributeModelEventListener.class);
         if (listeners != null) {
             for (final IFAttributeModelEventListener listener : listeners) {
-                if(!SwingUtilities.isEventDispatchThread()) {
-                    SwingUtilities.invokeLater(new Runnable() {                    
+                if (!SwingUtilities.isEventDispatchThread()) {
+                    SwingUtilities.invokeLater(new Runnable() {
                         @Override
                         public void run() {
                             listener.stateChanged(null, TableAM.this);
                         }
                     });
-                } else {
+                }
+                else {
                     listener.stateChanged(null, this);
                 }
             }
@@ -616,14 +617,15 @@ public class TableAM implements IFAttributeModel {
                 TableAMListener[] listeners = listenerList.getListeners(TableAMListener.class);
                 if (listeners != null) {
                     for (final TableAMListener listener : listeners) {
-                        if(!SwingUtilities.isEventDispatchThread()) {
-                            SwingUtilities.invokeLater(new Runnable() {                    
+                        if (!SwingUtilities.isEventDispatchThread()) {
+                            SwingUtilities.invokeLater(new Runnable() {
                                 @Override
                                 public void run() {
                                     listener.columnValueRangeChanged(TableAM.this, colDef);
                                 }
                             });
-                        } else {
+                        }
+                        else {
                             listener.columnValueRangeChanged(TableAM.this, colDef);
                         }
                     }
@@ -633,18 +635,18 @@ public class TableAM implements IFAttributeModel {
             @Override
             public void filterModeChanged(final ColumnDefinition< ?> colDef) {
 
-
                 TableAMListener[] listeners = listenerList.getListeners(TableAMListener.class);
                 if (listeners != null) {
                     for (final TableAMListener listener : listeners) {
-                        if(!SwingUtilities.isEventDispatchThread()) {
-                            SwingUtilities.invokeLater(new Runnable() {                    
+                        if (!SwingUtilities.isEventDispatchThread()) {
+                            SwingUtilities.invokeLater(new Runnable() {
                                 @Override
                                 public void run() {
                                     listener.columnFilterModeChanged(TableAM.this, colDef);
                                 }
                             });
-                        } else {
+                        }
+                        else {
                             listener.columnFilterModeChanged(TableAM.this, colDef);
                         }
                     }
@@ -657,14 +659,15 @@ public class TableAM implements IFAttributeModel {
         TableAMListener[] listeners = listenerList.getListeners(TableAMListener.class);
         if (listeners != null) {
             for (final TableAMListener listener : listeners) {
-                if(!SwingUtilities.isEventDispatchThread()) {
-                    SwingUtilities.invokeLater(new Runnable() {                    
+                if (!SwingUtilities.isEventDispatchThread()) {
+                    SwingUtilities.invokeLater(new Runnable() {
                         @Override
                         public void run() {
                             listener.columnAdded(TableAM.this, columnDefinition);
                         }
                     });
-                } else {
+                }
+                else {
                     listener.columnAdded(TableAM.this, columnDefinition);
                 }
             }
@@ -676,7 +679,7 @@ public class TableAM implements IFAttributeModel {
      */
     public boolean containsColumn(ColumnDefinition< ?> column) {
         return columns.contains(column);
-    }    
+    }
 
     /**
      * Delete a column from this table model.
@@ -690,14 +693,15 @@ public class TableAM implements IFAttributeModel {
         TableAMListener[] listeners = listenerList.getListeners(TableAMListener.class);
         if (listeners != null) {
             for (final TableAMListener listener : listeners) {
-                if(!SwingUtilities.isEventDispatchThread()) {
-                    SwingUtilities.invokeLater(new Runnable() {                    
+                if (!SwingUtilities.isEventDispatchThread()) {
+                    SwingUtilities.invokeLater(new Runnable() {
                         @Override
                         public void run() {
                             listener.columnRemoved(TableAM.this, columnDefinition);
                         }
                     });
-                } else {
+                }
+                else {
                     listener.columnRemoved(TableAM.this, columnDefinition);
                 }
             }
@@ -728,7 +732,6 @@ public class TableAM implements IFAttributeModel {
         listenerList.add(TableAMListener.class, listener);
     }
 
-
     /**
      * Returns the list of all column definitions
      */
@@ -737,7 +740,8 @@ public class TableAM implements IFAttributeModel {
     }
 
     /**
-     * @see net.ulrice.databinding.bufferedbinding.IFAttributeModel#gaChanged(net.ulrice.databinding.IFGuiAccessor, java.lang.Object)
+     * @see net.ulrice.databinding.bufferedbinding.IFAttributeModel#gaChanged(net.ulrice.databinding.IFGuiAccessor,
+     *      java.lang.Object)
      */
     @Override
     public void gaChanged(IFViewAdapter viewAdapter, Object value) {
@@ -750,14 +754,15 @@ public class TableAM implements IFAttributeModel {
     public void fireUpdateViews() {
         if (viewAdapterList != null && !massEditMode) {
             for (final IFViewAdapter viewAdapter : viewAdapterList) {
-                if(!SwingUtilities.isEventDispatchThread()) {
-                    SwingUtilities.invokeLater(new Runnable() {                    
+                if (!SwingUtilities.isEventDispatchThread()) {
+                    SwingUtilities.invokeLater(new Runnable() {
                         @Override
                         public void run() {
                             viewAdapter.updateFromBinding(TableAM.this);
                         }
                     });
-                } else {
+                }
+                else {
                     viewAdapter.updateFromBinding(this);
                 }
             }
@@ -806,7 +811,7 @@ public class TableAM implements IFAttributeModel {
     public boolean isInitialized() {
         return initialized;
     }
-    
+
     /**
      * True, if this table attribute model is dirty.
      */
@@ -814,7 +819,7 @@ public class TableAM implements IFAttributeModel {
     public boolean isDirty() {
         return dirty;
     }
-    
+
     /**
      * True, if this table attribute model is valid.
      */
@@ -824,7 +829,8 @@ public class TableAM implements IFAttributeModel {
     }
 
     /**
-     * Returns the validation results. If table model is not valid, the validation result contains all validation errors
+     * Returns the validation results. If table model is not valid, the validation result contains all validation
+     * errors
      */
     @Override
     public ValidationResult getValidationResult() {
@@ -839,7 +845,7 @@ public class TableAM implements IFAttributeModel {
     }
 
     /**
-     * Returns the validation results as list of string. 
+     * Returns the validation results as list of string.
      */
     @Override
     public List<String> getValidationFailures() {
@@ -867,7 +873,6 @@ public class TableAM implements IFAttributeModel {
         return result;
     }
 
-    
     /**
      * Returns the list of objects originally read from the model.
      */
@@ -903,19 +908,19 @@ public class TableAM implements IFAttributeModel {
         fireUpdateViews();
     }
 
-
-    public AbstractProcess<Void, Void> createLoader(final IFController controller, final boolean blocking, final ListDataProvider<?> provider) {
-        for(IFViewAdapter viewAdapter : viewAdapterList) {
-            if(viewAdapter instanceof UTableViewAdapter) {
+    public AbstractProcess<Void, Void> createLoader(final IFController controller, final boolean blocking,
+        final ListDataProvider< ?> provider) {
+        for (IFViewAdapter viewAdapter : viewAdapterList) {
+            if (viewAdapter instanceof UTableViewAdapter) {
                 UTableViewAdapter tableViewAdapter = (UTableViewAdapter) viewAdapter;
                 tableViewAdapter.getComponent().getRowSorter().disableRowSorter();
             }
-        }        
-      
+        }
+
         return new AbstractProcess<Void, Void>(controller, blocking) {
-            
-            private boolean cancelled = false;  
-            
+
+            private boolean cancelled = false;
+
             @Override
             public boolean hasProgressInformation() {
                 return true;
@@ -932,15 +937,15 @@ public class TableAM implements IFAttributeModel {
             }
 
             @Override
-            protected Void work() throws Exception {   
+            protected Void work() throws Exception {
                 clear();
-                
+
                 initialized = true;
-                
+
                 final List data = provider.getData();
                 int numLoaded = 0;
-                if(data != null) {
-                    for(Object item : data) {
+                if (data != null) {
+                    for (Object item : data) {
                         Element elem = createElement(item, false, true, false);
                         addElementToIdMap(elem);
                         elements.add(elem);
@@ -948,20 +953,20 @@ public class TableAM implements IFAttributeModel {
                         int loadedPercent = Math.round(100.0f / data.size() * numLoaded);
                         setProgress(loadedPercent > 100 ? 100 : loadedPercent);
                         fireProgressChanged();
-                        
-                        if(cancelled) {
+
+                        if (cancelled) {
                             break;
                         }
-                    }                    
+                    }
                 }
-            
+
                 return null;
             }
 
             @Override
-            protected void finished(Void result) {  
-                for(IFViewAdapter viewAdapter : viewAdapterList) {
-                    if(viewAdapter instanceof UTableViewAdapter) {
+            protected void finished(Void result) {
+                for (IFViewAdapter viewAdapter : viewAdapterList) {
+                    if (viewAdapter instanceof UTableViewAdapter) {
                         UTableViewAdapter tableViewAdapter = (UTableViewAdapter) viewAdapter;
                         tableViewAdapter.getComponent().getRowSorter().reEnableRowSorter();
                         tableViewAdapter.getComponent().sizeColumns(true);
@@ -974,23 +979,24 @@ public class TableAM implements IFAttributeModel {
             protected void failed(Throwable t) {
                 Ulrice.getMessageHandler().handleException(getOwningController(), t);
             }
-        };   
+        };
     }
-    
-    public AbstractProcess<Void, Void> createIncrementalLoader(final IFController controller, final IncrementalTableDataProvider provider) {
-        
-        for(IFViewAdapter viewAdapter : viewAdapterList) {
-            if(viewAdapter instanceof UTableViewAdapter) {
+
+    public AbstractProcess<Void, Void> createIncrementalLoader(final IFController controller,
+        final IncrementalTableDataProvider provider) {
+
+        for (IFViewAdapter viewAdapter : viewAdapterList) {
+            if (viewAdapter instanceof UTableViewAdapter) {
                 UTableViewAdapter tableViewAdapter = (UTableViewAdapter) viewAdapter;
                 tableViewAdapter.getComponent().getRowSorter().disableRowSorter();
             }
-        }        
-      
+        }
+
         return new AbstractProcess<Void, Void>(controller, provider.isBlocking()) {
-            
+
             private boolean cancelled = false;
-            int numLoaded = 0;            
-            
+            int numLoaded = 0;
+
             @Override
             public boolean hasProgressInformation() {
                 return true;
@@ -1007,20 +1013,20 @@ public class TableAM implements IFAttributeModel {
             }
 
             @Override
-            protected Void work() throws Exception {   
+            protected Void work() throws Exception {
                 clear();
-                
+
                 initialized = true;
                 int totalNumRows = provider.getNumRows();
                 int chunkSize = provider.getChunkSize();
                 int upperBound = provider.getUpperBound();
-                final int max = Math.min (upperBound, totalNumRows);
-                
+                final int max = Math.min(upperBound, totalNumRows);
+
                 while (numLoaded < max && !cancelled && !isCancelled()) {
                     final List chunk = provider.getNextChunk(numLoaded, chunkSize);
 
-                    if(chunk != null) {
-                        for(Object item : chunk) {
+                    if (chunk != null) {
+                        for (Object item : chunk) {
                             Element elem = createElement(item, false, true, false);
                             addElementToIdMap(elem);
                             elements.add(elem);
@@ -1033,8 +1039,8 @@ public class TableAM implements IFAttributeModel {
                     int loadedPercent = Math.round(100.0f / totalNumRows * numLoaded);
                     setProgress(loadedPercent > 100 ? 100 : loadedPercent);
                     fireProgressChanged();
-                    
-                    if(chunk.size() == 0) {
+
+                    if (chunk.size() == 0) {
                         break;
                     }
                 }
@@ -1042,9 +1048,9 @@ public class TableAM implements IFAttributeModel {
             }
 
             @Override
-            protected void finished(Void result) {  
-                for(IFViewAdapter viewAdapter : viewAdapterList) {
-                    if(viewAdapter instanceof UTableViewAdapter) {
+            protected void finished(Void result) {
+                for (IFViewAdapter viewAdapter : viewAdapterList) {
+                    if (viewAdapter instanceof UTableViewAdapter) {
                         UTableViewAdapter tableViewAdapter = (UTableViewAdapter) viewAdapter;
                         tableViewAdapter.getComponent().getRowSorter().reEnableRowSorter();
                         tableViewAdapter.getComponent().sizeColumns(true);
@@ -1056,9 +1062,9 @@ public class TableAM implements IFAttributeModel {
             protected void failed(Throwable t) {
                 Ulrice.getMessageHandler().handleException(getOwningController(), t);
             }
-        };                
+        };
     }
-    
+
     /**
      * Read the data from a given list.
      * 
@@ -1129,7 +1135,7 @@ public class TableAM implements IFAttributeModel {
         fireUpdateViews();
         fireTableCleared();
         fireDataChanged();
-        
+
         if (oldValid != valid || oldDirty != dirty) {
             fireStateChanged();
         }
@@ -1143,7 +1149,7 @@ public class TableAM implements IFAttributeModel {
         final List<Object> values = new ArrayList<Object>();
 
         for (Element elem : elements) {
-            if(!elem.isRemoved()) { 
+            if (!elem.isRemoved()) {
                 elem.writeObject();
                 values.add(elem.getOriginalValue());
             }
@@ -1151,7 +1157,7 @@ public class TableAM implements IFAttributeModel {
 
         tableMVA.setValues(values);
     }
-   
+
     /**
      * Create an empty object for a newly created element. The object is set as the original value in the element.
      * This method delegates to the table mva and can be overridden in special cases.
@@ -1161,7 +1167,8 @@ public class TableAM implements IFAttributeModel {
     }
 
     /**
-     * Add a new element 
+     * Add a new element
+     * 
      * @param value The original value of the element.
      * @return The newly created element
      */
@@ -1195,7 +1202,7 @@ public class TableAM implements IFAttributeModel {
     /**
      * Add an element
      * 
-     * @param index The index at which the element should be added.* 
+     * @param index The index at which the element should be added.*
      * @param value The original value.
      * @param dirty True, if the added value should be marked as dirty.
      * @param valid True, if the added value should be marked as valid.
@@ -1211,14 +1218,14 @@ public class TableAM implements IFAttributeModel {
         // unique constraint handling
         Element oldElement = element;
         if (keyDeleteMap.containsValue(buildKey(element))) {
-        	oldElement = checkAddedOrChangedElementAgainstDeletedElements(element);
+            oldElement = checkAddedOrChangedElementAgainstDeletedElements(element);
         }
-        else {        
+        else {
             addElementToIdMap(element);
             element.setInserted(true);
             newElements.add(element);
         }
-        
+
         // end of unique constraint handling
 
         if (index >= 0) {
@@ -1249,13 +1256,13 @@ public class TableAM implements IFAttributeModel {
             return false;
         }
 
-        if(!isDisplayRemovedEntries() || element.isInserted()) {
+        if (!isDisplayRemovedEntries() || element.isInserted()) {
             boolean removed = elements.remove(element);
             if (!removed) {
                 return false;
             }
         }
-        
+
         if (!newElements.contains(element)) {
             delElements.add(element);
         }
@@ -1266,25 +1273,24 @@ public class TableAM implements IFAttributeModel {
         handleElementStateChange(element);
         fireElementDeleted(element);
 
-        if(element.isInserted()) {
+        if (element.isInserted()) {
             elementIdMap.remove(element.getUniqueId());
             keyDeleteMap.remove(element.getUniqueId());
             keyMap.remove(element.getUniqueId());
             List< ?> functionalKey = buildKey(element);
-            uniqueDeleteMap.remove(functionalKey);           
+            uniqueDeleteMap.remove(functionalKey);
         }
-        
+
         fireUpdateViews();
         return true;
     }
-    
 
     /**
      * Move the element one position up.
      */
     public void moveElementUp(Element element) {
         int idx = getIndexOfElement(element);
-        if(idx > 0) {
+        if (idx > 0) {
             elements.remove(idx);
             idx--;
             elements.add(idx, element);
@@ -1294,11 +1300,12 @@ public class TableAM implements IFAttributeModel {
 
     /**
      * Move the element one position down.
+     * 
      * @param element
      */
     public void moveElementDown(Element element) {
         int idx = getIndexOfElement(element);
-        if(idx < elements.size() - 1) {
+        if (idx < elements.size() - 1) {
             elements.remove(idx);
             idx++;
             elements.add(idx, element);
@@ -1390,7 +1397,8 @@ public class TableAM implements IFAttributeModel {
     }
 
     /**
-     * Clones an original objects of an element. This is used during the copy process of an element. This method delegates to the table model accessor
+     * Clones an original objects of an element. This is used during the copy process of an element. This method
+     * delegates to the table model accessor
      */
     protected Object cloneObject(Object value) {
         return tableMVA.cloneObject(value);
@@ -1435,11 +1443,11 @@ public class TableAM implements IFAttributeModel {
      * Commit an element. This accepts all changes that were made in this object
      */
     public void commitElement(Element element) {
-        
-        if(element.isRemoved() && isDisplayRemovedEntries()) {
+
+        if (element.isRemoved() && isDisplayRemovedEntries()) {
             elements.remove(element);
         }
-        
+
         element.writeObject();
         element.readObject();
         newElements.remove(element);
@@ -1455,17 +1463,17 @@ public class TableAM implements IFAttributeModel {
      * Rollback the element. This discards all changes that were made in this object
      */
     public void rollbackElement(Element element) {
-        boolean wasInserted = element.isInserted(); 
-        if(wasInserted) {            
+        boolean wasInserted = element.isInserted();
+        if (wasInserted) {
             delElement(element);
         }
-        
+
         element.readObject();
-        if(!wasInserted && element.isRemoved() && isDisplayRemovedEntries()) {
+        if (!wasInserted && element.isRemoved() && isDisplayRemovedEntries()) {
             element.setRemoved(false);
             delElements.remove(element);
         }
-        
+
         handleElementStateChange(element);
         fireUpdateViews();
     }
@@ -1517,29 +1525,29 @@ public class TableAM implements IFAttributeModel {
         ElementLifecycleListener[] listeners = listenerList.getListeners(ElementLifecycleListener.class);
         if (listeners != null) {
             for (final ElementLifecycleListener constraint : listeners) {
-                if(!SwingUtilities.isEventDispatchThread()) {
-                    SwingUtilities.invokeLater(new Runnable() {                    
+                if (!SwingUtilities.isEventDispatchThread()) {
+                    SwingUtilities.invokeLater(new Runnable() {
                         @Override
                         public void run() {
                             constraint.elementAdded(TableAM.this, element);
                         }
                     });
-                } else {
+                }
+                else {
                     constraint.elementAdded(this, element);
                 }
             }
         }
     }
-    
+
     /**
      * Add an element to the internal data structures
      * 
-     * 
      * @param element
      */
-    private void addElementToIdMap(Element element){
+    private void addElementToIdMap(Element element) {
         elementIdMap.put(element.getUniqueId(), element);
-        for( int i = 0; i < element.getChildCount(); i++){
+        for (int i = 0; i < element.getChildCount(); i++) {
             addElementToIdMap(element.getChild(i));
         }
     }
@@ -1557,14 +1565,15 @@ public class TableAM implements IFAttributeModel {
         ElementLifecycleListener[] listeners = listenerList.getListeners(ElementLifecycleListener.class);
         if (listeners != null) {
             for (final ElementLifecycleListener constraint : listeners) {
-                if(!SwingUtilities.isEventDispatchThread()) {
-                    SwingUtilities.invokeLater(new Runnable() {                    
+                if (!SwingUtilities.isEventDispatchThread()) {
+                    SwingUtilities.invokeLater(new Runnable() {
                         @Override
                         public void run() {
                             constraint.elementRemoved(TableAM.this, element);
                         }
                     });
-                } else {
+                }
+                else {
                     constraint.elementRemoved(this, element);
                 }
             }
@@ -1585,14 +1594,15 @@ public class TableAM implements IFAttributeModel {
         ElementLifecycleListener[] listeners = listenerList.getListeners(ElementLifecycleListener.class);
         if (listeners != null) {
             for (final ElementLifecycleListener constraint : listeners) {
-                if(!SwingUtilities.isEventDispatchThread()) {
-                    SwingUtilities.invokeLater(new Runnable() {                    
+                if (!SwingUtilities.isEventDispatchThread()) {
+                    SwingUtilities.invokeLater(new Runnable() {
                         @Override
                         public void run() {
                             constraint.tableCleared(TableAM.this);
                         }
                     });
-                } else {
+                }
+                else {
                     constraint.tableCleared(this);
                 }
             }
@@ -1610,14 +1620,15 @@ public class TableAM implements IFAttributeModel {
         ElementLifecycleListener[] listeners = listenerList.getListeners(ElementLifecycleListener.class);
         if (listeners != null) {
             for (final ElementLifecycleListener constraint : listeners) {
-                if(!SwingUtilities.isEventDispatchThread()) {
-                    SwingUtilities.invokeLater(new Runnable() {                    
+                if (!SwingUtilities.isEventDispatchThread()) {
+                    SwingUtilities.invokeLater(new Runnable() {
                         @Override
                         public void run() {
                             constraint.elementStateChanged(TableAM.this, element);
                         }
                     });
-                } else {
+                }
+                else {
                     constraint.elementStateChanged(this, element);
                 }
             }
@@ -1637,49 +1648,68 @@ public class TableAM implements IFAttributeModel {
         return columns.get(index);
     }
 
-    
     /**
-     * Returns true, if an Element contains the given object
+     * Returns the Element, if an Element contains the given object, else null
      */
-    public boolean isElementExisting(Object object){
+    public Element getElementOfObjectWithoutTempElement(Object object) {
         List<Object> key = new ArrayList<Object>(uniqueKeyColumnIds != null ? uniqueKeyColumnIds.length : 0);
         if (uniqueKeyColumnIds != null) {
             for (String columnId : uniqueKeyColumnIds) {
                 ColumnDefinition colDef = columnIdMap.get(columnId);
                 key.add(colDef.getDataAccessor().getValue(object));
-                
-            }
-        }
-        Set<String> idSet = uniqueMap.get(key);
-        
-        return idSet != null;
-    }
 
-    /**
-     * Return an element of a current value or null, if element is not available
-     * 
-     * TODO: Use code of isElementExisting for getting key, so no tempElement is needed
-     */
-    public Element getElementOfObject(Object object) {
-        if(uniqueKeyColumnIds != null) {
-            Element tempElement = createElement(object, false, false, true);
-            List<?> key = buildKey(tempElement);
+            }
+
             Set<String> idSet = uniqueMap.get(key);
-            if(idSet != null) {
-                if(idSet.size() == 1) {
+            if (idSet != null) {
+                if (idSet.size() == 1) {
                     return getElementById(idSet.iterator().next());
                 }
-                for(String id : idSet) {
+                for (String id : idSet) {
                     Element element = getElementById(id);
-                    if(element.getCurrentValue().equals(object)) {
+                    if (element.getCurrentValue().equals(object)) {
                         return element;
                     }
                 }
             }
-        } else {
-            if(elements != null) {
-                for(Element element : elements) {
-                    if(element.getCurrentValue().equals(object)) {
+        }
+        else {
+            if (elements != null) {
+                for (Element element : elements) {
+                    if (element.getCurrentValue().equals(object)) {
+                        return element;
+                    }
+                }
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Return an element of a current value or null, if element is not available TODO: Use code of isElementExisting
+     * for getting key, so no tempElement is needed
+     */
+    public Element getElementOfObject(Object object) {
+        if (uniqueKeyColumnIds != null) {
+            Element tempElement = createElement(object, false, false, true);
+            List< ?> key = buildKey(tempElement);
+            Set<String> idSet = uniqueMap.get(key);
+            if (idSet != null) {
+                if (idSet.size() == 1) {
+                    return getElementById(idSet.iterator().next());
+                }
+                for (String id : idSet) {
+                    Element element = getElementById(id);
+                    if (element.getCurrentValue().equals(object)) {
+                        return element;
+                    }
+                }
+            }
+        }
+        else {
+            if (elements != null) {
+                for (Element element : elements) {
+                    if (element.getCurrentValue().equals(object)) {
                         return element;
                     }
                 }
@@ -1693,32 +1723,32 @@ public class TableAM implements IFAttributeModel {
      */
     public void activateMassEditMode() {
         this.massEditMode = true;
-    }    
-    
+    }
+
     /**
-     * Deactivate the mass edit mode, where fireUpdateViews and fireDataChanged are active
-     * and execute fireUpdateViews and fireDataChanged
+     * Deactivate the mass edit mode, where fireUpdateViews and fireDataChanged are active and execute fireUpdateViews
+     * and fireDataChanged
      */
-    public void deactivateMassEditModeAndUpdate(){
+    public void deactivateMassEditModeAndUpdate() {
         this.massEditMode = false;
-        
+
         fireUpdateViews();
         fireDataChanged();
     }
 
     @Override
     public void addExternalValidationError(String translatedMessage) {
-        // TODO Implement me..       
+        // TODO Implement me..
     }
 
     @Override
     public void clearExternalValidationErrors() {
-        // TODO Implement me..        
+        // TODO Implement me..
     }
 
     @Override
     public void addExternalValidationError(ValidationError validationError) {
-        // TODO Implement me..        
+        // TODO Implement me..
     }
 
     public String getPathToChildren() {
@@ -1728,11 +1758,11 @@ public class TableAM implements IFAttributeModel {
     public void setPathToChildren(String pathToChildren) {
         this.pathToChildren = pathToChildren;
     }
-    
+
     public boolean isForTreeTable() {
         return pathToChildren != null;
     }
-   
+
     public List<SortKey> getDefaultSortKeys() {
         return defaultSortKeys;
     }
@@ -1747,15 +1777,15 @@ public class TableAM implements IFAttributeModel {
     public boolean isDisplayRemovedEntries() {
         return displayRemovedEntries;
     }
-    
+
     /**
      * True, if removed entries should be still displayed in the table.
      */
     public void setDisplayRemovedEntries(boolean displayRemovedEntries) {
         this.displayRemovedEntries = displayRemovedEntries;
     }
-    
-    public String toString(){
+
+    public String toString() {
         return elements.size() + " Elements";
     }
 
