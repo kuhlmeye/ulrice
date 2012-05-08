@@ -1637,8 +1637,28 @@ public class TableAM implements IFAttributeModel {
         return columns.get(index);
     }
 
+    
+    /**
+     * Returns true, if an Element contains the given object
+     */
+    public boolean isElementExisting(Object object){
+        List<Object> key = new ArrayList<Object>(uniqueKeyColumnIds != null ? uniqueKeyColumnIds.length : 0);
+        if (uniqueKeyColumnIds != null) {
+            for (String columnId : uniqueKeyColumnIds) {
+                ColumnDefinition colDef = columnIdMap.get(columnId);
+                key.add(colDef.getDataAccessor().getValue(object));
+                
+            }
+        }
+        Set<String> idSet = uniqueMap.get(key);
+        
+        return idSet != null;
+    }
+
     /**
      * Return an element of a current value or null, if element is not available
+     * 
+     * TODO: Use code of isElementExisting for getting key, so no tempElement is needed
      */
     public Element getElementOfObject(Object object) {
         if(uniqueKeyColumnIds != null) {
