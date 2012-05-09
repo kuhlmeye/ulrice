@@ -1657,7 +1657,6 @@ public class TableAM implements IFAttributeModel {
             for (String columnId : uniqueKeyColumnIds) {
                 ColumnDefinition colDef = columnIdMap.get(columnId);
                 key.add(colDef.getDataAccessor().getValue(object));
-
             }
 
             Set<String> idSet = uniqueMap.get(key);
@@ -1686,8 +1685,7 @@ public class TableAM implements IFAttributeModel {
     }
 
     /**
-     * Return an element of a current value or null, if element is not available TODO: Use code of isElementExisting
-     * for getting key, so no tempElement is needed
+     * Return an element of a current value or null, if element is not available 
      */
     public Element getElementOfObject(Object object) {
         if (uniqueKeyColumnIds != null) {
