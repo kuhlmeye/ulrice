@@ -765,10 +765,18 @@ public class UTableComponent extends JPanel {
     }
 
     public int getModelRowCount() {
+        if (getRowSorter() == null) {
+            return (attributeModel != null) ? attributeModel.getRowCount() : 0;
+        }
+        
         return getRowSorter().getModelRowCount();
     }
 
     public int getViewRowCount() {
+        if (getRowSorter() == null) {
+            return (attributeModel != null) ? attributeModel.getRowCount() : 0;
+        }
+        
         return getRowSorter().getViewRowCount();
     }
 
