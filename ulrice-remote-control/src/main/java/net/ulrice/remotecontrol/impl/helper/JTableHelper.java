@@ -4,6 +4,7 @@ import java.awt.Component;
 import java.awt.Robot;
 
 import javax.swing.JTable;
+import javax.swing.table.TableCellEditor;
 import javax.swing.table.TableModel;
 
 import net.ulrice.remotecontrol.ComponentTableData;
@@ -86,7 +87,14 @@ public class JTableHelper extends AbstractJComponentHelper<JTable> {
         }
 
         Component editor = component.getComponent(component.getComponentCount() - 1);
+        boolean result = ComponentHelperRegistry.get(editor.getClass()).enter(robot, editor, text);
+        
+        TableCellEditor cellEditor = component.getCellEditor();
+        
+        if (cellEditor != null) {
+            cellEditor.stopCellEditing();
+        }
 
-        return ComponentHelperRegistry.get(editor.getClass()).enter(robot, editor, text);
+        return result;
     }
 }
