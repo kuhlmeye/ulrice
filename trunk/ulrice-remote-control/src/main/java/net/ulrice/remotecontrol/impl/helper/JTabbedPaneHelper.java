@@ -1,5 +1,7 @@
 package net.ulrice.remotecontrol.impl.helper;
 
+import java.awt.Component;
+
 import javax.swing.JTabbedPane;
 
 import net.ulrice.remotecontrol.ComponentListData;
@@ -27,7 +29,9 @@ public class JTabbedPaneHelper extends AbstractJComponentHelper<JTabbedPane>
 
 		for (int i = 0; i < component.getTabCount(); i += 1)
 		{
-			result.addEntry(component.getTabComponentAt(i).getClass().getName(), component.getSelectedIndex() == i);
+			Component tabComponentAt = component.getTabComponentAt(i);
+			
+            result.addEntry((tabComponentAt != null) ? tabComponentAt.getClass().getName() : Void.class, component.getSelectedIndex() == i);
 		}
 
 		return result;
