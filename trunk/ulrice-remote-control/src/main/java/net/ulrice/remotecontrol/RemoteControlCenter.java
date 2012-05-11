@@ -572,10 +572,16 @@ public class RemoteControlCenter {
 
     public static void setPausing(boolean pausing) {
         synchronized (SEMAPHORE) {
+            boolean hadPaused = RemoteControlCenter.pausing;
+
             RemoteControlCenter.pausing = pausing;
 
             if (remoteControlWindow != null) {
                 remoteControlWindow.updateState();
+            }
+
+            if ((!hadPaused) && (pausing)) {
+                step();
             }
         }
     }
