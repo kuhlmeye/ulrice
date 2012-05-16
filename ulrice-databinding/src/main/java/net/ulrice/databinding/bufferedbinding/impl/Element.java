@@ -633,6 +633,20 @@ public class Element {
         }
         return inserted || removed;
     }
+    
+    public boolean removeChild(Element element) {
+        if (getChildCount() > 0) {
+            if(childElements.remove(element)){
+                return true;
+            }            
+            for (Element child : childElements) {
+                if(child.removeChild(element)){
+                    return true;
+                }
+            }            
+        }
+        return false;
+    }
 
     public Element getChild(int index) {
         return childElements.get(index);
@@ -672,6 +686,21 @@ public class Element {
 
     public void setParent(Element parent) {
         this.parent = parent;
+    }
+    
+    public Element getChildByCurrentValue(Object object){
+        if (getChildCount() > 0) {
+            for (Element child : childElements) {
+                if (child.getCurrentValue().equals(object)) {
+                    return child;
+                }
+                Element found = child.getChildByCurrentValue(object);
+                if(found != null){
+                    return found;
+                }
+            }
+        }
+        return null;
     }
 
     public String toString() {
