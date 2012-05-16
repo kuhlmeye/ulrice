@@ -221,6 +221,9 @@ public class UTableComponent extends JPanel {
         
         staticTable.setDefaultRenderer(Object.class, new UTableVADefaultRenderer());
         scrollTable.setDefaultRenderer(Object.class, new UTableVADefaultRenderer());
+        staticTable.getUTableHeader().setExtendInHeight(true);
+        scrollTable.getUTableHeader().setExtendInHeight(true);
+        
         
         filter = new UTableVAFilter(sorter, staticTable.getUTableHeader(), scrollTable.getUTableHeader());
         sorter.setRowFilter(filter);

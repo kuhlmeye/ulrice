@@ -57,7 +57,6 @@ public class UTreeTableComponent extends UTableComponent {
         treeTableModel = new UTreeTableModel(viewAdapter.getAttributeModel());
         tree = new TreeTableCellRenderer(scrollTable, treeTableModel);
         tree.setRootVisible(false);
-        setUpperInfoArea(new ExpandColapsePanel(this));
         
         viewAdapter.addTableModelListener(new TableModelListener() {
 
@@ -179,6 +178,8 @@ public class UTreeTableComponent extends UTableComponent {
         // filter = new UTableVAFilter(sorter, staticTable.getUTableHeader(), scrollTable.getUTableHeader());
         // sorter.setRowFilter(filter);
 
+        staticTable.getUTableHeader().setExtendInHeight(false);
+        scrollTable.getUTableHeader().setExtendInHeight(false);
         staticTableModel = new UTableModel(false, UTreeTableComponent.this.fixedColumns, viewAdapter);
         staticTable.setModel(staticTableModel);
         staticTable.setSelectionModel(rowSelModel);
@@ -188,6 +189,12 @@ public class UTreeTableComponent extends UTableComponent {
     public void rebuildTreeTableStructure() {
         TableAM tableAM = viewAdapter.getAttributeModel();
         treeTableModel.fireTreeStructureChanged(tableAM, new Object[] { tableAM }, null, null);
+    }
+    
+    public void updateColumnModel() {
+        super.updateColumnModel();
+        scrollTable.getUTableHeader().removeAll();
+        scrollTable.getUTableHeader().add(new ExpandColapsePanel(this), scrollTable.getUTableHeader().getColumnModel().getColumn(0).getIdentifier());
     }
 
     @SuppressWarnings({ "rawtypes", "unchecked" })
