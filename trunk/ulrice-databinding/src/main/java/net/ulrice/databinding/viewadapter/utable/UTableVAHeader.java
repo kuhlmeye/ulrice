@@ -28,6 +28,11 @@ import javax.swing.table.TableColumnModel;
  * preferred height and revalidates when the dragged column is released.
  */
 public class UTableVAHeader extends JTableHeader {
+    
+    /**
+     * if the components (serach filter should extend the heigt of the table header
+     */
+    private boolean extendInHeight = true;
 
     /** Default generated serial version uid. */
     private static final long serialVersionUID = 9040213273578605389L;
@@ -99,10 +104,27 @@ public class UTableVAHeader extends JTableHeader {
         final Dimension size = super.getPreferredSize();
         final LayoutManager layout = getLayout();
         if (layout != null) {
-            size.height += layout.preferredLayoutSize(this).height;
+            if(isExtendInHeight()){
+                size.height += layout.preferredLayoutSize(this).height;
+            }else{
+                size.height = Math.max(layout.preferredLayoutSize(this).height, size.height);
+            }
+            
         }
         return size;
     }
+    
+    
+
+    public boolean isExtendInHeight() {
+        return extendInHeight;
+    }
+
+    public void setExtendInHeight(boolean extendInHeight) {
+        this.extendInHeight = extendInHeight;
+    }
+
+
 
     /**
      * Layout of the table header of the tablega-table component. This layout
@@ -189,6 +211,9 @@ public class UTableVAHeader extends JTableHeader {
                     if (rect.height > size.height) {
                         rect.y += rect.height - size.height;
                         rect.height = size.height;
+                    }
+                    if(!isExtendInHeight()){
+                        rect.y =  margin.top;
                     }
                     filterComponent.setBounds(rect);
                 }

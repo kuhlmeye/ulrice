@@ -10,7 +10,6 @@ import javax.swing.JTable;
 import javax.swing.table.TableCellRenderer;
 
 import net.ulrice.databinding.bufferedbinding.impl.ColumnDefinition;
-import net.ulrice.databinding.viewadapter.impl.JTableViewAdapter;
 
 /**
  * @author christof
@@ -18,8 +17,6 @@ import net.ulrice.databinding.viewadapter.impl.JTableViewAdapter;
 public class UTableVAHeaderRenderer implements TableCellRenderer {
 
     private TableCellRenderer labelRenderer;
-
-    private ExpandColapsePanel expandColapsePanel;
 
     /**
      * @param tableGA
@@ -51,19 +48,6 @@ public class UTableVAHeaderRenderer implements TableCellRenderer {
             ((JComponent) component).setToolTipText(tooltipText);
         }
 
-        if (column == 0) {
-            if (table instanceof UTable) {
-                UTable uTable = (UTable) table;
-                if (uTable.getTableComponent() instanceof UTreeTableComponent) {
-                    UTreeTableComponent treeTable = (UTreeTableComponent) uTable.getTableComponent();
-                    if (expandColapsePanel == null) {
-                        expandColapsePanel = new ExpandColapsePanel(treeTable);
-                    }
-                    component = expandColapsePanel;
-                }
-
-            }
-        }
         return component;
     }
 }
