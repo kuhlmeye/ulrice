@@ -263,6 +263,22 @@ public class TableAMTest {
     }
     
     @Test
+    @Ignore
+    public void addRowAndModifyAndAddTwice() {
+        tableAM.read();
+        Assert.assertEquals(2, tableAM.getRowCount());
+        
+        Element element = tableAM.addElement(null);
+        Assert.assertEquals(3, tableAM.getRowCount());
+        Assert.assertTrue(tableAM.isDirty());
+        Assert.assertTrue(tableAM.isValid());
+                
+        element.setValueAt(0, "Test");
+        element = tableAM.addElement(null);
+        element = tableAM.addElement(null);
+    }
+    
+    @Test
     public void modifyRowAndDelete() {
         tableAM.read();
         Assert.assertEquals(2, tableAM.getRowCount());
