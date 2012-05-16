@@ -228,8 +228,8 @@ public class TableAM implements IFAttributeModel {
      * element => After that the added/changed element is known as the removed one.
      * 
      * @param element The added/changed element.
-     * @return The orignal element, if key is not known in the list of removed elements or the removed element with the
-     *         values of the added/changed element.
+     * @return The orignal element, if key is not known in the list of removed elements or the removed element with
+     *         the values of the added/changed element.
      */
     private Element checkAddedOrChangedElementAgainstDeletedElements(Element element) {
         Element oldElement = null;
@@ -1280,7 +1280,7 @@ public class TableAM implements IFAttributeModel {
             List< ?> functionalKey = buildKey(element);
             uniqueDeleteMap.remove(functionalKey);
         }
-
+        setTreeStayOpen();
         fireUpdateViews();
         return true;
     }
@@ -1445,7 +1445,13 @@ public class TableAM implements IFAttributeModel {
     public void commitElement(Element element) {
 
         if (element.isRemoved() && isDisplayRemovedEntries()) {
-            elements.remove(element);
+            if(!elements.remove(element) && isForTreeTable()){
+                for(Element e: elements){
+                    if(e.removeChild(element)){
+                        break;
+                    }
+                }
+            }
         }
 
         element.writeObject();
@@ -1672,20 +1678,25 @@ public class TableAM implements IFAttributeModel {
                 }
             }
         }
-        else {
-            if (elements != null) {
-                for (Element element : elements) {
-                    if (element.getCurrentValue().equals(object)) {
-                        return element;
-                    }
+
+        if (elements != null) {
+            for (Element element : elements) {
+                if (element.getCurrentValue().equals(object)) {
+                    return element;
+                }
+                if (isForTreeTable()) {
+                    Element found = element.getChildByCurrentValue(object);
+                    if (found != null)
+                        return found;
                 }
             }
         }
+
         return null;
     }
 
     /**
-     * Return an element of a current value or null, if element is not available 
+     * Return an element of a current value or null, if element is not available
      */
     public Element getElementOfObject(Object object) {
         if (uniqueKeyColumnIds != null) {
@@ -1704,15 +1715,20 @@ public class TableAM implements IFAttributeModel {
                 }
             }
         }
-        else {
-            if (elements != null) {
-                for (Element element : elements) {
-                    if (element.getCurrentValue().equals(object)) {
-                        return element;
-                    }
+
+        if (elements != null) {
+            for (Element element : elements) {
+                if (element.getCurrentValue().equals(object)) {
+                    return element;
+                }
+                if (isForTreeTable()) {
+                    Element found = element.getChildByCurrentValue(object);
+                    if (found != null)
+                        return found;
                 }
             }
         }
+
         return null;
     }
 
