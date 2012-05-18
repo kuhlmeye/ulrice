@@ -283,8 +283,7 @@ public class TableAMTest {
     
     @Test
     /**
-     * TODO: christof der unique error geht verlohren wenn man andere felder editiert...
-     *
+     * bug:3137
      */
     public void uniqueErrorLost() {
         tableAM.read();
