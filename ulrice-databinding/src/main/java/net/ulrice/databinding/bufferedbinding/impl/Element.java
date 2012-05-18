@@ -12,6 +12,7 @@ import net.ulrice.databinding.bufferedbinding.IFAttributeModel;
 import net.ulrice.databinding.bufferedbinding.impl.ColumnDefinition.ColumnType;
 import net.ulrice.databinding.modelaccess.IFDynamicModelValueAccessor;
 import net.ulrice.databinding.validation.IFValidator;
+import net.ulrice.databinding.validation.UniqueKeyConstraintError;
 import net.ulrice.databinding.validation.ValidationError;
 import net.ulrice.databinding.validation.ValidationResult;
 
@@ -339,6 +340,9 @@ public class Element {
     this.originalValueDirty = dirty;
     this.originalValueValid = valid;
     this.originalValue = currentValue;
+    
+    clearElementValidationErrors(); // RAD wie bei setValueAt
+    
     if (modelList != null) {
         for (int i = 0; i < modelList.size(); i++) {
             if(isReadOnly(i) && omitReadOnly){
@@ -522,6 +526,16 @@ public class Element {
         }
         updateState();
     }
+    public void putUniqueKeyConstraintError(UniqueKeyConstraintError uniqueKeyConstraintError) {
+        removeUniqueKeyConstraintErrors();
+        addElementValidationError(uniqueKeyConstraintError);
+    }
+    
+    public void removeUniqueKeyConstraintErrors(){
+        validationResult.removeUniqueKeyConstraintErrors();
+    }
+    
+    
 
     public void removeElementValidationError(ValidationError validationError) {
         validationResult.removeValidationError(validationError);
@@ -532,6 +546,8 @@ public class Element {
         }
         updateState();
     }
+    
+   
 
     public ValidationResult getElementValidationErrors() {
         return validationResult;

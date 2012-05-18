@@ -16,6 +16,7 @@ import net.ulrice.databinding.IFBinding;
  */
 public class ValidationResult {
 
+    
     /** The list of validation errors. */
     private List<ValidationError> validationErrors;
     
@@ -47,7 +48,7 @@ public class ValidationResult {
      * @return The list of validation errors. 
      */
     public List<ValidationError> getValidationErrors() {
-        return Collections.unmodifiableList(validationErrors);
+        return Collections.unmodifiableList(validationErrors);   
     }
  
     
@@ -94,6 +95,20 @@ public class ValidationResult {
         this.validationErrors.clear();
         this.messagesByBindingMap.clear();
         this.globalMessages.clear();
+    }
+    
+    public void removeUniqueKeyConstraintErrors(){
+        if(validationErrors == null || validationErrors.size() ==0)
+            return;
+        List<ValidationError> errorsToRemove = new ArrayList<ValidationError>();
+        for(ValidationError error : validationErrors){
+            if(error instanceof UniqueKeyConstraintError){
+                errorsToRemove.add(error);
+            }
+        }
+        for(ValidationError error : errorsToRemove){
+            removeValidationError(error);
+        }
     }
 
 	public void removeValidationError(ValidationError validationError) {

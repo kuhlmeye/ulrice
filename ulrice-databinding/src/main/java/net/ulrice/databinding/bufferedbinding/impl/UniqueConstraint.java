@@ -65,8 +65,7 @@ public class UniqueConstraint implements ElementLifecycleListener {
 					currentErrorMap.put(key, uniqueConstraintError);
 					for (String uniqueId : uniqueIdSet) {
 						table.getElementById(uniqueId)
-								.addElementValidationError(
-										uniqueConstraintError);
+								.addElementValidationError(uniqueConstraintError);
 					}
 				}
 			} else {
