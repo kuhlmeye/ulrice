@@ -21,6 +21,7 @@ import net.ulrice.databinding.converter.IFValueConverter;
 import net.ulrice.databinding.modelaccess.IFIndexedModelValueAccessor;
 import net.ulrice.databinding.modelaccess.impl.IndexedReflectionMVA;
 import net.ulrice.databinding.validation.IFValidator;
+import net.ulrice.databinding.validation.UniqueKeyConstraintError;
 import net.ulrice.databinding.validation.ValidationError;
 import net.ulrice.databinding.validation.ValidationResult;
 import net.ulrice.databinding.viewadapter.IFViewAdapter;
@@ -146,12 +147,12 @@ public class TableAM implements IFAttributeModel {
                 Set<String> uniqueIdSet = uniqueMap.get(key);
                 uniqueIdSet.add(element.getUniqueId());
                 if (uniqueIdSet.size() > 1) {
-                    ValidationError uniqueConstraintError =
-                            new ValidationError(this, "Unique key constraint error", null);
+                    UniqueKeyConstraintError uniqueConstraintError =
+                            new UniqueKeyConstraintError(this, "Unique key constraint error", null);
                     currentErrorMap.put(key, uniqueConstraintError);
                     for (String uniqueId : uniqueIdSet) {
                         Element elementById = getElementById(uniqueId);
-                        elementById.addElementValidationError(uniqueConstraintError);
+                        elementById.putUniqueKeyConstraintError(uniqueConstraintError);
                     }
                 }
             }
@@ -200,8 +201,11 @@ public class TableAM implements IFAttributeModel {
                 if (uniqueKeySet.size() <= 1 && currentErrorMap.containsKey(oldKey)) {
                     ValidationError validationError = currentErrorMap.remove(oldKey);
                     getElementById(uniqueId).removeElementValidationError(validationError);
+                    getElementById(uniqueId).removeUniqueKeyConstraintErrors();
+                    
                     for (String uniqueElementId : uniqueKeySet) {
                         getElementById(uniqueElementId).removeElementValidationError(validationError);
+                        getElementById(uniqueElementId).removeUniqueKeyConstraintErrors();
                     }
 
                 }
