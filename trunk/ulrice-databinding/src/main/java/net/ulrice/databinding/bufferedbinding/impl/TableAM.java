@@ -137,7 +137,11 @@ public class TableAM implements IFAttributeModel {
         }
 
         List< ?> key = buildKey(element);
-        if (checkKeyChangeAndUpdateDatastructure(element.getUniqueId(), key)) {
+        //BUG:3137
+        //RAD: setValue entfernt den Validation Error, und wenn sich der key nicht geaendert hat wird er nicht mehr gesetzt
+        //if(checkKeyChangeAndUpdateDatastructure(element.getUniqueId(), key)) { 
+        checkKeyChangeAndUpdateDatastructure(element.getUniqueId(), key);
+               
             if (uniqueMap.containsKey(key)) {
                 Set<String> uniqueIdSet = uniqueMap.get(key);
                 uniqueIdSet.add(element.getUniqueId());
@@ -156,7 +160,7 @@ public class TableAM implements IFAttributeModel {
                 uniqueIdSet.add(element.getUniqueId());
                 uniqueMap.put(key, uniqueIdSet);
             }
-        }
+        //}
     }
 
     /**
