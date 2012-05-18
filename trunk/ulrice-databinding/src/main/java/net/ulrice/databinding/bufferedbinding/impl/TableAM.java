@@ -73,9 +73,9 @@ public class TableAM implements IFAttributeModel {
     // unique constraint handling
     private String[] uniqueKeyColumnIds = null;
     private Map<List< ?>, Set<String>> uniqueMap = new HashMap<List< ?>, Set<String>>();
-    private Map<List< ?>, Set<String>> uniqueDeleteMap = new HashMap<List< ?>, Set<String>>();
+//    private Map<List< ?>, Set<String>> uniqueDeleteMap = new HashMap<List< ?>, Set<String>>(); wozu?
     private Map<String, List< ?>> keyMap = new HashMap<String, List< ?>>();
-    private Map<String, List< ?>> keyDeleteMap = new HashMap<String, List< ?>>();
+//    private Map<String, List< ?>> keyDeleteMap = new HashMap<String, List< ?>>(); wozu?
     private Map<List< ?>, ValidationError> currentErrorMap = new HashMap<List< ?>, ValidationError>();
 
     private String pathToChildren;
@@ -189,15 +189,15 @@ public class TableAM implements IFAttributeModel {
                 }
 
                 // should not happen
-                if (uniqueDeleteMap.containsKey(oldKey)) {
-                    Set<String> uniqueDeleteKeySet = uniqueDeleteMap.get(oldKey);
-                    uniqueDeleteKeySet.add(uniqueId);
-                }
-                else {
-                    Set<String> uniqueIdSet = new HashSet<String>();
-                    uniqueIdSet.add(uniqueId);
-                    uniqueDeleteMap.put(oldKey, uniqueIdSet);
-                }
+//                if (uniqueDeleteMap.containsKey(oldKey)) { wozu?
+//                    Set<String> uniqueDeleteKeySet = uniqueDeleteMap.get(oldKey);
+//                    uniqueDeleteKeySet.add(uniqueId);
+//                }
+//                else {
+//                    Set<String> uniqueIdSet = new HashSet<String>();
+//                    uniqueIdSet.add(uniqueId);
+//                    uniqueDeleteMap.put(oldKey, uniqueIdSet);
+//                }
                 if (uniqueKeySet.size() <= 1 && currentErrorMap.containsKey(oldKey)) {
                     ValidationError validationError = currentErrorMap.remove(oldKey);
                     getElementById(uniqueId).removeElementValidationError(validationError);
@@ -209,7 +209,7 @@ public class TableAM implements IFAttributeModel {
                     }
 
                 }
-                keyDeleteMap.put(uniqueId, oldKey);
+                //keyDeleteMap.put(uniqueId, oldKey);
                 keyMap.put(uniqueId, key);
             }
             return true;
@@ -230,69 +230,69 @@ public class TableAM implements IFAttributeModel {
         return key;
     }
 
-    /**
-     * Checks added or changed elements against the list of deleted elements. If there is already a deleted element
-     * with the same unique key, change the unique id of the added or changed element to the unique id of the deleted
-     * element => After that the added/changed element is known as the removed one.
-     * 
-     * @param element The added/changed element.
-     * @return The orignal element, if key is not known in the list of removed elements or the removed element with
-     *         the values of the added/changed element.
-     */
-    private Element checkAddedOrChangedElementAgainstDeletedElements(Element element) {
-        Element oldElement = null;
-        String oldUniqueId = checkForOldUniqueId(buildKey(element), element.getUniqueId());
+//    /**
+//     * Checks added or changed elements against the list of deleted elements. If there is already a deleted element
+//     * with the same unique key, change the unique id of the added or changed element to the unique id of the deleted
+//     * element => After that the added/changed element is known as the removed one.
+//     * 
+//     * @param element The added/changed element.
+//     * @return The orignal element, if key is not known in the list of removed elements or the removed element with
+//     *         the values of the added/changed element.
+//     */
+//    private Element checkAddedOrChangedElementAgainstDeletedElements(Element element) {
+//        Element oldElement = null;
+//        String oldUniqueId = checkForOldUniqueId(buildKey(element), element.getUniqueId());
+//
+//        if (oldUniqueId == null) {
+//            return element;
+//        }
+//        else {
+//            // delete old element from delElements
+//            // how to find old element?
+//            Iterator<Element> iter = delElements.iterator();
+//            while (iter.hasNext()) {
+//                Element el = iter.next();
+//                if (oldUniqueId.equals(el.getUniqueId())) {
+//                    oldElement = el;
+//                    oldElement.setRemoved(false);
+//                    iter.remove();
+//                    break;
+//                }
+//            }
+//            if (oldElement != null) {
+//                oldElement.setCurrentValue(element.getCurrentValue());
+//            }
+//            else {
+//                oldElement = element;
+//            }
+//
+//            elementIdMap.put(oldUniqueId, oldElement);
+//            return oldElement;
+//        }
+//    }
 
-        if (oldUniqueId == null) {
-            return element;
-        }
-        else {
-            // delete old element from delElements
-            // how to find old element?
-            Iterator<Element> iter = delElements.iterator();
-            while (iter.hasNext()) {
-                Element el = iter.next();
-                if (oldUniqueId.equals(el.getUniqueId())) {
-                    oldElement = el;
-                    oldElement.setRemoved(false);
-                    iter.remove();
-                    break;
-                }
-            }
-            if (oldElement != null) {
-                oldElement.setCurrentValue(element.getCurrentValue());
-            }
-            else {
-                oldElement = element;
-            }
-
-            elementIdMap.put(oldUniqueId, oldElement);
-            return oldElement;
-        }
-    }
-
-    /**
-     * Check, if a newly created or changed element with a given unique key is already known in the datastructures
-     * with a different unique id.
-     * 
-     * @param key The list of value of the element defining the unique key
-     * @param newUniqueId The generated unique id of the newly created or changed element
-     * @return null, if there is no unique id available for the key or the unique id of the already known element
-     */
-    private String checkForOldUniqueId(List< ?> key, String newUniqueId) {
-        String oldUniqueId = null;
-        if (keyDeleteMap.containsValue(key)) {
-            for (Entry<String, List< ?>> entry : keyDeleteMap.entrySet()) {
-                if (key.equals(entry.getValue())) {
-                    oldUniqueId = entry.getKey();
-                    // remove Element from new Elements and replace it with the former deleted one
-                    // newElements.remove(getElementById(newUniqueId));
-                    // keyDeleteMap.remove(oldUniqueId);
-                }
-            }
-        }
-        return oldUniqueId;
-    }
+//    /**
+//     * Check, if a newly created or changed element with a given unique key is already known in the datastructures
+//     * with a different unique id.
+//     * 
+//     * @param key The list of value of the element defining the unique key
+//     * @param newUniqueId The generated unique id of the newly created or changed element
+//     * @return null, if there is no unique id available for the key or the unique id of the already known element
+//     */
+//    private String checkForOldUniqueId(List< ?> key, String newUniqueId) {
+//        String oldUniqueId = null;
+//        if (keyDeleteMap.containsValue(key)) {
+//            for (Entry<String, List< ?>> entry : keyDeleteMap.entrySet()) {
+//                if (key.equals(entry.getValue())) {
+//                    oldUniqueId = entry.getKey();
+//                    // remove Element from new Elements and replace it with the former deleted one
+//                    // newElements.remove(getElementById(newUniqueId));
+//                    // keyDeleteMap.remove(oldUniqueId);
+//                }
+//            }
+//        }
+//        return oldUniqueId;
+//    }
 
     // end of unique constraint handling
 
@@ -498,10 +498,10 @@ public class TableAM implements IFAttributeModel {
 
         if (uniqueKeyColumnIds != null) {
             checkUniqueConstraint(element);
-            if (keyDeleteMap.containsValue(buildKey(element))) {
-                checkAddedOrChangedElementAgainstDeletedElements(element);
-            }
-            checkAddedOrChangedElementAgainstDeletedElements(element);
+//            if (keyDeleteMap.containsValue(buildKey(element))) {
+//                checkAddedOrChangedElementAgainstDeletedElements(element);
+//            }
+//            checkAddedOrChangedElementAgainstDeletedElements(element);
         }
 
         // Inform the event listeners.
@@ -1225,14 +1225,14 @@ public class TableAM implements IFAttributeModel {
 
         // unique constraint handling
         Element oldElement = element;
-        if (keyDeleteMap.containsValue(buildKey(element))) {
-            oldElement = checkAddedOrChangedElementAgainstDeletedElements(element);
-        }
-        else {
+//        if (keyDeleteMap.containsValue(buildKey(element))) {
+//            oldElement = checkAddedOrChangedElementAgainstDeletedElements(element);
+//        }
+//        else {
             addElementToIdMap(element);
             element.setInserted(true);
             newElements.add(element);
-        }
+        //}
 
         // end of unique constraint handling
 
@@ -1283,10 +1283,10 @@ public class TableAM implements IFAttributeModel {
 
         if (element.isInserted()) {
             elementIdMap.remove(element.getUniqueId());
-            keyDeleteMap.remove(element.getUniqueId());
+            //keyDeleteMap.remove(element.getUniqueId());
             keyMap.remove(element.getUniqueId());
-            List< ?> functionalKey = buildKey(element);
-            uniqueDeleteMap.remove(functionalKey);
+            //List< ?> functionalKey = buildKey(element);
+            //uniqueDeleteMap.remove(functionalKey);
         }
         setTreeStayOpen();
         fireUpdateViews();
@@ -1601,8 +1601,8 @@ public class TableAM implements IFAttributeModel {
         if (uniqueKeyColumnIds != null) {
             uniqueMap.clear();
             keyMap.clear();
-            uniqueDeleteMap.clear();
-            keyDeleteMap.clear();
+//            uniqueDeleteMap.clear();
+//            keyDeleteMap.clear();
         }
 
         ElementLifecycleListener[] listeners = listenerList.getListeners(ElementLifecycleListener.class);
