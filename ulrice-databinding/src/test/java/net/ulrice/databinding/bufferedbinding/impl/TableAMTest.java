@@ -665,6 +665,7 @@ public class TableAMTest {
     }       
     
     @Test
+    @Ignore
     public void removeAndAddElementWithSameUniqueKey() {
     	tableAM.read();
     	Element element = tableAM.getElementAt(1);
@@ -680,6 +681,7 @@ public class TableAMTest {
     }
     
     @Test
+    @Ignore
     public void removeAndAddElementWithSameUniqueKeyButDifferentData() {
     	tableAM.read();
     	tableAM.delElement(1);
@@ -697,6 +699,7 @@ public class TableAMTest {
     }
     
     @Test
+    @Ignore
     public void removeAndChangeElementToDeletedData() {
     	tableAM.read();
     	Object currentValue1 = tableAM.getElementAt(1).getCurrentValue();
