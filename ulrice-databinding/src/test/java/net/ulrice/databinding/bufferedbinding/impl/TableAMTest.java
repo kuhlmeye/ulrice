@@ -1,7 +1,7 @@
 package net.ulrice.databinding.bufferedbinding.impl;
 
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.*;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -263,7 +263,10 @@ public class TableAMTest {
     }
     
     @Test
-    @Ignore
+    /**
+     * TODO: christof: neu, editieren, neu, neu.. kracht
+     *
+     */
     public void addRowAndModifyAndAddTwice() {
         tableAM.read();
         Assert.assertEquals(2, tableAM.getRowCount());
@@ -276,6 +279,31 @@ public class TableAMTest {
         element.setValueAt(0, "Test");
         element = tableAM.addElement(null);
         element = tableAM.addElement(null);
+    }
+    
+    @Test
+    /**
+     * TODO: christof der unique error geht verlohren wenn man andere felder editiert...
+     *
+     */
+    public void uniqueErrorLost() {
+        tableAM.read();
+        Assert.assertEquals(2, tableAM.getRowCount());
+        Assert.assertTrue(tableAM.isValid());
+        
+        String max = (String) tableAM.getValueAt(0, 0);
+        tableAM.getElementAt(1).setValueAt(0, max);
+        System.out.println(tableAM.isValid()); //
+
+        assertFalse("unique key error petra has the name of max", tableAM.isValid());
+        
+        tableAM.getElementAt(0).setValueAt(1, 20); 
+        tableAM.getElementAt(1).setValueAt(1, 20);
+        
+        assertFalse("changed values not in the constraint, tableAm must still be invalid", tableAM.isValid());
+        
+
+
     }
     
     @Test
