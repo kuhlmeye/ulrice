@@ -536,7 +536,6 @@ public class TableAM implements IFAttributeModel {
             invElements.remove(element);
             modElements.remove(element);
             delElements.remove(element);
-            return;
         }
         if (element.isValid() || element.isRemoved()) {
             invElements.remove(element);
