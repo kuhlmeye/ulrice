@@ -1684,20 +1684,20 @@ public class TableAM implements IFAttributeModel {
                     }
                 }
             }
-        }
-
-        if (elements != null) {
-            for (Element element : elements) {
-                if (element.getCurrentValue().equals(object)) {
-                    return element;
-                }
-                if (isForTreeTable()) {
-                    Element found = element.getChildByCurrentValue(object);
-                    if (found != null)
-                        return found;
+        }else{
+            if (elements != null) {
+                for (Element element : elements) {
+                    if (element.getCurrentValue().equals(object)) {
+                        return element;
+                    }
+                    if (isForTreeTable()) {
+                        Element found = element.getChildByCurrentValue(object);
+                        if (found != null)
+                            return found;
+                    }
                 }
             }
-        }
+        }        
 
         return null;
     }
@@ -1721,20 +1721,22 @@ public class TableAM implements IFAttributeModel {
                     }
                 }
             }
-        }
-
-        if (elements != null) {
-            for (Element element : elements) {
-                if (element.getCurrentValue().equals(object)) {
-                    return element;
-                }
-                if (isForTreeTable()) {
-                    Element found = element.getChildByCurrentValue(object);
-                    if (found != null)
-                        return found;
+        }else{
+            if (elements != null) {
+                for (Element element : elements) {
+                    if (element.getCurrentValue().equals(object)) {
+                        return element;
+                    }
+                    if (isForTreeTable()) {
+                        Element found = element.getChildByCurrentValue(object);
+                        if (found != null)
+                            return found;
+                    }
                 }
             }
         }
+
+        
 
         return null;
     }
