@@ -113,7 +113,7 @@ public class UTableComboBoxCellEditor extends AbstractCellEditor implements Tabl
     			return comboBox;
     		} else if(element instanceof ObjectWithPresentation<?>) {
     			ObjectWithPresentation<?> owp = (ObjectWithPresentation<?>) element;
-    			if(owp.getValue().equals(value)) {
+    			if((value == null && owp.getValue() == null) || (owp.getValue() != null && owp.getValue().equals(value))) {
     				comboBox.setSelectedIndex(i);
     				return comboBox;
     			}
