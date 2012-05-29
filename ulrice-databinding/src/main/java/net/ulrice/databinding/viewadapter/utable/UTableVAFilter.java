@@ -558,9 +558,13 @@ public class UTableVAFilter extends RowFilter<UTableViewAdapter, String> impleme
 
         FilterComboBoxModel cbModel = (FilterComboBoxModel) e.getSource();
         Object value = cbModel.getSelectedItem();
-
-        if (value == BooleanFilter.All  || ((ObjectWithPresentation< ?>) value).getValue() == null) {
-            filterChanged(cbModel.columndId, ""); //Handle null value like All is selected
+        
+        if(value instanceof ObjectWithPresentation< ?> && ((ObjectWithPresentation< ?>) value).getValue() == null){
+            //Handle null value like All is selected    
+            filterChanged(cbModel.columndId, "");
+        }
+        else if (value == BooleanFilter.All) {
+            filterChanged(cbModel.columndId, "");
         }
         else if (value == BooleanFilter.Yes) {
             filterChanged(cbModel.columndId, Boolean.TRUE.toString());
