@@ -81,7 +81,7 @@ public class StartApplication extends AbstractTask {
 		}
 
 		try {
-		    LOG.log(Level.SEVERE, commandBuffer.toString());
+		    LOG.log(Level.INFO, commandBuffer.toString());
 			// Start application
 			Process process = Runtime.getRuntime().exec(commandBuffer.toString(), null, new File(localDir));
 			StreamGobbler isGobbler = new StreamGobbler("OUT", process.getInputStream(), System.out);
@@ -98,13 +98,18 @@ public class StartApplication extends AbstractTask {
 
 	protected String replacePlaceholders(ProcessThread thread, String appParameter) {
 
+	    String userId = thread.getContext().getUserId();
 		String proxyHost = thread.getContext().getAppSettings().getProperty("http.proxyHost");
 		String proxyPort = thread.getContext().getAppSettings().getProperty("http.proxyPort");
 		String proxyUser = thread.getContext().getAppSettings().getProperty("http.proxyUser");
 		String proxyPass = thread.getContext().getAppSettings().getProperty("http.proxyPassword");
 
-		appParameter = appParameter.replace("${USERID}", thread.getContext().getUserId());
-
+		if (userId != null && !"".equals(userId)) {
+		    appParameter = appParameter.replace("${USERID}", userId);
+		}
+		else {
+            appParameter = appParameter.replace("${USERID}", "");
+		}
 		if (proxyHost != null && !"".equals(proxyHost)) {
 			appParameter = appParameter.replace("${PROXY_HOST}", proxyHost);
 		}
