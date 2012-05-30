@@ -47,7 +47,7 @@ public class JComboBoxHelper extends AbstractJComponentHelper<JComboBox> {
 
         for (int i = 0; i < model.getSize(); i += 1) {
             Object element = model.getElementAt(i);
-            data.addEntry(element.toString(), model.getSelectedItem() == element);
+            data.addEntry( element != null ? element.toString() : null, model.getSelectedItem() == element);
         }
 
         return data;
