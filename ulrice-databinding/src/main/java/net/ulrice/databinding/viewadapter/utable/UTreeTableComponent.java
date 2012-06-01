@@ -44,8 +44,6 @@ public class UTreeTableComponent extends UTableComponent {
         treeTableModel = new UTreeTableModel(viewAdapter.getAttributeModel());
         tree = new TreeTableCellRenderer(scrollTable, treeTableModel);
         tree.setRootVisible(false);
-        setUpperInfoArea(new ExpandColapsePanel(this));
-
         viewAdapter.addTableModelListener(new TableModelListener() {
 
             @Override
@@ -194,6 +192,13 @@ public class UTreeTableComponent extends UTableComponent {
             tableAM.setVirtualTreeNodes(virtualTreeNodes);
         }
         treeTableModel.fireTreeStructureChanged(tableAM, new Object[] { tableAM }, null, null);
+    }
+    
+    @Override
+    public void updateColumnModel() {
+        super.updateColumnModel();
+        scrollTable.getUTableHeader().removeAll();
+        scrollTable.getUTableHeader().add(new ExpandColapsePanel(this), scrollTable.getUTableHeader().getColumnModel().getColumn(0).getIdentifier());
     }
 
     @Override

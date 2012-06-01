@@ -98,8 +98,12 @@ public class UTableViewAdapter extends AbstractViewAdapter implements TableModel
      * @see net.ulrice.databinding.IFGuiAccessor#setAttributeModel(net.ulrice.databinding.IFAttributeModel)
      */
     public void setAttributeModel(TableAM attributeModel) {
+       
+        
+        
         if (this.attributeModel == null || !this.attributeModel.equals(attributeModel)) {
             if (this.attributeModel != null) {
+               
                 fireAttributeModelDetached(this.attributeModel);
                 this.attributeModel.removeTableAMListener(tableAMListener);
             }
@@ -107,6 +111,7 @@ public class UTableViewAdapter extends AbstractViewAdapter implements TableModel
             this.attributeModel = attributeModel;
             if(this.attributeModel != null){
                 this.attributeModel.addTableAMListener(tableAMListener);
+              
             }
             table.setAttributeModel(attributeModel);
 //            table.updateColumnModel();
@@ -135,9 +140,10 @@ public class UTableViewAdapter extends AbstractViewAdapter implements TableModel
      * Sends a {@link TableModelEvent} to all registered listeners to inform them that the table structure has
      * changed.
      */
-    public void fireTableDataChanged() {
+    public void fireTableDataChanged() {        
         fireTableChanged(new TableModelEvent(this));
     }
+    
 
     /**
      * @param e
@@ -304,18 +310,26 @@ public class UTableViewAdapter extends AbstractViewAdapter implements TableModel
         }
         super.detach(binding);
     }
-    @Override
-    public void updateFromBinding(IFBinding binding) {
+    
+    public void updateFromBinding(IFBinding binding, Element element){
+        
+        
         if (!isInNotification()) {
-        	int selRow = -1;
-        	if(table != null && table.getSelectionModel() != null) {
-        		selRow = table.getSelectionModel().getMinSelectionIndex();
-        	}        	
+            int selRow = -1;
+            if(table != null && table.getSelectionModel() != null) {
+                selRow = table.getSelectionModel().getMinSelectionIndex();
+            }           
             int selColumn = table.getSelectedColumn();
             // TODO Not very performant
 //            if(getRowSorter() != null)
 //                getRowSorter().allRowsChanged();
-            fireTableDataChanged();
+            if(element !=null){
+                int changedRow = getComponent().convertRowIndexToView(attributeModel.getIndexOfElement(element));                      
+                fireTableChanged(new TableModelEvent(this, changedRow));                
+            }else{
+                fireTableDataChanged(); 
+            }
+            
             
             if (selColumn >= 0) {
                 table.setSelectedColumn(selColumn);
@@ -331,6 +345,10 @@ public class UTableViewAdapter extends AbstractViewAdapter implements TableModel
         if (getStateMarker() != null) {
             getStateMarker().updateState(binding, binding.isReadOnly() && isEditable(), isDirty(), isValid(), table);
         }
+    }
+    @Override
+    public void updateFromBinding(IFBinding binding) {
+      updateFromBinding(binding, null);
         
     }
 
