@@ -9,7 +9,7 @@ import javax.swing.JButton;
 import javax.swing.JPanel;
 
 /**
- * Panel for expanding an colapsing all tree nodes
+ * Panel for expanding an collapsing all tree nodes
  * It is used in the table header
  * 
  * @author rad
