@@ -1,31 +1,19 @@
 package net.ulrice.databinding.viewadapter.utable;
 
-import java.awt.BorderLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import javax.swing.JButton;
-import javax.swing.JMenuItem;
-import javax.swing.JPanel;
-import javax.swing.JPopupMenu;
-import javax.swing.JTree;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
 import javax.swing.tree.TreePath;
 
-import net.ulrice.Ulrice;
 import net.ulrice.databinding.bufferedbinding.impl.Element;
 import net.ulrice.databinding.bufferedbinding.impl.TableAM;
-import net.ulrice.module.impl.action.ModuleActionManager;
 
 public class UTreeTableComponent extends UTableComponent {
 
@@ -38,12 +26,11 @@ public class UTreeTableComponent extends UTableComponent {
     public UTreeTableComponent() {
         super(0);
     }
-    
-   
 
     /**
      * TODO: doppelten Code aus UTableComponent zusammen fassen
      */
+    @Override
     public void init(final UTableViewAdapter viewAdapter) {
         this.viewAdapter = viewAdapter;
         staticTableModel = null;
@@ -57,7 +44,8 @@ public class UTreeTableComponent extends UTableComponent {
         treeTableModel = new UTreeTableModel(viewAdapter.getAttributeModel());
         tree = new TreeTableCellRenderer(scrollTable, treeTableModel);
         tree.setRootVisible(false);
-        
+        setUpperInfoArea(new ExpandColapsePanel(this));
+
         viewAdapter.addTableModelListener(new TableModelListener() {
 
             @Override
@@ -93,8 +81,9 @@ public class UTreeTableComponent extends UTableComponent {
         modelAdapter.addTableModelListener(new TableModelListener() {
             @Override
             public void tableChanged(TableModelEvent e) {
-                if (getRowSorter() != null)
+                if (getRowSorter() != null) {
                     getRowSorter().allRowsChanged();
+                }
 
                 scrollTable.revalidate();
                 staticTable.revalidate();
@@ -140,29 +129,36 @@ public class UTreeTableComponent extends UTableComponent {
                 Set<String> selUniqueIds = new HashSet<String>();
                 List<Element> selElements =
                         UTreeTableComponent.this.getSelectedElementsTreeIntern(getSelectedRowsModelIndex());
-                for (Element elem : selElements) {
 
-                    testForUniqueSelection(selUniqueIds, elem, e);
+                for (Element elem : selElements) {
+                    if (viewAdapter.getAttributeModel().isVirtualTreeNodes()) {
+                        processSelection(selUniqueIds, elem, e);
+                    }
+                    else {
+                        testForUniqueSelection(selUniqueIds, elem, e);
+                    }
                 }
                 System.out.println(selUniqueIds.size());
             }
 
             private void testForUniqueSelection(Set<String> selUniqueIds, Element element, ListSelectionEvent e) {
                 if (element.getChildCount() == 0) {
-
-                    if (selUniqueIds.contains(element.getUniqueId())) {
-                        // TODO: error handling
-                        UTreeTableComponent.this.rowSelModel.removeSelectionInterval(e.getFirstIndex(),
-                            e.getLastIndex());
-                    }
-                    else {
-                        selUniqueIds.add(element.getUniqueId());
-                    }
+                    processSelection(selUniqueIds, element, e);
                 }
                 for (int i = 0; i < element.getChildCount(); i++) {
                     testForUniqueSelection(selUniqueIds, element.getChild(i), e);
                 }
 
+            }
+
+            private void processSelection(Set<String> selUniqueIds, Element element, ListSelectionEvent e) {
+                if (selUniqueIds.contains(element.getUniqueId())) {
+                    // TODO: error handling
+                    UTreeTableComponent.this.rowSelModel.removeSelectionInterval(e.getFirstIndex(), e.getLastIndex());
+                }
+                else {
+                    selUniqueIds.add(element.getUniqueId());
+                }
             }
         });
 
@@ -185,18 +181,22 @@ public class UTreeTableComponent extends UTableComponent {
         staticTable.setSelectionModel(rowSelModel);
 
     }
- 
-    public void rebuildTreeTableStructure() {
+
+    /**
+     * rebuids the table structure for a tree table
+     *
+     * @param virtualTreeNodes true if a parent node is just a container for the childs false if the parent node
+     *        represent own objectes
+     */
+    public void rebuildTreeTableStructure(boolean virtualTreeNodes) {
         TableAM tableAM = viewAdapter.getAttributeModel();
+        if (virtualTreeNodes) {
+            tableAM.setVirtualTreeNodes(virtualTreeNodes);
+        }
         treeTableModel.fireTreeStructureChanged(tableAM, new Object[] { tableAM }, null, null);
     }
-    
-    public void updateColumnModel() {
-        super.updateColumnModel();
-        scrollTable.getUTableHeader().removeAll();
-        scrollTable.getUTableHeader().add(new ExpandColapsePanel(this), scrollTable.getUTableHeader().getColumnModel().getColumn(0).getIdentifier());
-    }
 
+    @Override
     @SuppressWarnings({ "rawtypes", "unchecked" })
     public List getSelectedObjects() {
         checkAttributeModelSet();
@@ -213,6 +213,7 @@ public class UTreeTableComponent extends UTableComponent {
         return result;
     }
 
+    @Override
     public List<Element> getSelectedElements() {
 
         if (attributeModel == null) {
@@ -239,34 +240,43 @@ public class UTreeTableComponent extends UTableComponent {
     }
 
     private void mapDoubleElement(HashMap<String, Element> elementsByUniquId, Element element) {
-
-        if (element.getChildCount() == 0) {
+        if (viewAdapter.getAttributeModel().isVirtualTreeNodes()) {
             elementsByUniquId.put(element.getUniqueId(), element);
         }
-        for (int i = 0; i < element.getChildCount(); i++) {
-            mapDoubleElement(elementsByUniquId, element.getChild(i));
+        else {
+            if (element.getChildCount() == 0) {
+                elementsByUniquId.put(element.getUniqueId(), element);
+            }
+            for (int i = 0; i < element.getChildCount(); i++) {
+                mapDoubleElement(elementsByUniquId, element.getChild(i));
+            }
         }
     }
 
+    @Override
     public Element getElementAtViewIndex(int viewIndex) {
         if (attributeModel == null) {
             return null;
         }
         int modelRow = viewIndex;
-        if (getRowSorter() != null)
+        if (getRowSorter() != null) {
             modelRow = getRowSorter().convertRowIndexToModel(viewIndex);
+        }
 
         return getElementAtModelIndex(modelRow);
     }
 
+    @Override
     public Element getElementAtModelIndex(int modelIndex) {
         return viewAdapter.getElementAtUsingModelIndex(modelIndex);
     }
 
+    @Override
     public int getModelRowCount() {
         return viewAdapter.getRowCount();
     }
 
+    @Override
     public int getViewRowCount() {
         return viewAdapter.getRowCount();
     }
@@ -287,5 +297,40 @@ public class UTreeTableComponent extends UTableComponent {
             row--;
         }
 
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void delSelectedRows() {
+        if (viewAdapter.getAttributeModel().isVirtualTreeNodes()) {
+            checkAttributeModelSet();
+            List<Element> elements = new ArrayList<Element>();
+            List<String> uniqueIds = new ArrayList<String>();
+            for (Element elem : getSelectedElements()) {
+                getElementsAndChilds(elem, elements, uniqueIds);
+                if (elem.getParent() != null) {
+                    elem.removeChild(viewAdapter.getAttributeModel().getPathToChildren());
+                }
+            }
+            delRows(elements);
+        }
+        else {
+            super.delSelectedRows();
+        }
+
+    }
+
+    private void getElementsAndChilds(Element elem, List<Element> elements, List<String> uniqueIds) {
+        if (!uniqueIds.contains(elem.getUniqueId())) {
+            elements.add(elem);
+            uniqueIds.add(elem.getUniqueId());
+            if (elem.getChildCount() > 0) {
+                for (int index = 0; index < elem.getChildCount(); index++) {
+                    getElementsAndChilds(elem.getChild(index), elements, uniqueIds);
+                }
+            }
+        }
     }
 }

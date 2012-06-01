@@ -19,7 +19,7 @@ import net.ulrice.databinding.viewadapter.utable.UTableRenderer;
 
 /**
  * @author christof
- * 
+ *
  */
 public class ColumnDefinition<T extends Object> implements PropertyChangeListener {
 
@@ -37,37 +37,40 @@ public class ColumnDefinition<T extends Object> implements PropertyChangeListene
 	private List<T> valueRange;
 	private Comparator<T> comparator;
 	private boolean fixedColumn;
-	
+
 	private TableCellEditor cellEditor;
 	private TableCellRenderer cellRenderer;
-	
+
 	private EventListenerList eventListeners = new EventListenerList();
-	
+
 	private ColumnColorOverride columnColorOverride;
-	
+
 	private ColumnType columnType = ColumnType.Editable;
-	
+
 	private Integer preferredWidth;
-	
+
 	private Border border;
-	
+
 	private List<UTableRenderer> preRendererList;
 	private List<UTableRenderer> postRendererList;
-	
+
+    private boolean isListOrderRelevant = false;
+    private boolean useListAM = false;
+
 	public enum ColumnType {
 		Editable,
 		ReadOnly,
 		NewEditable
 	}
 
-	
-	   
+
+
     public ColumnDefinition(IFDynamicModelValueAccessor dataAccessor, Class<T> columnClass) {
         this.id = dataAccessor.getAttributeId();
         this.columnName = id;
         this.dataAccessor = dataAccessor;
         this.columnClass = columnClass;
-        
+
         setFilterMode(columnClass);
     }
 
@@ -77,42 +80,50 @@ public class ColumnDefinition<T extends Object> implements PropertyChangeListene
         this.dataAccessor = dataAccessor;
         this.columnClass = columnClass;
         this.columnType = columnType;
-        
+
         setFilterMode(columnClass);
     }
-	
+
     public ColumnDefinition(String columnName, IFDynamicModelValueAccessor dataAccessor, Class<T> columnClass) {
         this.id = dataAccessor != null ? dataAccessor.getAttributeId() : columnName;
         this.columnName = columnName;
         this.dataAccessor = dataAccessor;
         this.columnClass = columnClass;
-        
+
         setFilterMode(columnClass);
     }
-    
+
     public ColumnDefinition(IFDynamicModelValueAccessor dataAccessor, Class<T> columnClass, FilterMode filterMode) {
         this(dataAccessor.getAttributeId(), dataAccessor, columnClass, filterMode);
     }
 
-    
+
     public ColumnDefinition(String columnName, IFDynamicModelValueAccessor dataAccessor, Class<T> columnClass, FilterMode filterMode) {
         this(columnName, dataAccessor, columnClass, filterMode, ColumnType.Editable);
     }
-    
+
     public ColumnDefinition(String columnName, IFDynamicModelValueAccessor dataAccessor, Class<T> columnClass, FilterMode filterMode, ColumnType columnType) {
         this.id = dataAccessor.getAttributeId();
         this.columnName = columnName;
         this.dataAccessor = dataAccessor;
         this.columnClass = columnClass;
         this.filterMode = filterMode;
-        this.columnType = columnType;        
+        this.columnType = columnType;
     }
 
     public GenericAM<T> createAM() {
-        GenericAM<T> genericAM = new GenericAM<T>(id, attributeInfo, getColumnType().equals(ColumnType.ReadOnly));
-        
+
+        GenericAM<T> genericAM;
+        if (useListAM) {
+            genericAM =
+                    new ListAM(id, attributeInfo, getColumnType().equals(ColumnType.ReadOnly), isListOrderRelevant);
+        }
+        else {
+            genericAM = new GenericAM<T>(id, attributeInfo, getColumnType().equals(ColumnType.ReadOnly));
+        }
+
         genericAM.setValueConverter(getValueConverter());
-                       
+
         if(getValidators() != null && !getValidators().isEmpty()) {
             for (IFValidator validator : getValidators()) {
                 genericAM.addValidator(validator);
@@ -136,7 +147,7 @@ public class ColumnDefinition<T extends Object> implements PropertyChangeListene
         }
         return this;
     }
-    
+
     public ColumnDefinition<T> setFilterMode(FilterMode filterMode) {
         this.filterMode = filterMode;
         fireFilterModeChanged();
@@ -193,6 +204,7 @@ public class ColumnDefinition<T extends Object> implements PropertyChangeListene
     /**
      * @see java.lang.Object#toString()
      */
+    @Override
     public String toString() {
         return getColumnName();
     }
@@ -204,7 +216,7 @@ public class ColumnDefinition<T extends Object> implements PropertyChangeListene
         return filterMode;
     }
 
-    
+
 	public IFValueConverter getValueConverter() {
 		return valueConverter;
 	}
@@ -217,16 +229,16 @@ public class ColumnDefinition<T extends Object> implements PropertyChangeListene
 	public List<IFValidator> getValidators() {
 		return validators;
 	}
-	
+
 	public ColumnDefinition<T> addValidator(IFValidator validator) {
 		validators.add(validator);
 		return this;
 	}
-	
+
     public boolean isUseAutoValueConverter() {
     	return useAutoValueConverter;
     }
-        
+
     public ColumnDefinition<T> setUseAutoValueConverter(boolean useAutoValueConverter) {
 		this.useAutoValueConverter = useAutoValueConverter;
 		return this;
@@ -239,11 +251,11 @@ public class ColumnDefinition<T extends Object> implements PropertyChangeListene
 		this.columnType = columnType;
 		return this;
 	}
-    
+
     public ColumnType getColumnType() {
 		return columnType;
 	}
-    
+
     /**
      * @param columnIndex
      * @return
@@ -251,26 +263,26 @@ public class ColumnDefinition<T extends Object> implements PropertyChangeListene
     public String getColumnName() {
         return columnName;
     }
-    
+
     public boolean isUseValueRange() {
         return useValueRange;
     }
-    
+
     public ColumnDefinition<T> setUseValueRange(boolean useValueRange) {
         this.useValueRange = useValueRange;
         return this;
     }
-    
+
     public List<T> getValueRange() {
         return valueRange;
     }
-    
+
     public ColumnDefinition<T> setValueRange(List<T> valueRange) {
         this.valueRange = valueRange;
         fireValueRangeChanged();
         return this;
     }
-    
+
     private void fireValueRangeChanged() {
         ColumnDefinitionChangedListener[] listeners = eventListeners.getListeners(ColumnDefinitionChangedListener.class);
         if(listeners != null) {
@@ -279,7 +291,7 @@ public class ColumnDefinition<T extends Object> implements PropertyChangeListene
             }
         }
     }
-    
+
     private void fireFilterModeChanged() {
         ColumnDefinitionChangedListener[] listeners = eventListeners.getListeners(ColumnDefinitionChangedListener.class);
         if(listeners != null) {
@@ -300,7 +312,7 @@ public class ColumnDefinition<T extends Object> implements PropertyChangeListene
     public TableCellEditor getCellEditor() {
         return cellEditor;
     }
-    
+
     public ColumnDefinition<T> setCellEditor(TableCellEditor cellEditor) {
         this.cellEditor = cellEditor;
         return this;
@@ -309,7 +321,7 @@ public class ColumnDefinition<T extends Object> implements PropertyChangeListene
     public TableCellRenderer getCellRenderer() {
         return cellRenderer;
     }
-    
+
 
     public ColumnDefinition<T> setCellRenderer(TableCellRenderer cellRenderer) {
         this.cellRenderer = cellRenderer;
@@ -320,24 +332,24 @@ public class ColumnDefinition<T extends Object> implements PropertyChangeListene
         this.attributeInfo = attributeInfo;
         return this;
     }
-    
+
     public IFAttributeInfo getAttributeInfo() {
         return attributeInfo;
     }
-    
+
     public ColumnDefinition<T> setColumnTooltip(String columnTooltip) {
         this.columnTooltip = columnTooltip;
         return this;
     }
-    
+
     public String getColumnTooltip() {
         return columnTooltip;
     }
-    
+
     public Comparator<T> getComparator() {
         return comparator;
     }
-    
+
     public void setComparator(Comparator<T> comparator) {
         this.comparator = comparator;
     }
@@ -357,7 +369,7 @@ public class ColumnDefinition<T extends Object> implements PropertyChangeListene
     public ColumnDefinition<T> setColumnColorOverride(ColumnColorOverride columnColorOverride) {
         this.columnColorOverride = columnColorOverride;
         return this;
-        
+
     }
 
     @Override
@@ -386,15 +398,15 @@ public class ColumnDefinition<T extends Object> implements PropertyChangeListene
     public ColumnDefinition<T> setBorder(Border border) {
         this.border = border;
         return this;
-    }  
-    
+    }
+
     public ColumnDefinition<T> addPostRenderer(UTableRenderer renderer){
         if(postRendererList == null){
             postRendererList = new ArrayList<UTableRenderer>();
         }
         postRendererList.add(renderer);
         return this;
-        
+
     }
     public ColumnDefinition<T> addPreRenderer(UTableRenderer renderer){
         if(preRendererList == null){
@@ -402,9 +414,9 @@ public class ColumnDefinition<T extends Object> implements PropertyChangeListene
         }
         preRendererList.add(renderer);
         return this;
-        
+
     }
-    
+
     public List<UTableRenderer> getPostRendererList() {
         return postRendererList;
     }
@@ -413,6 +425,33 @@ public class ColumnDefinition<T extends Object> implements PropertyChangeListene
         return preRendererList;
     }
 
-    
-    
+    /**
+     * @return the isListOrderRelevant
+     */
+    public boolean isListOrderRelevant() {
+        return isListOrderRelevant;
+    }
+
+    /**
+     * @param isListOrderRelevant the isListOrderRelevant to set
+     */
+    public void setListOrderRelevant(boolean isListOrderRelevant) {
+        this.isListOrderRelevant = isListOrderRelevant;
+    }
+
+    /**
+     * @return the useListAM
+     */
+    public boolean isUseListAM() {
+        return useListAM;
+    }
+
+    /**
+     * @param useListAM the useListAM to set
+     */
+    public ColumnDefinition<T> setUseListAM(boolean useListAM) {
+        this.useListAM = useListAM;
+        return this;
+    }
+
 }

@@ -24,13 +24,13 @@ import net.ulrice.databinding.viewadapter.IFViewChangeListener;
 
 /**
  * A generic attribute model.
- * 
+ *
  * @author christof
  */
 public class GenericAM<T> implements IFAttributeModel<T>, IFViewChangeListener {
 
     /** The event listener. */
-    private EventListenerList listenerList = new EventListenerList();
+    protected EventListenerList listenerList = new EventListenerList();
 
     /** The data accessor used to write and read the data. */
     private IFModelValueAccessor modelAccessor;
@@ -60,13 +60,15 @@ public class GenericAM<T> implements IFAttributeModel<T>, IFViewChangeListener {
 
     private List<ValidationError> externalValidationErrors = new LinkedList<ValidationError>();
 
+    private boolean isListOrderRelevant = false;
+
     public GenericAM(IFModelValueAccessor modelAccessor, IFAttributeInfo attributeInfo) {
         this.modelAccessor = modelAccessor;
         this.attributeInfo = attributeInfo;
         this.id = modelAccessor.getAttributeId();
 
     }
-    
+
     public GenericAM(String id, IFAttributeInfo attributeInfo, boolean readOnly) {
         this.id = id;
         this.attributeInfo = attributeInfo;
@@ -75,7 +77,7 @@ public class GenericAM<T> implements IFAttributeModel<T>, IFViewChangeListener {
 
     /**
      * Creates a new generic attribute model.
-     * 
+     *
      * @param id The Identifier.
      */
     public GenericAM(String id) {
@@ -93,6 +95,7 @@ public class GenericAM<T> implements IFAttributeModel<T>, IFViewChangeListener {
     /**
      * @see net.ulrice.databinding.bufferedbinding.IFAttributeModel#getCurrentValue()
      */
+    @Override
     public T getCurrentValue() {
         return currentValue;
     }
@@ -125,12 +128,13 @@ public class GenericAM<T> implements IFAttributeModel<T>, IFViewChangeListener {
         calculateState(null);
     }
 
+    @Override
     public void gaChanged(IFViewAdapter viewAdapter, T value) {
         setCurrentValueIntern(value);
         calculateState(viewAdapter);
         fireDataChanged(viewAdapter);
     }
-    
+
     public void recalculateStateForThisValidator(IFValidator caller, boolean newValid) {
         boolean stateChanged = false;
 
@@ -158,13 +162,13 @@ public class GenericAM<T> implements IFAttributeModel<T>, IFViewChangeListener {
             if (stateChanged) {
                 fireStateChanged(null);
             }
-        }        
+        }
     }
 
     /**
-	 * 
+	 *
 	 */
-    private void calculateState(IFViewAdapter viewAdapter) {
+    protected void calculateState(IFViewAdapter viewAdapter) {
         boolean stateChanged = false;
 
         try {
@@ -195,6 +199,38 @@ public class GenericAM<T> implements IFAttributeModel<T>, IFViewChangeListener {
                 if (getCurrentValue() instanceof BigDecimal) {
                     newDirty = !(((BigDecimal) getCurrentValue()).compareTo((BigDecimal) getOriginalValue()) == 0);
                 }
+                else if (getCurrentValue() instanceof List) {
+                    // compare lists
+                    List current = (List) getCurrentValue();
+                    List original = (List) getOriginalValue();
+
+                    if (current == null && original == null) {
+                        newDirty = false;
+                    }
+                    else if (current == null || original == null) {
+                        newDirty = true;
+                    }
+                    else if (current.isEmpty() && original.isEmpty()) {
+                        newDirty = false;
+                    }
+                    else if (current.size() == original.size()) {
+                        if (isListOrderRelevant) {
+                            newDirty = false;
+                            for (int index = 0; index < current.size(); index++) {
+                                if (!current.get(index).equals(original.get(index))) {
+                                    newDirty = true;
+                                    break;
+                                }
+                            }
+                        }
+                        else {
+                            newDirty = !(current.containsAll(original) && original.containsAll(current));
+                        }
+                    }
+                    else {
+                        newDirty = true;
+                    }
+                }
                 else {
                     newDirty = !getCurrentValue().equals(getOriginalValue());
                 }
@@ -217,6 +253,7 @@ public class GenericAM<T> implements IFAttributeModel<T>, IFViewChangeListener {
     /**
      * @see net.ulrice.databinding.bufferedbinding.IFAttributeModel#getOriginalValue()
      */
+    @Override
     public T getOriginalValue() {
         return originalValue;
     }
@@ -234,7 +271,7 @@ public class GenericAM<T> implements IFAttributeModel<T>, IFViewChangeListener {
 
         Object value = modelAccessor.getValue();
         T converted = (T) (getValueConverter() != null ? getValueConverter().modelToView(value) : value);
-        directRead((T) converted);
+        directRead(converted);
     }
 
     /**
@@ -310,6 +347,7 @@ public class GenericAM<T> implements IFAttributeModel<T>, IFViewChangeListener {
         return result.isValid() ? null : result;
     }
 
+    @Override
     public List<String> getValidationFailures() {
         return getValidationResult() != null ? getValidationResult().getMessagesByBinding(this)
                 : new ArrayList<String>();
@@ -423,6 +461,7 @@ public class GenericAM<T> implements IFAttributeModel<T>, IFViewChangeListener {
         return (modelAccessor != null && modelAccessor.isReadOnly() || readOnly);
     }
 
+    @Override
     public void setReadOnly(boolean readOnly) {
         boolean oldReadOnly = this.readOnly;
         this.readOnly = readOnly;
@@ -455,6 +494,7 @@ public class GenericAM<T> implements IFAttributeModel<T>, IFViewChangeListener {
         viewAdapter.bind(this);
     }
 
+    @Override
     public void removeViewAdapter(IFViewAdapter viewAdapter) {
         viewAdapterList.remove(viewAdapter);
         viewAdapter.removeViewChangeListener(this);
@@ -496,7 +536,7 @@ public class GenericAM<T> implements IFAttributeModel<T>, IFViewChangeListener {
     }
 
     @Override
-    public void addExternalValidationError(String translatedMessage) {        
+    public void addExternalValidationError(String translatedMessage) {
         addExternalValidationError(new ValidationError(this, translatedMessage, null));
     }
 
@@ -513,6 +553,20 @@ public class GenericAM<T> implements IFAttributeModel<T>, IFViewChangeListener {
     @Override
     public void clearExternalValidationErrors() {
         externalValidationErrors.clear();
+    }
+
+    /**
+     * @return the isListOrderRelevant
+     */
+    public boolean isListOrderRelevant() {
+        return isListOrderRelevant;
+    }
+
+    /**
+     * @param isListOrderRelevant the isListOrderRelevant to set
+     */
+    public void setListOrderRelevant(boolean isListOrderRelevant) {
+        this.isListOrderRelevant = isListOrderRelevant;
     }
 
 }
