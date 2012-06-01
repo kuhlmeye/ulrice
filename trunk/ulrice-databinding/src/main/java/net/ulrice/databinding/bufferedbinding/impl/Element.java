@@ -19,7 +19,7 @@ import net.ulrice.databinding.validation.ValidationResult;
 /**
  * The element of the list attribute model. It manages the models for all
  * attributes of a data row.
- * 
+ *
  * @author christof
  */
 public class Element {
@@ -63,7 +63,7 @@ public class Element {
 
     /**
      * Creates a new element.
-     * 
+     *
      * @param tableAM
      * @param uniqueId
      *            The unique identifier.
@@ -110,7 +110,7 @@ public class Element {
 
     /**
      * Returns, if a cell is readonly.
-     * 
+     *
      * @param columnIndex
      *            The index of the column.
      * @return True, if the value is readonly. False otherwise.
@@ -131,7 +131,7 @@ public class Element {
                 return true;
             case NewEditable:
                 if(tableAM.isNew(this)) {
-                    return modelList.get(columnIndex).isReadOnly();                 
+                    return modelList.get(columnIndex).isReadOnly();
                 } else {
                     return true;
                 }
@@ -142,7 +142,7 @@ public class Element {
 
     /**
      * Returns the cell value.
-     * 
+     *
      * @param columnIndex
      *            The index of the column
      * @return The cell value as an object.
@@ -159,7 +159,7 @@ public class Element {
 
     /**
      * Returns the cell value.
-     * 
+     *
      * @param columnId
      *            The identifier of the column
      * @return The cell value as an object.
@@ -189,7 +189,7 @@ public class Element {
 
     /**
      * Set the value of a cell.
-     * 
+     *
      * @param columnIndex
      *            Index of the column
      * @param aValue
@@ -198,15 +198,17 @@ public class Element {
     public void setValueAt(int columnIndex, Object aValue) {
         GenericAM<?> model = modelList.get(columnIndex);
         setValue(model, columns.get(columnIndex).getId(), aValue);
-        
-        for(Element elem: childElements){
-            elem.setValueAt(columnIndex, aValue);
+
+        if (!tableAM.isVirtualTreeNodes()) {
+            for (Element elem : childElements) {
+                elem.setValueAt(columnIndex, aValue);
+            }
         }
     }
 
     /**
      * Set the value of a cell
-     * 
+     *
      * @param columnId
      *            The identifier of the column
      * @param aValue
@@ -219,7 +221,7 @@ public class Element {
 
     /**
      * Internal method for setting a value.
-     * 
+     *
      * @param model
      *            The attribute model
      * @param columnId
@@ -282,7 +284,7 @@ public class Element {
 
     /**
      * Fires the event that the state changed.
-     * 
+     *
      * @param newState
      *            The new state
      * @param oldState
@@ -304,7 +306,7 @@ public class Element {
 
     /**
      * Write the object managed by the element in the value object.
-     * 
+     *
      * @return The value object
      */
     @SuppressWarnings("unchecked")
@@ -348,11 +350,11 @@ public class Element {
             if(isReadOnly(i) && omitReadOnly){
                 continue;
             }
-            
+
             GenericAM model = modelList.get(i);
             IFDynamicModelValueAccessor dataAccessor = columns.get(i).getDataAccessor();
 
-            Object value = dataAccessor.getValue(currentValue);             
+            Object value = dataAccessor.getValue(currentValue);
             Object converted = (model.getValueConverter() != null ? model
                     .getValueConverter().modelToView(value) : value);
             model.setValue(converted);
@@ -434,7 +436,7 @@ public class Element {
 
     /**
      * Return the current value object.
-     * 
+     *
      * @return The value object.
      */
     public Object getOriginalValue() {
@@ -443,7 +445,7 @@ public class Element {
 
     /**
      * Return the unique id.
-     * 
+     *
      * @return the uniqueId
      */
     public String getUniqueId() {
@@ -668,6 +670,15 @@ public class Element {
         return childElements.get(index);
     }
 
+    public void removeChild(String path) {
+        if (getParent() != null && getParent().idModelMap.containsKey(path)) {
+            GenericAM genericAM = getParent().idModelMap.get(path);
+            if (genericAM instanceof ListAM) {
+                ((ListAM) genericAM).remove(getCurrentValue());
+            }
+        }
+    }
+
     public boolean isInserted() {
         return inserted;
     }
@@ -719,6 +730,7 @@ public class Element {
         return null;
     }
 
+    @Override
     public String toString() {
         // hack because TreeTableCellRenderer uses the toString of the row for display
         Object value = getCurrentValue();
