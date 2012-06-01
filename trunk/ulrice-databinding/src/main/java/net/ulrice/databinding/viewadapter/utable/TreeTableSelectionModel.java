@@ -8,14 +8,7 @@ import javax.swing.tree.DefaultTreeSelectionModel;
 public class TreeTableSelectionModel extends DefaultTreeSelectionModel {
      
     public TreeTableSelectionModel() {
-        super();
- 
-        getListSelectionModel().addListSelectionListener(new ListSelectionListener() {
-            @Override
-            public void valueChanged(ListSelectionEvent e) {
-                 
-            }
-        });
+        super();     
     }
      
     ListSelectionModel getListSelectionModel() {
