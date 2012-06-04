@@ -323,11 +323,14 @@ public class UTableViewAdapter extends AbstractViewAdapter implements TableModel
             // TODO Not very performant
 //            if(getRowSorter() != null)
 //                getRowSorter().allRowsChanged();
-            if(element !=null){
-                int changedRow = getComponent().convertRowIndexToView(attributeModel.getIndexOfElement(element));                      
-                fireTableChanged(new TableModelEvent(this, changedRow));                
-            }else{
-                fireTableDataChanged(); 
+            
+            final int indexOfElement = attributeModel.getIndexOfElement(element);
+            if (indexOfElement == -1) {
+                fireTableDataChanged();
+            }
+            else {
+                final int changedRow = getComponent().convertRowIndexToView(indexOfElement);
+                fireTableChanged(new TableModelEvent(this, changedRow));
             }
             
             
