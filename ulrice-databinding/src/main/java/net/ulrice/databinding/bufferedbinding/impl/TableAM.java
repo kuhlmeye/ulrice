@@ -1462,6 +1462,7 @@ public class TableAM implements IFAttributeModel {
      */
     public void commitElement(Element element) {
 
+        boolean removed = element.isRemoved();
         if (element.isRemoved() && isDisplayRemovedEntries()) {
             if(!elements.remove(element) && isForTreeTable()){
                 for(Element e: elements){
@@ -1480,7 +1481,13 @@ public class TableAM implements IFAttributeModel {
         element.setInserted(false);
         element.setRemoved(false);
         setTreeStayOpen();
-        fireUpdateViews(element);
+        if(removed){
+            fireUpdateViews();
+        }else{
+            fireUpdateViews(element);
+        }
+        
+        
     }
 
     /**
