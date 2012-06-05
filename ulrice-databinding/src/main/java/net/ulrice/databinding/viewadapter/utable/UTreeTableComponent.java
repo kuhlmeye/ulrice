@@ -3,6 +3,7 @@ package net.ulrice.databinding.viewadapter.utable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Set;
 
@@ -237,7 +238,7 @@ public class UTreeTableComponent extends UTableComponent {
     }
 
     private List<Element> reduceDoubleElements(List<Element> elements) {
-        HashMap<String, Element> elementsByUniquId = new HashMap<String, Element>();
+        HashMap<String, Element> elementsByUniquId = new LinkedHashMap<String, Element>();
         for (Element element : elements) {
             mapDoubleElement(elementsByUniquId, element);
         }
