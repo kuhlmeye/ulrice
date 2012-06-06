@@ -16,7 +16,7 @@ import net.ulrice.databinding.validation.ValidationResult;
 public class NotNullValidator extends AbstractValidator {
 
 	@Override
-	protected ValidationResult validate(IFBinding bindingId, Object attribute) {
+	protected ValidationResult validate(IFBinding bindingId, Object attribute, Object rawAttribute) {
 		ValidationResult result = new ValidationResult();
 				
 		if (attribute == null) {

@@ -1,6 +1,5 @@
 package net.ulrice.databinding.viewadapter;
 
-import javax.swing.SwingUtilities;
 import javax.swing.event.EventListenerList;
 
 import net.ulrice.databinding.IFBinding;

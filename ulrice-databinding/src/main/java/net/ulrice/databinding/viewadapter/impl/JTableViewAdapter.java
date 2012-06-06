@@ -314,4 +314,9 @@ public class JTableViewAdapter extends AbstractViewAdapter implements TableModel
     public boolean isComponentEnabled() {
         return table.isEnabled();
     }
+
+    @Override
+    public Object getDisplayedValue() {
+        return null;
+    }
 }

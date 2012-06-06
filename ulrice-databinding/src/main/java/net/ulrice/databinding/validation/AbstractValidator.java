@@ -25,8 +25,8 @@ public abstract class AbstractValidator<T> implements IFValidator<T> {
      * @see net.ulrice.databinding.validation.IFValidator#validate(java.lang.Object)
      */
     @Override
-    public ValidationResult isValid(IFBinding bindingId, T attribute) {
-        this.errors = validate(bindingId, attribute);
+    public ValidationResult isValid(IFBinding bindingId, T attribute, Object rawAttribute) {
+        this.errors = validate(bindingId, attribute, rawAttribute);
         return errors;
     }
 
@@ -43,8 +43,9 @@ public abstract class AbstractValidator<T> implements IFValidator<T> {
      *
      * @param bindingId The identifier of the binding
      * @param attribute The attribute to be validated.
+     * @param rawAttribute 
      * @return The validation errors or null, if there are no validation errors.
      */
-    protected abstract ValidationResult validate(IFBinding bindingId, T attribute);
+    protected abstract ValidationResult validate(IFBinding bindingId, T attribute, Object rawAttribute);
 
 }

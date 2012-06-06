@@ -29,7 +29,7 @@ public class FieldORCombinationValidator extends AbstractValidator {
     }
 
     @Override
-    protected ValidationResult validate(IFBinding bindingId, Object attribute) {
+    protected ValidationResult validate(IFBinding bindingId, Object attribute, Object rawAttribute) {
         ValidationResult result = new ValidationResult();
 
         if (attribute == null) { /* actual field is cleared right now */
@@ -45,7 +45,7 @@ public class FieldORCombinationValidator extends AbstractValidator {
 
         for (GenericAM< ?> model : modelList) { /* actualize dependent fields */
             if (result.getValidationErrors().isEmpty() != model.isValid()) {
-                model.recalculateStateForThisValidator(this, result.getValidationErrors().isEmpty());
+                model.recalculateStateForThisValidator(this, result.getValidationErrors().isEmpty(), rawAttribute);
             }
         }
 

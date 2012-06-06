@@ -106,4 +106,9 @@ public class JListViewAdapter extends AbstractViewAdapter implements ListModel {
 	@Override
 	protected void removeComponentListener() {
 	}
+
+    @Override
+    public Object getDisplayedValue() {
+        return null;
+    }
 }

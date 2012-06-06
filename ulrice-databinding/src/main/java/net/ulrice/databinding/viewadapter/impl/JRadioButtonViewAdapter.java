@@ -74,4 +74,9 @@ public class JRadioButtonViewAdapter<M> extends AbstractViewAdapter<M, Boolean> 
 		}
 	}
 
+    @Override
+    public Object getDisplayedValue() {
+        return radioButton.getText();
+    }
+
 }

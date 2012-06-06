@@ -13,6 +13,15 @@ public interface IFViewAdapter <M, V> {
 	void updateFromBinding(IFBinding binding);
 	
 	M getValue();
+	
+	/**
+	 * Returns the raw value that is displayed in the Swing Component.
+	 * In most cases this will be a String and will not be converted
+	 * to the object that the model needs to have.
+	 * @return
+	 * The raw value that is displayed in the Swing Component.
+	 */
+	Object getDisplayedValue();
 
     JComponent getComponent();
 	

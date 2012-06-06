@@ -47,6 +47,11 @@ public class JButtonViewAdapter extends AbstractViewAdapter {
 	@Override
 	protected void removeComponentListener() {
 	}
+
+    @Override
+    public Object getDisplayedValue() {
+        return button.getText();
+    }
 }
 
 

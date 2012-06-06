@@ -64,4 +64,9 @@ public class JComboBoxViewAdapter<M> extends AbstractViewAdapter <M, ObjectWithP
 	protected void removeComponentListener() {
 		comboBox.removeItemListener(this);
 	}
+
+    @Override
+    public Object getDisplayedValue() {
+        return comboBox.getSelectedItem();
+    }
 }

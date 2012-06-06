@@ -21,7 +21,7 @@ public class IntegerLengthValidator extends AbstractValidator<Integer> {
     }
 
     @Override
-    protected ValidationResult validate(IFBinding bindingId, Integer attribute) {
+    protected ValidationResult validate(IFBinding bindingId, Integer attribute, Object rawAttribute) {
         ValidationResult result = new ValidationResult();
         
         if (attribute == null) {

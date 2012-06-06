@@ -63,4 +63,9 @@ public class JCheckBoxViewAdapter extends AbstractViewAdapter implements ActionL
 		checkBox.removeActionListener(this);
 	}
 
+    @Override
+    public Object getDisplayedValue() {
+        return checkBox.isSelected();
+    }
+
 }

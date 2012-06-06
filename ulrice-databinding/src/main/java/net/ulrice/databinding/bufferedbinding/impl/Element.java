@@ -404,7 +404,7 @@ public class Element {
             attributeModel.addValidator(new IFValidator() {
 
                 @Override
-                public ValidationResult isValid(IFBinding bindingId, Object attribute) {
+                public ValidationResult isValid(IFBinding bindingId, Object attribute, Object rawAttribute) {
                     return validationResult;
                 }
 

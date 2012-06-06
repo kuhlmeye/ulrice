@@ -220,7 +220,7 @@ public class ModelBinding {
             final Object converted = b.getConverter ().viewToModel (raw);
 
             for (IFValidator v: b.getValidators ()) {
-				ValidationResult validationErrors = v.isValid(b, converted);
+				ValidationResult validationErrors = v.isValid(b, converted, raw);
 				if(validationErrors != null) {
 					validationResult.addValidationErrors(validationErrors.getValidationErrors());
 				}

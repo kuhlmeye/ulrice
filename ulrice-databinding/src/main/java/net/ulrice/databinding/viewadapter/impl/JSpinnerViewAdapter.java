@@ -65,4 +65,9 @@ public class JSpinnerViewAdapter extends AbstractViewAdapter implements ChangeLi
 	protected void removeComponentListener() {
 	    spinner.removeChangeListener(this);
 	}
+
+    @Override
+    public Object getDisplayedValue() {
+        return spinner.getValue();
+    }
 }

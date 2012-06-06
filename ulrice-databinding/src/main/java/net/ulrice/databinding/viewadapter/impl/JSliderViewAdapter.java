@@ -65,4 +65,9 @@ public class JSliderViewAdapter extends AbstractViewAdapter implements ChangeLis
 	protected void removeComponentListener() {
 		slider.removeChangeListener(this);
 	}
+
+    @Override
+    public Object getDisplayedValue() {
+        return slider.getValue();
+    }
 }
