@@ -125,4 +125,9 @@ public class JTextComponentViewAdapter extends AbstractViewAdapter implements Do
 		return convertEmptyToNull;
 	}
 
+    @Override
+    public Object getDisplayedValue() {
+        return textComponent.getText();
+    }
+
 }

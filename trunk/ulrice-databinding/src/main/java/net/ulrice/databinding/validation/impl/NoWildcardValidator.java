@@ -23,7 +23,7 @@ public class NoWildcardValidator extends AbstractValidator<String> {
     }
 
     @Override
-    protected ValidationResult validate(IFBinding bindingId, String attribute) {
+    protected ValidationResult validate(IFBinding bindingId, String attribute, Object rawAttribute) {
         ValidationResult result = new ValidationResult();
         if (attribute != null && !attribute.isEmpty() && attribute.length() > startIndex) {
             String str =

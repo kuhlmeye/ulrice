@@ -519,5 +519,10 @@ public class UTableViewAdapter extends AbstractViewAdapter implements TableModel
 
     public TreeTableModelAdapter getTreeTableModelAdapter() {
         return treeTableModelAdapter;
+    }
+
+    @Override
+    public Object getDisplayedValue() {
+        return null;
     }       
 }

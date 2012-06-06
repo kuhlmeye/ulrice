@@ -16,7 +16,7 @@ public class StringLengthValidator extends AbstractValidator<String> {
     }
 
 	@Override
-	protected ValidationResult validate(IFBinding bindingId, String attribute) {
+	protected ValidationResult validate(IFBinding bindingId, String attribute, Object rawAttribute) {
 		ValidationResult result = new ValidationResult();
 		
 		// just validate length, not null should be handled by a different validator

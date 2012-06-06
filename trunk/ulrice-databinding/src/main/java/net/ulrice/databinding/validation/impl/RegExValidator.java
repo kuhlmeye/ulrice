@@ -32,7 +32,7 @@ public class RegExValidator<T extends Object> extends AbstractValidator<T> {
     }
     
     @Override
-    protected ValidationResult validate(IFBinding bindingId, T attribute) {
+    protected ValidationResult validate(IFBinding bindingId, T attribute, Object rawAttribute) {
 
         if(attribute != null) {
             if(!pattern.matcher(attribute.toString()).matches()) {
