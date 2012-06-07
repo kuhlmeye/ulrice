@@ -115,6 +115,11 @@ public class Ulrice {
         initializeRemoteControl();
     }
 
+
+    public static void shutdown() {
+        Ulrice.actionManager.dispose();
+    }
+
     /**
      * Initializes the remote control, if the class is present
      * 
