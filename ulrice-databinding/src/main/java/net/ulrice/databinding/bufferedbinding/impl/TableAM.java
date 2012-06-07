@@ -6,6 +6,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.Callable;
 
 import javax.swing.RowSorter.SortKey;
 import javax.swing.SwingUtilities;
@@ -927,8 +928,11 @@ public class TableAM implements IFAttributeModel {
         fireUpdateViews();
     }
 
-
     public AbstractProcess<Void, Void> createLoader(final IFController controller, final boolean blocking, final ListDataProvider<?> provider) {
+        return createLoader(controller, blocking, provider, null);
+    }
+
+    public AbstractProcess<Void, Void> createLoader(final IFController controller, final boolean blocking, final ListDataProvider<?> provider, final Runnable finishCallback) {
         for (IFViewAdapter viewAdapter : viewAdapterList) {
             if (viewAdapter instanceof UTableViewAdapter) {
                 UTableViewAdapter tableViewAdapter = (UTableViewAdapter) viewAdapter;
@@ -992,6 +996,10 @@ public class TableAM implements IFAttributeModel {
                     }
                 }
                 fireUpdateViews();
+                
+                if(finishCallback != null) {
+                    finishCallback.run();
+                }
             }
 
             @Override
