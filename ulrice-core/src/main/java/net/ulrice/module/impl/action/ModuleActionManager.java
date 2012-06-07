@@ -59,6 +59,11 @@ public class ModuleActionManager implements IFModuleEventListener, PropertyChang
 
         KeyboardFocusManager.getCurrentKeyboardFocusManager().addKeyEventDispatcher(this);
 	}
+	
+	public void dispose() {
+	    Ulrice.getModuleManager().removeModuleEventListener(this);
+        KeyboardFocusManager.getCurrentKeyboardFocusManager().removeKeyEventDispatcher(this);
+	}
 	  
     public boolean dispatchKeyEvent(KeyEvent keyEvent) {    
         KeyStroke ks = KeyStroke.getKeyStrokeForEvent(keyEvent);
