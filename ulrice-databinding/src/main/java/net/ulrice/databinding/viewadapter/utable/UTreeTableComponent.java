@@ -13,8 +13,13 @@ import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
 import javax.swing.tree.TreePath;
 
+
+import net.ulrice.Ulrice;
 import net.ulrice.databinding.bufferedbinding.impl.Element;
 import net.ulrice.databinding.bufferedbinding.impl.TableAM;
+import net.ulrice.message.Message;
+import net.ulrice.message.MessageSeverity;
+import net.ulrice.message.TranslationUsage;
 
 public class UTreeTableComponent extends UTableComponent {
 
@@ -131,10 +136,10 @@ public class UTreeTableComponent extends UTableComponent {
 
                 for (Element elem : selElements) {
                     if (viewAdapter.getAttributeModel().isVirtualTreeNodes()) {
-                        processSelection(selUniqueIds, elem, e);
+                        testForUniqueSelection(selUniqueIds, elem, e);                        
                     }
                     else {
-                        testForUniqueSelection(selUniqueIds, elem, e);
+                        processSelection(selUniqueIds, elem, e);
                     }
                 }
                 System.out.println(selUniqueIds.size());
@@ -152,7 +157,9 @@ public class UTreeTableComponent extends UTableComponent {
 
             private void processSelection(Set<String> selUniqueIds, Element element, ListSelectionEvent e) {
                 if (selUniqueIds.contains(element.getUniqueId())) {
-                    // TODO: error handling
+                    final String messageText = Ulrice.getTranslationProvider().getUlriceTranslation(TranslationUsage.Message, "AmbiguousSelection").getText();
+                    Ulrice.getMessageHandler().handleMessage(new Message(MessageSeverity.Warning, messageText));
+
                     UTreeTableComponent.this.rowSelModel.removeSelectionInterval(e.getFirstIndex(), e.getLastIndex());
                 }
                 else {
@@ -247,15 +254,16 @@ public class UTreeTableComponent extends UTableComponent {
 
     private void mapDoubleElement(HashMap<String, Element> elementsByUniquId, Element element) {
         if (viewAdapter.getAttributeModel().isVirtualTreeNodes()) {
-            elementsByUniquId.put(element.getUniqueId(), element);
-        }
-        else {
+            
             if (element.getChildCount() == 0) {
                 elementsByUniquId.put(element.getUniqueId(), element);
             }
             for (int i = 0; i < element.getChildCount(); i++) {
                 mapDoubleElement(elementsByUniquId, element.getChild(i));
             }
+        }
+        else {
+            elementsByUniquId.put(element.getUniqueId(), element);            
         }
     }
 
@@ -293,7 +301,6 @@ public class UTreeTableComponent extends UTableComponent {
             tree.expandRow(row);
             row++;
         }
-
     }
 
     public void collapseAll() {
