@@ -199,7 +199,7 @@ public class Element {
         GenericAM<?> model = modelList.get(columnIndex);
         setValue(model, columns.get(columnIndex).getId(), aValue);
 
-        if (!tableAM.isVirtualTreeNodes()) {
+        if (tableAM.isVirtualTreeNodes()) {
             for (Element elem : childElements) {
                 elem.setValueAt(columnIndex, aValue);
             }
