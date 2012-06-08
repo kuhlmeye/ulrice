@@ -134,37 +134,48 @@ public class UTreeTableComponent extends UTableComponent {
                 List<Element> selElements =
                         UTreeTableComponent.this.getSelectedElementsTreeIntern(getSelectedRowsModelIndex());
 
+                boolean ambiguousSelection = false;
                 for (Element elem : selElements) {
                     if (viewAdapter.getAttributeModel().isVirtualTreeNodes()) {
-                        testForUniqueSelection(selUniqueIds, elem, e);                        
+                        ambiguousSelection |= testForUniqueSelection(selUniqueIds, elem, e);                        
                     }
                     else {
-                        processSelection(selUniqueIds, elem, e);
+                        ambiguousSelection |= processSelection(selUniqueIds, elem, e);
                     }
                 }
-                System.out.println(selUniqueIds.size());
-            }
-
-            private void testForUniqueSelection(Set<String> selUniqueIds, Element element, ListSelectionEvent e) {
-                if (element.getChildCount() == 0) {
-                    processSelection(selUniqueIds, element, e);
-                }
-                for (int i = 0; i < element.getChildCount(); i++) {
-                    testForUniqueSelection(selUniqueIds, element.getChild(i), e);
-                }
-
-            }
-
-            private void processSelection(Set<String> selUniqueIds, Element element, ListSelectionEvent e) {
-                if (selUniqueIds.contains(element.getUniqueId())) {
+                if(ambiguousSelection){
                     final String messageText = Ulrice.getTranslationProvider().getUlriceTranslation(TranslationUsage.Message, "AmbiguousSelection").getText();
                     Ulrice.getMessageHandler().handleMessage(new Message(MessageSeverity.Warning, messageText));
+                }
+            }
 
-                    UTreeTableComponent.this.rowSelModel.removeSelectionInterval(e.getFirstIndex(), e.getLastIndex());
+            private boolean testForUniqueSelection(Set<String> selUniqueIds, Element element, ListSelectionEvent e) {
+                if (element.getChildCount() == 0) {
+                    return processSelection(selUniqueIds, element, e);
+                }
+                boolean ambiguousSelection = false;
+                for (int i = 0; i < element.getChildCount(); i++) {
+                    ambiguousSelection |= testForUniqueSelection(selUniqueIds, element.getChild(i), e);
+                }
+                return ambiguousSelection;
+            }
+
+            private boolean processSelection(Set<String> selUniqueIds, Element element, final ListSelectionEvent e) {
+                if (selUniqueIds.contains(element.getUniqueId())) {
+                    nested = true;
+                    try {
+                        UTreeTableComponent.this.rowSelModel.removeSelectionInterval(e.getFirstIndex(), e.getLastIndex());
+                    }
+                    finally {
+                        nested = false;
+                    }                   
+                    
+                    return true;
                 }
                 else {
                     selUniqueIds.add(element.getUniqueId());
                 }
+                return false;
             }
         });
 
@@ -210,13 +221,14 @@ public class UTreeTableComponent extends UTableComponent {
     }
 
     @Override
-    @SuppressWarnings({ "rawtypes", "unchecked" })
+    @SuppressWarnings({ "rawtypes" })
     public List getSelectedObjects() {
         checkAttributeModelSet();
         int[] rowsInModel = getSelectedRowsModelIndex();
         return getSelectedObjectsTreeIntern(rowsInModel);
     }
 
+    @SuppressWarnings({ "rawtypes", "unchecked" })
     protected List getSelectedObjectsTreeIntern(int[] rowsInModel) {
         List<Element> selectedElements = reduceDoubleElements(getSelectedElementsTreeIntern(rowsInModel));
         List result = new ArrayList(rowsInModel.length);
