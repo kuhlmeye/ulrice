@@ -182,13 +182,15 @@ public class UTableVAFilter extends RowFilter<UTableViewAdapter, String> impleme
     @Override
     public boolean include(javax.swing.RowFilter.Entry< ? extends UTableViewAdapter, ? extends String> entry) {
         boolean include = true;
-        Element element = entry.getModel().getComponent().getElementById(entry.getIdentifier());
+        String id = entry.getIdentifier();
+        Element element = entry.getModel().getComponent().getElementById(id);
         if (element != null) {
             if (element.isDirty() || !element.isValid()) {
                 return true;
             }
         }
-        for (int i = 0; i < entry.getValueCount() && include; i++) {
+        int count = entry.getValueCount();
+        for (int i = 0; i < count && include; i++) {
 
             String columnId = columnIdentifiers.get(i);
 
@@ -229,10 +231,10 @@ public class UTableVAFilter extends RowFilter<UTableViewAdapter, String> impleme
                 && StringBasedTableCellRenderer.class.isAssignableFrom(tableCellRenderer.getClass())) {
                 StringBasedTableCellRenderer c = (StringBasedTableCellRenderer) tableCellRenderer;
                 include &=
-                        includeValue(columnId, entry.getIdentifier(), c.getString(entry.getValue(i), table, colDef));
+                        includeValue(columnId, id, c.getString(entry.getValue(i), table, colDef));
             }
             else {
-                include &= includeValue(columnId, entry.getIdentifier(), entry.getValue(i));
+                include &= includeValue(columnId, id, entry.getValue(i));
             }
         }
         return include;
@@ -468,11 +470,11 @@ public class UTableVAFilter extends RowFilter<UTableViewAdapter, String> impleme
                     break;
                     }
                 }
-			}
-		}
+            }
+        }
         rowSorter.getModel().fireTableDataChanged();
        // rowSorter.getModel().fireTableDataChanged(); //TODO: fixme notwendig da immer um einen tastendruck hinten 
-	}
+    }
 
     private String correctRegEx(String regex) {
         if (regex.startsWith("+")) {
