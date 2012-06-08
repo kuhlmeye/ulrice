@@ -1,13 +1,11 @@
 package net.ulrice.databinding.viewadapter.utable;
 
-import java.awt.Color;
 import java.util.List;
 
 import javax.swing.JComponent;
 import javax.swing.JTable;
 import javax.swing.UIManager;
 import javax.swing.table.DefaultTableCellRenderer;
-import javax.swing.table.TableCellRenderer;
 
 import net.ulrice.databinding.bufferedbinding.impl.ColumnColorOverride;
 import net.ulrice.databinding.bufferedbinding.impl.ColumnDefinition;
