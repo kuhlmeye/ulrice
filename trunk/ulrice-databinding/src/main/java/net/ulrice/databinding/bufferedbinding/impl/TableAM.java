@@ -575,8 +575,11 @@ public class TableAM implements IFAttributeModel {
      */
     @SuppressWarnings("unchecked")
     private void fireDataChanged() {
+        if(massEditMode){
+            return;
+        }
         IFAttributeModelEventListener[] listeners = listenerList.getListeners(IFAttributeModelEventListener.class);
-        if (listeners != null && !massEditMode) {
+        if (listeners != null) {
             for (final IFAttributeModelEventListener listener : listeners) {
                 if (!SwingUtilities.isEventDispatchThread()) {
                     SwingUtilities.invokeLater(new Runnable() {
@@ -597,6 +600,10 @@ public class TableAM implements IFAttributeModel {
      */
     @SuppressWarnings("unchecked")
     private void fireStateChanged() {
+        if(massEditMode){
+            return;
+        }
+        
         IFAttributeModelEventListener[] listeners = listenerList.getListeners(IFAttributeModelEventListener.class);
         if (listeners != null) {
             for (final IFAttributeModelEventListener listener : listeners) {
@@ -762,8 +769,11 @@ public class TableAM implements IFAttributeModel {
     /**
      * Inform the connected view adapters about a change in an element of the attribute model.
      */
-    public void fireUpdateViews(final Element element) {
-        if (viewAdapterList != null && !massEditMode) {
+    public void fireUpdateViews(final Element element) {        
+        if(massEditMode){
+            return;
+        }
+        if (viewAdapterList != null) {
             for (final IFViewAdapter viewAdapter : viewAdapterList) {
                 if (!SwingUtilities.isEventDispatchThread()) {
                     SwingUtilities.invokeLater(new Runnable() {
@@ -1158,6 +1168,10 @@ public class TableAM implements IFAttributeModel {
         invElements.clear();
         elements.clear();
 
+        for(IFValidator validator : getValidators()){
+            validator.clearValidationErrors();
+        }
+        
         fireUpdateViews();
         fireTableCleared();
         fireDataChanged();
@@ -1780,6 +1794,7 @@ public class TableAM implements IFAttributeModel {
 
         fireUpdateViews();
         fireDataChanged();
+        fireStateChanged();
     }
 
     @Override
@@ -1791,6 +1806,7 @@ public class TableAM implements IFAttributeModel {
     public void clearExternalValidationErrors() {
         // TODO Implement me..
     }
+    
 
     @Override
     public void addExternalValidationError(ValidationError validationError) {
