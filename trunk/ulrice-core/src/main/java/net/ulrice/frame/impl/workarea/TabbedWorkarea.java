@@ -180,8 +180,10 @@ public class TabbedWorkarea extends JTabbedPane implements IFWorkarea, MouseList
             final String moduleId = Ulrice.getModuleManager().getModule(activeController).getUniqueId();
             LOG.warning("Closed module [id:" + moduleId + "] could not be found in the tab.");
         }
-
-        remove(getControllerComponent(activeController));
+        JComponent controllerComponent = getControllerComponent(activeController);
+        remove(controllerComponent);
+        glassPanelMap.remove(controllerComponent);
+        
     }
 
     /**
