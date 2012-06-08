@@ -91,6 +91,7 @@ public class ProcessManager implements IFProcessListener {
 
             String uniqueId = processIdMap.get(process);
             idProcessMap.remove(uniqueId);
+            processIdMap.remove(process);
             IFController controller = process.getOwningController();
             List<IFBackgroundProcess> list = null;
             list = controller == null ? globalProcesses : processMap.get(process.getOwningController());
@@ -99,6 +100,10 @@ public class ProcessManager implements IFProcessListener {
                 LOG.warning("Process "
                     + process
                     + " not found in list of controller.");
+            }else{
+                if(list.size() ==0 && controller != null){
+                    processMap.remove(controller);
+                }
             }
         }
         fireStateChanged(process);

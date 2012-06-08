@@ -661,6 +661,10 @@ public class ModuleManager implements IFModuleManager, IFModuleStructureManager,
                 else if (wasBlocked && !isBlockedByBlocker(controller, blocker)) {
                     fireBlockerRemoved(controller, blocker);
                 }
+                
+                if(m.size() == 0){
+                    blockers.remove(controller);
+                }
             }
         });
     }

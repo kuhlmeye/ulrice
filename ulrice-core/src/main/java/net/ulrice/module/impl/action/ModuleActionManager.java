@@ -271,7 +271,7 @@ public class ModuleActionManager implements IFModuleEventListener, PropertyChang
 		return new ArrayList<UlriceAction>(0);
 	}
 
-
+	
     public boolean isActionUsedByModule(String uniqueId) {
         if (activeController != null) {
             List<UlriceAction> actionList = controllerActionOrderMap.get(activeController);
@@ -322,6 +322,7 @@ public class ModuleActionManager implements IFModuleEventListener, PropertyChang
 
 		this.activeController = null;
 		controllerActionStateMap.remove(activeController);
+		controllerActionOrderMap.remove(activeController);
 
 		adaptActionStates();
 		fireApplicationActionsChanged();
