@@ -629,7 +629,8 @@ public class ModuleManager implements IFModuleManager, IFModuleStructureManager,
             final IdentityHashMap<Object, Object> m = new IdentityHashMap<Object, Object>();
             m.put(blocker, blocker);
             blockers.put(controller, m);
-            fireControllerBlocked(controller, this);
+            // TODO KUH Check why this was fireControllerBlocked(controller, this)
+            fireControllerBlocked(controller, blocker);
         }
         else {
             final boolean wasBlocked = isBlocked(controller);
