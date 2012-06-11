@@ -90,6 +90,14 @@ public class ModuleTree extends JTree implements IFMainFrameComponent, MouseList
         if (e.getClickCount() == 2) {
             TreePath path = getClosestPathForLocation(e.getX(), e.getY());
             Object pathComponent = path.getLastPathComponent();
+            Object selComponent = getSelectionPath().getLastPathComponent();
+            
+            // Compare, if selected component is equal to clicked component.
+            // If this is not done, you could run in trouble with nodes that will expand
+            if(!pathComponent.equals(selComponent)) {                
+                return;
+            }
+            
             if (pathComponent instanceof ModuleTreeNode) {
                 ModuleTreeNode node = (ModuleTreeNode) pathComponent;
                 handleNodeActivated(node);
