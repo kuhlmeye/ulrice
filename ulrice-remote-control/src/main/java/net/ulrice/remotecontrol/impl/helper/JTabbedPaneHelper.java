@@ -7,6 +7,7 @@ import javax.swing.JTabbedPane;
 
 import net.ulrice.remotecontrol.ComponentListData;
 import net.ulrice.remotecontrol.RemoteControlException;
+import net.ulrice.remotecontrol.util.RegularMatcher;
 
 public class JTabbedPaneHelper extends AbstractJComponentHelper<JTabbedPane> {
 
@@ -20,7 +21,10 @@ public class JTabbedPaneHelper extends AbstractJComponentHelper<JTabbedPane> {
 
     private int indexOfTab(JTabbedPane component, String title) {
         for (int i=0; i<component.getTabCount(); i+=1) {
-            if (title.equals(component.getTitleAt(i))) {
+            
+            RegularMatcher matcher = new RegularMatcher(title);
+            
+            if (matcher.matches(component.getTitleAt(i))) {
                 return i;
             }
         }
