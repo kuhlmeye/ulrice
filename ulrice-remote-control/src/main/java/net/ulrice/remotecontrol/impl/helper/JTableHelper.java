@@ -9,6 +9,8 @@ import javax.swing.table.TableModel;
 
 import net.ulrice.remotecontrol.ComponentTableData;
 import net.ulrice.remotecontrol.RemoteControlException;
+import net.ulrice.remotecontrol.util.RemoteControlUtils;
+import net.ulrice.remotecontrol.util.Result;
 
 public class JTableHelper extends AbstractJComponentHelper<JTable> {
 
@@ -38,9 +40,8 @@ public class JTableHelper extends AbstractJComponentHelper<JTable> {
                 try {
                     int modelRow = component.convertRowIndexToModel(row);
                     int modelColumn = component.convertColumnIndexToModel(column);
-    
-                    data.setEntry(row, column, model.getValueAt(modelRow, modelColumn),
-                        component.isCellSelected(row, column));
+
+                    data.setEntry(row, column, model.getValueAt(modelRow, modelColumn), component.isCellSelected(row, column));
                 }
                 catch (IndexOutOfBoundsException e) {
                     // concurrent problem
@@ -77,24 +78,45 @@ public class JTableHelper extends AbstractJComponentHelper<JTable> {
      *      java.lang.String, int, int)
      */
     @Override
-    public boolean enter(Robot robot, JTable component, String text, int row, int column)
-        throws RemoteControlException {
-        row = invertValue(row, component.getRowCount());
-        column = invertValue(column, component.getColumnCount());
+    public boolean enter(final Robot robot, final JTable component, final String text, int row, int column) throws RemoteControlException {
+        final int finalRow = invertValue(row, component.getRowCount());
+        final int finalColumn = invertValue(column, component.getColumnCount());
 
-        if (!component.editCellAt(row, column)) {
-            return false;
-        }
+        final Result<Boolean> result = new Result<Boolean>(2);
+        RemoteControlUtils.invokeInSwing(new Runnable() {
 
-        Component editor = component.getComponent(component.getComponentCount() - 1);
-        boolean result = ComponentHelperRegistry.get(editor.getClass()).enter(robot, editor, text);
-        
-        TableCellEditor cellEditor = component.getCellEditor();
-        
+            @Override
+            public void run() {
+                try {
+                    if (!component.editCellAt(finalRow, finalColumn)) {
+                        result.fireResult(false);
+                        return;
+                    }
+
+                    Component editor = component.getComponent(component.getComponentCount() - 1);
+                    result.fireResult(ComponentHelperRegistry.get(editor.getClass()).enter(robot, editor, text));
+                }
+                catch (Exception e) {
+                    result.fireException(e);
+                }
+            }
+
+        });
+
+        boolean editResult = result.aquireResult();
+
+        final TableCellEditor cellEditor = component.getCellEditor();
+
         if (cellEditor != null) {
-            cellEditor.stopCellEditing();
+            RemoteControlUtils.invokeInSwing(new Runnable() {
+
+                @Override
+                public void run() {
+                    cellEditor.stopCellEditing();
+                }
+            });
         }
 
-        return result;
+        return editResult;
     }
 }
