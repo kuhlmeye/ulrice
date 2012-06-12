@@ -20,9 +20,10 @@ public class JTabbedPaneHelper extends AbstractJComponentHelper<JTabbedPane> {
     }
 
     private int indexOfTab(JTabbedPane component, String title) {
+        
+        RegularMatcher matcher = new RegularMatcher(title);
+        
         for (int i=0; i<component.getTabCount(); i+=1) {
-            
-            RegularMatcher matcher = new RegularMatcher(title);
             
             if (matcher.matches(component.getTitleAt(i))) {
                 return i;
