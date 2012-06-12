@@ -68,4 +68,13 @@ public interface ComponentRemoteControl {
      */
     ComponentState waitFor(double seconds, ComponentMatcher... matchers) throws RemoteControlException;
 
+    /**
+     * Waits for the specified amount of seconds for no component to correlate the matcher
+     * 
+     * @param seconds the seconds
+     * @param matchers one or more matchers, concatenated by and
+     * @throws RemoteControlException on a timeout
+     */
+    void waitForNone(double seconds, ComponentMatcher... matchers) throws RemoteControlException;
+
 }

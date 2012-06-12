@@ -134,7 +134,7 @@ public class ComponentRemoteControlImpl implements ComponentRemoteControl {
                     result.fireResult(states);
                 }
             }
-            
+
         });
     }
 
@@ -149,6 +149,28 @@ public class ComponentRemoteControlImpl implements ComponentRemoteControl {
         Collection<ComponentState> results = waitForAll(seconds, matchers);
 
         return results.iterator().next();
+    }
+
+    /**
+     * {@inheritDoc}
+     * 
+     * @see net.ulrice.remotecontrol.ComponentRemoteControl#waitForNone(double,
+     *      net.ulrice.remotecontrol.ComponentMatcher[])
+     */
+    @Override
+    public void waitForNone(double seconds, final ComponentMatcher... matchers) throws RemoteControlException {
+        RemoteControlUtils.repeatInThread(seconds, new ResultClosure<Collection<ComponentState>>() {
+
+            @Override
+            public void invoke(Result<Collection<ComponentState>> result) throws RemoteControlException {
+                Collection<ComponentState> states = statesOf(matchers);
+
+                if ((states == null) || (states.size() == 0)) {
+                    result.fireResult(null);
+                }
+            }
+
+        });
     }
 
 }
