@@ -65,6 +65,7 @@ public class UTableVAFilter extends RowFilter<UTableViewAdapter, String> impleme
     /** The map holding the current filter expressions for all columns by id. */
     private Map<String, Pattern> regexExpressionMap = new HashMap<String, Pattern>();
     private Map<String, NumericPattern> numericPatternExpressionMap = new HashMap<String, NumericPattern>();
+    private Map<String, Object> comboBoxExpressionMap = new HashMap<String, Object>();
     private Map<String, List<String>> collapsedRowFilterMap = new HashMap<String, List<String>>();
 
     private UTableRowSorter rowSorter;
@@ -250,10 +251,23 @@ public class UTableVAFilter extends RowFilter<UTableViewAdapter, String> impleme
         String strValue = value == null ? "" : value.toString();
         boolean isPercentMode = false;
         if (columnFilterModes != null && columnFilterModes.containsKey(columnId)) {
-            boolean isCombo = false;
             switch (columnFilterModes.get(columnId)) {
                 case ComboBox:
-                    isCombo = true;
+                    if(comboBoxExpressionMap.containsKey(columnId)){
+                        Object reference = comboBoxExpressionMap.get(columnId);
+                        if(reference != null){
+                            if(reference.equals(value)){
+                                return true;
+                            }else{
+                                return false;
+                            }
+                        }else if(value == null){
+                            return true;    
+                        }else{
+                            return false;
+                        }
+                    }
+                    break;
                 case RegEx:
                 case Boolean:
                     Pattern pattern = regexExpressionMap.get(columnId);
@@ -267,10 +281,7 @@ public class UTableVAFilter extends RowFilter<UTableViewAdapter, String> impleme
                         else {
                             LOG.finest("ColumnId: " + columnId + ", Value: " + strValue + ", Pattern: "
                                 + pattern.pattern());
-                            if (isCombo) {
-                                return pattern.pattern().equals(strValue);
-                            }
-                            else
+
                                 return pattern.matcher(strValue).matches();
                         }
                     }
@@ -364,30 +375,19 @@ public class UTableVAFilter extends RowFilter<UTableViewAdapter, String> impleme
     private void filterChanged(String columnId, String text) {
         LOG.finer("Filter changed for column-id '" + columnId + "'. Text is: " + text);
         
-      //EXSTHUB: I made this, so we can also filter all entries where a cell is null (because null can be chosen in ComboBox)
-        if(text == null){
-            Pattern nullPattern = Pattern.compile("");
-            regexExpressionMap.put(columnId, nullPattern);
-        }
-        //OLD: if(text == null || text.isEmpty()){
-        else if (text.isEmpty()) {
+        if(text == null || text.isEmpty()){
             regexExpressionMap.remove(columnId);
             numericPatternExpressionMap.remove(columnId);
         }
         else if (columnFilterModes.containsKey(columnId)) {
-            boolean isCombo = false;
 
             switch (columnFilterModes.get(columnId)) {
                 case NoFilter:
                     break;
-                case ComboBox:
-                    isCombo = true;
                 case Boolean:
                 case RegEx: {
                     String regex = text;
-                    if (!isCombo) {
                         regex = correctRegEx(regex);
-                    }
 
                     try {
                         final Pattern pattern = Pattern.compile(regex, Pattern.CASE_INSENSITIVE);
@@ -570,26 +570,41 @@ public class UTableVAFilter extends RowFilter<UTableViewAdapter, String> impleme
         
         if(value instanceof ObjectWithPresentation< ?> && ((ObjectWithPresentation< ?>) value).getValue() == null){
             //EXSTHUB: With this we can also filter all cells with value "null"
-            filterChanged(cbModel.columndId, null);
+            filterComboChanged(cbModel.columndId, null, true);
         }
         else if (value == BooleanFilter.All) {
-            filterChanged(cbModel.columndId, "");
+            filterComboChanged(cbModel.columndId, null);
         }
         else if (value == BooleanFilter.Yes) {
-            filterChanged(cbModel.columndId, Boolean.TRUE.toString());
+            filterComboChanged(cbModel.columndId, Boolean.TRUE);
         }
         else if (value == BooleanFilter.No) {
-            filterChanged(cbModel.columndId, Boolean.FALSE.toString());
+            filterComboChanged(cbModel.columndId, Boolean.FALSE);
         }
         else if (value instanceof ObjectWithPresentation< ?>) {
-            filterChanged(cbModel.columndId, ((ObjectWithPresentation< ?>) value).getValue().toString());
+            filterComboChanged(cbModel.columndId, ((ObjectWithPresentation< ?>) value).getValue());
         }
         else if (value != null) {
-            filterChanged(cbModel.columndId, value.toString());
+            filterComboChanged(cbModel.columndId, value);
         }
         else {
-            filterChanged(cbModel.columndId, "");
+            filterComboChanged(cbModel.columndId, null);
         }
+    }
+
+    private void filterComboChanged(String columndId, Object object){
+        filterComboChanged(columndId, object, false);
+    }
+    
+    private void filterComboChanged(String columndId, Object value, boolean isEmptySelected) {
+        if(isEmptySelected){
+            comboBoxExpressionMap.put(columndId, null);
+        }else if (value == null){
+            comboBoxExpressionMap.remove(columndId);
+        }else{
+            comboBoxExpressionMap.put(columndId, value);
+        }
+        rowSorter.getModel().fireTableDataChanged();
     }
 
     private static class NumericPattern {
