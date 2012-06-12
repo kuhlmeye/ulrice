@@ -363,7 +363,14 @@ public class UTableVAFilter extends RowFilter<UTableViewAdapter, String> impleme
      */
     private void filterChanged(String columnId, String text) {
         LOG.finer("Filter changed for column-id '" + columnId + "'. Text is: " + text);
-        if (text == null || text.isEmpty()) {
+        
+      //EXSTHUB: I made this, so we can also filter all entries where a cell is null (because null can be chosen in ComboBox)
+        if(text == null){
+            Pattern nullPattern = Pattern.compile("");
+            regexExpressionMap.put(columnId, nullPattern);
+        }
+        //OLD: if(text == null || text.isEmpty()){
+        else if (text.isEmpty()) {
             regexExpressionMap.remove(columnId);
             numericPatternExpressionMap.remove(columnId);
         }
@@ -562,8 +569,8 @@ public class UTableVAFilter extends RowFilter<UTableViewAdapter, String> impleme
         Object value = cbModel.getSelectedItem();
         
         if(value instanceof ObjectWithPresentation< ?> && ((ObjectWithPresentation< ?>) value).getValue() == null){
-            //Handle null value like All is selected    
-            filterChanged(cbModel.columndId, "");
+            //EXSTHUB: With this we can also filter all cells with value "null"
+            filterChanged(cbModel.columndId, null);
         }
         else if (value == BooleanFilter.All) {
             filterChanged(cbModel.columndId, "");
