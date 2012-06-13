@@ -1,16 +1,8 @@
 package net.ulrice.ui.wizard;
 
-import javax.swing.Action;
+import java.util.Iterator;
 
 public interface StepFlow {
-    
-    void addStepFlowEventListener(StepFlowEventListener listener);
-    
-    void removeStepFlowEventListener(StepFlowEventListener listener);
-    
-    void addStep(Step step);
-    
-    void delStep(Step step);
     
     Step getStepById(String id);
     
@@ -24,7 +16,13 @@ public interface StepFlow {
     
     Step prev();
     
-    Action getNextAction();
+    boolean isFirst();
     
-    Action getPrevAction();
+    boolean isLast();
+    
+    Iterator<Step> getStepIterator();
+
+    WizardData getWizardData();
+
+    void initialize(Wizard wizard);
 }

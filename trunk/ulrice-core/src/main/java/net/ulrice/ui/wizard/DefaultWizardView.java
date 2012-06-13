@@ -3,6 +3,7 @@ package net.ulrice.ui.wizard;
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
 import java.awt.Font;
+import java.util.Iterator;
 
 import javax.swing.Action;
 import javax.swing.BoxLayout;
@@ -19,14 +20,16 @@ public class DefaultWizardView implements WizardView {
     private boolean rebuildInProgress;
     
     @Override
-    public void initialize(Action prevAction, Action nextAction) {
+    public void initialize(Action prevAction, Action nextAction, Action cancelAction, Action finishAction) {
 
         stepViewPanel.setLayout(new BoxLayout(stepViewPanel, BoxLayout.Y_AXIS));
         
         JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
         
+        buttonPanel.add(new JButton(cancelAction));
         buttonPanel.add(new JButton(prevAction));
         buttonPanel.add(new JButton(nextAction));
+        buttonPanel.add(new JButton(finishAction));
         
         panel.add(stepViewPanel, BorderLayout.WEST);
         panel.add(buttonPanel, BorderLayout.SOUTH);  
@@ -56,8 +59,9 @@ public class DefaultWizardView implements WizardView {
             try {
                 stepViewPanel.removeAll();
                 
-                if(addStepLabel(stepViewPanel, stepFlow, stepFlow.first())) {
-                    while(addStepLabel(stepViewPanel, stepFlow, stepFlow.next()));
+                Iterator<Step> stepIterator = stepFlow.getStepIterator();
+                while(stepIterator.hasNext()) {
+                    addStepLabel(stepViewPanel, stepFlow, stepIterator.next());
                 }
             } finally {
                 rebuildInProgress = false;

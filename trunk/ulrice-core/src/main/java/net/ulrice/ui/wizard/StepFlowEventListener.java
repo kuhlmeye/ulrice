@@ -4,7 +4,9 @@ import java.util.EventListener;
 
 public interface StepFlowEventListener extends EventListener {
 
-    void stepFlowChanged(StepFlow stepFlow);
+    void flowCancelled();
     
-    void currentStepChanged(StepFlow stepFlow);        
+    void flowFinished();
+    
+    void stepChanged();        
 }

@@ -9,4 +9,8 @@ public interface Step {
     String getTitle();
     
     JComponent getView();
+    
+    void onShow(StepFlow flow, WizardData data);
+    
+    void onHide(StepFlow flow, WizardData data);
 }
