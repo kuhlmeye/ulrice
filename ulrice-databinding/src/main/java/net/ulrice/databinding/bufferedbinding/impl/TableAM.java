@@ -670,6 +670,10 @@ public class TableAM implements IFAttributeModel {
         columns.add(columnDefinition);
         columnIdMap.put(columnDefinition.getId(), columnDefinition);
 
+        for(Element element : elements) {
+            element.readObject();
+        }
+        
         TableAMListener[] listeners = listenerList.getListeners(TableAMListener.class);
         if (listeners != null) {
             for (final TableAMListener listener : listeners) {
