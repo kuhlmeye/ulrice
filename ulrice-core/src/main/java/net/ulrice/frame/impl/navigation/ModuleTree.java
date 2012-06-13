@@ -87,7 +87,7 @@ public class ModuleTree extends JTree implements IFMainFrameComponent, MouseList
      */
     @Override
     public void mouseClicked(MouseEvent e) {
-        if (e.getClickCount() == 2) {
+        if (e.getClickCount() == 2 && getSelectionPath() != null) {
             TreePath path = getClosestPathForLocation(e.getX(), e.getY());
             Object pathComponent = path.getLastPathComponent();
             Object selComponent = getSelectionPath().getLastPathComponent();
