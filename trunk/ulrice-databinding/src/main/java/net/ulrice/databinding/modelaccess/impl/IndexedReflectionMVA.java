@@ -16,6 +16,7 @@ public class IndexedReflectionMVA implements IFIndexedModelValueAccessor {
 	private Object rootObject;
 	
 	private IFModelValueAccessor sizeMVA;
+	private Class<?> modelRowClass;
 
 	public IndexedReflectionMVA(String id, Object rootObject, String path, boolean readOnly, IFModelValueAccessor sizeMVA) {
 		this.rootObject = rootObject;
@@ -34,6 +35,11 @@ public class IndexedReflectionMVA implements IFIndexedModelValueAccessor {
 		this(id, rootObject, path, readOnly, null);
 	}
 
+	public IndexedReflectionMVA(Object rootObject, String path, Class<?> modelRowClass) {
+		this(rootObject.getClass().getSimpleName() + "." + path, rootObject, path, false, null);
+		this.modelRowClass = modelRowClass;
+	}
+	
 	public IndexedReflectionMVA(Object rootObject, String path) {		
 		this(rootObject.getClass().getSimpleName() + "." + path, rootObject, path, false, null);
 	}
@@ -109,6 +115,10 @@ public class IndexedReflectionMVA implements IFIndexedModelValueAccessor {
 	
 	@Override
 	public Class<?> getModelType() {
+		if(modelRowClass != null) {
+			return modelRowClass;
+		}
+		
 		if (path != null) {
 			Field field = UlriceReflectionUtils.getFieldByReflection(rootObject.getClass(), path);
 			Type genericFieldType = field.getGenericType();

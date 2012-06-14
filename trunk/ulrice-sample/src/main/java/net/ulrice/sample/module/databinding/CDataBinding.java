@@ -44,8 +44,7 @@ public class CDataBinding extends AbstractController {
 
         model.personList = new LinkedList<Person>();
 
-        model.getNameAM().read();
-        
+        model.getNameAM().read();        
         model.getTableAM().read();
         
         SwingWorker<List<Person>, List<Person>> worker = new SwingWorker<List<Person>, List<Person>>() {
@@ -57,7 +56,7 @@ public class CDataBinding extends AbstractController {
 		        for (int i = 0; i < 100; i++) {
 		        	list.add(new ArrayList<Person>(1000));
 		            for (int j = 0; j < 1000; j++) {
-		            	list.get(i).add(createPerson());
+		            	list.get(i).add(Person.createRandomPerson());
 		            }
 					System.out.println("Publish #" + i);
 		        	publish(list.get(i));
@@ -78,12 +77,6 @@ public class CDataBinding extends AbstractController {
 
 
         view.getListGA().sizeColumns(false);
-    }
-
-    public static Person createPerson() {
-        Person result = new Person(UUID.randomUUID().toString(),
-                UUID.randomUUID().toString(), (int) ((Math.random() * 100.0) / 1));
-        return result;
     }
     
     @Override

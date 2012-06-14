@@ -96,7 +96,7 @@ public class TableAMBuilder {
         };
         
         
-        final TableAM result = new TableAM(new IndexedReflectionMVA(modelRoot, elementCollectionPath), attributeInfo);
+        final TableAM result = new TableAM(new IndexedReflectionMVA(modelRoot, elementCollectionPath, modelRowClass), attributeInfo);
         for (ColumnDefinition<?> colDef: columnDefs) {
             result.addColumn (colDef);
         }
