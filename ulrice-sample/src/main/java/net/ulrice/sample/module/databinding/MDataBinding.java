@@ -37,15 +37,12 @@ public class MDataBinding {
 
         personList.add(new Person("Max", "Mustermann", 18));
         personList.add(new Person("Petra", "Musterfrau", 20));
-        personList.add(new Person("Otto", "Normal", 20));
+        personList.add(new Person("Otto", "Normal", 20));              
 
         tableAM = new TableAM(new IndexedReflectionMVA(this, "personList"), attributeInfo);
-        tableAM.addColumn(new ColumnDefinition<String>(new DynamicReflectionMVA(Person.class, "lastName"),
-            String.class));
-        tableAM.addColumn(new ColumnDefinition<String>(new DynamicReflectionMVA(Person.class, "firstName"),
-            String.class));
-        tableAM
-            .addColumn(new ColumnDefinition<Integer>(new DynamicReflectionMVA(Person.class, "age"), Integer.class));
+        tableAM.addColumn(new ColumnDefinition<String>(new DynamicReflectionMVA(Person.class, "lastName"), String.class));
+        tableAM.addColumn(new ColumnDefinition<String>(new DynamicReflectionMVA(Person.class, "firstName"), String.class));
+        tableAM.addColumn(new ColumnDefinition<Integer>(new DynamicReflectionMVA(Person.class, "age"), Integer.class));
     }
 
     public GenericAM<String> getNameAM() {
