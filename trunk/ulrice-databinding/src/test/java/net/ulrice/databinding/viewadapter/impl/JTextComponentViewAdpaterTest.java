@@ -25,8 +25,7 @@ public class JTextComponentViewAdpaterTest extends TestCase {
         
         textVA.setEditable(false);
         
-        // TODO please fix this
-//        assertFalse(textField.isEditable());
+        assertFalse(textField.isEditable());
     }
     
 }

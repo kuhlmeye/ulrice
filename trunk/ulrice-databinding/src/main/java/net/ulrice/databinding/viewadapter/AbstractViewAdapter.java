@@ -123,11 +123,13 @@ public abstract class AbstractViewAdapter<M, V> implements IFViewAdapter<M, V> {
     
     @Override
     public final void setEditable(boolean editable) {
-        this.editable = editable;        
+        this.editable = editable;
+        onSetEditable(editable);
         fireViewChange();
     }
     
-    
+    protected void onSetEditable(final boolean editable) {
+    }
     
     protected abstract void addComponentListener();
 

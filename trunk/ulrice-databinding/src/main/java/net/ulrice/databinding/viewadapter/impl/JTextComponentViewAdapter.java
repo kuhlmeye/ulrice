@@ -57,6 +57,11 @@ public class JTextComponentViewAdapter extends AbstractViewAdapter implements Do
 		return textComponent;
 	}
 	
+	@Override
+	protected void onSetEditable(boolean editable) {
+	    textComponent.setEditable(editable);
+	}
+	
 	public void setEnableSelectionIfComponentDisabled(boolean enableSelectionIfComponentDisabled) {
         this.enableSelectionIfComponentDisabled = enableSelectionIfComponentDisabled;
     }
