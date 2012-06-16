@@ -117,7 +117,7 @@ public class UTableComboBoxCellEditor extends AbstractCellEditor implements Tabl
     				comboBox.setSelectedIndex(i);
     				return comboBox;
     			}
-    		} else if(element.equals(value)) {
+    		} else if(element != null && element.equals(value)) {
 				comboBox.setSelectedIndex(i);
 				return comboBox;
     		}
