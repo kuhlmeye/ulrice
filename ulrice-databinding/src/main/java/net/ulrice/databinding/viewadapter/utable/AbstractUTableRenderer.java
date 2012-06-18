@@ -2,6 +2,7 @@ package net.ulrice.databinding.viewadapter.utable;
 
 import java.util.List;
 
+import javax.swing.JCheckBox;
 import javax.swing.JComponent;
 import javax.swing.JTable;
 import javax.swing.UIManager;
@@ -25,7 +26,7 @@ public abstract class AbstractUTableRenderer extends DefaultTableCellRenderer im
         tooltipHandler = defaultTooltipHandler;
         setForeground(UIManager.getColor("Label.Foreground"));
     }
-
+    
     public JComponent adaptComponent(JTable table, boolean isSelected, int row, int column, JComponent component) {
         if (table instanceof UTable) {
             
@@ -40,6 +41,10 @@ public abstract class AbstractUTableRenderer extends DefaultTableCellRenderer im
             String columnId = table.getColumnModel().getColumn(column).getIdentifier().toString();
             
             ColumnDefinition< ?> colDef = tableComponent.getColumnById(columnId);
+            
+            if(component instanceof JCheckBox){
+                ((JCheckBox)component).setBorderPainted(false);
+            }
             
             if(colDef.getPreRendererList() != null){
                 component = adapt(table, isSelected, row,column, component, colDef.getPreRendererList());
