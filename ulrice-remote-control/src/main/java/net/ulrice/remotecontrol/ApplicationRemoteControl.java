@@ -23,5 +23,7 @@ public interface ApplicationRemoteControl {
     public byte[] screenshot() throws RemoteControlException;
     
     public void overrideSpeedFactor(double speedFactor);
+    
+    public boolean combinedWaitFor(double timeoutInSeconds, ComponentMatcher componentMatcher, ControllerMatcher controllerMatcher) throws RemoteControlException;
 
 }

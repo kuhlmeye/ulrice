@@ -6,6 +6,7 @@ import javax.swing.JList;
 import javax.swing.ListModel;
 
 import net.ulrice.remotecontrol.ComponentListData;
+import net.ulrice.remotecontrol.ComponentMatcher;
 import net.ulrice.remotecontrol.RemoteControlException;
 import net.ulrice.remotecontrol.util.RegularMatcher;
 import net.ulrice.remotecontrol.util.RemoteControlUtils;
@@ -64,7 +65,12 @@ public class JListHelper extends AbstractJComponentHelper<JList> {
 
         });
 
-        return result.aquireResult();
+        try {
+            return result.aquireResult();
+        }
+        catch (RemoteControlException e) {
+            throw new RemoteControlException("Entering \"" + text + "\" into JList failed", e);
+        }
     }
 
     /**

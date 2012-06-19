@@ -7,6 +7,7 @@ import java.awt.Robot;
 import java.awt.Window;
 import java.util.Collection;
 
+import net.ulrice.remotecontrol.ActionMatcher;
 import net.ulrice.remotecontrol.ComponentInteraction;
 import net.ulrice.remotecontrol.ComponentMatcher;
 import net.ulrice.remotecontrol.ComponentRemoteControl;
@@ -111,7 +112,13 @@ public class ComponentRemoteControlImpl implements ComponentRemoteControl {
             }
         });
 
-        return result.aquireResult();
+        try {
+            return result.aquireResult();
+        }
+        catch (RemoteControlException e) {
+            throw new RemoteControlException("Interaction " + interaction + " failed on "
+                + ComponentMatcher.and(matchers), e);
+        }
     }
 
     /**
@@ -124,18 +131,24 @@ public class ComponentRemoteControlImpl implements ComponentRemoteControl {
     public Collection<ComponentState> waitForAll(final double seconds, final ComponentMatcher... matchers)
         throws RemoteControlException {
 
-        return RemoteControlUtils.repeatInThread(seconds, new ResultClosure<Collection<ComponentState>>() {
+        try {
+            return RemoteControlUtils.repeatInThread(seconds, new ResultClosure<Collection<ComponentState>>() {
 
-            @Override
-            public void invoke(Result<Collection<ComponentState>> result) throws RemoteControlException {
-                Collection<ComponentState> states = statesOf(matchers);
+                @Override
+                public void invoke(Result<Collection<ComponentState>> result) throws RemoteControlException {
+                    Collection<ComponentState> states = statesOf(matchers);
 
-                if ((states != null) && (states.size() > 0)) {
-                    result.fireResult(states);
+                    if ((states != null) && (states.size() > 0)) {
+                        result.fireResult(states);
+                    }
                 }
-            }
 
-        });
+            });
+        }
+        catch (RemoteControlException e) {
+            throw new RemoteControlException(String.format("Failed to wait %,.1f s for all components: %s", seconds,
+                ComponentMatcher.and(matchers)), e);
+        }
     }
 
     /**
@@ -159,18 +172,24 @@ public class ComponentRemoteControlImpl implements ComponentRemoteControl {
      */
     @Override
     public void waitForNone(double seconds, final ComponentMatcher... matchers) throws RemoteControlException {
-        RemoteControlUtils.repeatInThread(seconds, new ResultClosure<Collection<ComponentState>>() {
+        try {
+            RemoteControlUtils.repeatInThread(seconds, new ResultClosure<Collection<ComponentState>>() {
 
-            @Override
-            public void invoke(Result<Collection<ComponentState>> result) throws RemoteControlException {
-                Collection<ComponentState> states = statesOf(matchers);
+                @Override
+                public void invoke(Result<Collection<ComponentState>> result) throws RemoteControlException {
+                    Collection<ComponentState> states = statesOf(matchers);
 
-                if ((states == null) || (states.size() == 0)) {
-                    result.fireResult(null);
+                    if ((states == null) || (states.size() == 0)) {
+                        result.fireResult(null);
+                    }
                 }
-            }
 
-        });
+            });
+        }
+        catch (RemoteControlException e) {
+            throw new RemoteControlException(String.format("Failed to wait %,.1f s for no component to match: %s", seconds,
+                ComponentMatcher.and(matchers)), e);
+        }
     }
 
 }

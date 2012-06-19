@@ -78,18 +78,24 @@ public class ActionRemoteControlImpl implements ActionRemoteControl {
     public Collection<ActionState> waitForAll(final double seconds, final ActionMatcher... matchers)
         throws RemoteControlException {
 
-        return RemoteControlUtils.repeatInThread(seconds, new ResultClosure<Collection<ActionState>>() {
+        try {
+            return RemoteControlUtils.repeatInThread(seconds, new ResultClosure<Collection<ActionState>>() {
 
-            @Override
-            public void invoke(Result<Collection<ActionState>> result) throws RemoteControlException {
-                Collection<ActionState> states = statesOf(matchers);
+                @Override
+                public void invoke(Result<Collection<ActionState>> result) throws RemoteControlException {
+                    Collection<ActionState> states = statesOf(matchers);
 
-                if ((states != null) && (states.size() > 0)) {
-                    result.fireResult(states);
+                    if ((states != null) && (states.size() > 0)) {
+                        result.fireResult(states);
+                    }
                 }
-            }
-            
-        });
+
+            });
+        }
+        catch (RemoteControlException e) {
+            throw new RemoteControlException(String.format("Failed to wait %,.1f s for all actions: %s", seconds,
+                ActionMatcher.and(matchers)), e);
+        }
     }
 
     /**
@@ -148,7 +154,7 @@ public class ActionRemoteControlImpl implements ActionRemoteControl {
             else {
                 result = false;
             }
-            
+
             RemoteControlUtils.pause();
         }
 

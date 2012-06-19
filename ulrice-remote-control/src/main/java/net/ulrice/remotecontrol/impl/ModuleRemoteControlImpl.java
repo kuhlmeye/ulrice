@@ -114,8 +114,13 @@ public class ModuleRemoteControlImpl implements ModuleRemoteControl {
                 }
             });
 
-            success &= result.aquireResult();
-            
+            try {
+                success &= result.aquireResult();
+            }
+            catch (RemoteControlException e) {
+                throw new RemoteControlException("Opening module failed: " + ModuleMatcher.and(matchers), e);
+            }
+
             RemoteControlUtils.pause();
         }
 

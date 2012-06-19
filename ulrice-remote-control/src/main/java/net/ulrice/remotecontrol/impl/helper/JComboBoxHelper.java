@@ -6,6 +6,7 @@ import javax.swing.ComboBoxModel;
 import javax.swing.JComboBox;
 
 import net.ulrice.remotecontrol.ComponentListData;
+import net.ulrice.remotecontrol.ComponentMatcher;
 import net.ulrice.remotecontrol.RemoteControlException;
 import net.ulrice.remotecontrol.util.RegularMatcher;
 import net.ulrice.remotecontrol.util.RemoteControlUtils;
@@ -88,7 +89,12 @@ public class JComboBoxHelper extends AbstractJComponentHelper<JComboBox> {
 
         });
 
-        return result.aquireResult();
+        try {
+            return result.aquireResult();
+        }
+        catch (RemoteControlException e) {
+            throw new RemoteControlException("Entering \"" + text + "\" into JComboBox failed", e);
+        }
     }
 
 }
