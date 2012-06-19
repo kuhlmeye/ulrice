@@ -139,7 +139,7 @@ public abstract class RemoteKeyboardInstruction implements Serializable
 			@Override
 			public String toString()
 			{
-				return String.format("pause(%,.3f)", seconds);
+				return String.format("pause(%,.1f)", seconds);
 			}
 		};
 	}

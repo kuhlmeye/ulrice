@@ -79,7 +79,7 @@ public class Result<RESULT_TYPE> {
                 if (waitFor < 1) {
                     finished = true;
 
-                    throw new RemoteControlException(String.format("Action timed out: %,.3f seconds",
+                    throw new RemoteControlException(String.format("Action timed out: %,.1f seconds",
                         (double) timeout / 1000));
                 }
 
@@ -118,7 +118,7 @@ public class Result<RESULT_TYPE> {
                 if (waitFor < 1) {
                     finished = true;
 
-                    throw new RemoteControlException(String.format("Action timed out: %,.3f seconds",
+                    throw new RemoteControlException(String.format("Action timed out: %,.1f seconds",
                         (double) timeout / 1000));
                 }
             }
@@ -137,7 +137,7 @@ public class Result<RESULT_TYPE> {
             if (!gotResult) {
                 finished = true;
 
-                throw new RemoteControlException(String.format("Action timed out: %,.3f seconds",
+                throw new RemoteControlException(String.format("Action timed out: %,.1f seconds",
                     (double) timeout / 1000));
             }
 

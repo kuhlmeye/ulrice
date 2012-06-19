@@ -83,19 +83,25 @@ public class ControllerRemoteControlImpl implements ControllerRemoteControl {
     @Override
     public Collection<ControllerState> waitForAll(final double seconds, final ControllerMatcher... matchers)
         throws RemoteControlException {
-        
-        return RemoteControlUtils.repeatInThread(seconds, new ResultClosure<Collection<ControllerState>>() {
 
-            @Override
-            public void invoke(Result<Collection<ControllerState>> result) throws RemoteControlException {
-                Collection<ControllerState> states = statesOf(matchers);
+        try {
+            return RemoteControlUtils.repeatInThread(seconds, new ResultClosure<Collection<ControllerState>>() {
 
-                if ((states != null) && (states.size() > 0)) {
-                    result.fireResult(states);
+                @Override
+                public void invoke(Result<Collection<ControllerState>> result) throws RemoteControlException {
+                    Collection<ControllerState> states = statesOf(matchers);
+
+                    if ((states != null) && (states.size() > 0)) {
+                        result.fireResult(states);
+                    }
                 }
-            }
-            
-        });
+
+            });
+        }
+        catch (RemoteControlException e) {
+            throw new RemoteControlException(String.format("Failed to wait %,.1f s for all controllers: %s", seconds,
+                ControllerMatcher.and(matchers)), e);
+        }
     }
 
     /**
@@ -120,6 +126,7 @@ public class ControllerRemoteControlImpl implements ControllerRemoteControl {
 
     /**
      * {@inheritDoc}
+     * 
      * @see net.ulrice.remotecontrol.ControllerRemoteControl#focus(net.ulrice.remotecontrol.ControllerMatcher[])
      */
     @Override
@@ -150,7 +157,12 @@ public class ControllerRemoteControlImpl implements ControllerRemoteControl {
                 }
             });
 
-            success &= result.aquireResult();
+            try {
+                success &= result.aquireResult();
+            }
+            catch (RemoteControlException e) {
+                throw new RemoteControlException("Focussing conroller failed: " + ControllerMatcher.and(matchers), e);
+            }
 
             RemoteControlUtils.pause();
         }
@@ -201,25 +213,58 @@ public class ControllerRemoteControlImpl implements ControllerRemoteControl {
                 }
             });
 
-            ComponentRemoteControl componentRC = RemoteControlCenter.get(ComponentRemoteControl.class);
-
-            while (!result.testResult(0.25)) {
-                componentRC.interact(click(), ComponentMatcher.like(".*No"), ofType(JButton.class),
-                    within(ofType(JDialog.class)));
-                componentRC.interact(click(), ComponentMatcher.like(".*Close"), ofType(JButton.class),
-                    within(ofType(JDialog.class)));
-                componentRC.interact(click(), ComponentMatcher.like(".*Cancel"), ofType(JButton.class),
-                    within(ofType(JDialog.class)));
-                componentRC.interact(click(), ComponentMatcher.like(".*OK"), ofType(JButton.class),
-                    within(ofType(JDialog.class)));
+            try {
+                while (!result.testResult(0.25)) {
+                    closeDialogs();
+                }
+            }
+            catch (RemoteControlException e) {
+                throw new RemoteControlException("Failed to close the dialogs when closing the controller", e);
             }
 
-            success &= result.aquireResult();
-            
+            try {
+                success &= result.aquireResult();
+            }
+            catch (RemoteControlException e) {
+                throw new RemoteControlException("Closing of controller failed", e);
+            }
+
             RemoteControlUtils.pause();
         }
 
+        try {
+            // handle non modal dialogs
+            RemoteControlUtils.repeatInThread(5, new ResultClosure<Boolean>() {
+
+                @Override
+                public void invoke(Result<Boolean> result) throws RemoteControlException {
+                    if (closeDialogs()) {
+                        result.fireResult(Boolean.TRUE);
+                    }
+                }
+
+            });
+        }
+        catch (RemoteControlException e) {
+            throw new RemoteControlException("Failed to close all remaining dialogs", e);
+        }
+
         return success;
+    }
+
+    private boolean closeDialogs() throws RemoteControlException {
+        ComponentRemoteControl componentRC = RemoteControlCenter.get(ComponentRemoteControl.class);
+
+        componentRC.interact(click(), ComponentMatcher.like(".*No.*"), ofType(JButton.class),
+            within(ofType(JDialog.class)));
+        componentRC.interact(click(), ComponentMatcher.like(".*Close.*"), ofType(JButton.class),
+            within(ofType(JDialog.class)));
+        componentRC.interact(click(), ComponentMatcher.like(".*Cancel.*"), ofType(JButton.class),
+            within(ofType(JDialog.class)));
+        componentRC.interact(click(), ComponentMatcher.like(".*OK.*"), ofType(JButton.class),
+            within(ofType(JDialog.class)));
+
+        return !componentRC.contains(ofType(JDialog.class));
     }
 
 }

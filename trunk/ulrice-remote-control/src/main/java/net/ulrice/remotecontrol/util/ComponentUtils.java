@@ -64,7 +64,7 @@ public class ComponentUtils {
      */
     public static Collection<Component> collect(Collection<Component> results, Component... components) {
         for (Component component : components) {
-            if (component.isVisible()) {
+            if ((component != null) && (component.isVisible())) {
                 results.add(component);
 
                 if (component instanceof Container) {
@@ -152,7 +152,12 @@ public class ComponentUtils {
                             }
                         });
 
-                        return result.aquireResult();
+                        try {
+                            return result.aquireResult();
+                        }
+                        catch (RemoteControlException e) {
+                            throw new RemoteControlException("Failed to bring component to front", e);
+                        }
                     }
                     finally {
                         window.removeWindowFocusListener(focusListener);
@@ -208,7 +213,12 @@ public class ComponentUtils {
         try {
             component.requestFocus();
 
-            return result.aquireResult();
+            try {
+                return result.aquireResult();
+            }
+            catch (RemoteControlException e) {
+                throw new RemoteControlException("Setting focus to component failed", e);
+            }
         }
         finally {
             component.removeFocusListener(focusListener);

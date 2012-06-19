@@ -136,7 +136,7 @@ public abstract class ComponentInteraction implements Serializable {
 
             @Override
             public String toString() {
-                return String.format("pause[%,.3fs]", seconds);
+                return String.format("pause[%,.1fs]", seconds);
             }
 
         };
@@ -171,7 +171,7 @@ public abstract class ComponentInteraction implements Serializable {
 
             @Override
             public String toString() {
-                return String.format("constantPause[%,.3fs]", seconds);
+                return String.format("constantPause[%,.1fs]", seconds);
             }
 
         };

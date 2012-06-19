@@ -348,8 +348,8 @@ public class RemoteControlCenter {
      * @throws RemoteControlException on occasion
      */
     @SuppressWarnings("unchecked")
-    public static <TYPE> void registerNative(Class<TYPE> type, Object instance) throws RemoteControlException {
-        register(type, (TYPE) instance);
+    public static <TYPE> TYPE registerNative(Class<TYPE> type, Object instance) throws RemoteControlException {
+        return register(type, (TYPE) instance);
     }
 
     /**
@@ -359,7 +359,7 @@ public class RemoteControlCenter {
      * @param instance the implementation
      * @throws RemoteControlException on occasion
      */
-    public static <TYPE> void register(Class<TYPE> type, TYPE instance) throws RemoteControlException {
+    public static <TYPE> TYPE register(Class<TYPE> type, TYPE instance) throws RemoteControlException {
         synchronized (RemoteControlCenter.class) {
             BEANS.put(type, instance);
 
@@ -367,6 +367,8 @@ public class RemoteControlCenter {
                 registerMBean(type, instance);
             }
         }
+        
+        return instance;
     }
 
     @SuppressWarnings("unchecked")
@@ -572,17 +574,11 @@ public class RemoteControlCenter {
 
     public static void setPausing(boolean pausing) {
         synchronized (SEMAPHORE) {
-//            boolean hadPaused = RemoteControlCenter.pausing;
-
             RemoteControlCenter.pausing = pausing;
 
             if (remoteControlWindow != null) {
                 remoteControlWindow.updateState();
             }
-
-//            if ((!hadPaused) && (pausing)) {
-//                step();
-//            }
         }
     }
 

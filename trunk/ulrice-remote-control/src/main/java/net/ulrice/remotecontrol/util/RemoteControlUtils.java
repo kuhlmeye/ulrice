@@ -65,10 +65,6 @@ public class RemoteControlUtils {
      */
     public static void invokeInThread(Runnable runnable) {
         EXECUTOR_SERVICE.execute(runnable);
-//        Thread thread = new Thread(runnable, "RemoteControl");
-//
-//        thread.setDaemon(true);
-//        thread.start();
     }
 
     /**
@@ -112,7 +108,12 @@ public class RemoteControlUtils {
             }
         });
 
-        return result.aquireResult();
+        try {
+            return result.aquireResult();
+        }
+        catch (RemoteControlException e) {
+            throw new RemoteControlException("Failed to repeat closure in thread", e);
+        }
     }
 
     /**
