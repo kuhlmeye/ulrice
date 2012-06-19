@@ -22,6 +22,8 @@ import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.JToggleButton;
 import javax.swing.JToolBar;
@@ -38,6 +40,7 @@ public class RemoteControlWindow extends JWindow implements ActionListener, Mous
 
     private static final String PLAY_ACTION = "play";
     private static final String STEP_ACTION = "step";
+    private static final String INFO_ACTION = "info";
     private static final String PAUSE_ON_ERROR_ACTION = "pauseOnError";
     private static final String MINUS_ACTION = "minus";
     private static final String PLUS_ACTION = "plus";
@@ -48,6 +51,8 @@ public class RemoteControlWindow extends JWindow implements ActionListener, Mous
     private static final Icon PAUSE_ICON;
     private static final Icon PAUSE_ON_ERROR_ICON;
     private static final Icon STEP_ICON;
+    private static final Icon DOWN_ICON;
+    private static final Icon UP_ICON;
     // private static final Icon INFO_ICON;
     private static final Icon MINUS_ICON;
     private static final Icon PLUS_ICON;
@@ -57,7 +62,7 @@ public class RemoteControlWindow extends JWindow implements ActionListener, Mous
     private static final Icon ERROR_ICON;
 
     private static final double[] SPEED_VALUES = { 0, 0.25, 0.5, 1, 2, 4, 8, 16, 32, 64 };
-    
+
     static {
         try {
             GRIP_ICON = new ImageIcon(ImageIO.read(RemoteControlWindow.class.getResource("grip.png")));
@@ -66,6 +71,8 @@ public class RemoteControlWindow extends JWindow implements ActionListener, Mous
             PAUSE_ON_ERROR_ICON =
                     new ImageIcon(ImageIO.read(RemoteControlWindow.class.getResource("pauseOnError.png")));
             STEP_ICON = new ImageIcon(ImageIO.read(RemoteControlWindow.class.getResource("step.png")));
+            DOWN_ICON = new ImageIcon(ImageIO.read(RemoteControlWindow.class.getResource("down.png")));
+            UP_ICON = new ImageIcon(ImageIO.read(RemoteControlWindow.class.getResource("up.png")));
             // INFO_ICON = new ImageIcon(ImageIO.read(RemoteControlWindow.class.getResource("info.png")));
             MINUS_ICON = new ImageIcon(ImageIO.read(RemoteControlWindow.class.getResource("minus.png")));
             PLUS_ICON = new ImageIcon(ImageIO.read(RemoteControlWindow.class.getResource("plus.png")));
@@ -85,7 +92,9 @@ public class RemoteControlWindow extends JWindow implements ActionListener, Mous
     private final JToggleButton pauseOnErrorButton;
     private final JLabel infoLabel;
     private final JTextField infoField;
-    // private final JButton infoButton;
+    private final JButton infoButton;
+    private final JTextArea infoArea;
+    private final JScrollPane infoPane;
     private final JButton minusButton;
     private final JTextField speedField;
     private final JButton plusButton;
@@ -103,15 +112,14 @@ public class RemoteControlWindow extends JWindow implements ActionListener, Mous
             @Override
             protected void paintComponent(Graphics graphics) {
                 Graphics2D g = (Graphics2D) graphics;
-                
+
                 Color COLOR_A = new Color(0xffffff);
                 Color COLOR_B = new Color(0xe7e3f1);
                 Color COLOR_C = new Color(0xcbc2e1);
                 Color COLOR_D = new Color(0xffffff);
 
                 g.setPaint(new LinearGradientPaint(0, 0, 0, getHeight(), new float[] { 0.0f, 0.45f, 0.46f, 1.0f },
-                            new Color[] {
-                                COLOR_A, COLOR_B, COLOR_C, COLOR_D }));
+                    new Color[] { COLOR_A, COLOR_B, COLOR_C, COLOR_D }));
                 g.fillRect(0, 0, getWidth(), getHeight());
 
                 super.paintComponent(g);
@@ -130,10 +138,14 @@ public class RemoteControlWindow extends JWindow implements ActionListener, Mous
         stepButton = createButton(STEP_ICON, "Step", STEP_ACTION);
         pauseOnErrorButton = createToggleButton(PAUSE_ON_ERROR_ICON, "Pause On Error", PAUSE_ON_ERROR_ACTION);
         infoLabel = createLabel(OK_ICON);
-        infoField = createTextField("Ulrice Remote Control", 32);
+        infoField = createTextField("Ulrice Remote Control", 48);
         infoField.addMouseListener(this);
         infoField.addMouseMotionListener(this);
-        // infoButton = createButton(INFO_ICON, "Info", "info");
+        infoButton = createButton(DOWN_ICON, "Info", INFO_ACTION);
+        infoArea = createTextArea();
+        infoPane = new JScrollPane(infoArea);
+        infoPane.setBorder(BorderFactory.createMatteBorder(1, 0, 0, 0, Color.BLACK));
+        infoPane.setVisible(false);
         minusButton = createButton(MINUS_ICON, "Slow Down", MINUS_ACTION);
         speedField = createTextField("100 %", 5);
         speedField.setHorizontalAlignment(SwingConstants.CENTER);
@@ -146,7 +158,7 @@ public class RemoteControlWindow extends JWindow implements ActionListener, Mous
         toolbar.addSeparator();
         toolbar.add(infoLabel);
         toolbar.add(infoField);
-        // toolbar.add(infoButton);
+        toolbar.add(infoButton);
         toolbar.addSeparator();
         toolbar.add(pauseOnErrorButton);
         toolbar.addSeparator();
@@ -157,7 +169,8 @@ public class RemoteControlWindow extends JWindow implements ActionListener, Mous
         toolbar.add(stopButton);
 
         JPanel panel = new JPanel(new BorderLayout());
-        panel.add(toolbar, BorderLayout.CENTER);
+        panel.add(toolbar, BorderLayout.NORTH);
+        panel.add(infoPane, BorderLayout.CENTER);
         panel.setBorder(BorderFactory.createMatteBorder(1, 1, 1, 1, Color.BLACK));
 
         setContentPane(panel);
@@ -206,17 +219,20 @@ public class RemoteControlWindow extends JWindow implements ActionListener, Mous
 
     public void info(String info) {
         infoLabel.setIcon(OK_ICON);
-        infoField.setText(info);
+        infoField.setText(trim(info));
+        infoArea.setText(info);
     }
 
     public void warning(String warning) {
         infoLabel.setIcon(WARNING_ICON);
-        infoField.setText(warning);
+        infoField.setText(trim(warning));
+        infoArea.setText(warning);
     }
 
     public void error(String error) {
         infoLabel.setIcon(ERROR_ICON);
-        infoField.setText(error);
+        infoField.setText(trim(error));
+        infoArea.setText(error);
     }
 
     @Override
@@ -225,10 +241,17 @@ public class RemoteControlWindow extends JWindow implements ActionListener, Mous
 
         if (PLAY_ACTION.equals(action)) {
             onPlay();
+            return;
         }
 
         if (STEP_ACTION.equals(action)) {
             onStep();
+            return;
+        }
+
+        if (INFO_ACTION.equals(action)) {
+            onInfo();
+            return;
         }
 
         if (PAUSE_ON_ERROR_ACTION.equals(action)) {
@@ -280,6 +303,20 @@ public class RemoteControlWindow extends JWindow implements ActionListener, Mous
             }
         }
 
+        updateState();
+    }
+
+    private void onInfo() {
+        if (infoPane.isVisible()) {
+            infoPane.setVisible(false);
+            infoButton.setIcon(DOWN_ICON);
+        }
+        else {
+            infoPane.setVisible(true);
+            infoButton.setIcon(UP_ICON);
+        }
+
+        pack();
         updateState();
     }
 
@@ -456,6 +493,28 @@ public class RemoteControlWindow extends JWindow implements ActionListener, Mous
         field.setOpaque(false);
 
         return field;
+    }
+
+    private JTextArea createTextArea() {
+        JTextArea area = new JTextArea(5, 48);
+
+        area.setEditable(false);
+        area.setLineWrap(true);
+        area.setWrapStyleWord(true);
+        area.setBackground(new Color(0xfeffcc));
+        area.setFont(new Font(Font.MONOSPACED, Font.PLAIN, 10));
+
+        return area;
+    }
+
+    private static String trim(String s) {
+        int index = s.indexOf('\n');
+
+        if (index >= 0) {
+            return s.substring(0, index) + " ...";
+        }
+
+        return s;
     }
 
     public static void main(String[] args) {
