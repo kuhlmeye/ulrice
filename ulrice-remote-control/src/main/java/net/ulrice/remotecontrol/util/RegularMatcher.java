@@ -19,7 +19,7 @@ public class RegularMatcher implements Serializable {
         Pattern pattern;
 
         try {
-            pattern = Pattern.compile(regex, Pattern.CASE_INSENSITIVE);
+            pattern = Pattern.compile(regex, Pattern.CASE_INSENSITIVE | Pattern.DOTALL);
         }
         catch (PatternSyntaxException e) {
             pattern = null;
