@@ -553,9 +553,9 @@ public abstract class ComponentMatcher implements Serializable {
     }
 
     /**
-     * Matches all components which are childs of components that match the specified matchers.
+     * Matches all components which are children of components that match the specified matchers.
      * 
-     * @param matchers the matchers, concatinated by and
+     * @param matchers the matchers, concatenated by and
      * @return the matcher
      */
     public static ComponentMatcher within(final ComponentMatcher... matchers) {
@@ -584,6 +584,43 @@ public abstract class ComponentMatcher implements Serializable {
             @Override
             public String toString() {
                 return "within[" + matcher + "]";
+            }
+
+        };
+    }
+
+    /**
+     * Contains a component that matches the specified matchers.
+     * 
+     * @param matchers the matchers, concatenated by and
+     * @return the matcher
+     */
+    public static ComponentMatcher contains(final ComponentMatcher... matchers) {
+        final ComponentMatcher matcher = and(matchers);
+
+        return new ComponentMatcher() {
+
+            private static final long serialVersionUID = 5109183117261814614L;
+
+            @Override
+            public Collection<Component> match(Collection<Component> components) throws RemoteControlException {
+                Iterator<Component> it = components.iterator();
+
+                while (it.hasNext()) {
+                    Component component = it.next();
+                    Collection<Component> children = ComponentUtils.find(matcher, component);
+
+                    if (children.size() == 0) {
+                        it.remove();
+                    }
+                }
+
+                return components;
+            }
+
+            @Override
+            public String toString() {
+                return "contains[" + matcher + "]";
             }
 
         };

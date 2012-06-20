@@ -255,6 +255,8 @@ public class ControllerRemoteControlImpl implements ControllerRemoteControl {
     private boolean closeDialogs() throws RemoteControlException {
         ComponentRemoteControl componentRC = RemoteControlCenter.get(ComponentRemoteControl.class);
 
+        componentRC.interact(click(), ComponentMatcher.like(".*Yes.*"), ofType(JButton.class),
+            within(ofType(JDialog.class), ComponentMatcher.contains(texted(".*discard changes.*"))));
         componentRC.interact(click(), ComponentMatcher.like(".*No.*"), ofType(JButton.class),
             within(ofType(JDialog.class)));
         componentRC.interact(click(), ComponentMatcher.like(".*Close.*"), ofType(JButton.class),
