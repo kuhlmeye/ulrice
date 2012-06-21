@@ -47,7 +47,7 @@ public class UTableVAFilter extends RowFilter<UTableViewAdapter, String> impleme
 
     /** The logger used by this class. */
     private static final Logger LOG = Logger.getLogger(UTableVAFilter.class.getName());
-    
+
     /** Locale for search for formatted numbers.. */
     private Locale formatLocale = Locale.getDefault();
 
@@ -98,16 +98,107 @@ public class UTableVAFilter extends RowFilter<UTableViewAdapter, String> impleme
     /**
      * @param columnModel
      */
-    private void createFilterComponents(UTableVAHeader tableHeader) {
+    private void createFilterComponents(UTableVAHeader tableHeader, int toIndex) {
         TableColumnModel columnModel = tableHeader.getColumnModel();
 
+        if (rowSorter != null) {
+            final UTableViewAdapter model = rowSorter.getModel();
+            int colCount = columnIdentifiers.size();
+            if (toIndex < model.getColumnCount()) {
+                final ColumnDefinition< ?> columnDefinition = model.getAttributeModel().getColumns().get(toIndex);
+                columnIdentifiers.add(columnDefinition.getId());
+            }
+            if (colCount == columnIdentifiers.size()) {
+                this.columnIdentifiers = new ArrayList<String>(model.getColumnCount());
+                for (int i = 0; i < model.getColumnCount(); i++) {
+                    final ColumnDefinition< ?> columnDefinition = model.getAttributeModel().getColumns().get(i);
+                    columnIdentifiers.add(columnDefinition.getId());
+                }
+            }
+
+        }
+        if (toIndex < columnModel.getColumnCount()) {
+            createFilterComponentForColumn(tableHeader, columnModel, toIndex);
+        }
+        for (int i = 0; i < columnModel.getColumnCount(); i++) {
+            createFilterComponentForColumn(tableHeader, columnModel, i);
+        }
+    }
+
+    private void createFilterComponentForColumn(UTableVAHeader tableHeader, TableColumnModel columnModel, int i) {
+        final TableColumn column = columnModel.getColumn(i);
+        final ColumnDefinition< ?> columnDefinition = (ColumnDefinition< ?>) column.getHeaderValue();
+        final FilterMode filterMode = columnDefinition.getFilterMode();
+        columnFilterModes.put(columnDefinition.getId(), filterMode);
+        if (!FilterMode.NoFilter.equals(filterMode)) {
+            final JComponent component;
+
+            switch (filterMode) {
+                case RegEx:
+                case Numeric:
+                case Percent:
+                    JTextField field = new JTextField();
+                    field.setName(columnDefinition.getId());
+                    field.getDocument().putProperty(DOCUMENT_PROPERTY_FIELD_ID, columnDefinition.getId());
+                    field.getDocument().addDocumentListener(this);
+                    component = field;
+                    break;
+
+                case Boolean:
+                    FilterComboBoxModel cbm = new FilterComboBoxModel(columnDefinition.getId());
+                    cbm.addElement(BooleanFilter.All);
+                    cbm.addElement(BooleanFilter.Yes);
+                    cbm.addElement(BooleanFilter.No);
+                    cbm.setSelectedItem(BooleanFilter.All);
+                    cbm.addListDataListener(this);
+
+                    JComboBox comboBox = new JComboBox(cbm);
+                    component = comboBox;
+                    break;
+
+                case ComboBox:
+                    FilterComboBoxModel enumCbm = new FilterComboBoxModel(columnDefinition.getId());
+                    enumCbm.addElement(BooleanFilter.All);
+                    if (columnDefinition.isUseValueRange() && columnDefinition.getValueRange() != null) {
+                        for (Object value : columnDefinition.getValueRange()) {
+                            enumCbm.addElement(value);
+                        }
+                    }
+                    else if (columnDefinition.getColumnClass().isEnum()) {
+                        for (Object enumValue : columnDefinition.getColumnClass().getEnumConstants()) {
+                            enumCbm.addElement(enumValue);
+                        }
+                    }
+
+                    enumCbm.addListDataListener(this);
+                    JComboBox enumComboBox = new JComboBox(enumCbm);
+                    component = enumComboBox;
+
+                    break;
+
+                default:
+                    component = null;
+                    break;
+            }
+
+            if (component != null) {
+                tableHeader.add(component, column.getIdentifier());
+            }
+        }
+    }
+
+    /**
+     * @param columnModel
+     */
+    private void createFilterComponents(UTableVAHeader tableHeader) {
+        TableColumnModel columnModel = tableHeader.getColumnModel();
         // TODO Totally inefficient
         if (rowSorter != null) {
             final UTableViewAdapter model = rowSorter.getModel();
             this.columnIdentifiers = new ArrayList<String>(model.getColumnCount());
             for (int i = 0; i < model.getColumnCount(); i++) {
                 final ColumnDefinition< ?> columnDefinition =
-                        (ColumnDefinition< ?>) model.getAttributeModel().getColumns().get(i);
+                        model.getAttributeModel().getColumns().get(i);
                 columnIdentifiers.add(columnDefinition.getId());
             }
         }
@@ -205,14 +296,14 @@ public class UTableVAFilter extends RowFilter<UTableViewAdapter, String> impleme
                     }
                 }
             }
-            
+
             if (element != null && element.getOriginalValue() instanceof HeaderCapable) {
                 HeaderCapable item = (HeaderCapable) element.getOriginalValue();
                 if (item.isHeader()) {
                     return true;
                 }
             }
-            
+
             UTableComponent uTableComponent = entry.getModel().getComponent();
             @SuppressWarnings("rawtypes")
             ColumnDefinition colDef = uTableComponent.getColumnById(columnId);
@@ -252,24 +343,32 @@ public class UTableVAFilter extends RowFilter<UTableViewAdapter, String> impleme
         boolean isPercentMode = false;
         if (columnFilterModes != null && columnFilterModes.containsKey(columnId)) {
             switch (columnFilterModes.get(columnId)) {
+                case Boolean:
                 case ComboBox:
                     if(comboBoxExpressionMap.containsKey(columnId)){
                         Object reference = comboBoxExpressionMap.get(columnId);
                         if(reference != null){
+                            // if (reference.getClass().isEnum()) {
+                            // if (reference.toString().equals(value)) {
+                            // return true;
+                            // }
+                            // else {
+                            // return false;
+                            // }
+                            // }
                             if(reference.equals(value)){
                                 return true;
                             }else{
                                 return false;
                             }
                         }else if(value == null){
-                            return true;    
+                            return true;
                         }else{
                             return false;
                         }
                     }
                     break;
                 case RegEx:
-                case Boolean:
                     Pattern pattern = regexExpressionMap.get(columnId);
                     if (pattern != null) {
                         if (pattern.pattern().startsWith("\\+")) {
@@ -360,7 +459,7 @@ public class UTableVAFilter extends RowFilter<UTableViewAdapter, String> impleme
 
     /**
      * Set the filter value for a column.
-     * 
+     *
      * @param columnId The identifier of the column
      * @param text The filter text.
      */
@@ -374,7 +473,7 @@ public class UTableVAFilter extends RowFilter<UTableViewAdapter, String> impleme
      */
     private void filterChanged(String columnId, String text) {
         LOG.finer("Filter changed for column-id '" + columnId + "'. Text is: " + text);
-        
+
         if(text == null || text.isEmpty()){
             regexExpressionMap.remove(columnId);
             numericPatternExpressionMap.remove(columnId);
@@ -384,7 +483,6 @@ public class UTableVAFilter extends RowFilter<UTableViewAdapter, String> impleme
             switch (columnFilterModes.get(columnId)) {
                 case NoFilter:
                     break;
-                case Boolean:
                 case RegEx: {
                     String regex = text;
                         regex = correctRegEx(regex);
@@ -400,12 +498,12 @@ public class UTableVAFilter extends RowFilter<UTableViewAdapter, String> impleme
                 }
                 case Percent:
                 case Numeric: {
-                    
+
                     // Allowed:
                     //  > -0.9
                     //  < -0.9
                     // [0.8 1.0]
-                    
+
                     String trimmedText = text.trim();
                     if (trimmedText.startsWith(">") && trimmedText.length() > 1) {
                         trimmedText = trimmedText.substring(1);
@@ -423,7 +521,7 @@ public class UTableVAFilter extends RowFilter<UTableViewAdapter, String> impleme
                         }
                     } else if (trimmedText.startsWith("<") && trimmedText.length() > 1) {
                         trimmedText = trimmedText.substring(1);
-                        
+
                         Scanner numericScanner = new Scanner(trimmedText);
                         numericScanner.useLocale(formatLocale);
 
@@ -444,16 +542,16 @@ public class UTableVAFilter extends RowFilter<UTableViewAdapter, String> impleme
                                 Double valueA = Double.parseDouble(interval[0]);
                                 Double valueB = Double.parseDouble(interval[1]);
 
-                                numericPatternExpressionMap.put(columnId, new NumericPattern(NumericPattern.Operator.Interval, valueA, valueB));   
+                                numericPatternExpressionMap.put(columnId, new NumericPattern(NumericPattern.Operator.Interval, valueA, valueB));
                             } catch(NumberFormatException e) {
                                 LOG.log(Level.FINER, "Could not get double value from " + text, e);
                             }
-                        }                                                                       
+                        }
                     } else {
 
                         Scanner numericScanner = new Scanner(trimmedText);
                         numericScanner.useLocale(formatLocale);
-                        
+
                         if(numericScanner.hasNextDouble()) {
                             try {
                                 final Double valueA = numericScanner.nextDouble();
@@ -462,9 +560,9 @@ public class UTableVAFilter extends RowFilter<UTableViewAdapter, String> impleme
                             catch (InputMismatchException e) {
                                 LOG.log(Level.FINER, "Could not get double value from " + text, e);
                             }
-                        
+
                         } else {
-                            
+
                             String regex = correctRegEx(text);
                             try {
                                 final Pattern pattern = Pattern.compile(regex, Pattern.CASE_INSENSITIVE);
@@ -472,7 +570,7 @@ public class UTableVAFilter extends RowFilter<UTableViewAdapter, String> impleme
                             }
                             catch (PatternSyntaxException e) {
                                 LOG.log(Level.FINER, "Could not compile regex: " + regex, e);
-                            }                            
+                            }
                         }
                     break;
                     }
@@ -480,7 +578,7 @@ public class UTableVAFilter extends RowFilter<UTableViewAdapter, String> impleme
             }
         }
         rowSorter.getModel().fireTableDataChanged();
-       // rowSorter.getModel().fireTableDataChanged(); //TODO: fixme notwendig da immer um einen tastendruck hinten 
+       // rowSorter.getModel().fireTableDataChanged(); //TODO: fixme notwendig da immer um einen tastendruck hinten
     }
 
     private String correctRegEx(String regex) {
@@ -493,7 +591,7 @@ public class UTableVAFilter extends RowFilter<UTableViewAdapter, String> impleme
         regex = regex.replace(".", "\\.");
         regex = regex.replace("?", ".");
         regex = regex.replace("*", ".*");
-               
+
         regex += ".*";
         return regex;
     }
@@ -504,11 +602,14 @@ public class UTableVAFilter extends RowFilter<UTableViewAdapter, String> impleme
     @Override
     public void columnAdded(TableColumnModelEvent e) {
         TableColumnModel colModel = (TableColumnModel) e.getSource();
+        int toIndex = e.getToIndex();
         if (colModel.equals(staticTableHeader.getColumnModel())) {
             createFilterComponents(staticTableHeader);
+            // createFilterComponents(staticTableHeader, toIndex);
         }
         if (colModel.equals(scrollTableHeader.getColumnModel())) {
             createFilterComponents(scrollTableHeader);
+            // createFilterComponents(scrollTableHeader, toIndex);
         }
     }
 
@@ -567,7 +668,7 @@ public class UTableVAFilter extends RowFilter<UTableViewAdapter, String> impleme
 
         FilterComboBoxModel cbModel = (FilterComboBoxModel) e.getSource();
         Object value = cbModel.getSelectedItem();
-        
+
         if(value instanceof ObjectWithPresentation< ?> && ((ObjectWithPresentation< ?>) value).getValue() == null){
             //EXSTHUB: With this we can also filter all cells with value "null"
             filterComboChanged(cbModel.columndId, null, true);
@@ -595,7 +696,7 @@ public class UTableVAFilter extends RowFilter<UTableViewAdapter, String> impleme
     private void filterComboChanged(String columndId, Object object){
         filterComboChanged(columndId, object, false);
     }
-    
+
     private void filterComboChanged(String columndId, Object value, boolean isEmptySelected) {
         if(isEmptySelected){
             comboBoxExpressionMap.put(columndId, null);
@@ -644,6 +745,7 @@ public class UTableVAFilter extends RowFilter<UTableViewAdapter, String> impleme
             }
         }
 
+        @Override
         public String toString() {
             StringBuffer buffer = new StringBuffer();
             switch (op) {
@@ -734,5 +836,5 @@ public class UTableVAFilter extends RowFilter<UTableViewAdapter, String> impleme
     public void useFormatLocale(Locale locale) {
         this.formatLocale = locale;
     }
-    
+
 }
