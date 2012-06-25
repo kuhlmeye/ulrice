@@ -1725,8 +1725,7 @@ public class TableAM implements IFAttributeModel {
                     }
                 }
             }
-        }
-
+        } else {
             if (elements != null) {
                 for (Element element : elements) {
                     if (element.getCurrentValue().equals(object)) {
@@ -1739,7 +1738,7 @@ public class TableAM implements IFAttributeModel {
                     }
                 }
             }
-
+        }
         return null;
     }
 
