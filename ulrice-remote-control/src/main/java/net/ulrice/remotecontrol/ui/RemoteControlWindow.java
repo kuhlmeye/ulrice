@@ -10,9 +10,8 @@ import java.awt.LinearGradientPaint;
 import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
-import java.awt.event.MouseMotionListener;
 import java.io.IOException;
 
 import javax.imageio.ImageIO;
@@ -34,7 +33,58 @@ import net.ulrice.remotecontrol.RemoteControlCenter;
 import net.ulrice.remotecontrol.RemoteControlException;
 import net.ulrice.remotecontrol.util.RemoteControlUtils;
 
-public class RemoteControlWindow extends JWindow implements ActionListener, MouseListener, MouseMotionListener {
+public class RemoteControlWindow extends JWindow implements ActionListener {
+
+    private static class DragListener extends MouseAdapter {
+
+        private final JWindow window;
+
+        private Point dragPoint;
+
+        public DragListener(JWindow window) {
+            super();
+
+            this.window = window;
+        }
+
+        /**
+         * {@inheritDoc}
+         * 
+         * @see java.awt.event.MouseListener#mousePressed(java.awt.event.MouseEvent)
+         */
+        @Override
+        public void mousePressed(MouseEvent e) {
+            dragPoint = (Point) e.getPoint().clone();
+        }
+
+        /**
+         * {@inheritDoc}
+         * 
+         * @see java.awt.event.MouseListener#mouseReleased(java.awt.event.MouseEvent)
+         */
+        @Override
+        public void mouseReleased(MouseEvent e) {
+            dragPoint = null;
+        }
+
+        /**
+         * {@inheritDoc}
+         * 
+         * @see java.awt.event.MouseMotionListener#mouseDragged(java.awt.event.MouseEvent)
+         */
+        @Override
+        public void mouseDragged(MouseEvent e) {
+            if (dragPoint != null) {
+                Point point = (Point) e.getPoint().clone();
+                Point location = window.getLocation();
+
+                location.x += point.x - dragPoint.x;
+                location.y += point.y - dragPoint.y;
+
+                window.setLocation(location);
+            }
+        }
+    }
 
     private static final long serialVersionUID = -3532363641302143886L;
 
@@ -86,6 +136,8 @@ public class RemoteControlWindow extends JWindow implements ActionListener, Mous
         }
     }
 
+    private final DragListener dragListener = new DragListener(this);
+
     private final JLabel gripLabel;
     private final JButton playButton;
     private final JButton stepButton;
@@ -99,8 +151,6 @@ public class RemoteControlWindow extends JWindow implements ActionListener, Mous
     private final JTextField speedField;
     private final JButton plusButton;
     private final JButton stopButton;
-
-    private Point dragPoint;
 
     public RemoteControlWindow() {
         super();
@@ -139,8 +189,8 @@ public class RemoteControlWindow extends JWindow implements ActionListener, Mous
         pauseOnErrorButton = createToggleButton(PAUSE_ON_ERROR_ICON, "Pause On Error", PAUSE_ON_ERROR_ACTION);
         infoLabel = createLabel(OK_ICON);
         infoField = createTextField("Ulrice Remote Control", 48);
-        infoField.addMouseListener(this);
-        infoField.addMouseMotionListener(this);
+        infoField.addMouseListener(dragListener);
+        infoField.addMouseMotionListener(dragListener);
         infoButton = createButton(DOWN_ICON, "Info", INFO_ACTION);
         infoArea = createTextArea();
         infoPane = new JScrollPane(infoArea);
@@ -370,90 +420,11 @@ public class RemoteControlWindow extends JWindow implements ActionListener, Mous
         return index;
     }
 
-    /**
-     * {@inheritDoc}
-     * 
-     * @see java.awt.event.MouseListener#mouseClicked(java.awt.event.MouseEvent)
-     */
-    @Override
-    public void mouseClicked(MouseEvent e) {
-        // intentionally left blank
-    }
-
-    /**
-     * {@inheritDoc}
-     * 
-     * @see java.awt.event.MouseListener#mousePressed(java.awt.event.MouseEvent)
-     */
-    @Override
-    public void mousePressed(MouseEvent e) {
-        dragPoint = (Point) e.getPoint().clone();
-    }
-
-    /**
-     * {@inheritDoc}
-     * 
-     * @see java.awt.event.MouseListener#mouseReleased(java.awt.event.MouseEvent)
-     */
-    @Override
-    public void mouseReleased(MouseEvent e) {
-        dragPoint = null;
-    }
-
-    /**
-     * {@inheritDoc}
-     * 
-     * @see java.awt.event.MouseListener#mouseEntered(java.awt.event.MouseEvent)
-     */
-    @Override
-    public void mouseEntered(MouseEvent e) {
-        // intentionally left blank
-    }
-
-    /**
-     * {@inheritDoc}
-     * 
-     * @see java.awt.event.MouseListener#mouseExited(java.awt.event.MouseEvent)
-     */
-    @Override
-    public void mouseExited(MouseEvent e) {
-        // intentionally left blank
-    }
-
-    /**
-     * {@inheritDoc}
-     * 
-     * @see java.awt.event.MouseMotionListener#mouseDragged(java.awt.event.MouseEvent)
-     */
-    @Override
-    public void mouseDragged(MouseEvent e) {
-        if (dragPoint != null) {
-            Point point = (Point) e.getPoint().clone();
-            Point location = getLocation();
-
-            location.x += point.x - dragPoint.x;
-            location.y += point.y - dragPoint.y;
-
-            // dragPoint = point;
-            setLocation(location);
-        }
-    }
-
-    /**
-     * {@inheritDoc}
-     * 
-     * @see java.awt.event.MouseMotionListener#mouseMoved(java.awt.event.MouseEvent)
-     */
-    @Override
-    public void mouseMoved(MouseEvent e) {
-        // intentionally left blank
-    }
-
     private JLabel createLabel(Icon icon) {
         JLabel label = new JLabel(icon);
 
-        label.addMouseListener(this);
-        label.addMouseMotionListener(this);
+        label.addMouseListener(dragListener);
+        label.addMouseMotionListener(dragListener);
 
         return label;
     }
@@ -499,8 +470,7 @@ public class RemoteControlWindow extends JWindow implements ActionListener, Mous
         JTextArea area = new JTextArea(5, 48);
 
         area.setEditable(false);
-        area.setLineWrap(true);
-        area.setWrapStyleWord(true);
+        area.setLineWrap(false);
         area.setBackground(new Color(0xfeffcc));
         area.setFont(new Font(Font.MONOSPACED, Font.PLAIN, 10));
 
