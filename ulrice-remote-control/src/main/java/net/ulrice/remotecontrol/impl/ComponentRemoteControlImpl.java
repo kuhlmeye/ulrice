@@ -7,7 +7,6 @@ import java.awt.Robot;
 import java.awt.Window;
 import java.util.Collection;
 
-import net.ulrice.remotecontrol.ActionMatcher;
 import net.ulrice.remotecontrol.ComponentInteraction;
 import net.ulrice.remotecontrol.ComponentMatcher;
 import net.ulrice.remotecontrol.ComponentRemoteControl;
@@ -187,8 +186,8 @@ public class ComponentRemoteControlImpl implements ComponentRemoteControl {
             });
         }
         catch (RemoteControlException e) {
-            throw new RemoteControlException(String.format("Failed to wait %,.1f s for no component to match: %s", seconds,
-                ComponentMatcher.and(matchers)), e);
+            throw new RemoteControlException(String.format("Failed to wait %,.1f s for no component to match: %s",
+                seconds, ComponentMatcher.and(matchers)), e);
         }
     }
 

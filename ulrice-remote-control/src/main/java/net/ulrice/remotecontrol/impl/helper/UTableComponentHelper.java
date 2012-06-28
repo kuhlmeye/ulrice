@@ -30,7 +30,7 @@ public class UTableComponentHelper extends AbstractJComponentHelper<UTableCompon
                 data.setHeader(column, component.getColumnByViewIndex(column).getColumnName());
             }
             catch (ArrayIndexOutOfBoundsException e) {
-                //ignore
+                // ignore
             }
         }
 
@@ -96,6 +96,61 @@ public class UTableComponentHelper extends AbstractJComponentHelper<UTableCompon
 
         return ComponentHelperRegistry.get(scrollTable.getClass()).enter(robot, scrollTable, text, row,
             column - component.getFixedColumns());
+    }
+
+    /**
+     * {@inheritDoc}
+     * 
+     * @see net.ulrice.remotecontrol.impl.helper.AbstractComponentHelper#selectAll(java.awt.Robot, java.awt.Component)
+     */
+    @Override
+    public boolean selectAll(Robot robot, final UTableComponent component) throws RemoteControlException {
+        JTable staticTable = component.getStaticTable();
+        JTable scrollTable = component.getScrollTable();
+
+        if (staticTable.getColumnCount() > 0) {
+            return ComponentHelperRegistry.get(staticTable.getClass()).selectAll(robot, staticTable);
+        }
+
+        return ComponentHelperRegistry.get(scrollTable.getClass()).selectAll(robot, scrollTable);
+    }
+
+    /**
+     * {@inheritDoc}
+     * 
+     * @see net.ulrice.remotecontrol.impl.helper.AbstractComponentHelper#selectNone(java.awt.Robot,
+     *      java.awt.Component)
+     */
+    @Override
+    public boolean selectNone(Robot robot, final UTableComponent component) throws RemoteControlException {
+        JTable staticTable = component.getStaticTable();
+        JTable scrollTable = component.getScrollTable();
+
+        if (staticTable.getColumnCount() > 0) {
+            return ComponentHelperRegistry.get(staticTable.getClass()).selectNone(robot, staticTable);
+        }
+
+        return ComponentHelperRegistry.get(scrollTable.getClass()).selectNone(robot, scrollTable);
+    }
+
+    /**
+     * {@inheritDoc}
+     * 
+     * @see net.ulrice.remotecontrol.impl.helper.AbstractComponentHelper#select(java.awt.Robot, java.awt.Component,
+     *      int, int)
+     */
+    @Override
+    public boolean select(Robot robot, final UTableComponent component, final int start, final int end)
+
+    throws RemoteControlException {
+        JTable staticTable = component.getStaticTable();
+        JTable scrollTable = component.getScrollTable();
+
+        if (staticTable.getColumnCount() > 0) {
+            return ComponentHelperRegistry.get(staticTable.getClass()).select(robot, staticTable, start, end);
+        }
+
+        return ComponentHelperRegistry.get(scrollTable.getClass()).select(robot, scrollTable, start, end);
     }
 
 }
