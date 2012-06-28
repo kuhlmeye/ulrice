@@ -1704,6 +1704,8 @@ public class TableAM implements IFAttributeModel {
 
     /**
      * Returns the Element, if an Element contains the given object, else null
+     * 
+     * TODO: RAD wir haben das else bewusst entfernt... bin mir aber nicht mehr sicher warum
      */
     public Element getElementOfObjectWithoutTempElement(Object object) {
         List<Object> key = new ArrayList<Object>(uniqueKeyColumnIds != null ? uniqueKeyColumnIds.length : 0);
