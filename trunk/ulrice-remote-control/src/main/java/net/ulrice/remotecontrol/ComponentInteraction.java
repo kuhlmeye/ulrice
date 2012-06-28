@@ -199,7 +199,7 @@ public abstract class ComponentInteraction implements Serializable {
 
             @Override
             public double duration() {
-                return RemoteControlUtils.getRobotDelay() * 3 + RemoteControlUtils.getPauseDelay();
+                return (RemoteControlUtils.getRobotDelay() * 3) + RemoteControlUtils.getPauseDelay();
             }
 
             @Override
@@ -234,7 +234,7 @@ public abstract class ComponentInteraction implements Serializable {
 
             @Override
             public double duration() {
-                return RemoteControlUtils.getRobotDelay() * 3 + RemoteControlUtils.getPauseDelay();
+                return (RemoteControlUtils.getRobotDelay() * 3) + RemoteControlUtils.getPauseDelay();
             }
 
             @Override
@@ -269,7 +269,7 @@ public abstract class ComponentInteraction implements Serializable {
 
             @Override
             public double duration() {
-                return RemoteControlUtils.getRobotDelay() * 3 + RemoteControlUtils.getPauseDelay();
+                return (RemoteControlUtils.getRobotDelay() * 3) + RemoteControlUtils.getPauseDelay();
             }
 
             @Override
@@ -304,7 +304,7 @@ public abstract class ComponentInteraction implements Serializable {
 
             @Override
             public double duration() {
-                return RemoteControlUtils.getRobotDelay() * 3 + RemoteControlUtils.getPauseDelay();
+                return (RemoteControlUtils.getRobotDelay() * 3) + RemoteControlUtils.getPauseDelay();
             }
 
             @Override
@@ -418,6 +418,67 @@ public abstract class ComponentInteraction implements Serializable {
             @Override
             public String toString() {
                 return "selectAll";
+            }
+
+        };
+    }
+    
+    public static ComponentInteraction selectNone() {
+        return new ComponentInteraction() {
+
+            private static final long serialVersionUID = 4476987761023418379L;
+
+            @Override
+            public boolean interact(Component component, Robot robot) throws RemoteControlException {
+                try {
+                    return ComponentHelperRegistry.get(component.getClass()).selectNone(robot, component);
+                }
+                finally {
+                    RemoteControlUtils.pause();
+                }
+            }
+
+            @Override
+            public double duration() {
+                return RemoteControlUtils.getPauseDelay();
+            }
+
+            @Override
+            public String toString() {
+                return "selectNone";
+            }
+
+        };
+    }
+
+    /**
+     * Performs a select from start to end (incl.).
+     * 
+     * @return the interaction
+     */
+    public static ComponentInteraction select(final int start, final int end) {
+        return new ComponentInteraction() {
+
+            private static final long serialVersionUID = 4476987761023418379L;
+
+            @Override
+            public boolean interact(Component component, Robot robot) throws RemoteControlException {
+                try {
+                    return ComponentHelperRegistry.get(component.getClass()).select(robot, component, start, end);
+                }
+                finally {
+                    RemoteControlUtils.pause();
+                }
+            }
+
+            @Override
+            public double duration() {
+                return RemoteControlUtils.getPauseDelay();
+            }
+
+            @Override
+            public String toString() {
+                return "select(" + start + ", " + end + ")";
             }
 
         };

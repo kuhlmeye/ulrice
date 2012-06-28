@@ -6,7 +6,6 @@ import javax.swing.ComboBoxModel;
 import javax.swing.JComboBox;
 
 import net.ulrice.remotecontrol.ComponentListData;
-import net.ulrice.remotecontrol.ComponentMatcher;
 import net.ulrice.remotecontrol.RemoteControlException;
 import net.ulrice.remotecontrol.util.RegularMatcher;
 import net.ulrice.remotecontrol.util.RemoteControlUtils;
@@ -48,7 +47,7 @@ public class JComboBoxHelper extends AbstractJComponentHelper<JComboBox> {
 
         for (int i = 0; i < model.getSize(); i += 1) {
             Object element = model.getElementAt(i);
-            data.addEntry( element != null ? element.toString() : null, model.getSelectedItem() == element);
+            data.addEntry(element != null ? element.toString() : null, model.getSelectedItem() == element);
         }
 
         return data;
@@ -77,7 +76,7 @@ public class JComboBoxHelper extends AbstractJComponentHelper<JComboBox> {
                         return;
                     }
                 }
-                
+
                 if (text.isEmpty()) {
                     component.setSelectedIndex(-1);
                     result.fireResult(true);

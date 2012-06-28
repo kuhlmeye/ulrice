@@ -46,7 +46,10 @@ public interface ComponentHelper<TYPE extends Component>
 
 	boolean focus(Robot robot, TYPE component) throws RemoteControlException;
 
-	boolean selectAll(Robot robot, TYPE component) throws RemoteControlException;
+    boolean selectAll(Robot robot, TYPE component) throws RemoteControlException;
 
+    boolean selectNone(Robot robot, TYPE component) throws RemoteControlException;
+
+	boolean select(Robot robot, TYPE component, int start, int end) throws RemoteControlException;
 
 }

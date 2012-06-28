@@ -4,6 +4,7 @@ import java.awt.Component;
 import java.awt.Robot;
 
 import javax.swing.JTable;
+import javax.swing.ListSelectionModel;
 import javax.swing.table.TableCellEditor;
 import javax.swing.table.TableModel;
 
@@ -41,7 +42,8 @@ public class JTableHelper extends AbstractJComponentHelper<JTable> {
                     int modelRow = component.convertRowIndexToModel(row);
                     int modelColumn = component.convertColumnIndexToModel(column);
 
-                    data.setEntry(row, column, model.getValueAt(modelRow, modelColumn), component.isCellSelected(row, column));
+                    data.setEntry(row, column, model.getValueAt(modelRow, modelColumn),
+                        component.isCellSelected(row, column));
                 }
                 catch (IndexOutOfBoundsException e) {
                     // concurrent problem
@@ -78,7 +80,8 @@ public class JTableHelper extends AbstractJComponentHelper<JTable> {
      *      java.lang.String, int, int)
      */
     @Override
-    public boolean enter(final Robot robot, final JTable component, final String text, int row, int column) throws RemoteControlException {
+    public boolean enter(final Robot robot, final JTable component, final String text, int row, int column)
+        throws RemoteControlException {
         final int finalRow = invertValue(row, component.getRowCount());
         final int finalColumn = invertValue(column, component.getColumnCount());
 
@@ -119,4 +122,37 @@ public class JTableHelper extends AbstractJComponentHelper<JTable> {
 
         return editResult;
     }
+
+    /**
+     * {@inheritDoc}
+     * 
+     * @see net.ulrice.remotecontrol.impl.helper.AbstractComponentHelper#select(java.awt.Robot, java.awt.Component,
+     *      int, int)
+     */
+    @Override
+    public boolean select(Robot robot, final JTable component, final int start, final int end)
+        throws RemoteControlException {
+        final Result<Boolean> result = new Result<Boolean>(2);
+        RemoteControlUtils.invokeInSwing(new Runnable() {
+
+            @Override
+            public void run() {
+                try {
+                    ListSelectionModel selectionModel = component.getSelectionModel();
+
+                    selectionModel.addSelectionInterval(invertValue(start, component.getRowCount()),
+                        invertValue(end, component.getRowCount()));
+
+                    result.fireResult(true);
+                }
+                catch (Exception e) {
+                    result.fireException(e);
+                }
+            }
+
+        });
+
+        return result.aquireResult();
+    }
+
 }

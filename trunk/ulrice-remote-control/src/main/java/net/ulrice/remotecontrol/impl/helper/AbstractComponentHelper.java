@@ -222,7 +222,7 @@ public abstract class AbstractComponentHelper<TYPE extends Component> implements
      * {@inheritDoc}
      */
     @Override
-    public boolean selectAll(Robot robot, TYPE component) {
+    public boolean selectAll(Robot robot, TYPE component) throws RemoteControlException {
         try {
             component.getClass().getMethod("selectAll").invoke(component);
             return true;
@@ -230,6 +230,36 @@ public abstract class AbstractComponentHelper<TYPE extends Component> implements
         catch (Exception e) {
             return false;
         }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public boolean selectNone(Robot robot, TYPE component) throws RemoteControlException {
+        try {
+            component.getClass().getMethod("clearSelection").invoke(component);
+            return true;
+        }
+        catch (Exception e) {
+            return false;
+        }
+    }
+
+    /**
+     * {@inheritDoc}
+     * 
+     * @see net.ulrice.remotecontrol.impl.helper.ComponentHelper#select(java.awt.Robot, java.awt.Component, int, int)
+     */
+    @Override
+    public boolean select(Robot robot, TYPE component, int start, int end) throws RemoteControlException {
+        boolean result = true;
+
+        for (int i = start; i <= end; i += 1) {
+            result &= click(robot, component, i, 0);
+        }
+
+        return result;
     }
 
     protected int invertValue(int value, int maximum) {
