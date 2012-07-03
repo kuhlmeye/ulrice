@@ -1,8 +1,10 @@
 package net.ulrice.options;
 
 import java.awt.BorderLayout;
+import java.awt.CardLayout;
+import java.awt.Color;
 import java.awt.Dimension;
-import java.awt.GridLayout;
+import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.List;
@@ -14,6 +16,7 @@ import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.border.BevelBorder;
+import javax.swing.border.Border;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
@@ -25,84 +28,109 @@ import net.ulrice.options.modules.IFOptionModule;
 public class OptionsDialog extends JDialog {
 
     private static final long serialVersionUID = -8292944021110980145L;
+
+    private final JList moduleList;
+    private final OptionListModel moduleListModel = new OptionListModel();
     
-    private JList moduleList = new JList();
-    private OptionListModel model = new OptionListModel();
+    private CardLayout cardLayout = new CardLayout();
+    private JPanel cardPanel = new JPanel(cardLayout);
     
-    public OptionsDialog(List<IFOptionModule> optionModules) {
+    public OptionsDialog(final List<IFOptionModule> optionModules) {
         super(Ulrice.getMainFrame().getFrame());
-        getContentPane().setLayout(new BorderLayout());
-        getContentPane().add(new JScrollPane(moduleList), BorderLayout.WEST);
+
+        setTitle(getTranslationText(TranslationUsage.Title, "Options"));
+        setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
         
-        setMinimumSize(new Dimension(550, 400));
+        final Dimension preferredSize = new Dimension(550, 400);
+        setMinimumSize(preferredSize);
+        setPreferredSize(preferredSize);
         setLocationRelativeTo(Ulrice.getMainFrame().getFrame());
 
-        Translation titleTranslation = Ulrice.getTranslationProvider().getUlriceTranslation(TranslationUsage.Title, "Options");
-        setTitle(titleTranslation.isAvailable() ? titleTranslation.getText() : titleTranslation.getKey());
-        
-        setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
+        moduleListModel.addAllModules(optionModules);
+        moduleList = createModuleList();
 
-        Translation okTranslation = Ulrice.getTranslationProvider().getUlriceTranslation(TranslationUsage.Button, "OK");
-        JButton okButton = new JButton(okTranslation.isAvailable() ? okTranslation.getText() : okTranslation.getKey());
+        getContentPane().setLayout(new BorderLayout());
+        getContentPane().add(new JScrollPane(moduleList), BorderLayout.WEST);
+        getContentPane().add(cardPanel, BorderLayout.CENTER);
+        getContentPane().add(createButtonPanel(), BorderLayout.SOUTH);
+
+        initializeOptionModules(optionModules);
+        
+        if (moduleListModel.getSize() > 0) {
+            moduleList.setSelectedIndex(0);
+        }
+    }
+    
+    private JPanel createButtonPanel() {
+        final JButton okButton = new JButton(getTranslationText(TranslationUsage.Button, "OK"));
+        okButton.setPreferredSize(new Dimension(100, 28));
         okButton.addActionListener(new ActionListener() {
-            
             @Override
             public void actionPerformed(ActionEvent e) {
-                for(int i = 0; i < model.getSize(); i++) {
-                    model.getElementAt(i).onSave();
+                for (int i = 0; i < moduleListModel.getSize(); i++) {
+                    moduleListModel.getElementAt(i).onSave();
                 }
                 dispose();
             }
         });
 
-        Translation cancelTranslation = Ulrice.getTranslationProvider().getUlriceTranslation(TranslationUsage.Button, "Cancel");
-        JButton cancelButton = new JButton(cancelTranslation.isAvailable() ? cancelTranslation.getText() : cancelTranslation.getKey());
+        final JButton cancelButton = new JButton(getTranslationText(TranslationUsage.Button, "Cancel"));
+        cancelButton.setPreferredSize(new Dimension(100, 28));
         cancelButton.addActionListener(new ActionListener() {
-            
             @Override
             public void actionPerformed(ActionEvent e) {
                 dispose();
             }
         });
-        
-        JPanel buttonPanel = new JPanel(new GridLayout(1, 2));
+
+        final JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
         buttonPanel.add(okButton);
         buttonPanel.add(cancelButton);
         buttonPanel.setBorder(BorderFactory.createBevelBorder(BevelBorder.LOWERED));
         
-        getContentPane().add(buttonPanel, BorderLayout.SOUTH);
-        
-        moduleList.setCellRenderer(new OptionsModuleRenderer());
-        moduleList.setModel(model);
-        if(optionModules != null) {
-            model.addAllModules(optionModules);
-        }
-        
-        moduleList.addListSelectionListener(new ListSelectionListener() {
+        final Border outsideBorder = BorderFactory.createMatteBorder(1, 0, 0, 0, Color.GRAY);
+        final Border insideBorder = BorderFactory.createEmptyBorder();
+        final Border buttonPanelBorder = BorderFactory.createCompoundBorder(outsideBorder, insideBorder);
+        buttonPanel.setBorder(buttonPanelBorder);
 
+        return buttonPanel;
+    }
+    
+    private String getTranslationText(final TranslationUsage usage, final String key) {
+        final Translation ranslation = Ulrice.getTranslationProvider().getUlriceTranslation(usage, key);
+        return ranslation.isAvailable() ? ranslation.getText() : ranslation.getKey();
+    }
+    
+    private JList createModuleList() {
+        final JList moduleList = new JList(moduleListModel);
+        moduleList.setCellRenderer(new OptionsModuleRenderer());
+
+        moduleList.addListSelectionListener(new ListSelectionListener() {
             @Override
             public void valueChanged(ListSelectionEvent e) {
-                if(model.getActiveModule() != null) {
-                    model.getActiveModule().onHide();
-                    getContentPane().remove(2);        
+                
+                final IFOptionModule oldActiveModule = moduleListModel.getActiveModule();
+                if (oldActiveModule != null) {
+                    oldActiveModule.onHide();
                 }
-                
-                model.setActiveModule((IFOptionModule)moduleList.getSelectedValue());
-                
-                if(model.getActiveModule() != null) {
-                    model.getActiveModule().onShow();
-                    getContentPane().add(model.getActiveModule().getView(), BorderLayout.CENTER);   
-                    getContentPane().validate();                 
+
+                moduleListModel.setActiveModule((IFOptionModule) moduleList.getSelectedValue());
+
+                final IFOptionModule newActiveModule = moduleListModel.getActiveModule();
+                if (newActiveModule != null) {
+                    newActiveModule.onShow();
+                    cardLayout.show(cardPanel, newActiveModule.getClass().getSimpleName());
                 }
             }
         });
-        
-        
-        if(optionModules != null) {
-            for (IFOptionModule optionModule : optionModules) {
-                optionModule.onInitialize();
-            }
-        }
+
+        return moduleList;
     }
 
+    private void initializeOptionModules(final List<IFOptionModule> optionModules) {
+        for (IFOptionModule optionModule : optionModules) {
+            optionModule.onInitialize();
+            cardPanel.add(optionModule.getView(), optionModule.getClass().getSimpleName());
+        }
+    }
 }
