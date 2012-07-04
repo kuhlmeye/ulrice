@@ -65,30 +65,30 @@ public class JComboBoxHelper extends AbstractJComponentHelper<JComboBox> {
         final Result<Boolean> result = new Result<Boolean>(1);
         final RegularMatcher matcher = RemoteControlUtils.toMatcher(text);
 
-        RemoteControlUtils.invokeInSwing(new Runnable() {
+        try {
+            RemoteControlUtils.invokeInSwing(new Runnable() {
 
-            @Override
-            public void run() {
-                for (int i = 0; i < component.getModel().getSize(); i += 1) {
-                    if (matcher.matches(String.valueOf(component.getModel().getElementAt(i)))) {
-                        component.setSelectedIndex(i);
+                @Override
+                public void run() {
+                    for (int i = 0; i < component.getModel().getSize(); i += 1) {
+                        if (matcher.matches(String.valueOf(component.getModel().getElementAt(i)))) {
+                            component.setSelectedIndex(i);
+                            result.fireResult(true);
+                            return;
+                        }
+                    }
+
+                    if (text.isEmpty()) {
+                        component.setSelectedIndex(-1);
                         result.fireResult(true);
                         return;
                     }
+
+                    result.fireResult(false);
                 }
 
-                if (text.isEmpty()) {
-                    component.setSelectedIndex(-1);
-                    result.fireResult(true);
-                    return;
-                }
+            });
 
-                result.fireResult(false);
-            }
-
-        });
-
-        try {
             return result.aquireResult();
         }
         catch (RemoteControlException e) {

@@ -47,24 +47,24 @@ public class JListHelper extends AbstractJComponentHelper<JList> {
         final Result<Boolean> result = new Result<Boolean>(1);
         final RegularMatcher matcher = RemoteControlUtils.toMatcher(text);
 
-        RemoteControlUtils.invokeInSwing(new Runnable() {
+        try {
+            RemoteControlUtils.invokeInSwing(new Runnable() {
 
-            @Override
-            public void run() {
-                for (int i = 0; i < component.getModel().getSize(); i += 1) {
-                    if (matcher.matches(String.valueOf(component.getModel().getElementAt(i)))) {
-                        component.setSelectedIndex(i);
-                        result.fireResult(true);
-                        return;
+                @Override
+                public void run() {
+                    for (int i = 0; i < component.getModel().getSize(); i += 1) {
+                        if (matcher.matches(String.valueOf(component.getModel().getElementAt(i)))) {
+                            component.setSelectedIndex(i);
+                            result.fireResult(true);
+                            return;
+                        }
                     }
+
+                    result.fireResult(false);
                 }
 
-                result.fireResult(false);
-            }
+            });
 
-        });
-
-        try {
             return result.aquireResult();
         }
         catch (RemoteControlException e) {

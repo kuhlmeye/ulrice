@@ -2,7 +2,6 @@ package net.ulrice.remotecontrol.util;
 
 import java.awt.AWTException;
 import java.awt.Robot;
-import java.lang.reflect.InvocationTargetException;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.concurrent.ExecutorService;
@@ -56,6 +55,16 @@ public class RemoteControlUtils {
         }
 
         return Arrays.asList(values);
+    }
+
+    /**
+     * Starts a new thread that executes the runnable. Currently uses the EXECUTOR_SERVICE, but this may change in
+     * future.
+     * 
+     * @param runnable the runnable
+     */
+    public static void invokeAsync(Runnable runnable) {
+        invokeInThread(runnable);
     }
 
     /**
@@ -122,19 +131,34 @@ public class RemoteControlUtils {
      * @param runnable the runnable
      * @throws RemoteControlException on occasion
      */
-    public static void invokeInSwing(Runnable runnable) throws RemoteControlException {
+    public static void invokeInSwing(final Runnable runnable) throws RemoteControlException {
         if (SwingUtilities.isEventDispatchThread()) {
             runnable.run();
         }
         else {
             try {
-                SwingUtilities.invokeAndWait(runnable);
+                final Result<Boolean> result = new Result<Boolean>(10);
+
+                SwingUtilities.invokeLater(new Runnable() {
+
+                    @Override
+                    public void run() {
+                        try {
+                            runnable.run();
+
+                            result.fireResult(Boolean.TRUE);
+                        }
+                        catch (Exception e) {
+                            result.fireException(e);
+                        }
+                    }
+
+                });
+
+                result.aquireResult();
             }
-            catch (InterruptedException e) {
-                throw new RemoteControlException("Invocation interrupted", e);
-            }
-            catch (InvocationTargetException e) {
-                throw new RemoteControlException("Failed to invoke", e);
+            catch (RemoteControlException e) {
+                throw new RemoteControlException("Failed to invoke in swing", e);
             }
         }
     }

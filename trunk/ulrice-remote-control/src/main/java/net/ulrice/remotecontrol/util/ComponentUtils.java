@@ -2,7 +2,6 @@ package net.ulrice.remotecontrol.util;
 
 import java.awt.Component;
 import java.awt.Container;
-import java.awt.Dialog;
 import java.awt.Frame;
 import java.awt.Point;
 import java.awt.Rectangle;
@@ -104,7 +103,9 @@ public class ComponentUtils {
      */
     public static boolean toFront(Component component) throws RemoteControlException {
         while (component != null) {
-            if ((component instanceof Window) && (!(component instanceof Dialog)) && (component.isVisible())) {
+
+            if (component instanceof Window) {
+                // if ((component instanceof Window) && (!(component instanceof Dialog)) && (component.isVisible())) {
                 final Window window = (Window) component;
 
                 if (!window.isActive()) {
@@ -152,12 +153,10 @@ public class ComponentUtils {
                             }
                         });
 
-                        try {
-                            return result.aquireResult();
-                        }
-                        catch (RemoteControlException e) {
-                            throw new RemoteControlException("Failed to bring component to front", e);
-                        }
+                        return result.aquireResult();
+                    }
+                    catch (RemoteControlException e) {
+                        throw new RemoteControlException("Failed to bring component to front", e);
                     }
                     finally {
                         window.removeWindowFocusListener(focusListener);
@@ -266,15 +265,20 @@ public class ComponentUtils {
         throws RemoteControlException {
 
         if (component instanceof JComponent) {
-            RemoteControlUtils.invokeInSwing(new Runnable() {
+            try {
+                RemoteControlUtils.invokeInSwing(new Runnable() {
 
-                @Override
-                public void run() {
-                    ((JComponent) component).scrollRectToVisible(rectangle);
+                    @Override
+                    public void run() {
+                        ((JComponent) component).scrollRectToVisible(rectangle);
 
-                    component.repaint(0);
-                }
-            });
+                        component.repaint(0);
+                    }
+                });
+            }
+            catch (RemoteControlException e) {
+                throw new RemoteControlException("Failed to scroll component", e);
+            }
         }
     }
 

@@ -70,4 +70,14 @@ public interface ActionRemoteControl {
      */
     boolean action(ActionMatcher... matchers) throws RemoteControlException;
 
+    /**
+     * Executes the action asynchronously (does not wait for result). This is necessary, e.g, 
+     * if the action opens a modal dialog.
+     * 
+     * @param matchers matchers one or more matchers, concatenated by and
+     * @return true if executed
+     * @throws RemoteControlException on occasion
+     */
+    boolean asyncAction(ActionMatcher... matchers) throws RemoteControlException;
+
 }

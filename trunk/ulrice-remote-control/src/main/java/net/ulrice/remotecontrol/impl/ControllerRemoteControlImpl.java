@@ -142,22 +142,22 @@ public class ControllerRemoteControlImpl implements ControllerRemoteControl {
         for (final ControllerState state : states) {
             final Result<Boolean> result = new Result<Boolean>(2);
 
-            RemoteControlUtils.invokeInSwing(new Runnable() {
-
-                @Override
-                public void run() {
-                    try {
-                        Ulrice.getModuleManager().activateModule(state.getController());
-                        result.fireResult(true);
-                    }
-                    catch (Exception e) {
-                        e.printStackTrace(System.err);
-                        result.fireException(e);
-                    }
-                }
-            });
-
             try {
+                RemoteControlUtils.invokeInSwing(new Runnable() {
+
+                    @Override
+                    public void run() {
+                        try {
+                            Ulrice.getModuleManager().activateModule(state.getController());
+                            result.fireResult(true);
+                        }
+                        catch (Exception e) {
+                            e.printStackTrace(System.err);
+                            result.fireException(e);
+                        }
+                    }
+                });
+
                 success &= result.aquireResult();
             }
             catch (RemoteControlException e) {
@@ -188,32 +188,32 @@ public class ControllerRemoteControlImpl implements ControllerRemoteControl {
         for (final ControllerState state : states) {
             final Result<Boolean> result = new Result<Boolean>(2);
 
-            RemoteControlUtils.invokeInSwing(new Runnable() {
-
-                @Override
-                public void run() {
-                    try {
-                        Ulrice.getModuleManager().closeController(state.getController(), new IFCloseHandler() {
-
-                            @Override
-                            public void closeSuccess() {
-                                result.fireResult(true);
-                            }
-
-                            @Override
-                            public void closeFailure() {
-                                result.fireResult(false);
-                            }
-                        });
-                    }
-                    catch (Exception e) {
-                        e.printStackTrace(System.err);
-                        result.fireException(e);
-                    }
-                }
-            });
-
             try {
+                RemoteControlUtils.invokeInSwing(new Runnable() {
+
+                    @Override
+                    public void run() {
+                        try {
+                            Ulrice.getModuleManager().closeController(state.getController(), new IFCloseHandler() {
+
+                                @Override
+                                public void closeSuccess() {
+                                    result.fireResult(true);
+                                }
+
+                                @Override
+                                public void closeFailure() {
+                                    result.fireResult(false);
+                                }
+                            });
+                        }
+                        catch (Exception e) {
+                            e.printStackTrace(System.err);
+                            result.fireException(e);
+                        }
+                    }
+                });
+
                 while (!result.testResult(0.25)) {
                     closeDialogs();
                 }
