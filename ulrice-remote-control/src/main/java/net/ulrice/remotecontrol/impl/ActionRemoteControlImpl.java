@@ -6,6 +6,8 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedHashSet;
 
+import javax.swing.SwingUtilities;
+
 import net.ulrice.Ulrice;
 import net.ulrice.module.IFController;
 import net.ulrice.module.impl.ModuleActionState;
@@ -125,6 +127,20 @@ public class ActionRemoteControlImpl implements ActionRemoteControl {
      */
     @Override
     public boolean action(ActionMatcher... matchers) throws RemoteControlException {
+        return action(false, matchers);
+    }
+
+    /**
+     * {@inheritDoc}
+     * 
+     * @see net.ulrice.remotecontrol.ActionRemoteControl#asyncAction(net.ulrice.remotecontrol.ActionMatcher[])
+     */
+    @Override
+    public boolean asyncAction(ActionMatcher... matchers) throws RemoteControlException {
+        return action(true, matchers);
+    }
+
+    private boolean action(boolean async, final ActionMatcher... matchers) throws RemoteControlException {
         IFController controller = Ulrice.getModuleManager().getCurrentController();
 
         if (controller == null) {
@@ -142,12 +158,31 @@ public class ActionRemoteControlImpl implements ActionRemoteControl {
 
         for (final ModuleActionState actionState : list) {
             if (actionState.getAction().isEnabled()) {
-                RemoteControlUtils.invokeInSwing(new Runnable() {
+                final Runnable runnable = new Runnable() {
                     @Override
                     public void run() {
                         Ulrice.getActionManager().performAction(actionState.getAction(), null);
                     }
-                });
+                };
+
+                if (async) {
+                    RemoteControlUtils.invokeAsync(new Runnable() {
+
+                        @Override
+                        public void run() {
+                            SwingUtilities.invokeLater(runnable);
+                        }
+
+                    });
+                }
+                else {
+                    try {
+                        RemoteControlUtils.invokeInSwing(runnable);
+                    }
+                    catch (RemoteControlException e) {
+                        throw new RemoteControlException("Failed to invoke action: " + and(matchers), e);
+                    }
+                }
 
                 result &= true;
             }

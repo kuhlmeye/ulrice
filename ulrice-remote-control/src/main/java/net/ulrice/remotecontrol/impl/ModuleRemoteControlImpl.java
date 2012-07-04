@@ -91,30 +91,31 @@ public class ModuleRemoteControlImpl implements ModuleRemoteControl {
 
             final Result<Boolean> result = new Result<Boolean>(10);
 
-            RemoteControlUtils.invokeInSwing(new Runnable() {
-                @Override
-                public void run() {
-                    try {
-                        Ulrice.getModuleManager().openModule(state.getUniqueId(), new ControllerProviderCallback() {
-
-                            @Override
-                            public void onFailure(ModuleInstantiationException exc) {
-                                result.fireResult(false);
-                            }
-
-                            @Override
-                            public void onControllerReady(IFController controller) {
-                                result.fireResult(true);
-                            }
-                        });
-                    }
-                    catch (Exception e) {
-                        result.fireException(e);
-                    }
-                }
-            });
-
             try {
+                RemoteControlUtils.invokeInSwing(new Runnable() {
+                    @Override
+                    public void run() {
+                        try {
+                            Ulrice.getModuleManager().openModule(state.getUniqueId(),
+                                new ControllerProviderCallback() {
+
+                                    @Override
+                                    public void onFailure(ModuleInstantiationException exc) {
+                                        result.fireResult(false);
+                                    }
+
+                                    @Override
+                                    public void onControllerReady(IFController controller) {
+                                        result.fireResult(true);
+                                    }
+                                });
+                        }
+                        catch (Exception e) {
+                            result.fireException(e);
+                        }
+                    }
+                });
+
                 success &= result.aquireResult();
             }
             catch (RemoteControlException e) {

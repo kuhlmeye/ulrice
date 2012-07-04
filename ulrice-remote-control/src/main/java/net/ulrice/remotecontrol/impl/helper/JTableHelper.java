@@ -86,38 +86,52 @@ public class JTableHelper extends AbstractJComponentHelper<JTable> {
         final int finalColumn = invertValue(column, component.getColumnCount());
 
         final Result<Boolean> result = new Result<Boolean>(2);
-        RemoteControlUtils.invokeInSwing(new Runnable() {
 
-            @Override
-            public void run() {
-                try {
-                    if (!component.editCellAt(finalRow, finalColumn)) {
-                        result.fireResult(false);
-                        return;
+        try {
+            RemoteControlUtils.invokeInSwing(new Runnable() {
+
+                @Override
+                public void run() {
+                    try {
+                        if (!component.editCellAt(finalRow, finalColumn)) {
+                            result.fireResult(false);
+                            return;
+                        }
+
+                        Component editor = component.getComponent(component.getComponentCount() - 1);
+                        result.fireResult(ComponentHelperRegistry.get(editor.getClass()).enter(robot, editor, text));
                     }
-
-                    Component editor = component.getComponent(component.getComponentCount() - 1);
-                    result.fireResult(ComponentHelperRegistry.get(editor.getClass()).enter(robot, editor, text));
+                    catch (Exception e) {
+                        result.fireException(e);
+                    }
                 }
-                catch (Exception e) {
-                    result.fireException(e);
-                }
-            }
 
-        });
+            });
+        }
+        catch (RemoteControlException e) {
+            throw new RemoteControlException(String.format("Failed to enter %s into row/column %d/%d of the table",
+                text, row, column), e);
+        }
 
         boolean editResult = result.aquireResult();
 
         final TableCellEditor cellEditor = component.getCellEditor();
 
         if (cellEditor != null) {
-            RemoteControlUtils.invokeInSwing(new Runnable() {
+            try {
+                RemoteControlUtils.invokeInSwing(new Runnable() {
 
-                @Override
-                public void run() {
-                    cellEditor.stopCellEditing();
-                }
-            });
+                    @Override
+                    public void run() {
+                        cellEditor.stopCellEditing();
+                    }
+                });
+            }
+            catch (RemoteControlException e) {
+                throw new RemoteControlException(
+                    String.format("Failed to stop editing after entering %s into row/column %d/%d of the table",
+                        text, row, column), e);
+            }
         }
 
         return editResult;
@@ -133,26 +147,34 @@ public class JTableHelper extends AbstractJComponentHelper<JTable> {
     public boolean select(Robot robot, final JTable component, final int start, final int end)
         throws RemoteControlException {
         final Result<Boolean> result = new Result<Boolean>(2);
-        RemoteControlUtils.invokeInSwing(new Runnable() {
 
-            @Override
-            public void run() {
-                try {
-                    ListSelectionModel selectionModel = component.getSelectionModel();
+        try {
+            RemoteControlUtils.invokeInSwing(new Runnable() {
 
-                    selectionModel.addSelectionInterval(invertValue(start, component.getRowCount()),
-                        invertValue(end, component.getRowCount()));
+                @Override
+                public void run() {
+                    try {
+                        ListSelectionModel selectionModel = component.getSelectionModel();
 
-                    result.fireResult(true);
+                        selectionModel.addSelectionInterval(invertValue(start, component.getRowCount()),
+                            invertValue(end, component.getRowCount()));
+
+                        result.fireResult(true);
+                    }
+                    catch (Exception e) {
+                        result.fireException(e);
+                    }
                 }
-                catch (Exception e) {
-                    result.fireException(e);
-                }
-            }
 
-        });
+            });
 
-        return result.aquireResult();
+            return result.aquireResult();
+        }
+        catch (RemoteControlException e) {
+            throw new RemoteControlException(String.format("Failed to select section %d to %d of the table", start,
+                end), e);
+        }
+
     }
 
 }

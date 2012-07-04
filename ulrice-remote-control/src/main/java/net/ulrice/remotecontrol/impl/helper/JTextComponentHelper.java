@@ -23,13 +23,19 @@ public class JTextComponentHelper extends AbstractJComponentHelper<JTextComponen
     @Override
     public boolean enter(Robot robot, final JTextComponent component, final String text)
         throws RemoteControlException {
-        RemoteControlUtils.invokeInSwing(new Runnable() {
 
-            @Override
-            public void run() {
-                component.setText(text);
-            }
-        });
+        try {
+            RemoteControlUtils.invokeInSwing(new Runnable() {
+
+                @Override
+                public void run() {
+                    component.setText(text);
+                }
+            });
+        }
+        catch (RemoteControlException e) {
+            throw new RemoteControlException(String.format("Failed to enter %s into the text component", text), e);
+        }
 
         return true;
     }
