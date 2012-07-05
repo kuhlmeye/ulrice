@@ -1886,6 +1886,15 @@ public class TableAM implements IFAttributeModel {
         element.addChildElement(child);
         // TODO RAD check if needed
         elements.remove(child);
-
     }
+    
+    public List<Element> getLeafNodes(){
+        List<Element> result = new ArrayList<Element>();
+        for(Element element : elements){
+            element.addLeafNodes(result);
+        }
+        return result;
+    }
+    
+    
 }

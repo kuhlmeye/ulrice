@@ -409,9 +409,13 @@ public class UTableViewAdapter extends AbstractViewAdapter implements TableModel
     }
     
     public List<Element> getVisibleElements(){
+        
         if(getRowSorter() != null){
            return getRowSorter().getVisibleElements();
         }else{
+            if(getAttributeModel().isForTreeTable()){
+                return getAttributeModel().getLeafNodes();
+            }
             return getAttributeModel().getElements();
         }
     }
