@@ -91,4 +91,6 @@ public class TreeTableModelAdapter extends AbstractTableModel {
         treeTableModel.setValueAt(value, nodeForRow(row), column);
         fireTableDataChanged();
     }
+
+  
 }

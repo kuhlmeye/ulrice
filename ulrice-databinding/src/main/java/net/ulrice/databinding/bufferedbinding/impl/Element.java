@@ -678,6 +678,17 @@ public class Element {
             }
         }
     }
+    
+    public void addLeafNodes(List<Element> leafNodes){
+        if(getChildCount() == 0){
+            leafNodes.add(this);
+        }else{
+            for(Element element : childElements){
+                element.addLeafNodes(leafNodes);
+            }
+        }
+        
+    }
 
     public boolean isInserted() {
         return inserted;
