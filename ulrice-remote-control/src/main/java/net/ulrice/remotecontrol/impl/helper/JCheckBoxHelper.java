@@ -19,7 +19,8 @@ public class JCheckBoxHelper extends AbstractJComponentHelper<JCheckBox> {
         final boolean currentValue = component.isSelected();
 
         if (valueToSet != currentValue) {
-            return click(robot, component);
+            component.setSelected(valueToSet);
+            return true;
         }
 
         return true;
