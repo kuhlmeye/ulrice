@@ -54,6 +54,7 @@ public class RemoteControlCenter {
     private static RemoteControlWindow remoteControlWindow;
 
     private static boolean pausing = false;
+    private static boolean pauseOnScenario = false;
     private static boolean pauseOnError = false;
     private static boolean waiting = false;
 
@@ -575,6 +576,20 @@ public class RemoteControlCenter {
     public static void setPausing(boolean pausing) {
         synchronized (SEMAPHORE) {
             RemoteControlCenter.pausing = pausing;
+
+            if (remoteControlWindow != null) {
+                remoteControlWindow.updateState();
+            }
+        }
+    }
+
+    public static boolean isPauseOnScenario() {
+        return pauseOnScenario;
+    }
+
+    public static void setPauseOnScenario(boolean pauseOnScenario) {
+        synchronized (SEMAPHORE) {
+            RemoteControlCenter.pauseOnScenario = pauseOnScenario;
 
             if (remoteControlWindow != null) {
                 remoteControlWindow.updateState();

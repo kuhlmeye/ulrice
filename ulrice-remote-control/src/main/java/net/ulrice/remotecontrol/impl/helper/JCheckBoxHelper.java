@@ -5,6 +5,7 @@ import java.awt.Robot;
 import javax.swing.JCheckBox;
 
 import net.ulrice.remotecontrol.RemoteControlException;
+import net.ulrice.remotecontrol.util.RemoteControlUtils;
 
 public class JCheckBoxHelper extends AbstractJComponentHelper<JCheckBox> {
 
@@ -19,7 +20,21 @@ public class JCheckBoxHelper extends AbstractJComponentHelper<JCheckBox> {
         final boolean currentValue = component.isSelected();
 
         if (valueToSet != currentValue) {
-            component.setSelected(valueToSet);
+            try {
+                RemoteControlUtils.invokeInSwing(new Runnable() {
+                    @Override
+                    public void run() {
+                        if (component.isSelected() != valueToSet) {
+                            component.doClick(5);
+                        }
+//                        component.setSelected(valueToSet);
+                    }
+                });
+            }
+            catch (RemoteControlException e) {
+                throw new RemoteControlException("Failed to select/deselect checkbox", e);
+            }
+
             return true;
         }
 

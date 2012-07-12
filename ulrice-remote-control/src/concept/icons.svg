@@ -1531,6 +1531,74 @@
        y1="238.54399"
        x2="147.86365"
        y2="230.27127" />
+    <linearGradient
+       inkscape:collect="always"
+       xlink:href="#linearGradient3876"
+       id="linearGradient3288"
+       gradientUnits="userSpaceOnUse"
+       x1="128"
+       y1="242.36218"
+       x2="140"
+       y2="242.36218" />
+    <linearGradient
+       inkscape:collect="always"
+       xlink:href="#linearGradient3771-7-2"
+       id="linearGradient3290"
+       gradientUnits="userSpaceOnUse"
+       gradientTransform="matrix(2.7499982,0,0,0.84615385,-238.62476,42.517259)"
+       x1="136.77274"
+       y1="232.6349"
+       x2="136.77274"
+       y2="239.1349" />
+    <linearGradient
+       inkscape:collect="always"
+       xlink:href="#linearGradient3771-7-0"
+       id="linearGradient3292"
+       gradientUnits="userSpaceOnUse"
+       gradientTransform="matrix(2.7499982,0,0,0.84615385,-249.62476,42.517262)"
+       x1="138.22728"
+       y1="233.81673"
+       x2="138.77274"
+       y2="238.54399" />
+    <linearGradient
+       inkscape:collect="always"
+       xlink:href="#linearGradient3771-7-0"
+       id="linearGradient3298"
+       gradientUnits="userSpaceOnUse"
+       gradientTransform="matrix(2.7499982,0,0,0.84615385,-245.62476,42.517262)"
+       x1="138.22728"
+       y1="233.81673"
+       x2="138.77274"
+       y2="238.54399" />
+    <linearGradient
+       inkscape:collect="always"
+       xlink:href="#linearGradient3876"
+       id="linearGradient3299"
+       gradientUnits="userSpaceOnUse"
+       x1="160"
+       y1="242.36218"
+       x2="172"
+       y2="242.36218" />
+    <linearGradient
+       inkscape:collect="always"
+       xlink:href="#linearGradient3771-7-2"
+       id="linearGradient3301"
+       gradientUnits="userSpaceOnUse"
+       gradientTransform="matrix(2.7499982,0,0,0.84615385,-212.62476,42.517259)"
+       x1="136.77274"
+       y1="232.6349"
+       x2="136.77274"
+       y2="239.72581" />
+    <linearGradient
+       inkscape:collect="always"
+       xlink:href="#linearGradient3771-7-2"
+       id="linearGradient3303"
+       gradientUnits="userSpaceOnUse"
+       gradientTransform="matrix(2.7499982,0,0,0.84615385,-207.62476,42.517259)"
+       x1="136.77274"
+       y1="232.6349"
+       x2="136.77274"
+       y2="239.72581" />
   </defs>
   <sodipodi:namedview
      id="base"
@@ -1539,16 +1607,16 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="3.9999998"
-     inkscape:cx="219.44698"
-     inkscape:cy="805.66736"
+     inkscape:zoom="11.313708"
+     inkscape:cx="178.84475"
+     inkscape:cy="798.16778"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
      showgrid="true"
-     inkscape:window-width="1280"
-     inkscape:window-height="1002"
-     inkscape:window-x="1912"
-     inkscape:window-y="86"
+     inkscape:window-width="1858"
+     inkscape:window-height="1178"
+     inkscape:window-x="-8"
+     inkscape:window-y="-8"
      inkscape:window-maximized="1">
     <inkscape:grid
        type="xygrid"
@@ -1592,29 +1660,31 @@
      inkscape:groupmode="layer"
      id="layer1">
     <g
-       id="g4101">
+       id="g4101"
+       transform="translate(-16,0)">
       <rect
          y="236.36218"
          x="112"
          height="12"
          width="12"
          id="rect3979"
-         style="color:#000000;fill:url(#linearGradient4095);fill-opacity:1.0;fill-rule:nonzero;stroke:none;stroke-width:1px;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:accumulate" />
+         style="color:#000000;fill:url(#linearGradient4095);fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:1px;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:accumulate" />
       <rect
          y="238.86218"
          x="114.5"
          height="7"
          width="7"
          id="rect3981"
-         style="color:#000000;fill:url(#linearGradient3934-1);fill-opacity:1;fill-rule:nonzero;stroke:#483737;stroke-width:0.99999994000000003px;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:accumulate;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0" />
+         style="color:#000000;fill:url(#linearGradient3934-1);fill-opacity:1;fill-rule:nonzero;stroke:#483737;stroke-width:0.99999994px;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:accumulate" />
     </g>
     <g
        id="g4105"
        inkscape:export-filename="D:\ham\w\w.o\ulrice-parent\ulrice-remote-control\src\main\resources\net\ulrice\remotecontrol\ui\step.png"
        inkscape:export-xdpi="90"
-       inkscape:export-ydpi="90">
+       inkscape:export-ydpi="90"
+       transform="translate(-16,0)">
       <rect
-         style="color:#000000;fill:url(#linearGradient4093);fill-opacity:1.0;fill-rule:nonzero;stroke:none;stroke-width:1px;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:accumulate"
+         style="color:#000000;fill:url(#linearGradient4093);fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:1px;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:accumulate"
          id="rect4016"
          width="12"
          height="12"
@@ -1626,13 +1696,13 @@
          height="9"
          width="2"
          id="rect4026"
-         style="color:#000000;fill:url(#linearGradient4072);fill-opacity:1;fill-rule:nonzero;stroke:#483737;stroke-width:0.99999994000000003px;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:accumulate" />
+         style="color:#000000;fill:url(#linearGradient4072);fill-opacity:1;fill-rule:nonzero;stroke:#483737;stroke-width:0.99999994px;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:accumulate" />
       <path
          sodipodi:nodetypes="cccc"
          inkscape:connector-curvature="0"
          id="path4028"
          d="m 129.5,237.86218 5,4.5 -5,4.5 z"
-         style="color:#000000;fill:url(#linearGradient3934-4);fill-opacity:1;fill-rule:nonzero;stroke:#483737;stroke-width:0.99999994000000003px;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:accumulate" />
+         style="color:#000000;fill:url(#linearGradient3934-4);fill-opacity:1;fill-rule:nonzero;stroke:#483737;stroke-width:0.99999994px;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:accumulate" />
     </g>
     <g
        id="g4188"
@@ -1778,7 +1848,8 @@
        id="g4829"
        inkscape:export-filename="D:\ham\w\w.o\ulrice-parent\ulrice-remote-control\src\main\resources\net\ulrice\remotecontrol\ui\grip.png"
        inkscape:export-xdpi="90"
-       inkscape:export-ydpi="90">
+       inkscape:export-ydpi="90"
+       transform="translate(-16,0)">
       <g
          transform="translate(8,2.62e-6)"
          id="g4573">
@@ -2075,6 +2146,94 @@
          id="path3282"
          d="m 201.5,244.86218 -3.5,-6 -3.5,6 z"
          style="color:#000000;fill:url(#linearGradient3287);fill-opacity:1;fill-rule:nonzero;stroke:#483737;stroke-width:0.99999994000000003px;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:accumulate" />
+    </g>
+    <g
+       inkscape:export-ydpi="90"
+       inkscape:export-xdpi="90"
+       inkscape:export-filename="E:\w\w.o\ulrice-parent\ulrice-remote-control\src\main\resources\net\ulrice\remotecontrol\ui\ff.png"
+       id="g3278">
+      <rect
+         y="236.36218"
+         x="128"
+         height="12"
+         width="12"
+         id="rect3281"
+         style="color:#000000;fill:url(#linearGradient3288);fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:1px;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:accumulate" />
+      <path
+         sodipodi:nodetypes="cccc"
+         inkscape:connector-curvature="0"
+         id="path3294"
+         d="m 133.5,237.86218 5,4.5 -5,4.5 z"
+         style="color:#000000;fill:url(#linearGradient3298);fill-opacity:1;fill-rule:nonzero;stroke:#483737;stroke-width:0.99999994px;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:accumulate" />
+      <path
+         style="color:#000000;fill:url(#linearGradient3292);fill-opacity:1;fill-rule:nonzero;stroke:#483737;stroke-width:0.99999994px;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:accumulate"
+         d="m 129.5,237.86218 5,4.5 -5,4.5 z"
+         id="path3285"
+         inkscape:connector-curvature="0"
+         sodipodi:nodetypes="cccc" />
+    </g>
+    <g
+       id="g4081"
+       inkscape:export-filename="E:\w\w.o\ulrice-parent\ulrice-remote-control\src\main\resources\net\ulrice\remotecontrol\ui\pauseOnScenario.png"
+       inkscape:export-xdpi="90"
+       inkscape:export-ydpi="90">
+      <g
+         transform="translate(16,0)"
+         id="g3285"
+         inkscape:export-filename="D:\ham\w\w.o\ulrice-parent\ulrice-remote-control\src\main\resources\net\ulrice\remotecontrol\ui\pauseOnError.png"
+         inkscape:export-xdpi="90"
+         inkscape:export-ydpi="90">
+        <g
+           transform="translate(0,16)"
+           id="g3287"
+           inkscape:export-filename="D:\ham\w\w.o\ulrice-parent\ulrice-remote-control\src\main\resources\net\ulrice\remotecontrol\ui\pause.png"
+           inkscape:export-xdpi="90"
+           inkscape:export-ydpi="90">
+          <rect
+             style="color:#000000;fill:url(#linearGradient3299);fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:1px;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:accumulate"
+             id="rect3289"
+             width="12"
+             height="12"
+             x="160"
+             y="236.36218" />
+          <rect
+             style="color:#000000;fill:url(#linearGradient3301);fill-opacity:1;fill-rule:nonzero;stroke:#483737;stroke-width:0.99999994px;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:accumulate"
+             id="rect3291"
+             width="2"
+             height="9"
+             x="162.5"
+             y="237.86218" />
+          <rect
+             y="237.86218"
+             x="167.5"
+             height="9"
+             width="2"
+             id="rect3293"
+             style="color:#000000;fill:url(#linearGradient3303);fill-opacity:1;fill-rule:nonzero;stroke:#483737;stroke-width:0.99999994px;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:accumulate" />
+        </g>
+      </g>
+      <path
+         d="m 187.5,260.36218 a 3.5,3.5 0 1 1 -7,0 3.5,3.5 0 1 1 7,0 z"
+         sodipodi:ry="3.5"
+         sodipodi:rx="3.5"
+         sodipodi:cy="260.36218"
+         sodipodi:cx="184"
+         id="path3307"
+         style="color:#000000;fill:#ffeeaa;fill-opacity:1;fill-rule:nonzero;stroke:#d4aa00;stroke-width:1;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:accumulate;stroke-miterlimit:4;stroke-dasharray:none;stroke-linejoin:round;stroke-linecap:round"
+         sodipodi:type="arc" />
+      <text
+         transform="scale(1.1363916,0.87997835)"
+         sodipodi:linespacing="125%"
+         id="text4077"
+         y="299.15768"
+         x="158.9343"
+         style="font-size:9.13910484px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Sans"
+         xml:space="preserve"><tspan
+           style="font-weight:bold;-inkscape-font-specification:Sans Bold"
+           y="299.15768"
+           x="158.9343"
+           id="tspan4079"
+           sodipodi:role="line">S</tspan></text>
     </g>
   </g>
 </svg>
