@@ -2,73 +2,58 @@ package net.ulrice.ui.components;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
-import java.awt.Component;
 import java.awt.Dimension;
+import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.util.Locale;
 import java.util.Map;
 
 import javax.swing.BorderFactory;
-import javax.swing.DefaultComboBoxModel;
-import javax.swing.JButton;
-import javax.swing.JComboBox;
 import javax.swing.JLabel;
-import javax.swing.JList;
+import javax.swing.JMenuItem;
 import javax.swing.JPanel;
+import javax.swing.JPopupMenu;
 import javax.swing.JTextField;
-import javax.swing.ListCellRenderer;
 import javax.swing.UIManager;
 import javax.swing.border.EmptyBorder;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
-import javax.swing.plaf.basic.BasicComboBoxUI;
-import javax.swing.text.AbstractDocument;
-import javax.swing.text.AttributeSet;
-import javax.swing.text.BadLocationException;
-import javax.swing.text.Element;
-import javax.swing.text.PlainDocument;
 
 public class I18nTextField extends JPanel {
 
-	private static final long serialVersionUID = -1243667807674531792L;
+	private static final long serialVersionUID = 1L;
 
-	private JComboBox<Locale> localeSelector;
-	private DefaultComboBoxModel<Locale> localeSelectorModel = new DefaultComboBoxModel<Locale>();
+	private DocumentListener documentListener = new DocumentListener() {
+		
+		@Override
+		public void removeUpdate(DocumentEvent e) {
+			updateTextMap();
+		}
+		
+		@Override
+		public void insertUpdate(DocumentEvent e) {
+			updateTextMap();
+		}
+		
+		@Override
+		public void changedUpdate(DocumentEvent e) {
+			updateTextMap();
+		}
+	};
+	
+	private LocaleSelector localeSelector = new LocaleSelector();
 	
 	private JTextField textField;
-
+	
 	private Map<Locale, String> valueMap;
 
 	public I18nTextField() {
-		super(new BorderLayout());
-		
-		localeSelector = new JComboBox<Locale>(localeSelectorModel);
-		localeSelector.setUI(new BasicComboBoxUI() {
-		    @Override
-		    protected JButton createArrowButton() {
-		        return new JButton() {
-					private static final long serialVersionUID = 1L;
-
-					@Override
-	                public int getWidth() {
-	                        return 0;
-	                }
-		        };
-		    }
-		});
-		localeSelector.setRenderer(new ListCellRenderer<Locale>() {
-			
-			private JLabel label = new JLabel();
-
-			@Override
-			public Component getListCellRendererComponent(JList<? extends Locale> list, Locale value, int index, boolean isSelected, boolean cellHasFocus) {
-				label.setText(value.getCountry() + " " + value.getLanguage());
-				return label;
-			}
-			
-		});
-		localeSelector.addActionListener(new ActionListener() {
+		super(new BorderLayout(2, 2));
+	
+		localeSelector.setActionListener(new ActionListener() {
 			
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -101,23 +86,7 @@ public class I18nTextField extends JPanel {
 				}
 			};
 		};
-		textField.getDocument().addDocumentListener(new DocumentListener() {
-			
-			@Override
-			public void removeUpdate(DocumentEvent e) {
-				updateTextMap();
-			}
-			
-			@Override
-			public void insertUpdate(DocumentEvent e) {
-				updateTextMap();
-			}
-			
-			@Override
-			public void changedUpdate(DocumentEvent e) {
-				updateTextMap();
-			}
-		});
+		textField.getDocument().addDocumentListener(documentListener);
 
 		textField.setBorder(BorderFactory.createEmptyBorder());
 		textField.setOpaque(false);
@@ -126,26 +95,26 @@ public class I18nTextField extends JPanel {
 	}
 
 	private void updateTextField() {
-		if(valueMap != null && valueMap.containsKey(localeSelectorModel.getSelectedItem())) {
-			textField.setText(valueMap.get(localeSelectorModel.getSelectedItem()));
-		} else {
-			textField.setText(null);
+		try {
+			textField.getDocument().removeDocumentListener(documentListener);
+			Locale locale = getSelectedLocale();
+			if(valueMap != null && valueMap.containsKey(locale)) {
+				String text = valueMap.get(locale);
+				textField.setText(text);
+				textField.setCaretPosition(text == null ? 0 : text.length());
+			} else {
+				textField.setText(null);
+			}
+		} finally {
+			textField.getDocument().addDocumentListener(documentListener);
 		}
 	}
 	
 	private void updateTextMap() {
-		Locale locale = getLocale();
+		Locale locale = getSelectedLocale();
 		if(locale != null) {
 			valueMap.put(locale, textField.getText());
 		}
-	}
-
-	protected JComboBox<Locale> getSelector() {
-		return localeSelector;
-	}
-
-	protected JTextField getSearchField() {
-		return textField;
 	}
 
 	public void updateUI() {
@@ -165,22 +134,20 @@ public class I18nTextField extends JPanel {
 		setBorder(BorderFactory.createCompoundBorder(BorderFactory.createLineBorder(getForeground()), new EmptyBorder(0, 0, 0, 0)));
 	}
 
-	public void setAvailableLocales(Locale... locales) {
-		if(locales != null) {
-			for(Locale locale : locales) {
-				localeSelectorModel.addElement(locale);
+	public void setAvailableLocales(LocaleSelectorItem... localeItems) {
+		if(localeItems != null) {
+			if(localeItems.length > 0) {
+				localeSelector.setSelectedLocale(localeItems[0]);
+				updateTextField();
 			}
-			updateTextField();
+			for(LocaleSelectorItem localeItem : localeItems) {
+				localeSelector.addLocale(localeItem);
+			}
 		}
 	}
 	
-	public void setSelectedLocale(Locale locale) {
-		localeSelectorModel.setSelectedItem(locale);
-		updateTextField();
-	}
-	
 	public Locale getSelectedLocale() {
-		return (Locale) localeSelectorModel.getSelectedItem();
+		return (Locale) localeSelector.getSelectedLocale();
 	}
 	
 	public void setData(Map<Locale, String> valueMap) {
@@ -190,5 +157,75 @@ public class I18nTextField extends JPanel {
 	
 	public Map<Locale, String> getData() {
 		return valueMap;
+	}
+	
+	private class LocaleSelector extends JLabel {
+
+	    private static final long serialVersionUID = 1L;
+
+	    private JPopupMenu dropDownMenu = new JPopupMenu();    
+	    private Locale selectedLocale = null;
+	    
+	    private ActionListener listener = null;	    	    
+
+	    public LocaleSelector() {
+	        super();
+	        
+	        
+	        setBorder(new EmptyBorder(1, 1, 1, 1));
+	        setOpaque(false);
+
+	        addMouseListener(new MouseAdapter() {
+	            
+	            @Override
+	            public void mouseClicked(MouseEvent e) {
+	                if (LocaleSelector.this.dropDownMenu == null) {
+	                    return;
+	                }
+	                if (!dropDownMenu.isVisible()) {
+	                    Point p = LocaleSelector.this.getLocationOnScreen();
+	                    dropDownMenu.setLocation((int) p.getX(), (int) p.getY() + LocaleSelector.this.getHeight());
+	                    dropDownMenu.setVisible(true);
+	                }
+	                else {
+	                    dropDownMenu.setVisible(false);                    
+	                }
+	            }
+	        });        
+	    }
+
+		public void setSelectedLocale(LocaleSelectorItem localeItem) {
+            selectedLocale = localeItem.getLocale();
+            if(localeItem.getIcon() != null) {
+            	setIcon(localeItem.getIcon());
+            	setToolTipText(localeItem.getText());
+            } else {
+            	setText(localeItem.getText());
+            }
+		}
+
+		public void setActionListener(ActionListener listener) {
+	    	this.listener = listener;
+	    }
+
+	    public Locale getSelectedLocale() {
+	        return selectedLocale;
+	    }
+	    
+	    /**
+	     * Add a search provider to the list of selectable search providers
+	     */
+	    public void addLocale(final LocaleSelectorItem localeItem) {
+	        final JMenuItem menuItem = new JMenuItem(localeItem.getText(), localeItem.getIcon());
+	        menuItem.addActionListener(new ActionListener() {
+
+	            public void actionPerformed(ActionEvent e) {
+	                dropDownMenu.setVisible(false);
+	                setSelectedLocale(localeItem);
+	                listener.actionPerformed(e);
+	            }
+	        });     
+	        dropDownMenu.add(menuItem);
+	    }
 	}
 }
