@@ -5,15 +5,16 @@ import java.awt.Color;
 import java.awt.Dimension;
 
 import javax.swing.BorderFactory;
-import javax.swing.JTextField;
+import javax.swing.JScrollPane;
+import javax.swing.JTextArea;
 import javax.swing.UIManager;
 
-public class I18nTextField extends I18nTextComponent {
+public class I18nTextArea extends I18nTextComponent {
 
 	private static final long serialVersionUID = 1L;
 
-	public I18nTextField() {
-		super(new JTextField() {
+	public I18nTextArea() {
+		super(new JTextArea() {
 			private static final long serialVersionUID = 5152597750522473770L;
 
 			public void updateUI() {
@@ -38,10 +39,11 @@ public class I18nTextField extends I18nTextComponent {
 				}
 			};
 		});
-	
+		
+		getLocaleSelector().setShowTextAndIcon(true);
 		getTextComponent().setBorder(BorderFactory.createEmptyBorder());
 		getTextComponent().setOpaque(false);
-		add(getLocaleSelector(), BorderLayout.WEST);
-		add(getTextComponent(), BorderLayout.CENTER);
+		add(getLocaleSelector(), BorderLayout.NORTH);
+		add(new JScrollPane(getTextComponent()), BorderLayout.CENTER);
 	}
 }
