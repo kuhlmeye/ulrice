@@ -16,8 +16,6 @@ import net.ulrice.databinding.UlriceDatabinding;
 import net.ulrice.databinding.bufferedbinding.IFAttributeInfo;
 import net.ulrice.databinding.bufferedbinding.IFAttributeModel;
 import net.ulrice.databinding.bufferedbinding.IFAttributeModelEventListener;
-import net.ulrice.databinding.bufferedbinding.IFBindingGroup;
-import net.ulrice.databinding.bufferedbinding.IFBindingGroupEventListener;
 import net.ulrice.databinding.converter.IFValueConverter;
 import net.ulrice.databinding.converter.impl.DoNothingConverter;
 import net.ulrice.databinding.modelaccess.IFModelValueAccessor;
@@ -26,6 +24,8 @@ import net.ulrice.databinding.validation.ValidationError;
 import net.ulrice.databinding.validation.ValidationResult;
 import net.ulrice.databinding.viewadapter.IFViewAdapter;
 import net.ulrice.databinding.viewadapter.IFViewChangeListener;
+import net.ulrice.databinding.viewadapter.impl.I18nTextComponentViewAdapter;
+import net.ulrice.ui.components.LocaleSelectorItem;
 
 public class I18nTextAM implements IFAttributeModel<Map<Locale, String>>, IFViewChangeListener {
 
@@ -34,6 +34,7 @@ public class I18nTextAM implements IFAttributeModel<Map<Locale, String>>, IFView
 	private IFAttributeInfo attributeInfo;
 	private boolean readOnly;
 	private IFModelValueAccessor modelAccessor;
+	
 
 	private List<IFViewAdapter> viewAdapterList = new ArrayList<IFViewAdapter>();
 
@@ -42,6 +43,7 @@ public class I18nTextAM implements IFAttributeModel<Map<Locale, String>>, IFView
 	private List<IFValidator<Map<Locale, String>>> validators = new ArrayList<IFValidator<Map<Locale, String>>>();
 	private List<ValidationError> externalValidationErrors = new LinkedList<ValidationError>();
 	private IFValueConverter valueConverter;
+	private LocaleSelectorItem[] localeItems = new LocaleSelectorItem[0];
 
 	public I18nTextAM(IFModelValueAccessor modelAccessor, IFAttributeInfo attributeInfo) {
 		this.modelAccessor = modelAccessor;
@@ -54,6 +56,22 @@ public class I18nTextAM implements IFAttributeModel<Map<Locale, String>>, IFView
 		this.id = id;
 		this.attributeInfo = attributeInfo;
 		this.readOnly = readOnly;
+	}
+	
+	public void setAvailableLocales(LocaleSelectorItem... localeItems) {
+		if(localeItems == null) {
+			throw new IllegalArgumentException("LocaleItems must not be null.");
+		}
+		
+		this.localeItems = localeItems;
+		if(viewAdapterList != null) {
+			for(@SuppressWarnings("rawtypes") IFViewAdapter viewAdapter : viewAdapterList) {
+				if(viewAdapter instanceof I18nTextComponentViewAdapter) {
+					I18nTextComponentViewAdapter i18nVA = (I18nTextComponentViewAdapter) viewAdapter;
+					i18nVA.getComponent().setAvailableLocales(localeItems);
+				}
+			}
+		}		
 	}
 
 	public I18nTextAM(String id) {
@@ -88,6 +106,11 @@ public class I18nTextAM implements IFAttributeModel<Map<Locale, String>>, IFView
 	@Override
 	public void addViewAdapter(IFViewAdapter viewAdapter) {
 		Class<?> modelType = null;
+		
+		if(viewAdapter instanceof I18nTextComponentViewAdapter) {
+			I18nTextComponentViewAdapter i18nVA = (I18nTextComponentViewAdapter) viewAdapter;
+			i18nVA.getComponent().setAvailableLocales(localeItems);
+		}
 
 		if (getValueConverter() != null) {
 			modelType = getValueConverter().getViewType(modelType);
@@ -137,13 +160,14 @@ public class I18nTextAM implements IFAttributeModel<Map<Locale, String>>, IFView
 		modelMap.clear();
 		modelGroup.clear();
 		if (dataMap != null) {
-			for (Entry<Locale, String> entry : dataMap.entrySet()) {
-				GenericAM<String> model = new GenericAM<String>(id + entry.getKey().toString());
-				model.directRead(entry.getValue());
-				modelMap.put(entry.getKey(), model);
+			for(LocaleSelectorItem localeItem : localeItems) {
+				GenericAM<String> model = new GenericAM<String>(id + localeItem.getLocale().toString());
+				if(dataMap.containsKey(localeItem.getLocale())) {
+					model.directRead(dataMap.get(localeItem.getLocale()));
+				}
+				modelMap.put(localeItem.getLocale(), model);
 				modelGroup.addAttributeModel(model);
 				
-
 				model.addAttributeModelEventListener(new IFAttributeModelEventListener<String>() {
 
 					@Override
@@ -197,9 +221,16 @@ public class I18nTextAM implements IFAttributeModel<Map<Locale, String>>, IFView
 
 	public Map<Locale, String> directWrite() {
 		Map<Locale, String> result = new HashMap<Locale, String>();
-		for (Entry<Locale, GenericAM<String>> entry : modelMap.entrySet()) {
-			result.put(entry.getKey(), entry.getValue().directWrite());
-		}
+		for(LocaleSelectorItem localeItem : localeItems) {
+			if(modelMap.containsKey(localeItem.getLocale())) {
+				String value = modelMap.get(localeItem.getLocale()).directWrite();
+				if(value != null || "".equals(value)) {
+					result.put(localeItem.getLocale(), value);
+				} else {
+					result.remove(localeItem.getLocale());
+				}
+			}
+		}		
 
 		return result;
 	}
