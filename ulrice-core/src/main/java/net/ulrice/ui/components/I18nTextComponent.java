@@ -215,4 +215,20 @@ public class I18nTextComponent extends JPanel {
 			this.showTextAndIcon = showTextAndIcon;
 		}
 	}
+
+	public void addDocumentListener(DocumentListener documentListener) {
+		getTextComponent().getDocument().addDocumentListener(documentListener);
+	}
+
+	public void removeDocumentListener(DocumentListener documentListener) {
+		getTextComponent().getDocument().removeDocumentListener(documentListener);
+	}
+
+	public void setEditable(boolean editable) {
+		getTextComponent().setEditable(editable);
+	}
+
+	public boolean isEditable() {
+		return getTextComponent().isEditable();
+	}
 }
