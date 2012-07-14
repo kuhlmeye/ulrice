@@ -24,9 +24,8 @@ public class I18nTextComponentViewAdapter extends AbstractViewAdapter implements
 	private I18nTextComponent textComponent;
 	private boolean enableSelectionIfComponentDisabled = false;
 
-	public I18nTextComponentViewAdapter(I18nTextComponent textComponent) {
-	    
-		super(String.class);
+	public I18nTextComponentViewAdapter(I18nTextComponent textComponent) {	    
+		super(Map.class);
 		
 		this.enableSelectionIfComponentDisabled = BindingUI.getBoolean(BindingUI.MARKABLE_DURING_DISABLED_STATE, Boolean.FALSE);
 
