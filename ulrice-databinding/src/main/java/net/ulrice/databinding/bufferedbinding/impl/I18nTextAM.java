@@ -172,7 +172,8 @@ public class I18nTextAM implements IFAttributeModel<Map<Locale, String>>, IFView
 			for(LocaleSelectorItem localeItem : localeItems) {
 				GenericAM<String> model = new GenericAM<String>(id + localeItem.getLocale().toString());
 				if(dataMap.containsKey(localeItem.getLocale())) {
-					model.directRead(dataMap.get(localeItem.getLocale()));
+					String value = dataMap.get(localeItem.getLocale());					
+					model.directRead(value != null ? value : "");
 				}
 				modelMap.put(localeItem.getLocale(), model);
 				
@@ -339,8 +340,12 @@ public class I18nTextAM implements IFAttributeModel<Map<Locale, String>>, IFView
     private void setCurrentValueIntern(Map<Locale, String> value) {
     	initialized = true;
         clearExternalValidationErrors();
-		for (Entry<Locale, GenericAM<String>> entry : modelMap.entrySet()) {
-			entry.getValue().setCurrentValue(value.get(entry.getKey()));
+        
+		for(LocaleSelectorItem localeItem : localeItems) {
+			String textValue = value.get(localeItem.getLocale());
+			if(modelMap.containsKey(localeItem.getLocale())) {
+				modelMap.get(localeItem.getLocale()).setCurrentValue(textValue);
+			}
 		}
     }
     
