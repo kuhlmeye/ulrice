@@ -294,4 +294,15 @@ public class BindingGroup extends AbstractBindingGroup {
     public void removeAttributeModel(String id) {
         amMap.remove(id);
     }
+
+	public void clear() {
+		amMap.clear();
+		vaMap.clear();
+		changedSet.clear();
+		invalidSet.clear();
+
+        initialized = false;
+        valid = true;
+        dirty = false;
+	}
 }
