@@ -34,12 +34,11 @@ public class I18nTextAM implements IFAttributeModel<Map<Locale, String>>, IFView
 	private IFAttributeInfo attributeInfo;
 	private boolean readOnly;
 	private IFModelValueAccessor modelAccessor;
-	
+	private boolean initialized = false;
 
 	private List<IFViewAdapter> viewAdapterList = new ArrayList<IFViewAdapter>();
 
 	private Map<Locale, GenericAM<String>> modelMap = new HashMap<Locale, GenericAM<String>>();
-	private BindingGroup modelGroup = new BindingGroup();
 	private List<IFValidator<Map<Locale, String>>> validators = new ArrayList<IFValidator<Map<Locale, String>>>();
 	private List<ValidationError> externalValidationErrors = new LinkedList<ValidationError>();
 	private IFValueConverter valueConverter;
@@ -90,17 +89,27 @@ public class I18nTextAM implements IFAttributeModel<Map<Locale, String>>, IFView
 
 	@Override
 	public boolean isDirty() {
-		return modelGroup.isDirty();
+		for(GenericAM<String> model : modelMap.values()) {
+			if(model.isDirty()) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 	@Override
 	public boolean isValid() {
-		return modelGroup.isValid();
+		for(GenericAM<String> model : modelMap.values()) {
+			if(!model.isValid()) {
+				return false;
+			}
+		}
+		return true;
 	}
 
 	@Override
 	public boolean isInitialized() {
-		return modelGroup.isInitialized();
+		return initialized;
 	}
 
 	@Override
@@ -158,15 +167,14 @@ public class I18nTextAM implements IFAttributeModel<Map<Locale, String>>, IFView
 
 	public void directRead(Map<Locale, String> dataMap) {
 		modelMap.clear();
-		modelGroup.clear();
 		if (dataMap != null) {
+			initialized = true;
 			for(LocaleSelectorItem localeItem : localeItems) {
 				GenericAM<String> model = new GenericAM<String>(id + localeItem.getLocale().toString());
 				if(dataMap.containsKey(localeItem.getLocale())) {
 					model.directRead(dataMap.get(localeItem.getLocale()));
 				}
 				modelMap.put(localeItem.getLocale(), model);
-				modelGroup.addAttributeModel(model);
 				
 				model.addAttributeModelEventListener(new IFAttributeModelEventListener<String>() {
 
@@ -329,6 +337,7 @@ public class I18nTextAM implements IFAttributeModel<Map<Locale, String>>, IFView
 	}
 	
     private void setCurrentValueIntern(Map<Locale, String> value) {
+    	initialized = true;
         clearExternalValidationErrors();
 		for (Entry<Locale, GenericAM<String>> entry : modelMap.entrySet()) {
 			entry.getValue().setCurrentValue(value.get(entry.getKey()));
