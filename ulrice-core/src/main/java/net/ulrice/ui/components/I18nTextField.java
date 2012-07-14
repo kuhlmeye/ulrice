@@ -20,7 +20,14 @@ import javax.swing.JTextField;
 import javax.swing.ListCellRenderer;
 import javax.swing.UIManager;
 import javax.swing.border.EmptyBorder;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 import javax.swing.plaf.basic.BasicComboBoxUI;
+import javax.swing.text.AbstractDocument;
+import javax.swing.text.AttributeSet;
+import javax.swing.text.BadLocationException;
+import javax.swing.text.Element;
+import javax.swing.text.PlainDocument;
 
 public class I18nTextField extends JPanel {
 
@@ -41,14 +48,15 @@ public class I18nTextField extends JPanel {
 		    @Override
 		    protected JButton createArrowButton() {
 		        return new JButton() {
-		                @Override
-		                public int getWidth() {
-		                        return 0;
-		                }
+					private static final long serialVersionUID = 1L;
+
+					@Override
+	                public int getWidth() {
+	                        return 0;
+	                }
 		        };
 		    }
 		});
-		
 		localeSelector.setRenderer(new ListCellRenderer<Locale>() {
 			
 			private JLabel label = new JLabel();
@@ -64,7 +72,7 @@ public class I18nTextField extends JPanel {
 			
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				updateText();
+				updateTextField();
 			}
 		});
 		
@@ -93,6 +101,23 @@ public class I18nTextField extends JPanel {
 				}
 			};
 		};
+		textField.getDocument().addDocumentListener(new DocumentListener() {
+			
+			@Override
+			public void removeUpdate(DocumentEvent e) {
+				updateTextMap();
+			}
+			
+			@Override
+			public void insertUpdate(DocumentEvent e) {
+				updateTextMap();
+			}
+			
+			@Override
+			public void changedUpdate(DocumentEvent e) {
+				updateTextMap();
+			}
+		});
 
 		textField.setBorder(BorderFactory.createEmptyBorder());
 		textField.setOpaque(false);
@@ -100,11 +125,18 @@ public class I18nTextField extends JPanel {
 		add(textField, BorderLayout.CENTER);
 	}
 
-	private void updateText() {
+	private void updateTextField() {
 		if(valueMap != null && valueMap.containsKey(localeSelectorModel.getSelectedItem())) {
 			textField.setText(valueMap.get(localeSelectorModel.getSelectedItem()));
 		} else {
 			textField.setText(null);
+		}
+	}
+	
+	private void updateTextMap() {
+		Locale locale = getLocale();
+		if(locale != null) {
+			valueMap.put(locale, textField.getText());
 		}
 	}
 
@@ -138,12 +170,25 @@ public class I18nTextField extends JPanel {
 			for(Locale locale : locales) {
 				localeSelectorModel.addElement(locale);
 			}
-			updateText();
+			updateTextField();
 		}
 	}
-
+	
+	public void setSelectedLocale(Locale locale) {
+		localeSelectorModel.setSelectedItem(locale);
+		updateTextField();
+	}
+	
+	public Locale getSelectedLocale() {
+		return (Locale) localeSelectorModel.getSelectedItem();
+	}
+	
 	public void setData(Map<Locale, String> valueMap) {
 		this.valueMap = valueMap;
-		updateText();
+		updateTextField();
 	};
+	
+	public Map<Locale, String> getData() {
+		return valueMap;
+	}
 }
