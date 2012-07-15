@@ -7,7 +7,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.Map.Entry;
 
 import javax.swing.SwingUtilities;
 import javax.swing.event.EventListenerList;
@@ -29,26 +28,39 @@ import net.ulrice.ui.components.LocaleSelectorItem;
 
 public class I18nTextAM implements IFAttributeModel<Map<Locale, String>>, IFViewChangeListener {
 
-	protected EventListenerList listenerList = new EventListenerList();
 	private String id;
+	@SuppressWarnings("rawtypes")
+	private IFModelValueAccessor modelAccessor;
 	private IFAttributeInfo attributeInfo;
 	private boolean readOnly;
-	private IFModelValueAccessor modelAccessor;
-	private boolean initialized = false;
+	
+    private List<IFValidator<Map<Locale, String>>> validators = new ArrayList<IFValidator<Map<Locale, String>>>();
+	private List<IFViewAdapter<Map<Locale, String>, ?>> viewAdapterList = new ArrayList<IFViewAdapter<Map<Locale, String>, ?>>();
 
-	private List<IFViewAdapter> viewAdapterList = new ArrayList<IFViewAdapter>();
+    private EventListenerList listenerList = new EventListenerList();
 
-	private Map<Locale, GenericAM<String>> modelMap = new HashMap<Locale, GenericAM<String>>();
-	private List<IFValidator<Map<Locale, String>>> validators = new ArrayList<IFValidator<Map<Locale, String>>>();
-	private List<ValidationError> externalValidationErrors = new LinkedList<ValidationError>();
+    private LocaleSelectorItem[] localeItems = new LocaleSelectorItem[0];
+
+    @SuppressWarnings("rawtypes")
 	private IFValueConverter valueConverter;
-	private LocaleSelectorItem[] localeItems = new LocaleSelectorItem[0];
+	
+    private List<ValidationError> externalValidationErrors = new LinkedList<ValidationError>();
+   
+	private Map<Locale, String> originalValue;
+	private Map<Locale, String> currentValue;
+	
+	private boolean initialized = false;
+	private boolean dirty = false;
+	private boolean valid = true;
 
-	public I18nTextAM(IFModelValueAccessor modelAccessor, IFAttributeInfo attributeInfo) {
+	public I18nTextAM(String id) {
+		this.id = id;
+	}
+	
+	public I18nTextAM(IFModelValueAccessor<?> modelAccessor, IFAttributeInfo attributeInfo) {
 		this.modelAccessor = modelAccessor;
 		this.attributeInfo = attributeInfo;
-		this.id = modelAccessor.getAttributeId();
-		
+		this.id = modelAccessor.getAttributeId();		
 	}
 
 	public I18nTextAM(String id, IFAttributeInfo attributeInfo, boolean readOnly) {
@@ -56,6 +68,50 @@ public class I18nTextAM implements IFAttributeModel<Map<Locale, String>>, IFView
 		this.attributeInfo = attributeInfo;
 		this.readOnly = readOnly;
 	}
+
+	@SuppressWarnings({ "rawtypes", "unchecked" })
+	@Override
+	public void viewValueChanged(IFViewAdapter viewAdapter) {
+        gaChanged(viewAdapter, (Map<Locale, String>) viewAdapter.getValue());
+	}
+
+    @SuppressWarnings("unchecked")
+	@Override
+    public void addViewAdapter(@SuppressWarnings("rawtypes") IFViewAdapter viewAdapter) {
+        Class< ?> modelType = null;
+
+		if(viewAdapter instanceof I18nTextComponentViewAdapter) {
+			I18nTextComponentViewAdapter i18nVA = (I18nTextComponentViewAdapter) viewAdapter;
+			i18nVA.getComponent().setAvailableLocales(localeItems);
+		}
+        
+        if (getValueConverter() != null) {
+            modelType = getValueConverter().getViewType(modelType);
+        }
+        else {
+            modelType = modelAccessor != null ? modelAccessor.getModelType() : null;
+        }
+
+        if (modelType != null
+            && viewAdapter.isUseAutoValueConverter()
+            && (viewAdapter.getValueConverter() == null || viewAdapter.getValueConverter().equals(
+                DoNothingConverter.INSTANCE))) {
+            viewAdapter.setValueConverter(UlriceDatabinding.getConverterFactory().createConverter(
+                viewAdapter.getViewType(), modelType));
+        }
+
+        viewAdapterList.add(viewAdapter);
+        viewAdapter.addViewChangeListener(this);
+        viewAdapter.bind(this);
+    }
+
+    @Override
+    public void removeViewAdapter(@SuppressWarnings("rawtypes") IFViewAdapter viewAdapter) {
+        viewAdapterList.remove(viewAdapter);
+        viewAdapter.removeViewChangeListener(this);
+        viewAdapter.detach(this);
+    }
+
 	
 	public void setAvailableLocales(LocaleSelectorItem... localeItems) {
 		if(localeItems == null) {
@@ -73,285 +129,220 @@ public class I18nTextAM implements IFAttributeModel<Map<Locale, String>>, IFView
 		}		
 	}
 
-	public I18nTextAM(String id) {
-		this.id = id;
-	}
-
-	@Override
-	public boolean isReadOnly() {
-		return readOnly;
-	}
-
-	@Override
-	public String getId() {
-		return id;
-	}
-
-	@Override
-	public boolean isDirty() {
-		for(GenericAM<String> model : modelMap.values()) {
-			if(model.isDirty()) {
-				return true;
-			}
-		}
-		return false;
-	}
-
-	@Override
-	public boolean isValid() {
-		for(GenericAM<String> model : modelMap.values()) {
-			if(!model.isValid()) {
-				return false;
-			}
-		}
-		return true;
-	}
-
-	@Override
-	public boolean isInitialized() {
-		return initialized;
-	}
-
-	@Override
-	public void addViewAdapter(IFViewAdapter viewAdapter) {
-		Class<?> modelType = null;
-		
-		if(viewAdapter instanceof I18nTextComponentViewAdapter) {
-			I18nTextComponentViewAdapter i18nVA = (I18nTextComponentViewAdapter) viewAdapter;
-			i18nVA.getComponent().setAvailableLocales(localeItems);
-		}
-
-		if (getValueConverter() != null) {
-			modelType = getValueConverter().getViewType(modelType);
-		} else {
-			modelType = modelAccessor != null ? modelAccessor.getModelType() : null;
-		}
-
-		if (modelType != null && viewAdapter.isUseAutoValueConverter()
-				&& (viewAdapter.getValueConverter() == null || viewAdapter.getValueConverter().equals(DoNothingConverter.INSTANCE))) {
-			viewAdapter.setValueConverter(UlriceDatabinding.getConverterFactory().createConverter(viewAdapter.getViewType(), modelType));
-		}
-
-		viewAdapterList.add(viewAdapter);
-		viewAdapter.addViewChangeListener(this);
-		viewAdapter.bind(this);
-	}
-
-	@Override
-	public void removeViewAdapter(IFViewAdapter viewAdapter) {
-		viewAdapterList.remove(viewAdapter);
-		viewAdapter.removeViewChangeListener(this);
-		viewAdapter.detach(this);
-	}
-
-	@Override
-	public List<String> getValidationFailures() {
-		List<String> result = new ArrayList<String>();
-		for (GenericAM<String> model : modelMap.values()) {
-			result.addAll(getValidationFailures());
-		}
-
-		return result;
-	}
-
-	@Override
-	public void read() {
-		if (modelAccessor == null) {
-			throw new IllegalStateException("No data accessor is available.");
-		}
-
-		Object value = modelAccessor.getValue();
-		Map<Locale, String> converted = (Map<Locale, String>) (getValueConverter() != null ? getValueConverter().modelToView(value) : value);
-		directRead(converted);
-	}
-
-	public void directRead(Map<Locale, String> dataMap) {
-		modelMap.clear();
-		if (dataMap != null) {
-			initialized = true;
-			for(LocaleSelectorItem localeItem : localeItems) {
-				GenericAM<String> model = new GenericAM<String>(id + localeItem.getLocale().toString());
-				if(dataMap.containsKey(localeItem.getLocale())) {
-					String value = dataMap.get(localeItem.getLocale());					
-					model.directRead(value != null ? value : "");
-				}
-				modelMap.put(localeItem.getLocale(), model);
-				
-				model.addAttributeModelEventListener(new IFAttributeModelEventListener<String>() {
-
-					@Override
-					public void dataChanged(IFViewAdapter viewAdapter, IFAttributeModel<String> amSource) {
-						fireDataChanged(viewAdapter);
-					}
-
-					@Override
-					public void stateChanged(IFViewAdapter viewAdapter, IFAttributeModel<String> amSource) {
-						fireStateChanged(viewAdapter);
-					}
-				});
-				
-			}
-		}
-		fireUpdateViews();
-	}
-
+    
 	@Override
 	public Map<Locale, String> getCurrentValue() {
-		Map<Locale, String> result = new HashMap<Locale, String>();
-		for (Entry<Locale, GenericAM<String>> entry : modelMap.entrySet()) {
-			result.put(entry.getKey(), entry.getValue().getCurrentValue());
-		}
-
-		return result;
+		return currentValue;
 	}
 
 	@Override
 	public Map<Locale, String> getOriginalValue() {
-		Map<Locale, String> result = new HashMap<Locale, String>();
-		for (Entry<Locale, GenericAM<String>> entry : modelMap.entrySet()) {
-			result.put(entry.getKey(), entry.getValue().getOriginalValue());
-		}
-
-		return result;
+		return originalValue;
 	}
-	
+
 	@Override
-	public void write() {
-		if (modelAccessor == null) {
-			throw new IllegalStateException("No data accessor is available.");
-		}
+    public void read() {
+        this.initialized = true;
+        if (modelAccessor == null) {
+            throw new IllegalStateException("No data accessor is available.");
+        }
 
-		if (!modelAccessor.isReadOnly()) {
-			Map<Locale, String> value = directWrite();
-			Object converted = (getValueConverter() != null ? getValueConverter().viewToModel(value) : value);
-			modelAccessor.setValue(converted);
-		}
-	}
+        Object value = modelAccessor.getValue();
+        @SuppressWarnings("unchecked")
+		Map<Locale, String> converted = (Map<Locale, String>) (getValueConverter() != null ? getValueConverter().modelToView(value) : value);
+        directRead(converted);
+    }
 
-	public Map<Locale, String> directWrite() {
-		Map<Locale, String> result = new HashMap<Locale, String>();
+    public void directRead(Map<Locale, String> value) {
+    	this.originalValue = new HashMap<Locale, String>();
+    	for(LocaleSelectorItem item : localeItems) {
+    		this.originalValue.put(item.getLocale(), value.get(item.getLocale()));
+    	}
+    	
+        setCurrentValue(value);
+    }
+
+    @SuppressWarnings("unchecked")
+	@Override
+    public void write() {
+        if (modelAccessor == null) {
+            throw new IllegalStateException("No data accessor is available.");
+        }
+
+        if (!modelAccessor.isReadOnly()) {
+            Map<Locale, String> value = directWrite();
+            modelAccessor.setValue(getValueConverter() != null ? getValueConverter().viewToModel(value) : value);
+        }
+    }
+    
+    public Map<Locale, String> directWrite() {
+    	Map<Locale, String> result = new HashMap<Locale, String>();
 		for(LocaleSelectorItem localeItem : localeItems) {
-			if(modelMap.containsKey(localeItem.getLocale())) {
-				String value = modelMap.get(localeItem.getLocale()).directWrite();
-				if(value != null || "".equals(value)) {
+			if(currentValue.containsKey(localeItem.getLocale())) {
+				String value = currentValue.get(localeItem.getLocale());
+				if(value != null && !"".equals(value)) {
 					result.put(localeItem.getLocale(), value);
 				} else {
 					result.remove(localeItem.getLocale());
 				}
 			}
-		}		
+		}	
+    	
+        return result;
+    }
 
-		return result;
+	@SuppressWarnings("unchecked")
+	@Override
+	public void gaChanged(@SuppressWarnings("rawtypes") IFViewAdapter viewAdapter, Map<Locale, String> value) {
+        setCurrentValueIntern(value);
+        calculateState(viewAdapter);
+        fireDataChanged(viewAdapter);
 	}
+	
+	public void setCurrentValue(Map<Locale, String> value) {
+        setCurrentValueIntern(value);
+        calculateState(null);
+        fireDataChanged(null);
+    }
+	
+	private void setCurrentValueIntern(Map<Locale, String> value) {
+        this.initialized = true;
+        clearExternalValidationErrors();
+
+        this.currentValue= new HashMap<Locale, String>();
+    	for(LocaleSelectorItem item : localeItems) {
+    		this.currentValue.put(item.getLocale(), value.get(item.getLocale()));
+    	}
+    }
 
 	@Override
 	public void addValidator(IFValidator<Map<Locale, String>> validator) {
-		if (validator == null) {
-			return;
-		}
-		this.validators.add(validator);
+        if (validator == null) {
+            return;
+        }
+		validators.add(validator);
 	}
 
 	@Override
 	public List<IFValidator<Map<Locale, String>>> getValidators() {
 		return validators;
 	}
+	
+    @Override
+    public ValidationResult getValidationResult() {
+        ValidationResult result = new ValidationResult();
+        if (!externalValidationErrors.isEmpty()) {
+            result.addValidationErrors(externalValidationErrors);
+        }
 
-	@Override
-	public ValidationResult getValidationResult() {
-		ValidationResult result = new ValidationResult();
-		if (!externalValidationErrors.isEmpty()) {
-			result.addValidationErrors(externalValidationErrors);
-		}
+        if (getValidators() != null) {
+            for (IFValidator<?> validator : getValidators()) {
+                ValidationResult lastValidationErrors = validator.getLastValidationErrors();
+                if (lastValidationErrors != null) {
+                    result.addValidationErrors(lastValidationErrors.getValidationErrors());
+                }
+            }
+        }
 
-		if (getValidators() != null) {
-			for (IFValidator<Map<Locale, String>> validator : getValidators()) {
-				ValidationResult lastValidationErrors = validator.getLastValidationErrors();
-				if (lastValidationErrors != null) {
-					result.addValidationErrors(lastValidationErrors.getValidationErrors());
-				}
-			}
-
-		}
-
-		return result.isValid() ? null : result;
-	}
-
-	@Override
-	public void addAttributeModelEventListener(IFAttributeModelEventListener<Map<Locale, String>> listener) {
-		listenerList.add(IFAttributeModelEventListener.class, listener);
-	}
-
-	@Override
-	public void removeAttributeModelEventListener(IFAttributeModelEventListener<Map<Locale, String>> listener) {
-		listenerList.remove(IFAttributeModelEventListener.class, listener);
-	}
-
-    public IFValueConverter getValueConverter() {
-        return valueConverter;
+        return result.isValid() ? null : result;
     }
 
     @Override
-    public void setValueConverter(IFValueConverter valueConverter) {
+    public List<String> getValidationFailures() {
+        return getValidationResult() != null ? getValidationResult().getMessagesByBinding(this) : new ArrayList<String>();
+    }
+
+    @Override
+    public void addAttributeModelEventListener(IFAttributeModelEventListener<Map<Locale, String>> listener) {
+        listenerList.add(IFAttributeModelEventListener.class, listener);
+    }
+
+    @Override
+    public void removeAttributeModelEventListener(IFAttributeModelEventListener<Map<Locale, String>> listener) {
+        listenerList.remove(IFAttributeModelEventListener.class, listener);
+    }
+
+	@Override
+	public void setValueConverter(@SuppressWarnings("rawtypes") IFValueConverter valueConverter) {
         this.valueConverter = valueConverter;
-    }
-
-    @Override
-    public IFAttributeInfo getAttributeInfo() {
-        return attributeInfo;
-    }
+	}
+	
+	@SuppressWarnings("rawtypes")
+	public IFValueConverter getValueConverter() {
+		return valueConverter;
+	}
 
 	@Override
 	public void setReadOnly(boolean readOnly) {
-		this.readOnly = readOnly;
-	}
-
-	@Override
-	public void addExternalValidationError(String translatedMessage) {
-		addExternalValidationError(new ValidationError(this, translatedMessage, null));
-	}
-
-	@Override
-	public void addExternalValidationError(ValidationError validationError) {
-		boolean wasEmpty = externalValidationErrors.isEmpty();
-		externalValidationErrors.add(validationError);
-		if (wasEmpty) {
-			fireDataChanged(null);
-		}
-	}
-
-	@Override
-	public void clearExternalValidationErrors() {
-		externalValidationErrors.clear();
-	}
+		boolean oldReadOnly = this.readOnly;
+        this.readOnly = readOnly;
+        if(oldReadOnly != this.readOnly) {
+            fireUpdateViews();
+        }
+    }
+	
+    @Override
+    public void addExternalValidationError(String translatedMessage) {
+        addExternalValidationError(new ValidationError(this, translatedMessage, null));
+    }
 
     @Override
-    public void viewValueChanged(IFViewAdapter viewAdapter) {
-        gaChanged(viewAdapter, (Map<Locale, String>) viewAdapter.getValue());
+    public void addExternalValidationError(ValidationError validationError) {
+        boolean wasEmpty = externalValidationErrors.isEmpty();
+        externalValidationErrors.add(validationError);
+        if(wasEmpty) {
+            calculateState(null);
+            fireDataChanged(null);
+        }
     }
 
+    protected void calculateState(IFViewAdapter<Map<Locale, String>, ?> viewAdapter) {
+        boolean stateChanged = false;
 
-	@Override
-	public void gaChanged(IFViewAdapter viewAdapter, Map<Locale, String> value) {
-        setCurrentValueIntern(value);
-        fireDataChanged(viewAdapter);
-	}
-	
-    private void setCurrentValueIntern(Map<Locale, String> value) {
-    	initialized = true;
-        clearExternalValidationErrors();
-        
-		for(LocaleSelectorItem localeItem : localeItems) {
-			String textValue = value.get(localeItem.getLocale());
-			if(modelMap.containsKey(localeItem.getLocale())) {
-				modelMap.get(localeItem.getLocale()).setCurrentValue(textValue);
-			}
-		}
+        try {
+            if (getValidators() != null || !externalValidationErrors.isEmpty()) {
+                boolean newValid = true;
+                for (IFValidator<Map<Locale, String>> validator : getValidators()) {
+                    Object displayedValue = (viewAdapter == null) ? null : viewAdapter.getDisplayedValue();
+                    ValidationResult errors = validator.isValid(this, getCurrentValue(), displayedValue);
+                    if (errors != null && !errors.isValid()) {
+                        newValid &= false;
+                    }
+                    else {
+                        validator.clearValidationErrors();
+                        newValid &= true;
+                    }
+                }
+                newValid &= externalValidationErrors.isEmpty();
+                stateChanged = (valid != newValid);
+                valid = newValid;
+            }
+
+            if (getCurrentValue() == null && getOriginalValue() == null) {
+                stateChanged |= (dirty != false);
+                dirty = false;
+            }
+            else if (getCurrentValue() != null && getOriginalValue() != null) {
+                boolean newDirty = !getCurrentValue().equals(getOriginalValue());
+                stateChanged |= (newDirty != dirty);
+                dirty = newDirty;
+            }
+            else {
+                stateChanged |= (dirty != true);
+                dirty = true;
+            }
+        }
+        finally {
+            if (stateChanged) {
+                fireStateChanged(viewAdapter);
+            }
+        }
     }
     
-    @SuppressWarnings("unchecked")
-    public void fireDataChanged(final IFViewAdapter viewAdapter) {
-        IFAttributeModelEventListener<Map<Locale, String>>[] listeners = listenerList.getListeners(IFAttributeModelEventListener.class);
+    public void fireDataChanged(final IFViewAdapter<Map<Locale, String>, ?> viewAdapter) {
+        @SuppressWarnings("unchecked")
+		IFAttributeModelEventListener<Map<Locale, String>>[] listeners = listenerList.getListeners(IFAttributeModelEventListener.class);
+        
         if (listeners != null) {
             for (final IFAttributeModelEventListener<Map<Locale, String>> listener : listeners) {
                 if (!SwingUtilities.isEventDispatchThread()) {
@@ -377,10 +368,11 @@ public class I18nTextAM implements IFAttributeModel<Map<Locale, String>>, IFView
         }
         fireUpdateViews();
     }
-    
-    @SuppressWarnings("unchecked")
-    public void fireStateChanged(final IFViewAdapter viewAdapter) {
-        IFAttributeModelEventListener<Map<Locale, String>>[] listeners = listenerList.getListeners(IFAttributeModelEventListener.class);
+
+    public void fireStateChanged(final IFViewAdapter<Map<Locale, String>, ?> viewAdapter) {
+        @SuppressWarnings("unchecked")
+		IFAttributeModelEventListener<Map<Locale, String>>[] listeners = listenerList.getListeners(IFAttributeModelEventListener.class);
+
         if (listeners != null) {
             for (final IFAttributeModelEventListener<Map<Locale, String>> listener : listeners) {
                 if (!SwingUtilities.isEventDispatchThread()) {
@@ -406,10 +398,10 @@ public class I18nTextAM implements IFAttributeModel<Map<Locale, String>>, IFView
         }
         fireUpdateViews();
     }
-    
+
     public void fireUpdateViews() {
         if (viewAdapterList != null) {
-            for (final IFViewAdapter viewAdapter : viewAdapterList) {
+            for (final IFViewAdapter<Map<Locale, String>, ?> viewAdapter : viewAdapterList) {
                 if (!SwingUtilities.isEventDispatchThread()) {
                     try {
                         SwingUtilities.invokeAndWait(new Runnable() {
@@ -432,4 +424,43 @@ public class I18nTextAM implements IFAttributeModel<Map<Locale, String>>, IFView
             }
         }
     }
+
+
+    
+    @Override
+    public void clearExternalValidationErrors() {
+        externalValidationErrors.clear();        
+    }
+    
+	@Override
+	public String getId() {
+		return id;
+	}
+
+	@Override
+	public boolean isDirty() {
+		calculateState(null);
+		return dirty;
+	}
+
+	@Override
+	public boolean isReadOnly() {
+		return (modelAccessor != null && modelAccessor.isReadOnly() || readOnly);
+	}
+
+	@Override
+	public boolean isValid() {
+		calculateState(null);
+		return valid;
+	}
+
+	@Override
+	public boolean isInitialized() {
+		return initialized;
+	}
+
+	@Override
+	public IFAttributeInfo getAttributeInfo() {
+		return attributeInfo;
+	}	
 }
