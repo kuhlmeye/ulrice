@@ -26,6 +26,10 @@ public class StringToBooleanConverter implements IFValueConverter<Boolean, Strin
         if (view == null || "".equals(view.trim())) {
             return null;
         }
+        if("X".equals(view.trim())){
+            return true;
+        }
+        
         try {
             return Boolean.valueOf(view.toString());
         } catch (NumberFormatException ex) {
