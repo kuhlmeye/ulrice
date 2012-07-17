@@ -380,8 +380,20 @@ public class UTableVAFilter extends RowFilter<UTableViewAdapter, String> impleme
                         else {
                             LOG.finest("ColumnId: " + columnId + ", Value: " + strValue + ", Pattern: "
                                 + pattern.pattern());
-
+                            // If the value is a map from I18nTextField or I18nTextArea, it should be search in all
+                            // languages for the text
+                            if (value instanceof Map) {
+                                for (String mapValue : ((Map<String, String>) value).values()) {
+                                    if (pattern.matcher(mapValue).matches()) {
+                                        return true;
+                                    }
+                                }
+                                return false;
+                            }
+                            else {
                                 return pattern.matcher(strValue).matches();
+                            }
+
                         }
                     }
                 case Percent:
