@@ -60,7 +60,8 @@ public class ColumnDefinition<T extends Object> implements PropertyChangeListene
 	public enum ColumnType {
 		Editable,
 		ReadOnly,
-		NewEditable
+		NewEditable,
+		Hidden
 	}
 
 

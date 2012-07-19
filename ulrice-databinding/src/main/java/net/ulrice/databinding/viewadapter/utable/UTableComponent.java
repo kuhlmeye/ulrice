@@ -30,6 +30,7 @@ import javax.swing.table.TableColumn;
 import javax.swing.table.TableColumnModel;
 
 import net.ulrice.databinding.bufferedbinding.impl.ColumnDefinition;
+import net.ulrice.databinding.bufferedbinding.impl.ColumnDefinition.ColumnType;
 import net.ulrice.databinding.bufferedbinding.impl.Element;
 import net.ulrice.databinding.bufferedbinding.impl.TableAM;
 import net.ulrice.databinding.viewadapter.IFCellStateMarker;
@@ -453,6 +454,12 @@ public class UTableComponent extends JPanel {
 
         if (columnDefinition.getPreferredWidth() != null) {
             column.setPreferredWidth(columnDefinition.getPreferredWidth());
+        }
+        
+        if (columnDefinition.getColumnType().equals(ColumnType.Hidden)) {
+            column.setMinWidth(0);
+            column.setMaxWidth(0);
+            column.setPreferredWidth(0);
         }
 
         return column;
