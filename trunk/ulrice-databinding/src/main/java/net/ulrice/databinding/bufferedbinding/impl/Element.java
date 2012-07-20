@@ -321,7 +321,7 @@ public class Element {
 
                     Object value = attributeModel.directWrite();
                     Object converted = (attributeModel.getValueConverter() != null ? attributeModel
-                            .getValueConverter().viewToModel(value) : value);
+                            .getValueConverter().viewToModel(value, attributeModel.getAttributeInfo()) : value);
                     dataAccessor.setValue(getOriginalValue(), converted);
                 }
             }
@@ -356,7 +356,7 @@ public class Element {
 
             Object value = dataAccessor.getValue(currentValue);
             Object converted = (model.getValueConverter() != null ? model
-                    .getValueConverter().modelToView(value) : value);
+                    .getValueConverter().modelToView(value, model.getAttributeInfo()) : value);
             model.setValue(converted);
         }
         fireValueChanged(null);
@@ -375,7 +375,7 @@ public class Element {
 
                     Object value = attributeModel.getCurrentValue();
                     Object converted = (attributeModel.getValueConverter() != null ? attributeModel
-                            .getValueConverter().viewToModel(value) : value);
+                            .getValueConverter().viewToModel(value, attributeModel.getAttributeInfo()) : value);
                     dataAccessor.setValue(result, converted);
                 }
             }
@@ -424,7 +424,7 @@ public class Element {
 
             if (getOriginalValue() != null) {
                 final Object value = column.getDataAccessor().getValue(getOriginalValue());
-                final Object converted = (column.getValueConverter() != null ? column.getValueConverter().modelToView(value) : value);
+                final Object converted = (column.getValueConverter() != null ? column.getValueConverter().modelToView(value, attributeModel.getAttributeInfo()) : value);
                 attributeModel.directRead(converted);
             }
         }

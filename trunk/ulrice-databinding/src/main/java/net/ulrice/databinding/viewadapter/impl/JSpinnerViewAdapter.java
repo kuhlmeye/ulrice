@@ -4,6 +4,7 @@ import javax.swing.JSpinner;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
+import net.ulrice.databinding.bufferedbinding.IFAttributeInfo;
 import net.ulrice.databinding.viewadapter.AbstractViewAdapter;
 
 /**
@@ -17,8 +18,8 @@ public class JSpinnerViewAdapter extends AbstractViewAdapter implements ChangeLi
 
 	private JSpinner spinner;
 
-	public JSpinnerViewAdapter(JSpinner spinner) {
-		super(Integer.class);
+	public JSpinnerViewAdapter(JSpinner spinner, IFAttributeInfo attributeInfo) {
+		super(Integer.class, attributeInfo);
 		this.spinner = spinner;
 		this.spinner.addChangeListener(this);
         setEditable(isComponentEnabled());

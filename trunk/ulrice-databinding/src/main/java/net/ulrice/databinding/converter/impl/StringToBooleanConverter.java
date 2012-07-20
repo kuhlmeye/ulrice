@@ -1,5 +1,6 @@
 package net.ulrice.databinding.converter.impl;
 
+import net.ulrice.databinding.bufferedbinding.IFAttributeInfo;
 import net.ulrice.databinding.converter.IFValueConverter;
 import net.ulrice.databinding.converter.ValueConverterException;
 
@@ -22,7 +23,7 @@ public class StringToBooleanConverter implements IFValueConverter<Boolean, Strin
     }
     
     @Override
-    public Boolean viewToModel(String view) {
+    public Boolean viewToModel(String view, IFAttributeInfo attributeInfo) {
         if (view == null || "".equals(view.trim())) {
             return null;
         }
@@ -39,7 +40,7 @@ public class StringToBooleanConverter implements IFValueConverter<Boolean, Strin
     }
 
     @Override
-    public String modelToView(Boolean model) {
+    public String modelToView(Boolean model, IFAttributeInfo attributeInfo) {
         return model == null ? "" : String.valueOf(model);
     }
 

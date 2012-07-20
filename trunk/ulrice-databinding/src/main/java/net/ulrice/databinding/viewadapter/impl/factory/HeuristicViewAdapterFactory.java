@@ -24,7 +24,7 @@ public class HeuristicViewAdapterFactory {
 	public static IFViewAdapter createAdapter(Object viewElement) {
 		for (IFViewAdapterDescriptor desc : _descriptors) {
 			if (desc.canHandle(viewElement)) {
-				return desc.createInstance(viewElement);
+				return desc.createInstance(viewElement, null);
 			}
 		}
 

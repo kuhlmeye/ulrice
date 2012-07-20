@@ -1,5 +1,6 @@
 package net.ulrice.databinding.converter.impl;
 
+import net.ulrice.databinding.bufferedbinding.IFAttributeInfo;
 import net.ulrice.databinding.converter.IFValueConverter;
 import net.ulrice.databinding.converter.ValueConverterException;
 
@@ -22,7 +23,7 @@ public class StringToIntegerConverter implements IFValueConverter<Integer, Strin
     }
     
 	@Override
-	public Integer viewToModel(String view) {
+	public Integer viewToModel(String view, IFAttributeInfo attributeInfo) {
 		if (view == null || "".equals(view.trim()) || "-".equals(view.trim())) {
 			return null;
 		}
@@ -35,7 +36,7 @@ public class StringToIntegerConverter implements IFValueConverter<Integer, Strin
 	}
 
 	@Override
-	public String modelToView(Integer model) {
+	public String modelToView(Integer model, IFAttributeInfo attributeInfo) {
 		return model == null ? "" : String.valueOf(model);
 	}
 

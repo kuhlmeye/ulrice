@@ -24,18 +24,18 @@ public class VDataBinding extends JPanel {
 
 	private final JTextComponentViewAdapter textFieldGA1;
 	private final JTextComponentViewAdapter textFieldGA2;
-    private final JTableViewAdapter listGA = new JTableViewAdapter(new JTable());
+    private final JTableViewAdapter listGA = new JTableViewAdapter(new JTable(), null);
 
 	public VDataBinding() {
 		final JTextField tf1 = new JTextField();
 		final JTextField tf2 = new JTextField();
 		
-		textFieldGA1 = new JTextComponentViewAdapter(tf1);
+		textFieldGA1 = new JTextComponentViewAdapter(tf1, null);
 		BorderStateMarker borderStateMarker = new BorderStateMarker(textFieldGA1.getComponent().getBorder());
 		textFieldGA1.setStateMarker(borderStateMarker);
 		textFieldGA1.setTooltipHandler(new DetailedTooltipHandler());
 		tf1.setBorder(borderStateMarker);
-		textFieldGA2 = new JTextComponentViewAdapter(tf2);
+		textFieldGA2 = new JTextComponentViewAdapter(tf2, null);
 		
 		setLayout(new BorderLayout());
 		add(textFieldGA1.getComponent(), BorderLayout.NORTH);

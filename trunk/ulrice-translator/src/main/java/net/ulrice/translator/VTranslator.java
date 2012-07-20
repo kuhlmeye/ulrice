@@ -18,9 +18,9 @@ public class VTranslator extends JPanel {
 	
 	public void initialize(CTranslator Controller) {
 		
-		dictionaryVA = new UTableViewAdapter(new UTableComponent(0));
-		usagesVA = new UTableViewAdapter(new UTableComponent(0));
-		translationsVA = new UTableViewAdapter(new UTableComponent(0));
+		dictionaryVA = new UTableViewAdapter(new UTableComponent(0), null);
+		usagesVA = new UTableViewAdapter(new UTableComponent(0), null);
+		translationsVA = new UTableViewAdapter(new UTableComponent(0), null);
 		
 		JTabbedPane tabbedPane = new JTabbedPane();
 		tabbedPane.addTab("Usage", usagesVA.getComponent());

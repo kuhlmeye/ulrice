@@ -2,6 +2,7 @@ package net.ulrice.databinding.viewadapter.impl.factory;
 
 import javax.swing.JCheckBox;
 
+import net.ulrice.databinding.bufferedbinding.IFAttributeInfo;
 import net.ulrice.databinding.viewadapter.IFViewAdapter;
 import net.ulrice.databinding.viewadapter.IFViewAdapterDescriptor;
 import net.ulrice.databinding.viewadapter.impl.BorderStateMarker;
@@ -15,9 +16,9 @@ public class JCheckboxAdapterDescriptor implements IFViewAdapterDescriptor {
         return widget instanceof JCheckBox;
     }
 
-    public IFViewAdapter createInstance (Object widget) {
+    public IFViewAdapter createInstance (Object widget, IFAttributeInfo attributeInfo) {
         JCheckBox checkBox = (JCheckBox) widget;
-        JCheckBoxViewAdapter viewAdapter = new JCheckBoxViewAdapter(checkBox);
+        JCheckBoxViewAdapter viewAdapter = new JCheckBoxViewAdapter(checkBox, attributeInfo);
 
         DetailedTooltipHandler tooltipHandler = new DetailedTooltipHandler();
         BorderStateMarker stateMarker = new BorderStateMarker(checkBox.getBorder());

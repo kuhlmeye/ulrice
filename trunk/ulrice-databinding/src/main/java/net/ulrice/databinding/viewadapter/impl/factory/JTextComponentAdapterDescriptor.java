@@ -2,6 +2,7 @@ package net.ulrice.databinding.viewadapter.impl.factory;
 
 import javax.swing.text.JTextComponent;
 
+import net.ulrice.databinding.bufferedbinding.IFAttributeInfo;
 import net.ulrice.databinding.viewadapter.IFViewAdapter;
 import net.ulrice.databinding.viewadapter.IFViewAdapterDescriptor;
 import net.ulrice.databinding.viewadapter.impl.BorderStateMarker;
@@ -17,9 +18,9 @@ public class JTextComponentAdapterDescriptor implements IFViewAdapterDescriptor 
         return widget instanceof JTextComponent;
     }
 
-    public IFViewAdapter createInstance (Object widget) {
+    public IFViewAdapter createInstance (Object widget, IFAttributeInfo attributeInfo) {
         JTextComponent textComponent = (JTextComponent) widget;
-		JTextComponentViewAdapter viewAdapter = new JTextComponentViewAdapter (textComponent);
+		JTextComponentViewAdapter viewAdapter = new JTextComponentViewAdapter (textComponent, attributeInfo);
 
         DetailedTooltipHandler tooltipHandler = new DetailedTooltipHandler();
         BorderStateMarker stateMarker = new BorderStateMarker(textComponent.getBorder());

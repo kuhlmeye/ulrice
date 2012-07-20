@@ -6,6 +6,7 @@ import java.awt.event.ItemListener;
 import javax.swing.JComponent;
 import javax.swing.JRadioButton;
 
+import net.ulrice.databinding.bufferedbinding.IFAttributeInfo;
 import net.ulrice.databinding.viewadapter.AbstractViewAdapter;
 
 public class JRadioButtonViewAdapter<M> extends AbstractViewAdapter<M, Boolean> implements ItemListener
@@ -14,8 +15,8 @@ public class JRadioButtonViewAdapter<M> extends AbstractViewAdapter<M, Boolean> 
 	private final JRadioButton radioButton;
 	private final M value;
 	
-	public JRadioButtonViewAdapter(JRadioButton radioButton, M value) {
-		super(Boolean.class);
+	public JRadioButtonViewAdapter(JRadioButton radioButton, IFAttributeInfo attributeInfo, M value) {
+		super(Boolean.class, attributeInfo);
 		this.radioButton = radioButton;
 		this.value = value;
 		radioButton.addItemListener(this);

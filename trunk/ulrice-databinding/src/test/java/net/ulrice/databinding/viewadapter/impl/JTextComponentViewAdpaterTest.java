@@ -8,7 +8,7 @@ public class JTextComponentViewAdpaterTest extends TestCase {
     
     public void testSetComponentEnabled() {
         JTextField textField = new JTextField();
-        JTextComponentViewAdapter textVA = new JTextComponentViewAdapter(textField);
+        JTextComponentViewAdapter textVA = new JTextComponentViewAdapter(textField, null);
         
         textVA.setEnableSelectionIfComponentDisabled(true);
         textVA.setComponentEnabled(false);
@@ -21,7 +21,7 @@ public class JTextComponentViewAdpaterTest extends TestCase {
     
     public void testSetComponentEditable() {
         JTextField textField = new JTextField();
-        JTextComponentViewAdapter textVA = new JTextComponentViewAdapter(textField);
+        JTextComponentViewAdapter textVA = new JTextComponentViewAdapter(textField, null);
         
         textVA.setEditable(false);
         

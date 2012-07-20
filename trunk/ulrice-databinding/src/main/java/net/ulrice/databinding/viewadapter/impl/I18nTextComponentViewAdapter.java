@@ -8,6 +8,7 @@ import java.util.Map;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 
+import net.ulrice.databinding.bufferedbinding.IFAttributeInfo;
 import net.ulrice.databinding.ui.BindingUI;
 import net.ulrice.databinding.viewadapter.AbstractViewAdapter;
 import net.ulrice.ui.components.I18nTextComponent;
@@ -24,8 +25,8 @@ public class I18nTextComponentViewAdapter extends AbstractViewAdapter implements
 	private I18nTextComponent textComponent;
 	private boolean enableSelectionIfComponentDisabled = false;
 
-	public I18nTextComponentViewAdapter(I18nTextComponent textComponent) {	    
-		super(Map.class);
+	public I18nTextComponentViewAdapter(I18nTextComponent textComponent, IFAttributeInfo attributeInfo) {	    
+		super(Map.class, attributeInfo);
 		
 		this.enableSelectionIfComponentDisabled = BindingUI.getBoolean(BindingUI.MARKABLE_DURING_DISABLED_STATE, Boolean.FALSE);
 

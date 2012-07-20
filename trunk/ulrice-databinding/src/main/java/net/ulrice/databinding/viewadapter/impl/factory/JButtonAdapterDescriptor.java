@@ -2,6 +2,7 @@ package net.ulrice.databinding.viewadapter.impl.factory;
 
 import javax.swing.JButton;
 
+import net.ulrice.databinding.bufferedbinding.IFAttributeInfo;
 import net.ulrice.databinding.viewadapter.IFViewAdapter;
 import net.ulrice.databinding.viewadapter.IFViewAdapterDescriptor;
 import net.ulrice.databinding.viewadapter.impl.BorderStateMarker;
@@ -15,10 +16,10 @@ public class JButtonAdapterDescriptor implements IFViewAdapterDescriptor {
         return widget instanceof JButton;
     }
 
-    public IFViewAdapter createInstance (Object widget) {
+    public IFViewAdapter createInstance (Object widget, IFAttributeInfo attributeInfo) {
         
         JButton button = (JButton) widget;
-        JButtonViewAdapter viewAdapter = new JButtonViewAdapter(button);
+        JButtonViewAdapter viewAdapter = new JButtonViewAdapter(button, attributeInfo);
 
         DetailedTooltipHandler tooltipHandler = new DetailedTooltipHandler();
         BorderStateMarker stateMarker = new BorderStateMarker(button.getBorder());

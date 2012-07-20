@@ -4,6 +4,7 @@ import javax.swing.JSlider;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
+import net.ulrice.databinding.bufferedbinding.IFAttributeInfo;
 import net.ulrice.databinding.viewadapter.AbstractViewAdapter;
 
 /**
@@ -17,8 +18,8 @@ public class JSliderViewAdapter extends AbstractViewAdapter implements ChangeLis
 
 	private JSlider slider;
 
-	public JSliderViewAdapter(JSlider slider) {
-		super(Integer.class);
+	public JSliderViewAdapter(JSlider slider, IFAttributeInfo attributeInfo) {
+		super(Integer.class, attributeInfo);
 		this.slider = slider;
 		this.slider.addChangeListener(this);
         setEditable(isComponentEnabled());

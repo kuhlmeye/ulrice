@@ -29,18 +29,18 @@ public class VBehavior
 
 	private final Tube tube;
 
-	private final JTextComponentViewAdapter firstnameVA = new JTextComponentViewAdapter(new JTextField(25));
-	private final JTextComponentViewAdapter lastnameVA = new JTextComponentViewAdapter(new JTextField(25));
+	private final JTextComponentViewAdapter firstnameVA = new JTextComponentViewAdapter(new JTextField(25), null);
+	private final JTextComponentViewAdapter lastnameVA = new JTextComponentViewAdapter(new JTextField(25), null);
 	private final JRadioButtonViewAdapter<Gender> maleVA = new JRadioButtonViewAdapter<Gender>(
-	    new JRadioButton("Male"), Gender.MALE);
+	    new JRadioButton("Male"), null, Gender.MALE);
 	private final JRadioButtonViewAdapter<Gender> femaleVA = new JRadioButtonViewAdapter<Gender>(new JRadioButton(
-	    "Female"), Gender.FEMALE);
+	    "Female"), null, Gender.FEMALE);
 	private final JRadioButtonViewAdapter<Gender> unspecifiedVA = new JRadioButtonViewAdapter<Gender>(new JRadioButton(
-	    "Unspecified"), Gender.UNSPECIFIED);
+	    "Unspecified"), null, Gender.UNSPECIFIED);
 	private final JListViewAdapter occupationVA = new JListViewAdapter(new JList(new String[] {
 	    "Customer", "Software Architect", "Software Engineer", "Software Tester", "Removal Specialist", "Other"
-	}));
-	private final UTableViewAdapter knowledgeVA = new UTableViewAdapter(new UTableComponent(1));
+	}), null);
+	private final UTableViewAdapter knowledgeVA = new UTableViewAdapter(new UTableComponent(1), null);
 
 	public VBehavior(final CBehavior behavior)
 	{

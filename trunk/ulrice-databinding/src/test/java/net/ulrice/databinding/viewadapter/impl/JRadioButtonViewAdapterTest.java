@@ -46,9 +46,9 @@ public class JRadioButtonViewAdapterTest extends TestCase {
 		buttonGroup.add(greenButton);
 		buttonGroup.add(blueButton);
 		
-		redAdapter = new JRadioButtonViewAdapter(redButton, Color.red);
-		greenAdapter = new JRadioButtonViewAdapter(greenButton, Color.green);
-		blueAdapter = new JRadioButtonViewAdapter(blueButton, Color.blue);
+		redAdapter = new JRadioButtonViewAdapter(redButton, colorAM.getAttributeInfo(), Color.red);
+		greenAdapter = new JRadioButtonViewAdapter(greenButton, colorAM.getAttributeInfo(), Color.green);
+		blueAdapter = new JRadioButtonViewAdapter(blueButton, colorAM.getAttributeInfo(), Color.blue);
 		
 		bg.bind(colorAM, redAdapter);
 		bg.bind(colorAM, greenAdapter);

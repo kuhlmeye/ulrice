@@ -9,6 +9,7 @@ import javax.swing.event.ListDataEvent;
 import javax.swing.event.ListDataListener;
 
 import net.ulrice.databinding.IFBinding;
+import net.ulrice.databinding.bufferedbinding.IFAttributeInfo;
 import net.ulrice.databinding.bufferedbinding.impl.TableAM;
 import net.ulrice.databinding.viewadapter.AbstractViewAdapter;
 
@@ -18,8 +19,8 @@ public class JListViewAdapter extends AbstractViewAdapter implements ListModel {
     private TableAM attributeModel;
     private JList list;
     
-    public JListViewAdapter(JList list) {
-    	super(List.class);
+    public JListViewAdapter(JList list, IFAttributeInfo attributeInfo) {
+    	super(List.class, attributeInfo);
     	this.list = list;
         setEditable(isComponentEnabled());
     }

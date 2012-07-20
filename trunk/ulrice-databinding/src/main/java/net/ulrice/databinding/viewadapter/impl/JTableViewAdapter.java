@@ -16,6 +16,7 @@ import javax.swing.table.TableColumnModel;
 import javax.swing.table.TableModel;
 
 import net.ulrice.databinding.IFBinding;
+import net.ulrice.databinding.bufferedbinding.IFAttributeInfo;
 import net.ulrice.databinding.bufferedbinding.impl.ColumnDefinition;
 import net.ulrice.databinding.bufferedbinding.impl.Element;
 import net.ulrice.databinding.bufferedbinding.impl.TableAM;
@@ -33,8 +34,8 @@ public class JTableViewAdapter extends AbstractViewAdapter implements TableModel
 
 	private JTable table;
 
-	public JTableViewAdapter(JTable table) {
-		super(List.class);
+	public JTableViewAdapter(JTable table, IFAttributeInfo attributeInfo) {
+		super(List.class, attributeInfo);
 		this.table = table;
 
 		table.setModel(this);

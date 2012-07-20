@@ -2,6 +2,7 @@ package net.ulrice.databinding.converter.impl;
 
 import java.lang.reflect.Method;
 
+import net.ulrice.databinding.bufferedbinding.IFAttributeInfo;
 import net.ulrice.databinding.converter.IFValueConverter;
 
 
@@ -65,7 +66,7 @@ public class GenericStringToNumberConverter <X extends Number> implements IFValu
 	}
 
 	@Override
-	public X viewToModel(String o) {
+	public X viewToModel(String o, IFAttributeInfo attributeInfo) {
 		try {
 			if (o == null || o.trim().length() == 0) {
 				if (modelClass == nonPrimitiveModelClass)
@@ -80,7 +81,7 @@ public class GenericStringToNumberConverter <X extends Number> implements IFValu
 	}
 
 	@Override
-	public String modelToView(X o) {
+	public String modelToView(X o, IFAttributeInfo attributeInfo) {
 		return (o == null) ? null : o.toString(); //TODO numberformat?!
 	}
 }
