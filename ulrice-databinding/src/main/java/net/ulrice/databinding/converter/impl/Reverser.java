@@ -1,5 +1,6 @@
 package net.ulrice.databinding.converter.impl;
 
+import net.ulrice.databinding.bufferedbinding.IFAttributeInfo;
 import net.ulrice.databinding.converter.IFValueConverter;
 
 
@@ -22,13 +23,13 @@ public class Reverser<M, V> implements IFValueConverter<M, V> {
 
     
 	@Override
-	public M viewToModel(V o) {
-		return inner.modelToView(o);
+	public M viewToModel(V o, IFAttributeInfo attributeInfo) {
+		return inner.modelToView(o, attributeInfo);
 	}
 
 	@Override
-	public V modelToView(M o) {
-		return inner.viewToModel(o);
+	public V modelToView(M o, IFAttributeInfo attributeInfo) {
+		return inner.viewToModel(o, attributeInfo);
 	}
 
 	@Override

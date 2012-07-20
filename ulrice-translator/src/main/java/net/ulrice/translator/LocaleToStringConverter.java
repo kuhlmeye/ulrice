@@ -2,6 +2,7 @@ package net.ulrice.translator;
 
 import java.util.Locale;
 
+import net.ulrice.databinding.bufferedbinding.IFAttributeInfo;
 import net.ulrice.databinding.converter.IFValueConverter;
 
 public class LocaleToStringConverter implements IFValueConverter<Locale, String> {
@@ -17,7 +18,7 @@ public class LocaleToStringConverter implements IFValueConverter<Locale, String>
     }
     
 	@Override
-	public Locale viewToModel(String o) {
+	public Locale viewToModel(String o, IFAttributeInfo attributeInfo) {
 		if(o == null) {
 			return null;
 		}
@@ -26,7 +27,7 @@ public class LocaleToStringConverter implements IFValueConverter<Locale, String>
 	}
 
 	@Override
-	public String modelToView(Locale o) {
+	public String modelToView(Locale o, IFAttributeInfo attributeInfo) {
 		if(o == null) {
 			return null;
 		}

@@ -2,14 +2,15 @@ package net.ulrice.databinding.viewadapter.impl;
 
 import javax.swing.JButton;
 
+import net.ulrice.databinding.bufferedbinding.IFAttributeInfo;
 import net.ulrice.databinding.viewadapter.AbstractViewAdapter;
 
 
 public class JButtonViewAdapter extends AbstractViewAdapter {
     private final JButton button;
     
-    public JButtonViewAdapter (JButton button) {
-        super (String.class);
+    public JButtonViewAdapter (JButton button, IFAttributeInfo attributeInfo) {
+        super (String.class, attributeInfo);
         this.button = button;        
         setEditable(isComponentEnabled());
     }

@@ -1,6 +1,7 @@
 package net.ulrice.databinding.converter.impl;
 
 import net.ulrice.databinding.ObjectWithPresentation;
+import net.ulrice.databinding.bufferedbinding.IFAttributeInfo;
 import net.ulrice.databinding.converter.IFValueConverter;
 
 
@@ -21,12 +22,12 @@ public class DoNothingConverter <M, V> implements IFValueConverter <M, V> {
     }
     
     @SuppressWarnings("unchecked")
-    public V modelToView (M o) {
+    public V modelToView (M o, IFAttributeInfo attributeInfo) {
         return (V) o;
     }
 
     @SuppressWarnings("unchecked")
-    public M viewToModel (V o) {
+    public M viewToModel (V o, IFAttributeInfo attributeInfo) {
         return (M) o;
     }
 

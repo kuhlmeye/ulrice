@@ -5,14 +5,15 @@ import java.awt.event.ActionListener;
 
 import javax.swing.JCheckBox;
 
+import net.ulrice.databinding.bufferedbinding.IFAttributeInfo;
 import net.ulrice.databinding.viewadapter.AbstractViewAdapter;
 
 
 public class JCheckBoxViewAdapter extends AbstractViewAdapter implements ActionListener {
     private final JCheckBox checkBox;
     
-    public JCheckBoxViewAdapter (JCheckBox checkBox) {
-        super (Boolean.class);        
+    public JCheckBoxViewAdapter (JCheckBox checkBox, IFAttributeInfo attributeInfo) {
+        super (Boolean.class, attributeInfo);        
         this.checkBox = checkBox;        
         this.checkBox.addActionListener (this);
         setEditable(isComponentEnabled());

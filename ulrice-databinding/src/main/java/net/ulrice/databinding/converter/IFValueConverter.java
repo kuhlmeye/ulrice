@@ -1,5 +1,7 @@
 package net.ulrice.databinding.converter;
 
+import net.ulrice.databinding.bufferedbinding.IFAttributeInfo;
+
 
 /**
  * converts a value for presentation
@@ -15,6 +17,6 @@ public interface IFValueConverter <M, V> {
     
     boolean canHandle(Class<? extends Object> modelType, Class<? extends Object> viewType);
     
-    M viewToModel (V o);
-    V modelToView (M o);
+    M viewToModel (V o, IFAttributeInfo attributeInfo);
+    V modelToView (M o, IFAttributeInfo attributeInfo);
 }

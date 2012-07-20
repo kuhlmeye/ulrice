@@ -52,9 +52,9 @@ public class CRadioButtonSample extends AbstractController implements IFBindingG
 		main.add(blueLabel);
 		main.add(blueButton);
 		
-		JRadioButtonViewAdapter redAdapter = new JRadioButtonViewAdapter(redButton, Color.red);
-		JRadioButtonViewAdapter greenAdapter = new JRadioButtonViewAdapter(greenButton, Color.green);
-		JRadioButtonViewAdapter blueAdapter = new JRadioButtonViewAdapter(blueButton, Color.blue);
+		JRadioButtonViewAdapter redAdapter = new JRadioButtonViewAdapter(redButton, null, Color.red);
+		JRadioButtonViewAdapter greenAdapter = new JRadioButtonViewAdapter(greenButton, null, Color.green);
+		JRadioButtonViewAdapter blueAdapter = new JRadioButtonViewAdapter(blueButton, null, Color.blue);
 		
 //		Map<JRadioButton, Color> buttonMap = new HashMap<JRadioButton, Color>();
 //		buttonMap.put(redButton, Color.red);

@@ -271,7 +271,7 @@ public class GenericAM<T> implements IFAttributeModel<T>, IFViewChangeListener {
         }
 
         Object value = modelAccessor.getValue();
-        T converted = (T) (getValueConverter() != null ? getValueConverter().modelToView(value) : value);
+        T converted = (T) (getValueConverter() != null ? getValueConverter().modelToView(value, attributeInfo) : value);
         directRead(converted);
     }
 
@@ -294,7 +294,7 @@ public class GenericAM<T> implements IFAttributeModel<T>, IFViewChangeListener {
 
         if (!modelAccessor.isReadOnly()) {
             T value = directWrite();
-            Object converted = (getValueConverter() != null ? getValueConverter().viewToModel(value) : value);
+            Object converted = (getValueConverter() != null ? getValueConverter().viewToModel(value, attributeInfo) : value);
             modelAccessor.setValue(converted);
         }
     }

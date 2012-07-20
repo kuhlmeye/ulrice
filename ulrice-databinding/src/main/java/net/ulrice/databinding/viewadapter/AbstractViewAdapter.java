@@ -3,6 +3,7 @@ package net.ulrice.databinding.viewadapter;
 import javax.swing.event.EventListenerList;
 
 import net.ulrice.databinding.IFBinding;
+import net.ulrice.databinding.bufferedbinding.IFAttributeInfo;
 import net.ulrice.databinding.converter.IFValueConverter;
 import net.ulrice.databinding.converter.impl.DoNothingConverter;
 
@@ -24,9 +25,12 @@ public abstract class AbstractViewAdapter<M, V> implements IFViewAdapter<M, V> {
 
     private boolean readOnlyBinding;
 
+    private final IFAttributeInfo attributeInfo;
+
     @SuppressWarnings({ "rawtypes", "unchecked" })
-    public AbstractViewAdapter(Class viewType) {
+    public AbstractViewAdapter(Class viewType, IFAttributeInfo attributeInfo) {
         this.viewType = viewType;
+        this.attributeInfo = attributeInfo;
         setValueConverter(null);
     }
     
@@ -200,11 +204,11 @@ public abstract class AbstractViewAdapter<M, V> implements IFViewAdapter<M, V> {
     }
 
     protected M viewToModel(V object) {
-        return getValueConverter().viewToModel(object);
+        return getValueConverter().viewToModel(object, attributeInfo);
     }
 
     protected V modelToView(M object) {
-        return getValueConverter().modelToView(object);
+        return getValueConverter().modelToView(object, attributeInfo);
     }
 
     @Override
@@ -214,5 +218,9 @@ public abstract class AbstractViewAdapter<M, V> implements IFViewAdapter<M, V> {
 
     public void setUseAutoValueConverter(boolean useAutoValueConverter) {
         this.useAutoValueConverter = useAutoValueConverter;
+    }
+    
+    public IFAttributeInfo getAttributeInfo() {
+        return this.attributeInfo;
     }
 }

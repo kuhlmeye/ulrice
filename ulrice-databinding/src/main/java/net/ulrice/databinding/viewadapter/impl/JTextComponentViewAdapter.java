@@ -10,6 +10,7 @@ import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.text.JTextComponent;
 
+import net.ulrice.databinding.bufferedbinding.IFAttributeInfo;
 import net.ulrice.databinding.ui.BindingUI;
 import net.ulrice.databinding.viewadapter.AbstractViewAdapter;
 
@@ -25,9 +26,9 @@ public class JTextComponentViewAdapter extends AbstractViewAdapter implements Do
 	private boolean convertEmptyToNull = true;
 	private boolean enableSelectionIfComponentDisabled = false;
 
-	public JTextComponentViewAdapter(JTextComponent textComponent) {
+	public JTextComponentViewAdapter(JTextComponent textComponent, IFAttributeInfo attributeInfo) {
 	    
-		super(String.class);
+		super(String.class, attributeInfo);
 		
 		this.enableSelectionIfComponentDisabled = BindingUI.getBoolean(BindingUI.MARKABLE_DURING_DISABLED_STATE, Boolean.FALSE);
 

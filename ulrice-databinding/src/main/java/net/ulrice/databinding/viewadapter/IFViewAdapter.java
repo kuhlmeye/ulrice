@@ -3,6 +3,7 @@ package net.ulrice.databinding.viewadapter;
 import javax.swing.JComponent;
 
 import net.ulrice.databinding.IFBinding;
+import net.ulrice.databinding.bufferedbinding.IFAttributeInfo;
 import net.ulrice.databinding.converter.IFValueConverter;
 
 
@@ -45,4 +46,5 @@ public interface IFViewAdapter <M, V> {
 	void setValueConverter(IFValueConverter<M, V> converter);
 	IFValueConverter<M, V> getValueConverter();
 	boolean isUseAutoValueConverter();
+    IFAttributeInfo getAttributeInfo();
 }

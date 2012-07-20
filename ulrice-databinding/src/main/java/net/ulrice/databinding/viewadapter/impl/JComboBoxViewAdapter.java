@@ -6,6 +6,7 @@ import java.awt.event.ItemListener;
 import javax.swing.JComboBox;
 
 import net.ulrice.databinding.ObjectWithPresentation;
+import net.ulrice.databinding.bufferedbinding.IFAttributeInfo;
 import net.ulrice.databinding.viewadapter.AbstractViewAdapter;
 
 
@@ -13,8 +14,8 @@ public class JComboBoxViewAdapter<M> extends AbstractViewAdapter <M, ObjectWithP
     private final JComboBox comboBox;
     private final PresentationProvider<M> presentationProvider;
 
-    public JComboBoxViewAdapter (JComboBox combo, PresentationProvider<M> presentationProvider) {
-        super (ObjectWithPresentation.class);
+    public JComboBoxViewAdapter (JComboBox combo, IFAttributeInfo attributeInfo, PresentationProvider<M> presentationProvider) {
+        super (ObjectWithPresentation.class, attributeInfo);
         this.presentationProvider = presentationProvider;
         comboBox = combo;        
         comboBox.addItemListener(this);

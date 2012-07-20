@@ -149,7 +149,7 @@ public class I18nTextAM implements IFAttributeModel<Map<Locale, String>>, IFView
 
         Object value = modelAccessor.getValue();
         @SuppressWarnings("unchecked")
-		Map<Locale, String> converted = (Map<Locale, String>) (getValueConverter() != null ? getValueConverter().modelToView(value) : value);
+		Map<Locale, String> converted = (Map<Locale, String>) (getValueConverter() != null ? getValueConverter().modelToView(value, attributeInfo) : value);
         directRead(converted);
     }
 
@@ -171,7 +171,7 @@ public class I18nTextAM implements IFAttributeModel<Map<Locale, String>>, IFView
 
         if (!modelAccessor.isReadOnly()) {
             Map<Locale, String> value = directWrite();
-            modelAccessor.setValue(getValueConverter() != null ? getValueConverter().viewToModel(value) : value);
+            modelAccessor.setValue(getValueConverter() != null ? getValueConverter().viewToModel(value, attributeInfo) : value);
         }
     }
     

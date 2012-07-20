@@ -1,5 +1,6 @@
 package net.ulrice.databinding.converter.impl;
 
+import net.ulrice.databinding.bufferedbinding.IFAttributeInfo;
 import net.ulrice.databinding.converter.IFValueConverter;
 
 /**
@@ -20,12 +21,12 @@ public class BooleanRemoveNullConverter implements IFValueConverter<Boolean, Boo
     }
     
     @Override
-    public Boolean viewToModel(Boolean view) {
+    public Boolean viewToModel(Boolean view, IFAttributeInfo attributeInfo) {
         return view == null ? Boolean.FALSE : view;
     }
 
     @Override
-    public Boolean modelToView(Boolean model) {
+    public Boolean modelToView(Boolean model, IFAttributeInfo attributeInfo) {
         return model == null ? Boolean.FALSE : model;
     }
 

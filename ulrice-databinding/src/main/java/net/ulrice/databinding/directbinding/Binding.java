@@ -98,14 +98,14 @@ public class Binding implements IFBinding {
 	@Override
 	public Object getCurrentValue() {
 		if(getModelValueAccessor() != null ){
-			return getConverter().modelToView(getModelValueAccessor().getValue());
+			return getConverter().modelToView(getModelValueAccessor().getValue(), _viewAdapter.getAttributeInfo());
 		}
 		return null;
 	}
 	
 	protected void setCurrentValue(Object currentValue) {
 		if(getModelValueAccessor() != null ){
-			getModelValueAccessor().setValue(getConverter().viewToModel(currentValue));
+			getModelValueAccessor().setValue(getConverter().viewToModel(currentValue, _viewAdapter.getAttributeInfo()));
 		}
 	}
 

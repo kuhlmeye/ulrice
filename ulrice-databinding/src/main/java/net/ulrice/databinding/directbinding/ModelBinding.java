@@ -88,7 +88,7 @@ public class ModelBinding {
                 final IndexedBinding cb = b.getColumnBindings ().get (col);
 
                 final Object raw = cb.getModelValueAccessor ().getValue (row);
-                final Object converted = cb.getConverter ().modelToView (raw);
+                final Object converted = cb.getConverter ().modelToView (raw, null);
                 
                 _isUpdatingView = true;
                 try {
@@ -150,7 +150,7 @@ public class ModelBinding {
                 return;
 
             final Object raw = tableModel.getValueAt (e.getFirstRow (), e.getColumn ());
-            final Object converted = columnBinding.getConverter ().viewToModel (raw);
+            final Object converted = columnBinding.getConverter ().viewToModel (raw, null);
             columnBinding.getModelValueAccessor ().setValue (e.getFirstRow (), converted);
         }
         finally {
@@ -217,7 +217,7 @@ public class ModelBinding {
 
         try {
             final Object raw = b.getViewAdapter ().getValue ();
-            final Object converted = b.getConverter ().viewToModel (raw);
+            final Object converted = b.getConverter ().viewToModel (raw, null);
 
             for (IFValidator v: b.getValidators ()) {
 				ValidationResult validationErrors = v.isValid(b, converted, raw);

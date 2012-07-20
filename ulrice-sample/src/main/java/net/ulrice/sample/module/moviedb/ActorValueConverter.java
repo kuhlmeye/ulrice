@@ -2,6 +2,7 @@ package net.ulrice.sample.module.moviedb;
 
 import java.util.List;
 
+import net.ulrice.databinding.bufferedbinding.IFAttributeInfo;
 import net.ulrice.databinding.converter.IFValueConverter;
 import net.ulrice.sample.module.moviedb.Movie.Actor;
 
@@ -19,13 +20,13 @@ public class ActorValueConverter implements IFValueConverter <List, String> {
     }
 
 	@Override
-	public List<?> viewToModel(String o) {
+	public List<?> viewToModel(String o, IFAttributeInfo attributeInfo) {
 	    throw new UnsupportedOperationException(); // only for r/o columns
 	}
 
 	@SuppressWarnings("unchecked")
     @Override
-	public String modelToView(List o) {
+	public String modelToView(List o, IFAttributeInfo attributeInfo) {
         List<Actor> actorList = o;
 		StringBuffer buffer = new StringBuffer();
 

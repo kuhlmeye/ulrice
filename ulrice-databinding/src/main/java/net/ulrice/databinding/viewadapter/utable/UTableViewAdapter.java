@@ -14,6 +14,7 @@ import javax.swing.event.TableModelListener;
 import javax.swing.table.TableModel;
 
 import net.ulrice.databinding.IFBinding;
+import net.ulrice.databinding.bufferedbinding.IFAttributeInfo;
 import net.ulrice.databinding.bufferedbinding.impl.ColumnDefinition;
 import net.ulrice.databinding.bufferedbinding.impl.Element;
 import net.ulrice.databinding.bufferedbinding.impl.TableAM;
@@ -69,8 +70,8 @@ public class UTableViewAdapter extends AbstractViewAdapter implements TableModel
         }
     };
     
-    public UTableViewAdapter(final UTableComponent table) {
-        super(List.class);
+    public UTableViewAdapter(final UTableComponent table, IFAttributeInfo attributeInfo) {
+        super(List.class, attributeInfo);
 
         this.table = table;        
         setEditable(isComponentEnabled());
