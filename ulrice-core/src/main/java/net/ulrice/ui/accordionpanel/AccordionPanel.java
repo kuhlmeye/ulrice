@@ -1,6 +1,7 @@
 package net.ulrice.ui.accordionpanel;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
@@ -8,8 +9,10 @@ import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.swing.BorderFactory;
 import javax.swing.JComponent;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 
 public class AccordionPanel extends JPanel implements ActionListener {
 
@@ -37,7 +40,7 @@ public class AccordionPanel extends JPanel implements ActionListener {
         constraints.gridy = 1;
         constraints.fill = GridBagConstraints.BOTH;
         constraints.weightx = 1;
-
+        
         add(topPanel, BorderLayout.NORTH);
 
     }
@@ -46,8 +49,28 @@ public class AccordionPanel extends JPanel implements ActionListener {
         this(false);
     }
 
+    /**
+     * Add a foldable with scrollbars
+     */
+    public AccordionContentPanel addFoldableWithScrollBar(String title, JComponent content) {
+        JScrollPane scrollPaneWithContent = new JScrollPane(content, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+        scrollPaneWithContent.setBorder(BorderFactory.createEmptyBorder());
+        
+        return addFoldable(title, scrollPaneWithContent);
+    }
+    
+    /**
+     * Default foldable with light blue color
+     */
     public AccordionContentPanel addFoldable(String title, JComponent content) {
-        AccordionContentPanel panel = new AccordionContentPanel(title, content);
+        return addFoldable(title, content, new Color(0xecf4fb));
+    }
+
+    /**
+     * Add a foldable with specific seperator color
+     */
+    public AccordionContentPanel addFoldable(String title, JComponent content, Color seperatorColor) {
+        AccordionContentPanel panel = new AccordionContentPanel(title, content, seperatorColor);
 
         panel.addActionListener(this);
         panel.setFolded(foldables.size() > 0);
@@ -59,11 +82,11 @@ public class AccordionPanel extends JPanel implements ActionListener {
 
         return panel;
     }
-    
-    public void removeFoldable(AccordionContentPanel panel){
+
+    public void removeFoldable(AccordionContentPanel panel) {
         foldables.remove(panel);
         topPanel.remove(panel);
-        
+
     }
 
     public AccordionPanel setContent(JComponent content) {
@@ -78,6 +101,7 @@ public class AccordionPanel extends JPanel implements ActionListener {
     }
 
     public void togglePanel(Object panel) {
+        invalidate();
         if (foldables.contains(panel)) {
             for (AccordionContentPanel foldable : foldables) {
                 if (foldable == panel) {
@@ -90,6 +114,7 @@ public class AccordionPanel extends JPanel implements ActionListener {
                 }
             }
         }
+        validate();
     }
 
     @Override
