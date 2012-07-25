@@ -11,6 +11,7 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.geom.Point2D;
 
+import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
@@ -19,14 +20,18 @@ public class AccordionSeparatorPanel extends JPanel {
     private static final long serialVersionUID = 7528047902693951355L;
 
     private String actionCommand;
+    private JLabel foldLabel;
 
-    public AccordionSeparatorPanel(String title) {
+    public AccordionSeparatorPanel(String title, Color backgroundColor) {
         super(new BorderLayout());
 
         setOpaque(false);
-        setBackground(new Color(0xecf4fb));
+        setBackground(backgroundColor);
 
-        add(new JLabel(" "+title));
+        foldLabel = new JLabel();
+
+        add(foldLabel, BorderLayout.WEST);
+        add(new JLabel(title), BorderLayout.CENTER);
 
         addMouseListener(new MouseAdapter() {
 
@@ -62,9 +67,7 @@ public class AccordionSeparatorPanel extends JPanel {
 
         for (int i = listeners.length - 2; i >= 0; i -= 2) {
             if (listeners[i] == ActionListener.class) {
-                e =
-                        new ActionEvent(this, ActionEvent.ACTION_PERFORMED,
-                            getActionCommand(), when, modifiers);
+                e = new ActionEvent(this, ActionEvent.ACTION_PERFORMED, getActionCommand(), when, modifiers);
             }
             ((ActionListener) listeners[i + 1]).actionPerformed(e);
         }
@@ -76,14 +79,22 @@ public class AccordionSeparatorPanel extends JPanel {
 
         Graphics2D g2 = (Graphics2D) g;
         LinearGradientPaint paint =
-                new LinearGradientPaint(new Point2D.Double(0, 0), new Point2D.Double(0, height), new float[] {
-                    0.0f, 1.0f / height, 0.5f, 1.0f - (2.0f / height), 1.0f }, new Color[] {
-                    Colors.brighter(getBackground(), 0.01), getBackground(), getBackground(),
-                    Colors.darker(getBackground(), 0.1), Colors.darker(getBackground(), 0.5) });
+                new LinearGradientPaint(new Point2D.Double(0, 0), new Point2D.Double(0, height), new float[] { 0.0f, 1.0f / height, 0.5f, 1.0f - (2.0f / height), 1.0f },
+                    new Color[] {
+                        Colors.brighter(getBackground(), 0.01), getBackground(), getBackground(), Colors.darker(getBackground(), 0.1), Colors.darker(getBackground(), 0.5) });
 
         g2.setPaint(paint);
         g2.fillRect(0, 0, getWidth(), height);
 
         super.paintComponent(g);
+    }
+
+    public void setOpened(boolean b) {
+        if (b) {
+            foldLabel.setIcon(new ImageIcon(AccordionSeparatorPanel.class.getResource("opened.gif")));
+        }
+        else {
+            foldLabel.setIcon(new ImageIcon(AccordionSeparatorPanel.class.getResource("closed.gif")));
+        }
     }
 }

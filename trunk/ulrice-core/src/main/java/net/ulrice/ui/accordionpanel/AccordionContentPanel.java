@@ -1,6 +1,7 @@
 package net.ulrice.ui.accordionpanel;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
@@ -16,10 +17,10 @@ public class AccordionContentPanel extends JPanel implements ActionListener {
 
     private String actionCommand;
 
-    public AccordionContentPanel(String title, JComponent content) {
+    public AccordionContentPanel(String title, JComponent content, Color seperatorBackgroundColor) {
         super(new BorderLayout());
 
-        separatorPanel = new AccordionSeparatorPanel(title);
+        separatorPanel = new AccordionSeparatorPanel(title, seperatorBackgroundColor);
         separatorPanel.addActionListener(this);
 
         this.content = content;
@@ -63,6 +64,7 @@ public class AccordionContentPanel extends JPanel implements ActionListener {
     }
 
     public void setFolded(boolean folded) {
+        separatorPanel.setOpened(!folded);
         content.setVisible(!folded);
     }
 
