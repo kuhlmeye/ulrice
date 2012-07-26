@@ -126,4 +126,9 @@ public class HotkeyOptionModule implements IFOptionModule {
 			Ulrice.getAppPrefs().putConfiguration(Ulrice.getModuleManager(), hotkeyModule.getFunctionKey(), hotkeyModule.getModuleId());
 		}
 	}
+	
+	@Override
+	public void onClose() {
+	    
+	}
 }

@@ -1,5 +1,6 @@
 package net.ulrice.databinding.bufferedbinding.impl;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -62,6 +63,17 @@ public class BindingGroup extends AbstractBindingGroup {
         if (viewAdapters != null && viewAdapters.contains(viewAdapter)) {
             removeViewAdapter(attributeModel.getId(), viewAdapter);
         }       
+    }
+    
+    public void unbind(IFAttributeModel<?> attributeModel){
+        if (amMap.containsValue(attributeModel)) {
+            removeAttributeModel(attributeModel);
+        }
+        
+        final List<IFViewAdapter> viewAdapters = new ArrayList<IFViewAdapter>(vaMap.get(attributeModel.getId()));
+        for (IFViewAdapter viewAdapter : viewAdapters) {
+            removeViewAdapter(attributeModel.getId(), viewAdapter);
+        }
     }
     
     public void removeAttributeModel(IFAttributeModel<?> am){
