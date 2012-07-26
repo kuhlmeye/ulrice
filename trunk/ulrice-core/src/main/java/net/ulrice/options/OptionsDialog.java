@@ -133,4 +133,12 @@ public class OptionsDialog extends JDialog {
             cardPanel.add(optionModule.getView(), optionModule.getClass().getSimpleName());
         }
     }
+    
+    @Override
+    public void dispose() {
+        for (int i = 0; i < moduleListModel.getSize(); i++) {
+            moduleListModel.getElementAt(i).onClose();
+        }
+        super.dispose();
+    }
 }

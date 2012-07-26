@@ -38,4 +38,9 @@ public interface IFOptionModule {
      * Called, if the data should be saved (closing of dialog,...)
      */
     void onSave();
+    
+    /**
+     * Called, if the option dialog is closed.
+     */
+    void onClose();
 }
