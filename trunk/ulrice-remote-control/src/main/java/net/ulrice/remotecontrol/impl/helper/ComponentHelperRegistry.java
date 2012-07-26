@@ -27,6 +27,7 @@ public class ComponentHelperRegistry {
         register(new JTextComponentHelper());
         register(new UTableComponentHelper());
         register(new WindowHelper());
+        register(new I18nTextComponentHelper());
     }
 
     /**
