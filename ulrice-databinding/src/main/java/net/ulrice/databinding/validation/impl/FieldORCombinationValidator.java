@@ -10,7 +10,7 @@ import net.ulrice.databinding.validation.ValidationResult;
 
 /**
  * Checks if minimum one of a list of fields is filled
- * 
+ *
  * @author silvia.roessler@gmail.com
  */
 
@@ -45,7 +45,7 @@ public class FieldORCombinationValidator extends AbstractValidator {
 
         for (GenericAM< ?> model : modelList) { /* actualize dependent fields */
             if (result.getValidationErrors().isEmpty() != model.isValid()) {
-                model.recalculateStateForThisValidator(this, result.getValidationErrors().isEmpty(), rawAttribute);
+                model.recalculateStateForThisValidator(this, result.getValidationErrors().isEmpty(), model.getCurrentValue());
             }
         }
 
