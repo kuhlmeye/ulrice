@@ -90,9 +90,10 @@ public class JListHelper extends AbstractJComponentHelper<JList> {
     @Override
     public boolean click(Robot robot, JList component, String text) throws RemoteControlException {
         ListModel model = component.getModel();
-
+        final RegularMatcher matcher = RemoteControlUtils.toMatcher(text);
+        
         for (int i = 0; i < model.getSize(); i += 1) {
-            if (text.equals(model.getElementAt(i))) {
+            if (matcher.matches(String.valueOf(model.getElementAt(i)))) {
                 return click(robot, component, i);
             }
         }

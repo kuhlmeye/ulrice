@@ -436,8 +436,9 @@ public class ColumnDefinition<T extends Object> implements PropertyChangeListene
     /**
      * @param isListOrderRelevant the isListOrderRelevant to set
      */
-    public void setListOrderRelevant(boolean isListOrderRelevant) {
+    public ColumnDefinition<T> setListOrderRelevant(boolean isListOrderRelevant) {
         this.isListOrderRelevant = isListOrderRelevant;
+        return this;
     }
 
     /**

@@ -362,7 +362,12 @@ public class Element {
         fireValueChanged(null);
         updateState();
     }
-}
+}   
+    
+    public void setOriginalValueDirty(boolean dirty){
+        originalValueDirty = dirty;
+        updateState();
+    }
 
     public Object getCurrentValue() {
         Object result = tableAM.cloneObject(getOriginalValue());
