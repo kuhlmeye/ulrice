@@ -24,7 +24,7 @@ public class JCheckBoxHelper extends AbstractJComponentHelper<JCheckBox> {
                 RemoteControlUtils.invokeInSwing(new Runnable() {
                     @Override
                     public void run() {
-                        if (component.isSelected() != valueToSet) {
+                        while (component.isSelected() != valueToSet) {
                             component.doClick(5);
                         }
 //                        component.setSelected(valueToSet);
