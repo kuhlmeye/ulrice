@@ -2,6 +2,7 @@ package net.ulrice.ui.accordionpanel;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
@@ -40,7 +41,7 @@ public class AccordionPanel extends JPanel implements ActionListener {
         constraints.gridy = 1;
         constraints.fill = GridBagConstraints.BOTH;
         constraints.weightx = 1;
-        
+
         add(topPanel, BorderLayout.NORTH);
 
     }
@@ -51,14 +52,19 @@ public class AccordionPanel extends JPanel implements ActionListener {
 
     /**
      * Add a foldable with scrollbars
+     * 
+     * @param preferredHeight - The height of the component has to be set in order to get scrollPane to work
      */
-    public AccordionContentPanel addFoldableWithScrollBar(String title, JComponent content) {
-        JScrollPane scrollPaneWithContent = new JScrollPane(content, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
-        scrollPaneWithContent.setBorder(BorderFactory.createEmptyBorder());
-        
-        return addFoldable(title, scrollPaneWithContent);
+    public AccordionContentPanel addFoldableWithScrollPane(String title, JComponent content, int preferredHeight) {
+
+        JScrollPane sp = new JScrollPane(content, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+        sp.setBorder(BorderFactory.createEmptyBorder());
+
+        sp.setPreferredSize(new Dimension(0, preferredHeight));
+
+        return addFoldable(title, sp);
     }
-    
+
     /**
      * Default foldable with light blue color
      */
@@ -76,8 +82,8 @@ public class AccordionPanel extends JPanel implements ActionListener {
         panel.setFolded(foldables.size() > 0);
 
         foldables.add(panel);
-
         topPanel.add(panel, constraints);
+
         constraints.gridy += 1;
 
         return panel;
