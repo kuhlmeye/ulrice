@@ -108,12 +108,12 @@ public class JTextComponentViewAdapter extends AbstractViewAdapter implements Do
 
 	@Override
 	protected void addComponentListener() {
-		textComponent.getDocument().removeDocumentListener(this);
+	    textComponent.getDocument().addDocumentListener(this);
 	}
 
 	@Override
 	protected void removeComponentListener() {
-		textComponent.getDocument().addDocumentListener(this);	
+	    textComponent.getDocument().removeDocumentListener(this);
 	}
 	
     @Override
