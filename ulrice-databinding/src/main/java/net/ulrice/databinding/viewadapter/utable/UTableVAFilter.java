@@ -514,6 +514,7 @@ public class UTableVAFilter extends RowFilter<UTableViewAdapter, String> impleme
                     // Allowed:
                     //  > -0.9
                     //  < -0.9
+                    //  <> -0.9
                     // [0.8 1.0]
 
                     String trimmedText = text.trim();
@@ -526,6 +527,21 @@ public class UTableVAFilter extends RowFilter<UTableViewAdapter, String> impleme
                             try {
                                 final Double valueA = numericScanner.nextDouble();
                                 numericPatternExpressionMap.put(columnId, new NumericPattern(NumericPattern.Operator.Greater, valueA, null));
+                            }
+                            catch (InputMismatchException e) {
+                                LOG.log(Level.FINER, "Could not get double value from " + text, e);
+                            }
+                        }
+                    } else if (trimmedText.startsWith("<>") && trimmedText.length() > 2) {
+                        trimmedText = trimmedText.substring(2);
+
+                        Scanner numericScanner = new Scanner(trimmedText);
+                        numericScanner.useLocale(formatLocale);
+
+                        if(numericScanner.hasNextDouble()) {
+                            try {
+                                final Double valueA = numericScanner.nextDouble();
+                                numericPatternExpressionMap.put(columnId, new NumericPattern(NumericPattern.Operator.NotEqual, valueA, null));
                             }
                             catch (InputMismatchException e) {
                                 LOG.log(Level.FINER, "Could not get double value from " + text, e);
@@ -723,7 +739,7 @@ public class UTableVAFilter extends RowFilter<UTableViewAdapter, String> impleme
     private static class NumericPattern {
 
         static enum Operator {
-            Greater, Smaller, Interval, Exact;
+            Greater, Smaller, Interval, Exact, NotEqual;
         };
 
         Operator op = null;
@@ -747,6 +763,8 @@ public class UTableVAFilter extends RowFilter<UTableViewAdapter, String> impleme
                     return valueA.doubleValue() < Double.valueOf(value.toString());
                 case Smaller:
                     return valueA.doubleValue() > Double.valueOf(value.toString());
+                case NotEqual:
+                    return valueA.doubleValue() != Double.valueOf(value.toString());
                 case Interval:
                     return valueA.doubleValue() < Double.valueOf(value.toString())
                         && valueB.doubleValue() > Double.valueOf(value.toString());
@@ -766,6 +784,9 @@ public class UTableVAFilter extends RowFilter<UTableViewAdapter, String> impleme
                     break;
                 case Smaller:
                     buffer.append('<').append(valueA);
+                    break;
+                case NotEqual:
+                    buffer.append("<>").append(valueA);
                     break;
                 case Interval:
                     buffer.append('[').append(valueA).append(',').append(valueB).append(']');
