@@ -41,9 +41,9 @@ public class JTableHelper extends AbstractJComponentHelper<JTable> {
                 try {
                     int modelRow = component.convertRowIndexToModel(row);
                     int modelColumn = component.convertColumnIndexToModel(column);
+                    int preferredWidth = component.getColumnModel().getColumn(modelColumn).getPreferredWidth();
 
-                    data.setEntry(row, column, model.getValueAt(modelRow, modelColumn),
-                        component.isCellSelected(row, column));
+                    data.setEntry(row, column, model.getValueAt(modelRow, modelColumn), component.isCellSelected(row, column), preferredWidth == 0);
                 }
                 catch (IndexOutOfBoundsException e) {
                     // concurrent problem
@@ -80,8 +80,7 @@ public class JTableHelper extends AbstractJComponentHelper<JTable> {
      *      java.lang.String, int, int)
      */
     @Override
-    public boolean enter(final Robot robot, final JTable component, final String text, int row, int column)
-        throws RemoteControlException {
+    public boolean enter(final Robot robot, final JTable component, final String text, int row, int column) throws RemoteControlException {
         final int finalRow = invertValue(row, component.getRowCount());
         final int finalColumn = invertValue(column, component.getColumnCount());
 
@@ -109,8 +108,7 @@ public class JTableHelper extends AbstractJComponentHelper<JTable> {
             });
         }
         catch (RemoteControlException e) {
-            throw new RemoteControlException(String.format("Failed to enter %s into row/column %d/%d of the table",
-                text, row, column), e);
+            throw new RemoteControlException(String.format("Failed to enter %s into row/column %d/%d of the table", text, row, column), e);
         }
 
         boolean editResult = result.aquireResult();
@@ -128,9 +126,7 @@ public class JTableHelper extends AbstractJComponentHelper<JTable> {
                 });
             }
             catch (RemoteControlException e) {
-                throw new RemoteControlException(
-                    String.format("Failed to stop editing after entering %s into row/column %d/%d of the table",
-                        text, row, column), e);
+                throw new RemoteControlException(String.format("Failed to stop editing after entering %s into row/column %d/%d of the table", text, row, column), e);
             }
         }
 
@@ -144,8 +140,7 @@ public class JTableHelper extends AbstractJComponentHelper<JTable> {
      *      int, int)
      */
     @Override
-    public boolean select(Robot robot, final JTable component, final int start, final int end)
-        throws RemoteControlException {
+    public boolean select(Robot robot, final JTable component, final int start, final int end) throws RemoteControlException {
         final Result<Boolean> result = new Result<Boolean>(2);
 
         try {
@@ -156,8 +151,7 @@ public class JTableHelper extends AbstractJComponentHelper<JTable> {
                     try {
                         ListSelectionModel selectionModel = component.getSelectionModel();
 
-                        selectionModel.addSelectionInterval(invertValue(start, component.getRowCount()),
-                            invertValue(end, component.getRowCount()));
+                        selectionModel.addSelectionInterval(invertValue(start, component.getRowCount()), invertValue(end, component.getRowCount()));
 
                         result.fireResult(true);
                     }
@@ -171,8 +165,7 @@ public class JTableHelper extends AbstractJComponentHelper<JTable> {
             return result.aquireResult();
         }
         catch (RemoteControlException e) {
-            throw new RemoteControlException(String.format("Failed to select section %d to %d of the table", start,
-                end), e);
+            throw new RemoteControlException(String.format("Failed to select section %d to %d of the table", start, end), e);
         }
 
     }

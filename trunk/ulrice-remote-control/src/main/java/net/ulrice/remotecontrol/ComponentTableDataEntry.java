@@ -13,11 +13,13 @@ public class ComponentTableDataEntry implements Serializable {
 
     private Object value;
     private boolean selected;
+    private boolean hidden;
 
-    public ComponentTableDataEntry(Object value, boolean selected) {
+    public ComponentTableDataEntry(Object value, boolean selected, boolean hidden) {
         super();
         this.value = value;
         this.selected = selected;
+        this.hidden = hidden;
     }
 
     public Object getValue() {
@@ -34,6 +36,14 @@ public class ComponentTableDataEntry implements Serializable {
 
     public void setSelected(boolean selected) {
         this.selected = selected;
+    }
+
+    public boolean isHidden() {
+        return hidden;
+    }
+
+    public void setHidden(boolean hidden) {
+        this.hidden = hidden;
     }
 
     @Override

@@ -3,6 +3,7 @@ package net.ulrice.remotecontrol;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -88,8 +89,8 @@ public class ComponentTableData implements Serializable {
         return list.get(column);
     }
 
-    public void setEntry(int row, int column, Object value, boolean selected) {
-        setEntry(row, column, new ComponentTableDataEntry(value, selected));
+    public void setEntry(int row, int column, Object value, boolean selected, boolean hidden) {
+        setEntry(row, column, new ComponentTableDataEntry(value, selected, hidden));
     }
 
     public void setEntry(int row, int column, ComponentTableDataEntry entry) {
@@ -123,7 +124,7 @@ public class ComponentTableData implements Serializable {
         ComponentTableDataEntry entry = getEntry(row, column);
 
         if (entry == null) {
-            setEntry(row, column, new ComponentTableDataEntry(value, false));
+            setEntry(row, column, new ComponentTableDataEntry(value, false, false));
         }
         else {
             entry.setValue(value);
@@ -140,7 +141,7 @@ public class ComponentTableData implements Serializable {
         ComponentTableDataEntry entry = getEntry(row, column);
 
         if (entry == null) {
-            setEntry(row, column, new ComponentTableDataEntry(null, selected));
+            setEntry(row, column, new ComponentTableDataEntry(null, selected, false));
         }
         else {
             entry.setSelected(selected);
@@ -150,6 +151,33 @@ public class ComponentTableData implements Serializable {
     public boolean isColumnSelected(int column) {
         for (int row = 0; row < getRowCount(); row += 1) {
             if (!isSelected(row, column)) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    public boolean isHidden(int row, int column) {
+        ComponentTableDataEntry entry = getEntry(row, column);
+
+        return (entry != null) && (entry.isHidden());
+    }
+
+    public void setHidden(int row, int column, boolean hidden) {
+        ComponentTableDataEntry entry = getEntry(row, column);
+
+        if (entry == null) {
+            setEntry(row, column, new ComponentTableDataEntry(null, false, hidden));
+        }
+        else {
+            entry.setHidden(hidden);
+        }
+    }
+
+    public boolean isColumnHidden(int column) {
+        for (int row = 0; row < getRowCount(); row += 1) {
+            if (!isHidden(row, column)) {
                 return false;
             }
         }
@@ -170,6 +198,16 @@ public class ComponentTableData implements Serializable {
     public boolean isRowSelected(int row) {
         for (int column = 0; column < getColumnCount(); column += 1) {
             if (!isSelected(row, column)) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    public boolean isRowHidden(int row) {
+        for (int column = 0; column < getColumnCount(); column += 1) {
+            if (!isHidden(row, column)) {
                 return false;
             }
         }
@@ -205,31 +243,9 @@ public class ComponentTableData implements Serializable {
 
     public boolean isRowEmpty(int row) {
         for (int column = 0; column < getColumnCount(); column += 1) {
-            Object value = getValue(row, column);
-
-            if (value == null) {
-                continue;
+            if ((!isHidden(row, column)) && (!isEmpty(getValue(row, column)))) {
+                return false;
             }
-
-            if ((value instanceof String) && (((String) value).length() == 0)) {
-                continue;
-            }
-
-            if ((value instanceof Number) && (((Number) value).doubleValue() == 0)) {
-                continue;
-            }
-            
-            if (value instanceof Boolean) {
-                // ignore, what is empty?
-                continue;
-            }
-            
-            if (value instanceof Enum) {
-                // ignore, what is empty?
-                continue;
-            }
-
-            return false;
         }
 
         return true;
@@ -242,7 +258,7 @@ public class ComponentTableData implements Serializable {
         int widths[] = new int[columnCount];
 
         Arrays.fill(widths, 1);
-        
+
         for (int column = 0; column < columnCount; column += 1) {
             String header = getHeader(column);
             widths[column] = Math.max(widths[column], (header != null) ? header.length() : 0);
@@ -254,12 +270,15 @@ public class ComponentTableData implements Serializable {
             }
         }
 
-        builder.append("IDX |");
+        builder.append(" IDX |");
 
         for (int column = 0; column < columnCount; column += 1) {
             String header = getHeader(column);
             if (isColumnSelected(column)) {
-                builder.append(String.format(" %-" + widths[column] + "s*", (header != null) ? header : ""));
+                builder.append(String.format("[%-" + widths[column] + "s]", (header != null) ? header : ""));
+            }
+            else if (isColumnHidden(column)) {
+                builder.append(String.format("(%-" + widths[column] + "s)", (header != null) ? header : ""));
             }
             else {
                 builder.append(String.format(" %-" + widths[column] + "s ", (header != null) ? header : ""));
@@ -267,7 +286,7 @@ public class ComponentTableData implements Serializable {
             builder.append("|");
         }
 
-        builder.append("\n    +");
+        builder.append("\n     +");
 
         for (int column = 0; column < columnCount; column += 1) {
             for (int i = -2; i < widths[column]; i += 1) {
@@ -278,15 +297,21 @@ public class ComponentTableData implements Serializable {
 
         for (int row = 0; row < getRowCount(); row += 1) {
             if (isRowSelected(row)) {
-                builder.append(String.format("\n%3d*|", row));
+                builder.append(String.format("\n[%3d]|", row));
+            }
+            else if (isRowHidden(row)) {
+                builder.append(String.format("\n(%3d)|", row));
             }
             else {
-                builder.append(String.format("\n%3d |", row));
+                builder.append(String.format("\n %3d |", row));
             }
 
             for (int column = 0; column < columnCount; column += 1) {
                 if (isSelected(row, column)) {
                     builder.append(String.format("[%-" + widths[column] + "s]", toString(row, column)));
+                }
+                else if (isHidden(row, column)) {
+                    builder.append(String.format("(%-" + widths[column] + "s)", toString(row, column)));
                 }
                 else {
                     builder.append(String.format(" %-" + widths[column] + "s ", toString(row, column)));
@@ -296,6 +321,50 @@ public class ComponentTableData implements Serializable {
         }
 
         return builder.toString();
+    }
+
+    private static boolean isEmpty(Object value) {
+        if (value == null) {
+            return true;
+        }
+
+        if (value instanceof String) {
+            String s = (String) value;
+
+            s = s.trim();
+
+            return s.length() == 0;
+        }
+
+        if (value instanceof Number) {
+            return ((Number) value).doubleValue() == 0;
+        }
+
+        if (value instanceof Boolean) {
+            // ignore, what is empty?
+            return true;
+        }
+
+        if (value instanceof Enum) {
+            // ignore, what is empty?
+            return true;
+        }
+
+        if (value instanceof Collection< ?>) {
+            for (Object entry : (Collection< ?>) value) {
+                if (!isEmpty(entry)) {
+                    return false;
+                }
+            }
+
+            return true;
+        }
+
+        if (value instanceof Map< ?, ?>) {
+            return isEmpty(((Map<?, ?>)value).values());
+        }
+        
+        return false;
     }
 
 }
