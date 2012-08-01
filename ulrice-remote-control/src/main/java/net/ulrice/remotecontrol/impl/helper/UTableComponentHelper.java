@@ -36,9 +36,11 @@ public class UTableComponentHelper extends AbstractJComponentHelper<UTableCompon
 
         for (int row = 0; row < component.getViewRowCount(); row += 1) {
             for (int column = 0; column < component.getColumnCount(); column += 1) {
+                Integer preferredWidth = component.getColumnByViewIndex(column).getPreferredWidth();
                 data.setEntry(row, column,
                     component.getElementAtViewIndex(row).getValueAt(component.convertColumnIndexToModel(column)),
-                    component.getSelectionModel().isSelectedIndex(row));
+                    component.getSelectionModel().isSelectedIndex(row),
+                    preferredWidth == null || preferredWidth.intValue() == 0);
             }
         }
 
