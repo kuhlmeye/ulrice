@@ -54,7 +54,7 @@ public class Toolbar extends JToolBar implements IFModuleActionManagerEventListe
     /**
      * Rebuild all actions.
      */
-    private void rebuildActions() {
+    protected void rebuildActions() {
         removeAll();
         if (actionArrays != null) {
             boolean lastWasSeparator = true;
