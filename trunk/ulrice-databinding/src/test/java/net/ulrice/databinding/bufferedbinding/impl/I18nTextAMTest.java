@@ -180,4 +180,15 @@ public class I18nTextAMTest {
 		 
 		 assertEquals(2, map1.size());
 	 }
+	 
+	 @Test
+	 public void removeEmptyLocalesTrim() {
+		 textAM1.read();
+		 Map<Locale, String> map = textAM1.getCurrentValue();
+		 map.put(Locale.GERMAN, " ");
+		 textAM1.setCurrentValue(map);
+		 textAM1.write();
+		 
+		 assertEquals(2, map1.size());
+	 }
 }
