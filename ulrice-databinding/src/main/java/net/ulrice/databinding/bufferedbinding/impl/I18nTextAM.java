@@ -171,7 +171,7 @@ public class I18nTextAM implements IFAttributeModel<Map<Locale, String>>, IFView
 
         if (!modelAccessor.isReadOnly()) {
             Map<Locale, String> value = directWrite();
-            modelAccessor.setValue(getValueConverter() != null ? getValueConverter().viewToModel(value) : value);
+            modelAccessor.setValue(getValueConverter() != null ? getValueConverter().viewToModel(value, attributeInfo) : value);
         }
     }
     
