@@ -115,6 +115,10 @@ public class GenericAMTest {
         
         stringAAM.setCurrentValue("Test");
         Assert.assertTrue(stringAAM.isDirty());
-        Assert.assertTrue(stringAAM.isValid());        
+        Assert.assertTrue(stringAAM.isValid());    
+        
+        stringAAM.clearExternalValidationErrors();
+        Assert.assertTrue(stringAAM.isDirty());
+        Assert.assertTrue(stringAAM.isValid());       
     }
 }
