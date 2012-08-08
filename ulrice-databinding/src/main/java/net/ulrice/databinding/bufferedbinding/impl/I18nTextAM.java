@@ -33,6 +33,7 @@ public class I18nTextAM implements IFAttributeModel<Map<Locale, String>>, IFView
 	private IFModelValueAccessor modelAccessor;
 	private IFAttributeInfo attributeInfo;
 	private boolean readOnly;
+	private boolean removeEmptyLanguages = false;
 	
     private List<IFValidator<Map<Locale, String>>> validators = new ArrayList<IFValidator<Map<Locale, String>>>();
 	private List<IFViewAdapter<Map<Locale, String>, ?>> viewAdapterList = new ArrayList<IFViewAdapter<Map<Locale, String>, ?>>();
@@ -179,11 +180,11 @@ public class I18nTextAM implements IFAttributeModel<Map<Locale, String>>, IFView
     	Map<Locale, String> result = new HashMap<Locale, String>();
 		for(LocaleSelectorItem localeItem : localeItems) {
 			if(currentValue.containsKey(localeItem.getLocale())) {
-				String value = currentValue.get(localeItem.getLocale());
-				if(value != null && !"".equals(value.trim())) {
-					result.put(localeItem.getLocale(), value);
-				} else {
+				String value = currentValue.get(localeItem.getLocale());				
+				if((value == null || "".equals(value.trim())) && isRemoveEmptyLanguages()) {
 					result.remove(localeItem.getLocale());
+				} else {
+					result.put(localeItem.getLocale(), value);
 				}
 			}
 		}	
@@ -463,4 +464,12 @@ public class I18nTextAM implements IFAttributeModel<Map<Locale, String>>, IFView
 	public IFAttributeInfo getAttributeInfo() {
 		return attributeInfo;
 	}	
+	
+	public boolean isRemoveEmptyLanguages() {
+		return removeEmptyLanguages;
+	}
+	
+	public void setRemoveEmptyLanguages(boolean removeEmptyLanguages) {
+		this.removeEmptyLanguages = removeEmptyLanguages;
+	}
 }

@@ -172,6 +172,7 @@ public class I18nTextAMTest {
 	 
 	 @Test
 	 public void removeEmptyLocales() {
+		 textAM1.setRemoveEmptyLanguages(true);
 		 textAM1.read();
 		 Map<Locale, String> map = textAM1.getCurrentValue();
 		 map.put(Locale.GERMAN, "");
@@ -183,6 +184,7 @@ public class I18nTextAMTest {
 	 
 	 @Test
 	 public void removeEmptyLocalesTrim() {
+		 textAM1.setRemoveEmptyLanguages(true);
 		 textAM1.read();
 		 Map<Locale, String> map = textAM1.getCurrentValue();
 		 map.put(Locale.GERMAN, " ");
@@ -190,5 +192,27 @@ public class I18nTextAMTest {
 		 textAM1.write();
 		 
 		 assertEquals(2, map1.size());
+	 }
+	 
+	 @Test
+	 public void notRemoveEmptyLocales() {
+		 textAM1.read();
+		 Map<Locale, String> map = textAM1.getCurrentValue();
+		 map.put(Locale.GERMAN, "");
+		 textAM1.setCurrentValue(map);
+		 textAM1.write();
+		 
+		 assertEquals(3, map1.size());
+	 }
+	 
+	 @Test
+	 public void notRemoveEmptyLocalesTrim() {
+		 textAM1.read();
+		 Map<Locale, String> map = textAM1.getCurrentValue();
+		 map.put(Locale.GERMAN, " ");
+		 textAM1.setCurrentValue(map);
+		 textAM1.write();
+		 
+		 assertEquals(3, map1.size());
 	 }
 }
