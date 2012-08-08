@@ -15,6 +15,7 @@ import net.ulrice.message.TranslationProvider;
 import net.ulrice.module.IFModuleManager;
 import net.ulrice.module.IFModuleStructureManager;
 import net.ulrice.module.impl.action.ModuleActionManager;
+import net.ulrice.options.ApplicationOptions;
 import net.ulrice.process.ProcessManager;
 import net.ulrice.profile.ProfileManager;
 import net.ulrice.security.GrantAllAuthCallback;
@@ -117,6 +118,7 @@ public class Ulrice {
 
 
     public static void shutdown() {
+    	ApplicationOptions.clearOptionsModules();
         Ulrice.actionManager.dispose();
     }
 

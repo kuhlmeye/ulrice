@@ -25,4 +25,8 @@ public class ApplicationOptions {
     public static void addOptionModule(IFOptionModule optionModule) {
         optionModules.add(optionModule);
     }
+    
+    public static void clearOptionsModules() {
+    	optionModules.clear();
+    }
 }
