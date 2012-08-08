@@ -12,7 +12,6 @@ import javax.swing.event.EventListenerList;
 import net.ulrice.Ulrice;
 import net.ulrice.message.MessageSeverity;
 import net.ulrice.module.IFController;
-import net.ulrice.module.IFModuleTitleProvider.Usage;
 import net.ulrice.process.IFBackgroundProcess.ProcessState;
 
 /**
@@ -154,5 +153,5 @@ public class ProcessManager implements IFProcessListener {
 
     private synchronized String getNextUniqueId() {
         return Long.toHexString(currentId++);
-    }      
+    }     
 }
