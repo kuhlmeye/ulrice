@@ -32,6 +32,7 @@ public class I18nTextComponentHelper extends AbstractJComponentHelper<I18nTextCo
 
                 @Override
                 public void run() {
+                    component.getTextComponent().setText(text);
                     Map<Locale, String> map = component.getData();
                     map.put(component.getSelectedLocale(), text);
                 }

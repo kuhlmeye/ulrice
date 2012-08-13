@@ -63,7 +63,8 @@ public class I18nTextComponent extends JPanel {
 		textComponent.getDocument().addDocumentListener(documentListener);
 	}
 
-	protected JTextComponent getTextComponent() {
+	/* method is public now to be able to reach the text component for BDD tests*/
+	public JTextComponent getTextComponent() {
 		return textComponent;
 	}
 	
