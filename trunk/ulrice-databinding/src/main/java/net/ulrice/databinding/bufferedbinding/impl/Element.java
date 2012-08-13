@@ -523,6 +523,15 @@ public class Element {
         }
         updateState();
     }
+    
+    public void removeExternalValidationErrors(){
+        for (GenericAM< ?> model : modelList) {
+            if (model != null) {
+                model.clearExternalValidationErrors();
+            }
+        }
+        updateState();
+    }
 
     public void addElementValidationError(ValidationError validationError) {
         validationResult.addValidationError(validationError);
@@ -533,6 +542,7 @@ public class Element {
         }
         updateState();
     }
+    
     public void putUniqueKeyConstraintError(UniqueKeyConstraintError uniqueKeyConstraintError) {
         removeUniqueKeyConstraintErrors();
         addElementValidationError(uniqueKeyConstraintError);
@@ -553,8 +563,6 @@ public class Element {
         }
         updateState();
     }
-    
-   
 
     public ValidationResult getElementValidationErrors() {
         return validationResult;
