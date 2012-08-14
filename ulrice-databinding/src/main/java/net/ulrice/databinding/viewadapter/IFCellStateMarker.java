@@ -3,6 +3,7 @@ package net.ulrice.databinding.viewadapter;
 import javax.swing.JComponent;
 
 import net.ulrice.databinding.IFBinding;
+import net.ulrice.databinding.bufferedbinding.impl.ColumnColorOverride;
 import net.ulrice.databinding.bufferedbinding.impl.Element;
 
 /**
@@ -13,5 +14,5 @@ import net.ulrice.databinding.bufferedbinding.impl.Element;
 public interface IFCellStateMarker {
 
 	void initialize(JComponent component);
-    void updateState(Element value, int row, boolean isSelected, boolean editable, boolean dirty, boolean valid, JComponent component);    
+    void updateState(Element value, int row, boolean isSelected, boolean editable, boolean dirty, boolean valid, ColumnColorOverride columnColorOverride, JComponent component);    
 }
