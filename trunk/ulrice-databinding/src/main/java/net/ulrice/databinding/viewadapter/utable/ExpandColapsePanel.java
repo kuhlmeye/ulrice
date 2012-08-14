@@ -19,7 +19,7 @@ public class ExpandColapsePanel extends JPanel {
 
     private static final long serialVersionUID = 1L;
 
-    public ExpandColapsePanel(final UTreeTableComponent treeTable) {
+    public ExpandColapsePanel(final ExpandColapseListener listener) {
         setLayout(new FlowLayout(FlowLayout.LEFT, 0, 0));
 
         JButton btnExpand = new JButton("+");
@@ -27,12 +27,13 @@ public class ExpandColapsePanel extends JPanel {
         btnExpand.setPreferredSize(new Dimension(22, 22));
         btnExpand.setFont(btnExpand.getFont().deriveFont(10));
         
+        this.setOpaque(false);
         add(btnExpand);
         btnExpand.addActionListener(new ActionListener() {
 
             @Override
             public void actionPerformed(ActionEvent e) {
-                treeTable.expandAll();
+                listener.expandAll();
 
             }
         });
@@ -45,7 +46,7 @@ public class ExpandColapsePanel extends JPanel {
 
             @Override
             public void actionPerformed(ActionEvent e) {
-                treeTable.collapseAll();
+                listener.collapseAll();
             }
         });
         add(btnCollapse);
