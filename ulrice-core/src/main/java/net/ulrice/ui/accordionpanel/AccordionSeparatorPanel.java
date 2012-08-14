@@ -15,6 +15,8 @@ import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
+import net.ulrice.util.Colors;
+
 public class AccordionSeparatorPanel extends JPanel {
 
     private static final long serialVersionUID = 7528047902693951355L;

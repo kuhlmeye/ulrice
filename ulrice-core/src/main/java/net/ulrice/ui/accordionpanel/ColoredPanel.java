@@ -10,6 +10,8 @@ import java.awt.geom.Point2D;
 import javax.swing.JPanel;
 import javax.swing.JSeparator;
 
+import net.ulrice.util.Colors;
+
 /**
  * Panel with coloured background
  * 
