@@ -47,7 +47,7 @@ public abstract class AbstractUTableRenderer extends DefaultTableCellRenderer im
             }
             
             if(colDef.getPreRendererList() != null){
-                component = adapt(table, isSelected, row,column, component, colDef.getPreRendererList());
+                component = adapt(table, isSelected, row, column, component, colDef.getPreRendererList());
             }            
             
             if (colDef.getBorder() != null) {
@@ -67,7 +67,7 @@ public abstract class AbstractUTableRenderer extends DefaultTableCellRenderer im
                     valid &= element.isColumnValid(columnId);
 
                     sm.initialize(component);
-                    sm.updateState(element, row, isSelected, !readOnly, dirty, valid, component);
+                    sm.updateState(element, row, isSelected, !readOnly, dirty, valid, colDef.getColumnColorOverride(), component);
                 }
 
                 IFCellTooltipHandler tth = getTooltipHandler(tableComponent);
@@ -76,17 +76,7 @@ public abstract class AbstractUTableRenderer extends DefaultTableCellRenderer im
                 }
             }
 
-            ColumnColorOverride colorOverride = colDef.getColumnColorOverride();
-            if (colorOverride != null && !dirty && valid) {
-                if (readOnly && !isSelected) {
-                    component.setBackground(row % 2 == 0 ? colorOverride.getEvenReadOnlyColor() : colorOverride
-                        .getOddReadOnlyColor());
-                }
-                else if (!readOnly && !isSelected) {
-                    component.setBackground(row % 2 == 0 ? colorOverride.getEvenNormalColor() : colorOverride
-                        .getOddNormalColor());
-                }
-            }
+            
             
             if(colDef.getPostRendererList() != null){
                 component = adapt(table, isSelected, row,column, component, colDef.getPostRendererList());
