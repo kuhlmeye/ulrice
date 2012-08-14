@@ -24,6 +24,11 @@ public class ColumnColorOverride {
         this.oddReadOnlyColor = oddReadOnlyColor;
     }
     
+    public ColumnColorOverride(Color evenColor, Color oddColor) {
+        this(evenColor, oddColor, evenColor, oddColor);
+       
+    }
+    
     public Color getEvenNormalColor() {
         return evenNormalColor;
     }
