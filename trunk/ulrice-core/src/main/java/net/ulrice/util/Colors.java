@@ -1,4 +1,4 @@
-package net.ulrice.ui.accordionpanel;
+package net.ulrice.util;
 
 import java.awt.Color;
 
