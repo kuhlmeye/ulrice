@@ -21,7 +21,7 @@ import net.ulrice.message.Message;
 import net.ulrice.message.MessageSeverity;
 import net.ulrice.message.TranslationUsage;
 
-public class UTreeTableComponent extends UTableComponent {
+public class UTreeTableComponent extends UTableComponent implements ExpandColapseListener{
 
     private static final long serialVersionUID = 1L;
     protected UTableViewAdapter viewAdapter;
