@@ -22,6 +22,8 @@ public class UTableHeaderListener implements MouseListener, MouseMotionListener 
     private MouseMotionListener originalMotion;
     private JTable table;
     private UTableComponent uTable;
+    
+    private boolean sortingDisabled = false;
 
     public UTableHeaderListener(BasicTableHeaderUI.MouseInputHandler original, JTable table, UTableComponent uTable) {
 
@@ -37,6 +39,9 @@ public class UTableHeaderListener implements MouseListener, MouseMotionListener 
      */
     @Override
     public void mouseClicked(MouseEvent e) {
+        if(isSortingDisabled()){
+            return;
+        }
         boolean multi = false;
         
         //multi column sorting is activated by holding the shift key
@@ -128,5 +133,14 @@ public class UTableHeaderListener implements MouseListener, MouseMotionListener 
     public void mouseMoved(MouseEvent e) {
         originalMotion.mouseMoved(e);
     }
+
+    public boolean isSortingDisabled() {
+        return sortingDisabled;
+    }
+
+    public void setSortingDisabled(boolean sortingDisabled) {
+        this.sortingDisabled = sortingDisabled;
+    }
+    
 
 }
