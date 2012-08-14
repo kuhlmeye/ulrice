@@ -536,7 +536,8 @@ public class TableAM implements IFAttributeModel {
      * @param element The element with the changed state.
      */
     protected void handleElementStateChange(final Element element) {
-        if (element.getChildCount() != 0 && !virtualTreeNodes) {
+        boolean virtualTreeNodeElement = element.getChildCount() != 0 && virtualTreeNodes;
+        if (virtualTreeNodeElement) {
             invElements.remove(element);
             modElements.remove(element);
             delElements.remove(element);
@@ -549,7 +550,7 @@ public class TableAM implements IFAttributeModel {
         }
 
         if (element.isDirty() && !element.isInsertedOrRemoved() && elementIdMap.containsKey(element.getUniqueId())
-            && !newElements.contains(element) && !delElements.contains(element)) {
+            && !newElements.contains(element) && !delElements.contains(element) && !virtualTreeNodeElement) {
             modElements.add(element);
         }
 
