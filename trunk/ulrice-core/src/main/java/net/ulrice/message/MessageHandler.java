@@ -18,6 +18,7 @@ import javax.swing.event.EventListenerList;
 
 import net.ulrice.Ulrice;
 import net.ulrice.module.IFController;
+import net.ulrice.module.event.AbstractModuleEventAdapter;
 import net.ulrice.module.event.IFModuleEventListener;
 
 /**
@@ -27,7 +28,7 @@ import net.ulrice.module.event.IFModuleEventListener;
  * 
  * @author christof
  */
-public class MessageHandler implements UncaughtExceptionHandler, IFModuleEventListener {
+public class MessageHandler implements UncaughtExceptionHandler {
 
 	/** The logger used by this class. */
 	private static final Logger LOG = Logger.getLogger(MessageHandler.class.getName());
@@ -40,51 +41,69 @@ public class MessageHandler implements UncaughtExceptionHandler, IFModuleEventLi
 
 	/** Map holding the lists of all module specific messages. */
 	private Map<IFController, List<Message>> moduleMessages;
-	
+
 	/**
 	 * Creates a new message handler instance.
 	 */
 	public MessageHandler() {
 		Thread.setDefaultUncaughtExceptionHandler(this);
-		
-		Ulrice.getModuleManager().addModuleEventListener(this);
 
-		
+		Ulrice.getModuleManager().addModuleEventListener(new AbstractModuleEventAdapter() {
+
+			/**
+			 * @see net.ulrice.module.event.IFModuleEventListener#openModule(net.ulrice.module.IFController)
+			 */
+			@Override
+			public void openModule(IFController controller) {
+				// Prepare data structure for a new controller.
+				moduleMessages.put(controller, new LinkedList<Message>());
+			}
+
+			/**
+			 * @see net.ulrice.module.event.IFModuleEventListener#closeController(net.ulrice.module.IFController)
+			 */
+			@Override
+			public void closeController(IFController controller) {
+				// Remove all messages from the module.
+				moduleMessages.remove(controller);
+			}
+		});
+
 		this.listenerList = new EventListenerList();
 		this.globalMessages = new LinkedList<Message>();
 		this.moduleMessages = new HashMap<IFController, List<Message>>();
-		
-		Timer cleanupTimer = new Timer(5000, new ActionListener() {
-            
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                long cTime = System.currentTimeMillis();
-                
-                boolean needsFireEvent = false;
-                needsFireEvent = cleanupMessages(cTime, globalMessages);
-                
-                for(List<Message> messageList : moduleMessages.values()) {
-                    needsFireEvent |= cleanupMessages(cTime, messageList);
-                }
-                
-                if(needsFireEvent) {
-                    fireMessagesChanged();
-                }
-                
-            }
 
-            private boolean cleanupMessages(long cTime, List<Message> messageList) {
-                List<Message> delMessages = new ArrayList<Message>();
-                for(Message message : messageList) {
-                    if(message != null) {
-                        if(cTime - message.getCreationTimestamp() > 5000) {
-                            delMessages.add(message);
-                        }
-                    }
-                }
-                messageList.removeAll(delMessages);
-                return !delMessages.isEmpty();
-            }
+		Timer cleanupTimer = new Timer(5000, new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				long cTime = System.currentTimeMillis();
+
+				boolean needsFireEvent = false;
+				needsFireEvent = cleanupMessages(cTime, globalMessages);
+
+				for (List<Message> messageList : moduleMessages.values()) {
+					needsFireEvent |= cleanupMessages(cTime, messageList);
+				}
+
+				if (needsFireEvent) {
+					fireMessagesChanged();
+				}
+
+			}
+
+			private boolean cleanupMessages(long cTime, List<Message> messageList) {
+				List<Message> delMessages = new ArrayList<Message>();
+				for (Message message : messageList) {
+					if (message != null) {
+						if (cTime - message.getCreationTimestamp() > 5000) {
+							delMessages.add(message);
+						}
+					}
+				}
+				messageList.removeAll(delMessages);
+				return !delMessages.isEmpty();
+			}
 		});
 		cleanupTimer.setRepeats(true);
 		cleanupTimer.start();
@@ -105,24 +124,24 @@ public class MessageHandler implements UncaughtExceptionHandler, IFModuleEventLi
 		}
 		return moduleMessages.get(controller);
 	}
-	
-	public List<Message> getSortedMessages(IFController controller) {
-	    List<Message> globalMessages = getGlobalMessages();
-        List<Message> controllerMessages = getMessages(controller);
-        
-        List<Message> result = new ArrayList<Message>(globalMessages.size() + controllerMessages.size());
-        result.addAll(globalMessages);
-        result.addAll(controllerMessages);
-        
-        Collections.sort(result, new Comparator<Message>() {
 
-            @Override
-            public int compare(Message o1, Message o2) {
-                return (int)(o1.getCreationTimestamp() - o2.getCreationTimestamp());
-            }
-        });
-        
-        return result;
+	public List<Message> getSortedMessages(IFController controller) {
+		List<Message> globalMessages = getGlobalMessages();
+		List<Message> controllerMessages = getMessages(controller);
+
+		List<Message> result = new ArrayList<Message>(globalMessages.size() + controllerMessages.size());
+		result.addAll(globalMessages);
+		result.addAll(controllerMessages);
+
+		Collections.sort(result, new Comparator<Message>() {
+
+			@Override
+			public int compare(Message o1, Message o2) {
+				return (int) (o1.getCreationTimestamp() - o2.getCreationTimestamp());
+			}
+		});
+
+		return result;
 	}
 
 	/**
@@ -222,7 +241,7 @@ public class MessageHandler implements UncaughtExceptionHandler, IFModuleEventLi
 		} else {
 			LOG.warning("Message ignored. Message: " + message.getMessage());
 		}
-		
+
 	}
 
 	/**
@@ -245,29 +264,29 @@ public class MessageHandler implements UncaughtExceptionHandler, IFModuleEventLi
 		listenerList.remove(IFMessageEventListener.class, listener);
 	}
 
-    /**
-     * Fire a newly handled message
-     */
-    private void fireMessageHandled(Message message) {
-        IFMessageEventListener[] listeners = listenerList.getListeners(IFMessageEventListener.class);
-        if (listeners != null) {
-            for (IFMessageEventListener listener : listeners) {
-                listener.messageOccurred(message);
-            }
-        }
-    }
+	/**
+	 * Fire a newly handled message
+	 */
+	private void fireMessageHandled(Message message) {
+		IFMessageEventListener[] listeners = listenerList.getListeners(IFMessageEventListener.class);
+		if (listeners != null) {
+			for (IFMessageEventListener listener : listeners) {
+				listener.messageOccurred(message);
+			}
+		}
+	}
 
-    /**
-     * Fire a newly handled message
-     */
-    private void fireMessagesChanged() {
-        IFMessageEventListener[] listeners = listenerList.getListeners(IFMessageEventListener.class);
-        if (listeners != null) {
-            for (IFMessageEventListener listener : listeners) {
-                listener.messagesChanged();
-            }
-        }
-    }
+	/**
+	 * Fire a newly handled message
+	 */
+	private void fireMessagesChanged() {
+		IFMessageEventListener[] listeners = listenerList.getListeners(IFMessageEventListener.class);
+		if (listeners != null) {
+			for (IFMessageEventListener listener : listeners) {
+				listener.messagesChanged();
+			}
+		}
+	}
 
 	/**
 	 * @see java.lang.Thread.UncaughtExceptionHandler#uncaughtException(java.lang.Thread,
@@ -283,61 +302,4 @@ public class MessageHandler implements UncaughtExceptionHandler, IFModuleEventLi
 			LOG.log(Level.SEVERE, th.getLocalizedMessage(), th);
 		}
 	}
-
-	/**
-	 * @see net.ulrice.module.event.IFModuleEventListener#openModule(net.ulrice.module.IFController)
-	 */
-	@Override
-	public void openModule(IFController controller) {
-		// Prepare data structure for a new controller.
-		moduleMessages.put(controller, new LinkedList<Message>());
-	}
-
-	/**
-	 * @see net.ulrice.module.event.IFModuleEventListener#closeController(net.ulrice.module.IFController)
-	 */
-	@Override
-	public void closeController(IFController controller) {
-		// Remove all messages from the module.
-		moduleMessages.remove(controller);
-	}
-
-	/**
-	 * @see net.ulrice.module.event.IFModuleEventListener#activateModule(net.ulrice.module.IFController)
-	 */
-	@Override
-	public void activateModule(IFController controller) {
-		// Nothing to do in here.
-	}
-
-	/**
-	 * @see net.ulrice.module.event.IFModuleEventListener#deactivateModule(net.ulrice.module.IFController)
-	 */
-	@Override
-	public void deactivateModule(IFController controller) {
-		// Nothing to do in here.
-	}
-
-	@Override
-	public void moduleBlocked(IFController controller, Object blocker) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void moduleUnblocked(IFController controller, Object blocker) {
-		// TODO Auto-generated method stub
-		
-	}
-	
-	@Override
-    public void moduleBlockerRemoved(IFController controller, Object blocker) {
-        // Do nothing, MessageHandler doesn´t care about the blockers
-    }
-
-    @Override
-    public void nameChanged(IFController controller) {
-        // TODO Auto-generated method stub
-        
-    }
 }
