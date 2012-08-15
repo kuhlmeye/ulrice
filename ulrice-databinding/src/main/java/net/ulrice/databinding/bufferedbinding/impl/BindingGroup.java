@@ -32,9 +32,9 @@ public class BindingGroup extends AbstractBindingGroup {
     /** The set of all invalid attribute models. */
     private Set<String> invalidSet = new HashSet<String>();
 
-    boolean dirty;
-    boolean initialized;
-    boolean valid;
+    protected boolean dirty;
+    protected boolean initialized;
+    protected boolean valid;
 
     public BindingGroup() {
         initialized = false;

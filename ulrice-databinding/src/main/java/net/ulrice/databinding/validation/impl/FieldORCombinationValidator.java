@@ -18,8 +18,8 @@ import net.ulrice.databinding.validation.ValidationResult;
 @SuppressWarnings("rawtypes")
 public class FieldORCombinationValidator extends AbstractValidator {
 
-    ArrayList<GenericAM< ?>> modelList = new ArrayList<GenericAM< ?>>();
-    String idString = new String();
+    protected ArrayList<GenericAM< ?>> modelList = new ArrayList<GenericAM< ?>>();
+    protected String idString = new String();
 
     public FieldORCombinationValidator(GenericAM< ?>... models) {
         for (GenericAM< ?> model : models) {

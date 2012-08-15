@@ -742,9 +742,9 @@ public class UTableVAFilter extends RowFilter<UTableViewAdapter, String> impleme
             Greater, Smaller, Interval, Exact, NotEqual;
         };
 
-        Operator op = null;
-        Number valueA;
-        Number valueB;
+        protected Operator op = null;
+        protected Number valueA;
+        protected Number valueB;
 
         public NumericPattern(Operator op, Number valueA, Number valueB) {
             this.op = op;

@@ -20,7 +20,7 @@ public class MessageDialog extends JDialog {
     /** Generated serialVersionUID */
     private static final long serialVersionUID = -707670329224887436L;
 
-    JLabel label = new JLabel();
+    private JLabel label = new JLabel();
 
     public MessageDialog() {
         setUndecorated(true);

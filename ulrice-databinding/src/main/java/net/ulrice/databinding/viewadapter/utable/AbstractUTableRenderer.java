@@ -15,10 +15,10 @@ import net.ulrice.databinding.viewadapter.IFCellStateMarker;
 import net.ulrice.databinding.viewadapter.IFCellTooltipHandler;
 
 public abstract class AbstractUTableRenderer extends DefaultTableCellRenderer implements UTableRenderer {
-    IFCellStateMarker stateMarker;
-    IFCellTooltipHandler tooltipHandler;
-    static IFCellStateMarker defaultStateMarker;
-    static IFCellTooltipHandler defaultTooltipHandler;
+    protected IFCellStateMarker stateMarker;
+    protected IFCellTooltipHandler tooltipHandler;
+    protected static IFCellStateMarker defaultStateMarker;
+    protected static IFCellTooltipHandler defaultTooltipHandler;
 
     public AbstractUTableRenderer() {
         super();
