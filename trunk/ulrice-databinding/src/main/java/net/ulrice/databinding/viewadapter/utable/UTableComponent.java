@@ -36,6 +36,11 @@ import net.ulrice.databinding.bufferedbinding.impl.TableAM;
 import net.ulrice.databinding.viewadapter.IFCellStateMarker;
 import net.ulrice.databinding.viewadapter.IFCellTooltipHandler;
 
+/**
+ * Ulrice table component with some extended features like sorting, filtering, ...
+ * 
+ * @author DL10KUH
+ */
 public class UTableComponent extends JPanel {
 
     private static final long serialVersionUID = 6533485227507042410L;
@@ -309,26 +314,44 @@ public class UTableComponent extends JPanel {
         return scrollTable;
     }
 
+    /**
+     * Add a component to the upper information area of the table.
+     */
     public void setUpperInfoArea(JComponent component) {
         add(component, BorderLayout.NORTH);
     }
 
+    /**
+     * Add a component to the lower information area of the table.
+     */
     public void setLowerInfoArea(JComponent component) {
         add(component, BorderLayout.SOUTH);
     }
 
+    /**
+     * Add a component to the left information area of the table.
+     */
     public void setLeftInfoArea(JComponent component) {
         add(component, BorderLayout.EAST);
     }
 
+    /**
+     * Add a component to the right information area of the table.
+     */
     public void setRightInfoArea(JComponent component) {
         add(component, BorderLayout.WEST);
     }
 
+    /**
+     * Set the default cell tooltip handler for this table.
+     */
     public void setCellTooltipHandler(IFCellTooltipHandler tooltipHandler) {
         this.tooltipHandler = tooltipHandler;
     }
 
+    /**
+     * Set the default cell state marker for this table.
+     */
     public void setCellStateMarker(IFCellStateMarker stateMarker) {
         this.stateMarker = stateMarker;
     }
@@ -368,6 +391,7 @@ public class UTableComponent extends JPanel {
     }
 
     /**
+     * Update the column model of the table according to the column definitions
 	 */
     public void updateColumnModel() {
 
@@ -416,7 +440,7 @@ public class UTableComponent extends JPanel {
             }
         }
     }
-
+    
     protected TableColumn addColumn(TableColumnModel columnModel, int columnIndex, ColumnDefinition< ?> columnDefinition) {
         TableColumn column = new TableColumn();
         column.setIdentifier(columnDefinition.getId());
@@ -469,6 +493,9 @@ public class UTableComponent extends JPanel {
         return fixedColumns;
     }
 
+    /**
+     * Set the number of fixed columns
+     */
     protected void setFixedColumns(int fixedColumns) {
         this.fixedColumns = fixedColumns;
         if (scrollTableModel != null && staticTableModel != null) { // FIXME Quick fix to open all modules
@@ -502,6 +529,11 @@ public class UTableComponent extends JPanel {
         staticTable.setDefaultEditor(clazz, editor);
     }
 
+    /**
+     * Resize the column widths
+     * 
+     * @param includeHeader true, if the header should be included.
+     */
     public void sizeColumns(boolean includeHeader) {
         for (int c = 0; c < staticTable.getColumnCount(); c++) {
             sizeColumn(staticTable, c, RESIZE_MARGIN, includeHeader);
@@ -543,10 +575,16 @@ public class UTableComponent extends JPanel {
         return maxWidth;
     }
 
+    /**
+     * Returns the index of the selected for for the view side. View and model side could have different indices because of sorting.
+     */
     public int getSelectedRowViewIndex() {
         return getSelectionModel().getMinSelectionIndex();
     }
 
+    /**
+     * Returns the index of the selected row in the model side. View and model side could have different indices because of sorting.
+     */
     public int getSelectedRowModelIndex() {
         int viewIndex = getSelectedRowViewIndex();
         if(getRowSorter() == null){
@@ -579,11 +617,17 @@ public class UTableComponent extends JPanel {
         getSelectionModel().addSelectionInterval(index, index);
     }
 
+    /**
+     * Returns true, if exactly one table row is selected.
+     */
     public boolean isSingleRowSelected() {
         ListSelectionModel sm = getSelectionModel();
         return !sm.isSelectionEmpty() && sm.getMinSelectionIndex() == sm.getMaxSelectionIndex();
     }
 
+    /**
+     * Returns true, if one or more table rows are selected.
+     */
     public boolean areRowsSelected() {
         ListSelectionModel sm = getSelectionModel();
         return !sm.isSelectionEmpty();
@@ -621,6 +665,9 @@ public class UTableComponent extends JPanel {
         this.attributeModel = attributeModel;
     }
 
+    /**
+     * Add a new and empty row to the table.
+     */
     public void addRow() {
         checkAttributeModelSet();
         int modelIdx = getSelectedRowModelIndex();
@@ -631,16 +678,27 @@ public class UTableComponent extends JPanel {
         }
     }
 
+    /**
+     * Delete a row from the table 
+     * @param modelIndex Model side row index of the row that should be deleted.
+     */
     public void delRowWithModelIndex(int modelIndex) {
         checkAttributeModelSet();
         attributeModel.delElement(modelIndex);
     }
 
+    /**
+     * Delete a row from the table.
+     * @param viewIndex View side row index of the row that should be deleted
+     */
     public void delRowWithViewIndex(int viewIndex) {
         checkAttributeModelSet();
         attributeModel.delElement(getRowSorter().convertRowIndexToModel(viewIndex));
     }
 
+    /**
+     * Duplicate the selected rows in the table. Copied rows are in new state.
+     */
     public void copySelectedRows() {
         checkAttributeModelSet();
         List<Object> values = getSelectedObjects();
@@ -651,6 +709,9 @@ public class UTableComponent extends JPanel {
         }
     }
 
+    /**
+     * Copy selected row and return the element.
+     */
     public Element copySelectedRow() {
         checkAttributeModelSet();
 
@@ -662,6 +723,9 @@ public class UTableComponent extends JPanel {
         }
     }
 
+    /**
+     * Delete all selected rows from the table.
+     */
     public void delSelectedRows() {
         checkAttributeModelSet();
         List<Element> elements = getSelectedElements();
@@ -676,16 +740,25 @@ public class UTableComponent extends JPanel {
         }
     }
 
+    /**
+     * Move the element one position up in the table
+     */
     public void moveElementUp(Element element) {
         checkAttributeModelSet();
         attributeModel.moveElementUp(element);
     }
 
+    /**
+     * Move the element one position down in the table.
+     */
     public void moveElementDown(Element element) {
         checkAttributeModelSet();
         attributeModel.moveElementDown(element);
     }
 
+    /**
+     * Return the list of selected as objects.
+     */
     @SuppressWarnings({ "rawtypes", "unchecked" })
     public List getSelectedObjects() {
         checkAttributeModelSet();
@@ -697,6 +770,10 @@ public class UTableComponent extends JPanel {
         }
         return result;
     }
+    
+    /**
+     * Return the list of selected rows as elements
+     */
     public List<Element> getSelectedElements() {
         //checkAttributeModelSet();
         if(attributeModel == null) {
@@ -711,12 +788,18 @@ public class UTableComponent extends JPanel {
         return result;
     }
 
+    /**
+     * Return the selected row as element.
+     */
     public Element getSelectedElement() {
         checkAttributeModelSet();
         int rowInModel = getSelectedRowModelIndex();
         return attributeModel.getElementAt(rowInModel);
     }
 
+    /**
+     * Return the selected row as object.
+     */
     public Object getSelectedObject() {
         checkAttributeModelSet();
         int rowInModel = getSelectedRowModelIndex();
@@ -729,6 +812,9 @@ public class UTableComponent extends JPanel {
         }
     }
 
+    /**
+     * Return the element by the element id.
+     */
     public Element getElementById(String id) {
         if (attributeModel == null) {
             return null;
@@ -736,6 +822,9 @@ public class UTableComponent extends JPanel {
         return attributeModel.getElementById(id);
     }
 
+    /**
+     * Return the element of the row with the given view side index.
+     */
     public Element getElementAtViewIndex(int viewIndex) {
         if (attributeModel == null) {
             return null;
@@ -748,22 +837,34 @@ public class UTableComponent extends JPanel {
         return getElementAtModelIndex(modelRow);
     }
 
+    /**
+     * Return the element of the row with the given model side index.
+     */
     public Element getElementAtModelIndex(int modelIndex) {
         return attributeModel.getElementAt(modelIndex);
     }
 
+    /**
+     * Returns true, if a cell is dirty
+     */
     public boolean isCellDirty(int row, int col) {
         int modelRow = getRowSorter().convertRowIndexToModel(row);
         int modelCol = convertColumnIndexToModel(col);
         return attributeModel != null ? attributeModel.isCellDirty(modelRow, modelCol) : false;
     }
 
+    /**
+     * Returns true, if a cell is valid.
+     */
     public boolean isCellValid(int row, int col) {
         int modelRow = getRowSorter().convertRowIndexToModel(row);
         int modelCol = convertColumnIndexToModel(col);
         return attributeModel != null ? attributeModel.isCellValid(modelRow, modelCol) : true;
     }
 
+    /**
+     * Returns true, if a cell is editable.
+     */
     public boolean isCellEditable(int row, int col) {
         int modelRow = getRowSorter().convertRowIndexToModel(row);
         int modelCol = convertColumnIndexToModel(col);
@@ -774,10 +875,16 @@ public class UTableComponent extends JPanel {
         return false;
     }
 
+    /**
+     * Returns the number of columns
+     */
     public int getColumnCount() {
         return attributeModel != null ? attributeModel.getColumnCount() : 0;
     }
 
+    /**
+     * Returns the number of rows from the model. Model and view rows could be different because of table filters.
+     */
     public int getModelRowCount() {
         if (getRowSorter() == null) {
             return (attributeModel != null) ? attributeModel.getRowCount() : 0;
@@ -786,6 +893,9 @@ public class UTableComponent extends JPanel {
         return getRowSorter().getModelRowCount();
     }
 
+    /**
+     * Returns the number of rows shown in the table. Model and view rows could be different because of table filters.
+     */
     public int getViewRowCount() {
         if (getRowSorter() == null) {
             return (attributeModel != null) ? attributeModel.getRowCount() : 0;
@@ -794,6 +904,9 @@ public class UTableComponent extends JPanel {
         return getRowSorter().getViewRowCount();
     }
 
+    /**
+     * Return the column definition by columnid or null, if not available or table is not bound
+     */
     public ColumnDefinition<?> getColumnById(String columnId) {
         if (attributeModel != null) {
             return attributeModel.getColumnById(columnId);
@@ -801,6 +914,9 @@ public class UTableComponent extends JPanel {
         return null;
     }
 
+    /**
+     * Return the column definition by view index or null, if table is not bound
+     */
     public ColumnDefinition<?> getColumnByViewIndex(int viewIndex) {
         if (attributeModel != null) {
             int modelIndex = convertColumnIndexToModel(viewIndex);
@@ -808,7 +924,7 @@ public class UTableComponent extends JPanel {
         }
         return null;
     }
-
+    
     public TableColumn getColumn(int column) {
         if (column < fixedColumns) {
             return staticTable.getColumnModel().getColumn(column);
@@ -845,6 +961,9 @@ public class UTableComponent extends JPanel {
         popupMenu.show(component, x, y);
     }
 
+    /**
+     * Convert view row index to model index.
+     */
     public int convertRowIndexToModel(int index) {
         if (getRowSorter() != null) {
             return getRowSorter().convertRowIndexToModel(index);
@@ -852,6 +971,9 @@ public class UTableComponent extends JPanel {
         return index;
     }
 
+    /**
+     * Convert model row index to view index.
+     */
     public int convertRowIndexToView(int index) {
         if (getRowSorter() != null) {
             return getRowSorter().convertRowIndexToView(index);
@@ -865,10 +987,16 @@ public class UTableComponent extends JPanel {
         scrollToRow(viewIndex);
     }
 
+    /**
+     * Scroll to a certain row.
+     */
     public void scrollToRow(int row) {
         scrollTable.scrollRectToVisible(new Rectangle(scrollTable.getCellRect(row, 0, true)));
     }
 
+    /**
+     * Undo all changes of the currently selected row.
+     */
     public void undoChangesOfSelectedRow() {
         if (isSingleRowSelected() && attributeModel != null) {
             attributeModel.rollbackElement(getSelectedElement());
