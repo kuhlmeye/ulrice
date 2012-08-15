@@ -105,12 +105,12 @@ public class I18nTextComponentViewAdapter extends AbstractViewAdapter implements
 
 	@Override
 	protected void addComponentListener() {
-		textComponent.removeDocumentListener(this);
+		textComponent.addDocumentListener(this);	
 	}
 
 	@Override
 	protected void removeComponentListener() {
-		textComponent.addDocumentListener(this);	
+		textComponent.removeDocumentListener(this);
 	}
 	
     @Override
