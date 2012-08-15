@@ -47,8 +47,8 @@ public class ModuleActionManager implements IFModuleEventListener, PropertyChang
 	/** The list of event listeners. */
 	private EventListenerList listenerList = new EventListenerList();
 	
-    private HashMap<KeyStroke, UlriceAction> applicationActionHotkeyMap = new HashMap<KeyStroke, UlriceAction>();
-    private HashMap<KeyStroke, UlriceAction> controllerActionHotkeyMap = new HashMap<KeyStroke, UlriceAction>();
+    private Map<KeyStroke, UlriceAction> applicationActionHotkeyMap = new HashMap<KeyStroke, UlriceAction>();
+    private Map<KeyStroke, UlriceAction> controllerActionHotkeyMap = new HashMap<KeyStroke, UlriceAction>();
         
 	
 	/**
@@ -89,7 +89,7 @@ public class ModuleActionManager implements IFModuleEventListener, PropertyChang
         return false;
     }
         
-    public void addHotkey(HashMap<KeyStroke, UlriceAction> hotkeyMap, UlriceAction action) {
+    public void addHotkey(Map<KeyStroke, UlriceAction> hotkeyMap, UlriceAction action) {
         KeyStroke keyStroke = action.getHotkey();
         
         if (keyStroke != null) {
@@ -97,7 +97,7 @@ public class ModuleActionManager implements IFModuleEventListener, PropertyChang
         }
     }
 
-    public void removeHotkey(HashMap<KeyStroke, UlriceAction> hotkeyMap, UlriceAction action) {
+    public void removeHotkey(Map<KeyStroke, UlriceAction> hotkeyMap, UlriceAction action) {
         if (action == null) {
             return;
         }
