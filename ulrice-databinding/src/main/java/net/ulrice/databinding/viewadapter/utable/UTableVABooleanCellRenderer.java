@@ -1,12 +1,10 @@
 package net.ulrice.databinding.viewadapter.utable;
 
-import java.awt.Color;
 import java.awt.Component;
 
 import javax.swing.JCheckBox;
 import javax.swing.JTable;
 import javax.swing.SwingConstants;
-import javax.swing.table.TableCellRenderer;
 
 /**
  * 

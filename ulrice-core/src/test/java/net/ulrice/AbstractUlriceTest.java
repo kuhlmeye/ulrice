@@ -1,7 +1,5 @@
 package net.ulrice;
 
-import java.util.Properties;
-
 import net.ulrice.appprefs.DefaultAppPrefs;
 import net.ulrice.appprefs.IFAppPrefs;
 import net.ulrice.configuration.ConfigurationException;

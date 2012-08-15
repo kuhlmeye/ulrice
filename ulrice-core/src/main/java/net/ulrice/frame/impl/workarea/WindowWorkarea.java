@@ -1,7 +1,6 @@
 package net.ulrice.frame.impl.workarea;
 
 import java.awt.BorderLayout;
-import java.awt.event.ActionEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.beans.PropertyVetoException;
@@ -9,18 +8,15 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.swing.AbstractAction;
 import javax.swing.JComponent;
 import javax.swing.JDesktopPane;
 import javax.swing.JInternalFrame;
-import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
 import javax.swing.event.InternalFrameAdapter;
 import javax.swing.event.InternalFrameEvent;
 
 import net.ulrice.Ulrice;
 import net.ulrice.frame.IFWorkarea;
-import net.ulrice.message.TranslationProvider;
 import net.ulrice.module.IFController;
 import net.ulrice.module.IFModuleTitleProvider.Usage;
 import net.ulrice.module.ModuleIconSize;

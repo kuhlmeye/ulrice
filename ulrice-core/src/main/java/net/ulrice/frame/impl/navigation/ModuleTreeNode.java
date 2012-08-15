@@ -3,21 +3,12 @@ package net.ulrice.frame.impl.navigation;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.Enumeration;
 import java.util.List;
 
-import javax.swing.ImageIcon;
-
 import net.ulrice.Ulrice;
-import net.ulrice.module.ControllerProviderCallback;
 import net.ulrice.module.IFModule;
 import net.ulrice.module.IFModuleGroup;
-import net.ulrice.module.ModuleIconSize;
-import net.ulrice.module.ModuleType;
-import net.ulrice.module.IFModuleTitleProvider.Usage;
-import net.ulrice.profile.Profile;
 import net.ulrice.profile.ProfilableModule;
-import net.ulrice.profile.ProfileManager;
 import net.ulrice.profile.ProfiledModule;
 
 public class ModuleTreeNode {

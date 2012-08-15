@@ -1,14 +1,10 @@
 package net.ulrice.configuration;
 
-import java.util.List;
-import java.util.Properties;
-
 import net.ulrice.appprefs.IFAppPrefs;
 import net.ulrice.frame.IFMainFrame;
 import net.ulrice.message.TranslationProvider;
 import net.ulrice.module.IFModuleManager;
 import net.ulrice.module.IFModuleStructureManager;
-import net.ulrice.options.modules.IFOptionModule;
 import net.ulrice.profile.persister.ProfilePersister;
 import net.ulrice.security.IFAuthCallback;
 

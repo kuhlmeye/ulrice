@@ -7,7 +7,6 @@ import java.util.EventObject;
 import javax.swing.DefaultCellEditor;
 import javax.swing.JTable;
 import javax.swing.JTextField;
-import javax.swing.table.JTableHeader;
 
 
 public class UTable extends JTable {

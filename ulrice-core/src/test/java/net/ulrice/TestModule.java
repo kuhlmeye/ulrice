@@ -6,7 +6,6 @@ import net.ulrice.module.impl.AbstractController;
 import net.ulrice.module.impl.IFClosing;
 
 import org.junit.Ignore;
-import org.junit.Test;
 
 @Ignore("Base-Class")
 public class TestModule extends AbstractController {

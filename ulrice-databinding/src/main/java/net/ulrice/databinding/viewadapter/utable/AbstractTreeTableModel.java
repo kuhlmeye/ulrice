@@ -3,7 +3,6 @@ package net.ulrice.databinding.viewadapter.utable;
 import javax.swing.event.EventListenerList;
 import javax.swing.event.TreeModelEvent;
 import javax.swing.event.TreeModelListener;
-import javax.swing.tree.TreeNode;
 import javax.swing.tree.TreePath;
  
 public abstract class AbstractTreeTableModel implements TreeTableModel {

@@ -5,7 +5,6 @@ import java.awt.Component;
 import javax.swing.JTree;
 import javax.swing.tree.DefaultTreeCellRenderer;
 
-import net.ulrice.module.IFModule;
 import net.ulrice.module.IFModuleTitleProvider.Usage;
 
 public class ModuleTreeCellRenderer extends DefaultTreeCellRenderer {

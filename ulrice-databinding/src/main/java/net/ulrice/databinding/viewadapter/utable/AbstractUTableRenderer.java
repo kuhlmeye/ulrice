@@ -8,7 +8,6 @@ import javax.swing.JTable;
 import javax.swing.UIManager;
 import javax.swing.table.DefaultTableCellRenderer;
 
-import net.ulrice.databinding.bufferedbinding.impl.ColumnColorOverride;
 import net.ulrice.databinding.bufferedbinding.impl.ColumnDefinition;
 import net.ulrice.databinding.bufferedbinding.impl.Element;
 import net.ulrice.databinding.viewadapter.IFCellStateMarker;

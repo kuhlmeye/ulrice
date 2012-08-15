@@ -2,8 +2,6 @@ package net.ulrice.databinding.bufferedbinding.impl;
 
 import static org.junit.Assert.assertEquals;
 import net.ulrice.databinding.bufferedbinding.IFAttributeInfo;
-import net.ulrice.databinding.bufferedbinding.impl.BindingGroup;
-import net.ulrice.databinding.bufferedbinding.impl.GenericAM;
 import net.ulrice.databinding.modelaccess.impl.ReflectionMVA;
 import net.ulrice.databinding.validation.impl.RegExValidator;
 

@@ -25,8 +25,8 @@ import javax.swing.border.Border;
 import net.ulrice.Ulrice;
 import net.ulrice.module.IFController;
 import net.ulrice.module.IFModuleManager;
-import net.ulrice.module.ModuleIconSize;
 import net.ulrice.module.IFModuleTitleProvider.Usage;
+import net.ulrice.module.ModuleIconSize;
 import net.ulrice.ui.UIConstants;
 
 /**
