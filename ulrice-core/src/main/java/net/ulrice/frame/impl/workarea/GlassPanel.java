@@ -18,9 +18,7 @@ import javax.swing.UIManager;
 
 import net.ulrice.ui.UI;
 
-public class GlassPanel extends JLayeredPane implements AWTEventListener,
-		MouseWheelListener {
-
+public class GlassPanel extends JLayeredPane implements AWTEventListener, MouseWheelListener {
 
 	private static final long serialVersionUID = 382926138153043911L;
 	private boolean blocked = false;
@@ -71,25 +69,16 @@ public class GlassPanel extends JLayeredPane implements AWTEventListener,
 				c = c.getParent();
 			}
 
-			if ((event instanceof KeyEvent)
-					&& (event.getSource() instanceof Component)) {
-				if (c == this) {
-					((KeyEvent) event).consume();
-				}
-			} else if ((event instanceof MouseEvent)
-					&& (event.getSource() instanceof Component)) {
-				if (c == this) {
-					((MouseEvent) event).consume();
-				}
-			} else if ((event instanceof MouseWheelEvent)
-					&& (event.getSource() instanceof Component)) {
-				if (c == this) {
-					((MouseWheelEvent) event).consume();
-				}
+			if ((event instanceof KeyEvent) && (event.getSource() instanceof Component) && c == this) {
+				((KeyEvent) event).consume();
+
+			} else if ((event instanceof MouseEvent) && (event.getSource() instanceof Component) && c == this) {
+				((MouseEvent) event).consume();
+
+			} else if ((event instanceof MouseWheelEvent) && (event.getSource() instanceof Component) && c == this) {
+				((MouseWheelEvent) event).consume();
 			}
-
 		}
-
 	}
 
 	@Override

@@ -276,25 +276,19 @@ public class UTableVAFilter extends RowFilter<UTableViewAdapter, String> impleme
         boolean include = true;
         String id = entry.getIdentifier();
         Element element = entry.getModel().getComponent().getElementById(id);
-        if (element != null) {
-            if (element.isDirty() || !element.isValid()) {
-                return true;
-            }
+        if (element != null && (element.isDirty() || !element.isValid())) {
+            return true;
         }
         int count = entry.getValueCount();
         for (int i = 0; i < count && include; i++) {
 
             String columnId = columnIdentifiers.get(i);
 
-            if (collapsedRowFilterMap.containsKey(columnId)) {
-                if (element.getCurrentValue() instanceof HeaderCapable) {
-                    HeaderCapable item = (HeaderCapable) element.getCurrentValue();
-                    if (!item.isHeader()) {
-                        if (collapsedRowFilterMap.get(columnId).contains(entry.getStringValue(i))) {
-                            return false;
-                        }
-                    }
-                }
+            if (collapsedRowFilterMap.containsKey(columnId) && (element.getCurrentValue() instanceof HeaderCapable)) {
+                HeaderCapable item = (HeaderCapable) element.getCurrentValue();
+                if (!item.isHeader() && (collapsedRowFilterMap.get(columnId).contains(entry.getStringValue(i)))) {
+                    return false;
+                }                
             }
 
             if (element != null && element.getOriginalValue() instanceof HeaderCapable) {
