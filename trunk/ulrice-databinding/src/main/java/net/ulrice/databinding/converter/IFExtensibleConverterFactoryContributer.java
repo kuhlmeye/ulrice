@@ -9,6 +9,5 @@ import java.util.List;
  */
 public interface IFExtensibleConverterFactoryContributer {
 	
-	public List<IFValueConverter<?, ?>> contribute();
-
+	List<IFValueConverter<?, ?>> contribute();
 }

@@ -5,13 +5,13 @@ public interface HeaderCapable {
     /**
      * Header row flag for collapse rows with UTableVAFilter
      */
-    public abstract boolean isHeader();
+    boolean isHeader();
 
     /**
      * Is the 'virtual node' from the header row collapsed
      * 
      * @return
      */
-    public abstract boolean isCollapsed();
+    boolean isCollapsed();
 
 }
