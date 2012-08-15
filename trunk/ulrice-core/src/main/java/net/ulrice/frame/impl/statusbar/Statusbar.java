@@ -33,14 +33,14 @@ import net.ulrice.message.Message;
 import net.ulrice.message.MessageHandler;
 import net.ulrice.module.IFController;
 import net.ulrice.module.IFModuleManager;
-import net.ulrice.module.event.IFModuleEventListener;
+import net.ulrice.module.event.AbstractModuleEventAdapter;
 
 /**
  * The default statusbar of ulrice.
  * 
  * @author christof
  */
-public class Statusbar extends JPanel implements IFMainFrameComponent, IFMessageEventListener, IFModuleEventListener, ActionListener {
+public class Statusbar extends JPanel implements IFMainFrameComponent, ActionListener {
 
 	private static final String SHOW_PROCESS_LIST = "SHOW_PROCESS_LIST";
 
@@ -80,10 +80,62 @@ public class Statusbar extends JPanel implements IFMainFrameComponent, IFMessage
 	public Statusbar() {
 	    
 		messageHandler = Ulrice.getMessageHandler();
-		messageHandler.addMessageEventListener(this);
+		messageHandler.addMessageEventListener(new IFMessageEventListener() {
+			
+			@Override
+			public void messagesChanged() {
+				// Nothing to do in here...				
+			}
+			
+			@Override
+			public void messageOccurred(Message message) {
+				updateMessageList();
+			}
+		});
 
 		moduleManager = Ulrice.getModuleManager();
-		moduleManager.addModuleEventListener(this);
+		moduleManager.addModuleEventListener(new AbstractModuleEventAdapter() {
+
+			/**
+			 * @see net.ulrice.module.event.IFModuleEventListener#activateModule(net.ulrice.module.IFController)
+			 */
+			@Override
+			public void activateModule(IFController activeController) {
+				Statusbar.this.activeController = activeController;
+				updateMessageList();
+			}
+
+			/**
+			 * @see net.ulrice.module.event.IFModuleEventListener#closeController(net.ulrice.module.IFController)
+			 */
+			@Override
+			public void closeController(IFController activeController) {
+				if (Statusbar.this.activeController != null && Statusbar.this.activeController.equals(activeController)) {
+					Statusbar.this.activeController = null;
+				}
+				resetMessageList();
+			}
+
+			/**
+			 * @see net.ulrice.module.event.IFModuleEventListener#deactivateModule(net.ulrice.module.IFController)
+			 */
+			@Override
+			public void deactivateModule(IFController activeController) {
+				if (activeController.equals(Statusbar.this.activeController)) {
+					Statusbar.this.activeController = null;
+				}
+				resetMessageList();
+			}
+
+			/**
+			 * @see net.ulrice.module.event.IFModuleEventListener#openModule(net.ulrice.module.IFController)
+			 */
+			@Override
+			public void openModule(IFController activeController) {
+				Statusbar.this.activeController = activeController;
+				updateMessageList();
+			}
+		});
 
 		messageList = new TreeSet<Message>();
 		
@@ -154,53 +206,6 @@ public class Statusbar extends JPanel implements IFMainFrameComponent, IFMessage
 		}
 	}
 
-	/**
-	 * @see net.ulrice.message.IFMessageEventListener#messageOccurred(net.ulrice.message.Message)
-	 */
-	@Override
-	public void messageOccurred(Message message) {
-		updateMessageList();
-	}
-
-	/**
-	 * @see net.ulrice.module.event.IFModuleEventListener#activateModule(net.ulrice.module.IFController)
-	 */
-	@Override
-	public void activateModule(IFController activeController) {
-		this.activeController = activeController;
-		updateMessageList();
-	}
-
-	/**
-	 * @see net.ulrice.module.event.IFModuleEventListener#closeController(net.ulrice.module.IFController)
-	 */
-	@Override
-	public void closeController(IFController activeController) {
-		if (this.activeController != null && this.activeController.equals(activeController)) {
-			this.activeController = null;
-		}
-		resetMessageList();
-	}
-
-	/**
-	 * @see net.ulrice.module.event.IFModuleEventListener#deactivateModule(net.ulrice.module.IFController)
-	 */
-	@Override
-	public void deactivateModule(IFController activeController) {
-		if (activeController.equals(this.activeController)) {
-			this.activeController = null;
-		}
-		resetMessageList();
-	}
-
-	/**
-	 * @see net.ulrice.module.event.IFModuleEventListener#openModule(net.ulrice.module.IFController)
-	 */
-	@Override
-	public void openModule(IFController activeController) {
-		this.activeController = activeController;
-		updateMessageList();
-	}
 
 	/**
 	 * Updates the messages with the messages of the current active controller.
@@ -296,35 +301,4 @@ public class Statusbar extends JPanel implements IFMainFrameComponent, IFMessage
 			layeredPane.repaint();
 		}
 	}
-
-	@Override
-	public void moduleBlocked(IFController controller, Object blocker) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void moduleUnblocked(IFController controller, Object blocker) {
-		// TODO Auto-generated method stub
-		
-	}
-	
-	@Override
-    public void moduleBlockerRemoved(IFController controller, Object blocker) {
-        // TODO Auto-generated method stub
-        
-    }
-
-    @Override
-    public void messagesChanged() {
-        // TODO Auto-generated method stub
-        
-    }
-
-    @Override
-    public void nameChanged(IFController controller) {
-        // TODO Auto-generated method stub
-        
-    }
-
 }
