@@ -7,6 +7,6 @@ package net.ulrice.databinding.converter;
  */
 public interface IFConverterFactory {
 
-	public <M, V> IFValueConverter<M, V> createConverter (Class<V> presentationType, Class<M> modelType);
+	<M, V> IFValueConverter<M, V> createConverter (Class<V> presentationType, Class<M> modelType);
 	
 }
