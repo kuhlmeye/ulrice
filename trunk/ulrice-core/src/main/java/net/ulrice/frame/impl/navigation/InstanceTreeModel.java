@@ -36,9 +36,9 @@ public class InstanceTreeModel implements TreeModel, IFModuleEventListener {
 	private EventListenerList listenerList = new EventListenerList();
 
 	/** List of instances per controller. */
-	Map<IFModule, List<IFController>> instanceMap = new HashMap<IFModule, List<IFController>>();
+	private Map<IFModule, List<IFController>> instanceMap = new HashMap<IFModule, List<IFController>>();
 
-	List<IFModule> moduleList = new ArrayList<IFModule>();
+	private List<IFModule> moduleList = new ArrayList<IFModule>();
 
 	public InstanceTreeModel() {
 		moduleManager = Ulrice.getModuleManager();

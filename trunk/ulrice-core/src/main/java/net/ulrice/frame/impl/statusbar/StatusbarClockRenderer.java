@@ -23,9 +23,9 @@ public class StatusbarClockRenderer implements IFStatusbarClockRenderer {
 	private DateFormat dateDF;
 	private DateFormat timeDF;
 	
-	JPanel clockPanel;
-	JLabel dateLabel;
-	JLabel timeLabel;
+	private JPanel clockPanel;
+	private JLabel dateLabel;
+	private JLabel timeLabel;
 
 	public StatusbarClockRenderer() {
 		dateDF = DateFormat.getDateInstance(DateFormat.SHORT);

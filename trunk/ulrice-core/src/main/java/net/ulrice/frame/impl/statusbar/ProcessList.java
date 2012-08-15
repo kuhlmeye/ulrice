@@ -59,7 +59,7 @@ public class ProcessList extends JList implements IFProcessListener {
 	
 	class ProcessListModel extends AbstractListModel {
 
-		ArrayList<IFBackgroundProcess> processList = new ArrayList<IFBackgroundProcess>();
+		private ArrayList<IFBackgroundProcess> processList = new ArrayList<IFBackgroundProcess>();
 
 		@Override
 		public int getSize() {

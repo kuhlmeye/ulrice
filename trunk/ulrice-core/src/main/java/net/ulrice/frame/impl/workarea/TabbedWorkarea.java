@@ -51,7 +51,7 @@ public class TabbedWorkarea extends JTabbedPane implements IFWorkarea, MouseList
 
     private final Map<JComponent, GlassPanel> glassPanelMap = new HashMap<JComponent, GlassPanel>();
 
-    boolean ignoreStateChangedEvents = false;
+    private boolean ignoreStateChangedEvents = false;
     /**
      * Creates a new tabbed workarea.
      */

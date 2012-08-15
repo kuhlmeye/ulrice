@@ -981,7 +981,7 @@ public class TableAM implements IFAttributeModel {
                 initialized = true;
 
                 final List data = provider.getData();
-                int numLoaded = 0;
+                int numLoaded = 0;                
                 if (data != null) {
                     for (Object item : data) {
                         Element elem = createElement(item, false, true, false);
@@ -1036,7 +1036,7 @@ public class TableAM implements IFAttributeModel {
         return new AbstractProcess<Void, Void>(controller, provider.isBlocking()) {
 
             private boolean cancelled = false;
-            int numLoaded = 0;
+            private int numLoaded = 0;
 
             @Override
             public boolean hasProgressInformation() {
