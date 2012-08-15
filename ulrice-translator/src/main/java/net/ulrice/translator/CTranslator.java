@@ -66,22 +66,22 @@ public class CTranslator extends AbstractController {
         return new IncrementalLoader<DictionaryEntryDTO>(this, false, translationService.getDictionaryEntriesChunkSize(), Integer.MAX_VALUE, new IncrementalDataProvider<DictionaryEntryDTO>() {
 
             @Override
-            public List<DictionaryEntryDTO> getData(int firstRow, int maxNumRows) throws Exception {
+            public List<DictionaryEntryDTO> getData(int firstRow, int maxNumRows) {
                 return translationService.getDictionaryEntries(firstRow, maxNumRows);
             }
 
             @Override
-            public int getNumRows() throws Exception {
+            public int getNumRows() {
                 return translationService.getNumDictionaryEntries();
             }
 
             @Override
-            public void onChunkLoaded(List<DictionaryEntryDTO> chunk, int firstRow) throws Exception {
+            public void onChunkLoaded(List<DictionaryEntryDTO> chunk, int firstRow) {
                 model.getDictionaryAM().read(chunk, true);
             }
 
             @Override
-            public void onFinished() throws Exception {                
+            public void onFinished() {                
             }
             
         });
@@ -91,22 +91,22 @@ public class CTranslator extends AbstractController {
         return new IncrementalLoader<TranslationDTO>(this, false, translationService.getTranslationsChunkSize(), Integer.MAX_VALUE, new IncrementalDataProvider<TranslationDTO>() {
 
             @Override
-            public List<TranslationDTO> getData(int firstRow, int maxNumRows) throws Exception {
+            public List<TranslationDTO> getData(int firstRow, int maxNumRows) {
                 return translationService.getTranslations(firstRow, maxNumRows);
             }
 
             @Override
-            public int getNumRows() throws Exception {
+            public int getNumRows() {
                 return translationService.getNumTranslations();
             }
 
             @Override
-            public void onChunkLoaded(List<TranslationDTO> chunk, int firstRow) throws Exception {
+            public void onChunkLoaded(List<TranslationDTO> chunk, int firstRow) {
                 model.getTranslationsAM().read(chunk, true);
             }
 
             @Override
-            public void onFinished() throws Exception {                
+            public void onFinished() {                
             }
             
         });
@@ -116,24 +116,24 @@ public class CTranslator extends AbstractController {
         return new IncrementalLoader<UsageDTO>(this, false, translationService.getUsagesChunkSize(), Integer.MAX_VALUE, new IncrementalDataProvider<UsageDTO>() {
 
             @Override
-            public List<UsageDTO> getData(int firstRow, int maxNumRows) throws Exception {
+            public List<UsageDTO> getData(int firstRow, int maxNumRows) {
                 return translationService.getUsages(firstRow, maxNumRows);
             }
 
             @Override
-            public int getNumRows() throws Exception {
+            public int getNumRows() {
                 return translationService.getNumUsages();
             }
 
             @Override
-            public void onChunkLoaded(List<UsageDTO> chunk, int firstRow) throws Exception {
+            public void onChunkLoaded(List<UsageDTO> chunk, int firstRow) {
                 if(chunk != null) {
                     model.getUsagesAM().read(chunk, true);
                 }
             }
 
             @Override
-            public void onFinished() throws Exception {                
+            public void onFinished() {                
             }
             
         });
