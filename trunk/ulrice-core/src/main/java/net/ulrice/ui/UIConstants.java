@@ -8,37 +8,37 @@ package net.ulrice.ui;
 public interface UIConstants {
 
 	/** The border of a marked icon in the changeover dialog. */
-	public static final String CHANGEOVER_MARKED_BORDER = "Ulrice.ChangeoverDialog.MarkedBorder";
+	String CHANGEOVER_MARKED_BORDER = "Ulrice.ChangeoverDialog.MarkedBorder";
 	
 	/** The border of an unmarked icon in the changeover dialog. */
-	public static final String CHANGEOVER_NONMARKED_BORDER = "Ulrice.ChangeoverDialog.NonMarkedBorder";
+	String CHANGEOVER_NONMARKED_BORDER = "Ulrice.ChangeoverDialog.NonMarkedBorder";
 	
 	/** The insets for the icon list. */
-	public static final String CHANGEOVER_ICON_INSETS = "Ulrice.ChangeoverDialog.IconInsets";
+	String CHANGEOVER_ICON_INSETS = "Ulrice.ChangeoverDialog.IconInsets";
 
 	/** The number of controller icons per row. */
-	public static final String CHANGEOVER_ICONS_PER_ROW = "Ulrice.ChangeoverDialog.IconsPerRow";
+	String CHANGEOVER_ICONS_PER_ROW = "Ulrice.ChangeoverDialog.IconsPerRow";
 
 	/** The dimension of the changeover dialog. */
-	public static final String CHANGEOVER_DIALOG_SIZE = "Ulrice.ChangeoverDialog.Dimension";
+	String CHANGEOVER_DIALOG_SIZE = "Ulrice.ChangeoverDialog.Dimension";
 	
 	/** The border of the icon panel. */
-	public static final String CHANGEOVER_ICON_PANEL_BORDER = "Ulrice.ChangeoverDialog.IconPanel.Border";
+	String CHANGEOVER_ICON_PANEL_BORDER = "Ulrice.ChangeoverDialog.IconPanel.Border";
 	
 	/** The font used for displaying the date in the statusbar. */
-	public static final String STATUSBAR_CLOCKRENDERER_DATE_FONT = "Ulrice.StatusbarClockRenderer.Date.Font";
+	String STATUSBAR_CLOCKRENDERER_DATE_FONT = "Ulrice.StatusbarClockRenderer.Date.Font";
 	
 	/** The font used for displaying the time in the statusbar. */
-	public static final String STATUSBAR_CLOCKRENDERER_TIME_FONT = "Ulrice.StatusbarClockRenderer.Time.Font";
+	String STATUSBAR_CLOCKRENDERER_TIME_FONT = "Ulrice.StatusbarClockRenderer.Time.Font";
 	
 
-	public static final String CLOSE_ACTION_TEXT = "Ulrice.TabbedWorkarea.CloseActionText";
-	public static final String CLOSE_OTHER_ACTION_TEXT = "Ulrice.TabbedWorkarea.CloseOtherActionText";
-	public static final String CLOSE_ALL_ACTION_TEXT = "Ulrice.TabbedWorkarea.CloseAllActionText";
+	String CLOSE_ACTION_TEXT = "Ulrice.TabbedWorkarea.CloseActionText";
+	String CLOSE_OTHER_ACTION_TEXT = "Ulrice.TabbedWorkarea.CloseOtherActionText";
+	String CLOSE_ALL_ACTION_TEXT = "Ulrice.TabbedWorkarea.CloseAllActionText";
 	
-	public static final String MESSAGEDIALOG_OPAQUE = "MessageDialog.Opaque";
-	public static final String MESSAGEDIALOG_FOREGROUND = "MessageDialog.Foreground";
+	String MESSAGEDIALOG_OPAQUE = "MessageDialog.Opaque";
+	String MESSAGEDIALOG_FOREGROUND = "MessageDialog.Foreground";
 	
-	public static final String GLASSPANEL_COLOR = "GlassPanel.Color";
+	String GLASSPANEL_COLOR = "GlassPanel.Color";
 
 }
