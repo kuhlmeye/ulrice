@@ -5,7 +5,7 @@ import java.util.Locale;
 
 public interface TranslationProvider {
     
-    final String ULRICE_COMPONENT = "ULRICE";
+    String ULRICE_COMPONENT = "ULRICE";
 
     Translation getUlriceTranslation(TranslationUsage usage, String key, Object... params);
     

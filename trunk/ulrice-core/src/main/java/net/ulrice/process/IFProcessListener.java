@@ -9,12 +9,12 @@ public interface IFProcessListener extends EventListener {
 	 * 
 	 * @param process The process.
 	 */
-	public void stateChanged(IFBackgroundProcess process);
+	void stateChanged(IFBackgroundProcess process);
 	
 	/**
 	 * Called, if the progress of the process changed.
 	 * 
 	 * @param process The process.
 	 */
-	public void progressChanged(IFBackgroundProcess process);
+	void progressChanged(IFBackgroundProcess process);
 }
