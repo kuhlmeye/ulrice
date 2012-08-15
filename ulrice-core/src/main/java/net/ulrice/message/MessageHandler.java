@@ -19,7 +19,6 @@ import javax.swing.event.EventListenerList;
 import net.ulrice.Ulrice;
 import net.ulrice.module.IFController;
 import net.ulrice.module.event.AbstractModuleEventAdapter;
-import net.ulrice.module.event.IFModuleEventListener;
 
 /**
  * This class cares about all kinds of module messages (informational messages,

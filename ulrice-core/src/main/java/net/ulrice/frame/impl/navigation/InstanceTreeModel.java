@@ -18,13 +18,13 @@ import net.ulrice.Ulrice;
 import net.ulrice.module.IFController;
 import net.ulrice.module.IFModule;
 import net.ulrice.module.IFModuleManager;
-import net.ulrice.module.event.IFModuleEventListener;
+import net.ulrice.module.event.AbstractModuleEventAdapter;
 
 /**
  * @author christof
  * 
  */
-public class InstanceTreeModel implements TreeModel, IFModuleEventListener {
+public class InstanceTreeModel implements TreeModel {
 
 	/** The root of the tree. */
 	private final Object ROOT_OBJECT = new String("ROOT");
@@ -42,7 +42,29 @@ public class InstanceTreeModel implements TreeModel, IFModuleEventListener {
 
 	public InstanceTreeModel() {
 		moduleManager = Ulrice.getModuleManager();
-		moduleManager.addModuleEventListener(this);
+		moduleManager.addModuleEventListener(new AbstractModuleEventAdapter() {
+
+			/**
+			 * @see net.ulrice.module.event.IFModuleEventListener#openModule(net.ulrice.module.IFController)
+			 */
+			@Override
+			public void openModule(IFController activeController) {
+				addController(activeController);
+			}
+
+			/**
+			 * @see net.ulrice.module.event.IFModuleEventListener#closeController(net.ulrice.module.IFController)
+			 */
+			@Override
+			public void closeController(IFController activeController) {
+				removeController(activeController);
+			}
+
+		    @Override
+		    public void nameChanged(IFController controller) {
+		        fireTreeStructureChanged(new TreeModelEvent(getRoot(), new TreePath(getRoot())));
+		    }
+		});
 
 		// Build up the basic list.
 		if (moduleManager != null) {
@@ -228,36 +250,6 @@ public class InstanceTreeModel implements TreeModel, IFModuleEventListener {
 	}
 
 	/**
-	 * @see net.ulrice.module.event.IFModuleEventListener#openModule(net.ulrice.module.IFController)
-	 */
-	@Override
-	public void openModule(IFController activeController) {
-		addController(activeController);
-	}
-
-	/**
-	 * @see net.ulrice.module.event.IFModuleEventListener#closeController(net.ulrice.module.IFController)
-	 */
-	@Override
-	public void closeController(IFController activeController) {
-		removeController(activeController);
-	}
-
-	/**
-	 * @see net.ulrice.module.event.IFModuleEventListener#activateModule(net.ulrice.module.IFController)
-	 */
-	@Override
-	public void activateModule(IFController activeController) {
-	}
-
-	/**
-	 * @see net.ulrice.module.event.IFModuleEventListener#deactivateModule(net.ulrice.module.IFController)
-	 */
-	@Override
-	public void deactivateModule(IFController activeController) {
-	}
-
-	/**
 	 * Inform the listeners that the tree has changed.
 	 * 
 	 * @param e
@@ -272,28 +264,4 @@ public class InstanceTreeModel implements TreeModel, IFModuleEventListener {
 			}
 		}
 	}
-
-	@Override
-	public void moduleBlocked(IFController controller, Object blocker) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void moduleUnblocked(IFController controller, Object blocker) {
-		// TODO Auto-generated method stub
-		
-	}
-	
-	@Override
-    public void moduleBlockerRemoved(IFController controller, Object blocker) {
-        // TODO Auto-generated method stub
-        
-    }
-
-    @Override
-    public void nameChanged(IFController controller) {
-        fireTreeStructureChanged(new TreeModelEvent(getRoot(), new TreePath(getRoot())));
-    }
-
 }
