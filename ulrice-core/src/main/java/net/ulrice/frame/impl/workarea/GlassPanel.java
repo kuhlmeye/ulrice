@@ -34,7 +34,7 @@ public class GlassPanel extends JLayeredPane implements AWTEventListener,
 	public void setBlocked(boolean blocked) {
 		if (this.blocked != blocked) {
 			if (blocked) {
-				add(overlayPanel, new Integer(1));
+				add(overlayPanel, Integer.valueOf(1));
 				overlayPanel.requestFocus();
 				overlayPanel.addMouseWheelListener(this);
 				Toolkit.getDefaultToolkit().addAWTEventListener(this, 0xFFF);
@@ -53,7 +53,7 @@ public class GlassPanel extends JLayeredPane implements AWTEventListener,
 
 	public void addModuleView(JComponent view) {
 		this.view = view;
-		add(view, new Integer(0));
+		add(view, Integer.valueOf(0));
 		repaint();
 	}
 
