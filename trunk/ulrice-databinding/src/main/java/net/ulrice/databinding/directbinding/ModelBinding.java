@@ -43,13 +43,12 @@ import net.ulrice.databinding.viewadapter.impl.factory.HeuristicViewAdapterFacto
  *  an ein Model. 
  */
 public class ModelBinding {
-    private final Object _model;
-    private final ModelNotificationAdapter _modelNotificationAdapter;
+    private final Object model;
 
-    private final List<Binding> _bindings = new ArrayList<Binding> ();
-    private final List<TableBinding> _tableBindings = new ArrayList<TableBinding> ();
+    private final List<Binding> bindings = new ArrayList<Binding> ();
+    private final List<TableBinding> tableBindings = new ArrayList<TableBinding> ();
 
-    private boolean _isUpdatingView = false;
+    private boolean isUpdatingView = false;    
 
     /**
      * Wenn das Modell PropertyChangeSupport unterstützt, muss man keinen expliziten Adapter angeben
@@ -59,10 +58,9 @@ public class ModelBinding {
     }
 
     public ModelBinding (Object model, ModelNotificationAdapter modelNotificationAdapter) {
-        _model = model;
-        _modelNotificationAdapter = modelNotificationAdapter;
+    	this.model = model;
 
-        _modelNotificationAdapter.addModelChangeListener (new ModelChangeListener() {
+        modelNotificationAdapter.addModelChangeListener (new ModelChangeListener() {
             public void modelChanged () {
                 updateViews ();
             }
@@ -70,11 +68,11 @@ public class ModelBinding {
     }
 
     private void updateViews () {
-        for (Binding b: _bindings) {
+        for (Binding b: bindings) {
             updateView (b);
         }
 
-        for (TableBinding b: _tableBindings)
+        for (TableBinding b: tableBindings)
             updateView (b);
 
     }
@@ -90,12 +88,12 @@ public class ModelBinding {
                 final Object raw = cb.getModelValueAccessor ().getValue (row);
                 final Object converted = cb.getConverter ().modelToView (raw, null);
                 
-                _isUpdatingView = true;
+                isUpdatingView = true;
                 try {
                     cb.getViewAdapter ().setValue (row, converted);
                 }
                 finally {
-                    _isUpdatingView = false;
+                    isUpdatingView = false;
                 }
             }
         }
@@ -123,19 +121,19 @@ public class ModelBinding {
         if (oldValue != null && oldValue.equals (converted))
             return;
 
-        _isUpdatingView = true;
+        isUpdatingView = true;
         try {        
             calculateState(b);        	        	
             b.getViewAdapter ().updateFromBinding(b);
         }
         finally {
-            _isUpdatingView = false;
+            isUpdatingView = false;
         }
     }
 
     private void updateModelFromTable (TableModel tableModel, List<IndexedBinding> columnBindings, TableModelEvent e) {
         try {
-            if (_isUpdatingView)
+            if (isUpdatingView)
                 return;
             
             if (e.getType () != TableModelEvent.UPDATE)
@@ -160,7 +158,7 @@ public class ModelBinding {
 
     private void updateModel (Binding b) {
         try {
-            if (_isUpdatingView) 
+            if (isUpdatingView) 
                 return;
 
             if (b.isReadOnly ())
@@ -199,15 +197,15 @@ public class ModelBinding {
 	private void validateAll () {
         final ValidationResult validationResult = new ValidationResult ();
 
-        for (Binding b: _bindings)
+        for (Binding b: bindings)
             validate (b, validationResult);
 
-        for (Binding b: _bindings) {
+        for (Binding b: bindings) {
             final List<String> raw = validationResult.getMessagesByBinding(b);
             b.setValidationFailures(raw != null ? raw : new ArrayList<String> ());
             calculateState(b);
             b.getViewAdapter ().updateFromBinding(b);
-            b.getViewAdapter ().setComponentEnabled (b.isWidgetEnabled (validationResult.isValid (), _model));
+            b.getViewAdapter ().setComponentEnabled (b.isWidgetEnabled (validationResult.isValid (), model));
         }
     }
 
@@ -242,7 +240,7 @@ public class ModelBinding {
         final IFViewAdapter va = HeuristicViewAdapterFactory.createAdapter (viewElement);
         final Predicate enabledPredicate = new OgnlPredicate (enabledExpression);
         Binding binding = new Binding (va, null, enabledPredicate, null, new ArrayList<IFValidator<?>> (), true);
-		_bindings.add (binding);
+		bindings.add (binding);
         va.setBindWithoutValue(true);
         updateViews ();
         return binding;
@@ -250,7 +248,7 @@ public class ModelBinding {
 
     //TODO soll auch ohne Type gehen
     public Binding register (Object viewElement, String modelPath, Class<?> modelType, IFValidator<?>... validators) {
-        final IFModelValueAccessor mva = new OgnlMVA (_model, modelPath, modelType);
+        final IFModelValueAccessor mva = new OgnlMVA (model, modelPath, modelType);
         final IFViewAdapter va = HeuristicViewAdapterFactory.createAdapter (viewElement);
         final Predicate enabledPredicate = mva.isReadOnly () ? Predicate.FALSE : Predicate.TRUE;
 
@@ -258,7 +256,7 @@ public class ModelBinding {
     }
 
     public Binding register (Object viewElement, String modelPath, Class<?> modelType, boolean enabled, IFValidator<?>... validators) { 
-        final IFModelValueAccessor mva = new OgnlMVA (_model, modelPath, modelType);
+        final IFModelValueAccessor mva = new OgnlMVA (model, modelPath, modelType);
         final IFViewAdapter va = HeuristicViewAdapterFactory.createAdapter (viewElement);
         final Predicate enabledPredicate = enabled ? Predicate.FALSE : Predicate.TRUE;
 
@@ -266,7 +264,7 @@ public class ModelBinding {
     }
 
     public Binding register (Object viewElement, String modelPath, Class<?> modelType, String enabledExpression, IFValidator<?>... validators) {
-        final IFModelValueAccessor mva = new OgnlMVA (_model, modelPath, modelType);
+        final IFModelValueAccessor mva = new OgnlMVA (model, modelPath, modelType);
         return register (HeuristicViewAdapterFactory.createAdapter (viewElement), mva, new OgnlPredicate (enabledExpression), Arrays.asList (validators), mva.isReadOnly ());
     }
 
@@ -277,7 +275,7 @@ public class ModelBinding {
     public Binding register (IFViewAdapter viewAdapter, IFValueConverter viewConverter, Predicate enabledPredicate, IFModelValueAccessor modelValueAccessor, List<IFValidator<?>> validators, boolean isReadOnly) {
         ensureEventThread ();
         final Binding b = new Binding (viewAdapter, viewConverter, enabledPredicate, modelValueAccessor, validators, isReadOnly);
-        _bindings.add (b);
+        bindings.add (b);
         updateViews ();
 
         viewAdapter.addViewChangeListener (new IFViewChangeListener() {
@@ -302,7 +300,7 @@ public class ModelBinding {
         ensureEventThread ();
 
         final DefaultTableModel tableModel = (DefaultTableModel) oTableModel;
-        final IFModelValueAccessor numRowsAccessor = new OgnlMVA (_model, "(" + baseExpression + ").size()", Integer.class);
+        final IFModelValueAccessor numRowsAccessor = new OgnlMVA (model, "(" + baseExpression + ").size()", Integer.class);
 
         final boolean canBeEditable = tableModel instanceof EditableTableModel;
 
@@ -313,12 +311,12 @@ public class ModelBinding {
             final IFValueConverter converter = UlriceDatabinding.getConverterFactory().createConverter (columnType, columnType);
 
             final ColumnAdapter viewAdapter = new DefaultTableModelColumnAdapter (tableModel, columnType, col, ! canBeEditable); //TODO readOnly noch über Typen filtern?
-            final IFIndexedModelValueAccessor modelValueAccessor = new OgnlSingleListIndexedMVA (columnType, null, _model, baseExpression, expr, numRowsAccessor);
+            final IFIndexedModelValueAccessor modelValueAccessor = new OgnlSingleListIndexedMVA (columnType, null, model, baseExpression, expr, numRowsAccessor);
             columnBindings.add (new IndexedBinding (viewAdapter, converter, IndexedPredicate.TRUE, modelValueAccessor, viewAdapter.isReadOnly () || modelValueAccessor.isReadOnly ())); //TODO: enabled
         }
 
         final TableModelAdapter tableViewAdapter = new DefaultTableModelAdapter (tableModel);
-        _tableBindings.add (new TableBinding (tableViewAdapter, columnBindings));
+        tableBindings.add (new TableBinding (tableViewAdapter, columnBindings));
 
         if (tableModel instanceof WithTypesPerColumn) {
             final List<Class<?>> columnTypes = new ArrayList<Class<?>> ();
@@ -347,7 +345,7 @@ public class ModelBinding {
     }
     
     public void commit() {
-        for (Binding b: _bindings) {
+        for (Binding b: bindings) {
             b.setDirty(false);
             b.setValid(true);
             Object value = b.getModelValueAccessor().getValue();
@@ -357,7 +355,7 @@ public class ModelBinding {
     }
     
     public void rollback() {
-        for (Binding b: _bindings) {
+        for (Binding b: bindings) {
             b.setDirty(false);
             b.setValid(true);
             b.setCurrentValue(b.getOriginalValue());
@@ -367,14 +365,14 @@ public class ModelBinding {
 
     public boolean isValid() {
     	boolean result = true;
-        for (Binding b: _bindings) {
+        for (Binding b: bindings) {
         	result &= b.isValid(); 
         }
     	return result;
     }
     public boolean isDirty() {
     	boolean result = false;
-        for (Binding b: _bindings) {
+        for (Binding b: bindings) {
         	result |= b.isDirty(); 
         }
     	return result;
