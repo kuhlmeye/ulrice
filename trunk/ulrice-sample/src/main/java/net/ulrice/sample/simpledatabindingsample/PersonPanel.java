@@ -9,19 +9,19 @@ import javax.swing.JTextField;
 
 
 public class PersonPanel extends JPanel {
-    final JTextField _vornameTF = new JTextField ();
-    final JTextField _vorname2TF = new JTextField ();
-    final JTextField _nachnameTF = new JTextField ();
-    final JTextField _zahlTF = new JTextField ();
+    final JTextField vornameTF = new JTextField ();
+    final JTextField vorname2TF = new JTextField ();
+    final JTextField nachnameTF = new JTextField ();
+    final JTextField zahlTF = new JTextField ();
     
-    final JTextField _nameTF = new JTextField ();
+    final JTextField nameTF = new JTextField ();
     
-    final JCheckBox _hatAutoCB = new JCheckBox ();
+    final JCheckBox hatAutoCB = new JCheckBox ();
     
-    final JComboBox _anredeCombo = new JComboBox();
+    final JComboBox anredeCombo = new JComboBox();
     
-    final JButton _saveButton = new JButton ("Speichern");
-    final JButton _otherButton = new JButton ("Anderer Button");
+    final JButton saveButton = new JButton ("Speichern");
+    final JButton otherButton = new JButton ("Anderer Button");
     
     public PersonPanel () {
         setLayout (null);
@@ -33,30 +33,30 @@ public class PersonPanel extends JPanel {
         createLabel ("Auto", 4);
         createLabel ("Anrede", 5);
         
-        _vornameTF. setBounds (200, 20, 200, 21);
-        _vorname2TF. setBounds (420, 20, 200, 21);
-        _nachnameTF.setBounds (200, 45, 200, 21);
-        _zahlTF.   setBounds (200, 70, 200, 21);
+        vornameTF. setBounds (200, 20, 200, 21);
+        vorname2TF. setBounds (420, 20, 200, 21);
+        nachnameTF.setBounds (200, 45, 200, 21);
+        zahlTF.   setBounds (200, 70, 200, 21);
         
-        add (_vornameTF);
-        add (_vorname2TF);
-        add (_nachnameTF);
-        add (_zahlTF);
+        add (vornameTF);
+        add (vorname2TF);
+        add (nachnameTF);
+        add (zahlTF);
         
-        _nameTF.setBounds (200, 95, 200, 21);
-        _nameTF.setEnabled (false);
-        add (_nameTF);
+        nameTF.setBounds (200, 95, 200, 21);
+        nameTF.setEnabled (false);
+        add (nameTF);
        
-        _hatAutoCB.setBounds (200, 120, 200, 21);
-        add (_hatAutoCB);
+        hatAutoCB.setBounds (200, 120, 200, 21);
+        add (hatAutoCB);
         
-        _anredeCombo.setBounds (200, 145, 200, 21);
-        add (_anredeCombo);
+        anredeCombo.setBounds (200, 145, 200, 21);
+        add (anredeCombo);
         
-        _saveButton. setBounds ( 20, 250, 120, 25);
-        _otherButton.setBounds (150, 250, 220, 25);
-        add (_saveButton);
-        add (_otherButton);
+        saveButton. setBounds ( 20, 250, 120, 25);
+        otherButton.setBounds (150, 250, 220, 25);
+        add (saveButton);
+        add (otherButton);
     }
     
     private JLabel createLabel (String text, int line) {

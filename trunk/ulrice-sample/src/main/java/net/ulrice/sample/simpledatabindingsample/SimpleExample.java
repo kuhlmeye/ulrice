@@ -27,8 +27,8 @@ public class SimpleExample {
                 frame.setLayout (new BorderLayout ());
                 
                 final PersonPanel panel = new PersonPanel ();
-                panel._anredeCombo.addItem (new ObjectWithPresentation ("Herr", "Hr."));
-                panel._anredeCombo.addItem (new ObjectWithPresentation ("Frau", "Fr."));
+                panel.anredeCombo.addItem (new ObjectWithPresentation ("Herr", "Hr."));
+                panel.anredeCombo.addItem (new ObjectWithPresentation ("Frau", "Fr."));
                 
                 final PersonDTO model = new PersonDTO ("Arno", "Haase", 99, true);
                 
@@ -36,27 +36,27 @@ public class SimpleExample {
                 
                 final ModelBinding binding = new ModelBinding (model);        
                 
-                Binding b = binding.register (panel._vornameTF, "vorname", String.class); //TODO do not pass the type any more
+                Binding b = binding.register (panel.vornameTF, "vorname", String.class); //TODO do not pass the type any more
                 BorderStateMarker borderStateMarker = new BorderStateMarker(BorderFactory.createLineBorder(Color.DARK_GRAY));
 				b.getViewAdapter().setStateMarker(borderStateMarker);
-                panel._vornameTF.setBorder(borderStateMarker);
+                panel.vornameTF.setBorder(borderStateMarker);
                 b.getViewAdapter().setTooltipHandler(new DetailedTooltipHandler());
                 
-                b = binding.register (panel._vorname2TF, "vorname", String.class, new StringLengthValidator (2, 30)); 
+                b = binding.register (panel.vorname2TF, "vorname", String.class, new StringLengthValidator (2, 30)); 
                 borderStateMarker = new BorderStateMarker(BorderFactory.createLineBorder(Color.DARK_GRAY));
 				b.getViewAdapter().setStateMarker(borderStateMarker);
-                panel._vorname2TF.setBorder(borderStateMarker);
+                panel.vorname2TF.setBorder(borderStateMarker);
                 b.getViewAdapter().setTooltipHandler(new DetailedTooltipHandler());
                 
-                binding.register (panel._nachnameTF, "nachname", String.class); 
-                binding.register (panel._zahlTF, "zahl", Integer.class);
-                binding.register (panel._nameTF, "name", String.class); 
-                binding.register (panel._hatAutoCB, "hatAuto", Boolean.class, "vorname.length() < 5");
+                binding.register (panel.nachnameTF, "nachname", String.class); 
+                binding.register (panel.zahlTF, "zahl", Integer.class);
+                binding.register (panel.nameTF, "name", String.class); 
+                binding.register (panel.hatAutoCB, "hatAuto", Boolean.class, "vorname.length() < 5");
                 
-                binding.registerWithoutData (panel._saveButton, "#isValid && vorname.startsWith ('A')");
-                binding.register (panel._otherButton, "vorname + \"'s Button\"", String.class, "hatAuto && name.length() < 20");
+                binding.registerWithoutData (panel.saveButton, "#isValid && vorname.startsWith ('A')");
+                binding.register (panel.otherButton, "vorname + \"'s Button\"", String.class, "hatAuto && name.length() < 20");
 
-                binding.register (panel._anredeCombo, "anrede", String.class);
+                binding.register (panel.anredeCombo, "anrede", String.class);
                 
                 //-----------------------------------------------------------
                 
