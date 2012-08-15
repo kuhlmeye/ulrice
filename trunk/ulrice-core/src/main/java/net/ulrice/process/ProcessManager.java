@@ -57,10 +57,8 @@ public class ProcessManager implements IFProcessListener {
         processIdMap.put(process, uniqueId);
         fireStateChanged(process);
 
-        if (ProcessState.Started.equals(process.getProcessState())) {
-            if (process.getOwningController() != null && process.blocksWorkarea()) {
-                Ulrice.getModuleManager().addBlocker(process.getOwningController(), process);
-            }
+        if (ProcessState.Started.equals(process.getProcessState()) && (process.getOwningController() != null && process.blocksWorkarea())) {
+            Ulrice.getModuleManager().addBlocker(process.getOwningController(), process);
         }
         return uniqueId;
     }
@@ -78,10 +76,8 @@ public class ProcessManager implements IFProcessListener {
     public void stateChanged(IFBackgroundProcess process) {
 
         Ulrice.getMessageHandler().handleMessage(process.getOwningController(), MessageSeverity.Status, process.getProcessProgressMessage() + " (" + process.getProcessState() + ")");
-        if (ProcessState.Started.equals(process.getProcessState())) {
-            if (process.getOwningController() != null && process.blocksWorkarea()) {
-                Ulrice.getModuleManager().addBlocker(process.getOwningController(), process);                
-            }
+        if (ProcessState.Started.equals(process.getProcessState()) && process.getOwningController() != null && process.blocksWorkarea()) {
+            Ulrice.getModuleManager().addBlocker(process.getOwningController(), process);                
         }
         if (ProcessState.Done.equals(process.getProcessState())) {
             if (process.getOwningController() != null && process.blocksWorkarea()) {
