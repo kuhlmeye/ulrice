@@ -2,7 +2,6 @@ package net.ulrice.frame.impl.navigation;
 
 import java.util.Comparator;
 
-import javax.jws.soap.SOAPBinding.Use;
 import javax.swing.event.EventListenerList;
 import javax.swing.event.TreeModelEvent;
 import javax.swing.event.TreeModelListener;
@@ -10,10 +9,7 @@ import javax.swing.tree.TreeModel;
 import javax.swing.tree.TreePath;
 
 import net.ulrice.Ulrice;
-import net.ulrice.module.IFModule;
-import net.ulrice.module.IFModuleGroup;
 import net.ulrice.module.IFModuleStructureManager;
-import net.ulrice.module.IFModuleTitleProvider.Usage;
 import net.ulrice.module.event.IFModuleStructureEventListener;
 
 /**

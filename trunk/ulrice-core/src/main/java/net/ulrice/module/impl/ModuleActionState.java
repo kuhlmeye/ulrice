@@ -1,8 +1,6 @@
 package net.ulrice.module.impl;
 
-import java.util.HashSet;
 import java.util.IdentityHashMap;
-import java.util.Set;
 
 import net.ulrice.module.impl.action.UlriceAction;
 

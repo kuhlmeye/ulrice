@@ -12,7 +12,6 @@ import net.ulrice.databinding.modelaccess.impl.ReflectionMVA;
 import net.ulrice.databinding.validation.IFValidator;
 import net.ulrice.databinding.validation.ValidationError;
 import net.ulrice.databinding.validation.ValidationResult;
-import net.ulrice.databinding.validation.impl.RegExValidator;
 import net.ulrice.ui.components.LocaleSelectorItem;
 
 import org.junit.After;

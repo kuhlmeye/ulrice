@@ -1,6 +1,5 @@
 package net.ulrice.module;
 
-import javax.swing.ImageIcon;
 
 
 /**

@@ -8,7 +8,6 @@ import java.util.Comparator;
 
 import javax.swing.JComponent;
 import javax.swing.JTree;
-import javax.swing.KeyStroke;
 import javax.swing.tree.TreePath;
 
 import net.ulrice.Ulrice;

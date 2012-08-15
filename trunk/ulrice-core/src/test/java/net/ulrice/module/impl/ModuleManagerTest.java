@@ -2,7 +2,6 @@ package net.ulrice.module.impl;
 
 
 import net.ulrice.AbstractUlriceTest;
-import net.ulrice.module.IFController;
 import net.ulrice.module.exception.ModuleInstantiationException;
 
 import org.junit.Assert;

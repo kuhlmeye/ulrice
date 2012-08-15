@@ -6,7 +6,6 @@ import java.awt.Image;
 import java.awt.Insets;
 import java.awt.image.ImageObserver;
 
-import javax.swing.BorderFactory;
 import javax.swing.Icon;
 import javax.swing.JComponent;
 import javax.swing.UIManager;

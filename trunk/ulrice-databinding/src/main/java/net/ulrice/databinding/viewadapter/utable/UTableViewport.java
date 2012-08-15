@@ -1,6 +1,5 @@
 package net.ulrice.databinding.viewadapter.utable;
 
-import java.awt.Color;
 import java.awt.Dimension;
 
 import javax.swing.JViewport;

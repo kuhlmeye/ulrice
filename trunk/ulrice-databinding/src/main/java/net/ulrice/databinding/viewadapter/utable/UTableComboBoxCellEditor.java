@@ -8,7 +8,6 @@ import java.util.EventObject;
 import java.util.List;
 
 import javax.swing.AbstractCellEditor;
-import javax.swing.AbstractListModel;
 import javax.swing.JComboBox;
 import javax.swing.JComponent;
 import javax.swing.JPopupMenu;
