@@ -10,13 +10,13 @@ package net.ulrice.databinding.bufferedbinding;
  */
 public interface IFBindingGroup {
 
-    public abstract boolean isDirty();
+    boolean isDirty();
 
-    public abstract boolean isValid();
+    boolean isValid();
 
-    public abstract void write();
+    void write();
 
-    public abstract void read();
+    void read();
     
     void addBindingGroupChangeListener(IFBindingGroupEventListener l);
     

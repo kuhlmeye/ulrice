@@ -11,23 +11,23 @@ public interface IFBackgroundProcess extends Runnable {
 		Cancelled				
 	}
 	
-	public boolean hasProgressInformation();
+	boolean hasProgressInformation();
 	
-	public ProcessState getProcessState();
+	ProcessState getProcessState();
 	
-	public double getProcessProgress();
+	double getProcessProgress();
 
-	public String getProcessProgressMessage();
+	String getProcessProgressMessage();
 	
-	public IFController getOwningController();
+	IFController getOwningController();
 	
-	public void addProcessListener(IFProcessListener listener);
+	void addProcessListener(IFProcessListener listener);
 	
-	public void removeProcessListener(IFProcessListener listener);
+	void removeProcessListener(IFProcessListener listener);
 	
-	public boolean blocksWorkarea();
+	boolean blocksWorkarea();
 	
-	public boolean supportsCancel();
+	boolean supportsCancel();
 	
-	public void cancelProcess();
+	void cancelProcess();
 }
