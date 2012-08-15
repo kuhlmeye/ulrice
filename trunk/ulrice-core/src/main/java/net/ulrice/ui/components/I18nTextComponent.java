@@ -7,6 +7,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 
@@ -47,7 +48,7 @@ public class I18nTextComponent extends JPanel {
 	
 	private JTextComponent textComponent;
 	
-	private Map<Locale, String> valueMap;
+	private Map<Locale, String> valueMap = new HashMap<Locale, String>();
 
 	public I18nTextComponent(JTextComponent textComponent) {
 		super(new BorderLayout(2, 2));
