@@ -135,6 +135,7 @@ public class I18nTextComponent extends JPanel {
 	};
 	
 	public Map<Locale, String> getData() {
+		updateTextMap();
 		return valueMap;
 	}
 	
