@@ -18,8 +18,9 @@ import net.ulrice.databinding.validation.IFValidator;
 import net.ulrice.databinding.viewadapter.utable.UTableRenderer;
 
 /**
+ * Defines a column in the table am.
+ * 
  * @author christof
- *
  */
 public class ColumnDefinition<T extends Object> implements PropertyChangeListener {
 
@@ -112,6 +113,9 @@ public class ColumnDefinition<T extends Object> implements PropertyChangeListene
         this.columnType = columnType;
     }
 
+    /**
+     * Create the generic attribute model for this column
+     */
     public GenericAM<T> createAM() {
 
         GenericAM<T> genericAM;
@@ -132,7 +136,7 @@ public class ColumnDefinition<T extends Object> implements PropertyChangeListene
         }
 		return genericAM;
     }
-
+   
     private ColumnDefinition<T> setFilterMode(Class<T> columnClass) {
         if (Number.class.isAssignableFrom(columnClass)) {
             setFilterMode(FilterMode.Numeric);
@@ -149,6 +153,9 @@ public class ColumnDefinition<T extends Object> implements PropertyChangeListene
         return this;
     }
 
+    /**
+     * Sets the default filter mode for this column..
+     */
     public ColumnDefinition<T> setFilterMode(FilterMode filterMode) {
         this.filterMode = filterMode;
         fireFilterModeChanged();
@@ -156,31 +163,28 @@ public class ColumnDefinition<T extends Object> implements PropertyChangeListene
     }
 
     /**
-     * @param columnIndex
-     * @return
+     * Returns the class of the data in this column
      */
     public Class<?> getColumnClass() {
         return columnClass;
     }
 
-
-
     /**
-     * @return the dataAccessor
+     * Returns the data accessor used to get the data from the model.
      */
     public IFDynamicModelValueAccessor getDataAccessor() {
         return dataAccessor;
     }
 
     /**
-     * @param dataAccessor the dataAccessor to set
+     * Set the data accessor to get the from the model.
      */
     public void setDataAccessor(IFDynamicModelValueAccessor dataAccessor) {
         this.dataAccessor = dataAccessor;
     }
 
     /**
-     * @return the id
+     * Returns the id.
      */
     public String getId() {
         return id;
@@ -217,67 +221,106 @@ public class ColumnDefinition<T extends Object> implements PropertyChangeListene
         return filterMode;
     }
 
-
+    /**
+     * Returns the default value converter used by this column definition
+     */
 	public IFValueConverter getValueConverter() {
 		return valueConverter;
 	}
 
+	/**
+	 * Sets the value converter used by this column
+	 */
 	public void setValueConverter(IFValueConverter valueConverter) {
 		this.valueConverter = valueConverter;
 	}
 
-
+	/**
+	 * Returns the list of standard validators that should be used in this column
+	 */
 	public List<IFValidator> getValidators() {
 		return validators;
 	}
 
+	/**
+	 * Add a validator to the list of validators for this column
+	 */
 	public ColumnDefinition<T> addValidator(IFValidator validator) {
 		validators.add(validator);
 		return this;
 	}
 
+	/**
+	 * Returns true, if an auto value converter should be used. This converter tries
+	 * to automatically convert objects, if model and column class are different.
+	 */
     public boolean isUseAutoValueConverter() {
     	return useAutoValueConverter;
     }
 
+    /**
+     * Set to true, if auto value converter should be used.
+     */
     public ColumnDefinition<T> setUseAutoValueConverter(boolean useAutoValueConverter) {
 		this.useAutoValueConverter = useAutoValueConverter;
 		return this;
 	}
+    
+    /**
+     * Sets the name of the column.
+     */
     public void setColumnName(String columnName) {
         this.columnName = columnName;
     }
 
+    /**
+     * Sets the type of the column
+     */
     public ColumnDefinition<T> setColumnType(ColumnType columnType) {
 		this.columnType = columnType;
 		return this;
 	}
 
+    /**
+     * Returns the type of this column
+     */
     public ColumnType getColumnType() {
 		return columnType;
 	}
 
     /**
-     * @param columnIndex
-     * @return
+     * Returns the name of this column
      */
     public String getColumnName() {
         return columnName;
     }
 
+    /**
+     * Returns true, if a value range is defined for this column. Definition of a value range
+     * will result in a combobox in the table cell editor.
+     */
     public boolean isUseValueRange() {
         return useValueRange;
     }
 
+    /**
+     * Set to true, if a value range should be used in this column
+     */
     public ColumnDefinition<T> setUseValueRange(boolean useValueRange) {
         this.useValueRange = useValueRange;
         return this;
     }
 
+    /**
+     * Returns the list of valid value for this column
+     */
     public List<T> getValueRange() {
         return valueRange;
     }
 
+    /**
+     * Set the list of valid values for this column
+     */
     public ColumnDefinition<T> setValueRange(List<T> valueRange) {
         this.valueRange = valueRange;
         fireValueRangeChanged();
@@ -302,63 +345,104 @@ public class ColumnDefinition<T extends Object> implements PropertyChangeListene
         }
     }
 
+    /**
+     * Register a change listener to this column
+     */
     public void addChangeListener(ColumnDefinitionChangedListener listener) {
         eventListeners.add(ColumnDefinitionChangedListener.class, listener);
     }
 
+    /**
+     * Remove a registered change listener from this columnn
+     */
     public void removeChangeListener(ColumnDefinitionChangedListener listener) {
         eventListeners.remove(ColumnDefinitionChangedListener.class, listener);
     }
 
+    /**
+     * The default table cell editor that should be used in this column
+     */
     public TableCellEditor getCellEditor() {
         return cellEditor;
     }
 
+    /**
+     * Set the default table cell editor that should be used by this column
+     */
     public ColumnDefinition<T> setCellEditor(TableCellEditor cellEditor) {
         this.cellEditor = cellEditor;
         return this;
     }
 
+    /**
+     * Returns the default table cell renderer that should be used by this column
+     */
     public TableCellRenderer getCellRenderer() {
         return cellRenderer;
     }
 
-
+    /**
+     * Sets the default cell renderer that should be used by this column
+     */
     public ColumnDefinition<T> setCellRenderer(TableCellRenderer cellRenderer) {
         this.cellRenderer = cellRenderer;
         return this;
     }
 
+    /**
+     * Sets the attribute info of this column
+     */
     public ColumnDefinition<T> setAttributeInfo(IFAttributeInfo attributeInfo) {
         this.attributeInfo = attributeInfo;
         return this;
     }
 
+    /**
+     * Returns the attribute info of this column
+     */
     public IFAttributeInfo getAttributeInfo() {
         return attributeInfo;
     }
 
+    /**
+     * Sets the default header tooltip
+     */
     public ColumnDefinition<T> setColumnTooltip(String columnTooltip) {
         this.columnTooltip = columnTooltip;
         return this;
     }
 
+    /**
+     * Returns the header tooltip
+     */
     public String getColumnTooltip() {
         return columnTooltip;
     }
 
+    /**
+     * Returns the comparator of this column that should be used by the row sorter
+     */
     public Comparator<T> getComparator() {
         return comparator;
     }
 
+    /**
+     * Sets the comparator of this column that is used by the row sorter
+     */
     public void setComparator(Comparator<T> comparator) {
         this.comparator = comparator;
     }
 
+    /**
+     * Returns true, if this is a fixed column
+     */
     public boolean isFixedColumn() {
         return fixedColumn;
     }
 
+    /**
+     * Set to true, if this is a fixed column
+     */
     public void setFixedColumn(boolean fixedColumn) {
         this.fixedColumn = fixedColumn;
     }
@@ -383,10 +467,16 @@ public class ColumnDefinition<T extends Object> implements PropertyChangeListene
         }
     }
 
+    /**
+     * Returns the preferred width of this column. This value is used by the column reiszer
+     */
     public Integer getPreferredWidth() {
         return preferredWidth;
     }
 
+    /**
+     * Sets the preferreed width of this column.
+     */
     public ColumnDefinition<T> setPreferredWidth(Integer preferredWidth) {
         this.preferredWidth = preferredWidth;
         return this;
