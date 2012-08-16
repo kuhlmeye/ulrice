@@ -43,9 +43,6 @@ public class Element {
 
 	private boolean originalValueValid = true;
 
-	/** The event listeners. */
-	private EventListenerList listenerList = new EventListenerList();
-
 	/** Flag, if this element is editable. */
 	private boolean readOnly;
 
