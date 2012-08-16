@@ -132,8 +132,7 @@ public class UlriceReflectionUtils {
 	private static Method getMethodInHierarchy(Class< ? extends Object> cls, Class< ? extends Object> originalCls,
         String methodName) throws NoSuchMethodException {
         try {
-            Method result = cls.getDeclaredMethod(methodName);
-            return result;
+            return cls.getDeclaredMethod(methodName);
         } catch (SecurityException e) {
             throw new ReflectionMVAException("Security exception while accessing method " + cls.getName() + "." + methodName + ".", e);
         } catch (NoSuchMethodException e) {
@@ -219,8 +218,7 @@ public class UlriceReflectionUtils {
 				out.close();
 
 				ObjectInputStream in = new ObjectInputStream(new ByteArrayInputStream(bytes.toByteArray()));
-				Object objCopy = in.readObject();
-				return objCopy;
+				return in.readObject();
 			} catch (IOException e) {
 				ErrorHandler.handle(e);
 			} catch (ClassNotFoundException e) {
