@@ -71,8 +71,7 @@ public abstract class AbstractProcess<T, V> extends SwingWorker<T, V> implements
     protected T doInBackground() throws Exception {
         this.state = ProcessState.Started;
         fireStateChanged();
-        T result = work();
-        return result;
+        return work();
     }
 
     @Override
