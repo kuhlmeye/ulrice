@@ -2,29 +2,29 @@ package net.ulrice.databinding.directbinding.table;
 
 
 public class ExpressionColumnSpec {
-    private final String _expression;
-    private final Boolean _isReadOnly;
-    private final Class<?> _type;
+    private final String expression;
+    private final Boolean isReadOnly;
+    private final Class<?> type;
     
     public ExpressionColumnSpec (String expression, Class<?> type) {
         this (expression, null, type);
     }
     
     public ExpressionColumnSpec (String expression, Boolean readOnly, Class<?> type) {
-        _expression = expression;
-        _isReadOnly = readOnly;
-        _type = type;
+    	this.expression = expression;
+    	this.isReadOnly = readOnly;
+    	this.type = type;
     }
     
     public String getExpression () {
-        return _expression;
+        return expression;
     }
     
     public Class<?> getType () {
-        return _type;
+        return type;
     }
 
     public Boolean getIsReadOnly () {
-        return _isReadOnly;
+        return isReadOnly;
     }
 }
