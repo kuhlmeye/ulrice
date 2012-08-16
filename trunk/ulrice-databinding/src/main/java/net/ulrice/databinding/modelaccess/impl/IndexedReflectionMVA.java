@@ -127,8 +127,7 @@ public class IndexedReflectionMVA implements IFIndexedModelValueAccessor {
 			    ParameterizedType aType = (ParameterizedType) genericFieldType;
 			    Type[] fieldArgTypes = aType.getActualTypeArguments();
 			    for(Type fieldArgType : fieldArgTypes){
-			        Class<?> fieldArgClass = (Class<?>) fieldArgType;
-					return fieldArgClass;
+					return (Class<?>) fieldArgType;
 			    }
 			}
 			
