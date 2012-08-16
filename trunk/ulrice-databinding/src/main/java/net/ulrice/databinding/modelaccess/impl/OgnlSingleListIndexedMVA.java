@@ -10,29 +10,29 @@ import ognl.OgnlException;
 
 
 public class OgnlSingleListIndexedMVA implements IFIndexedModelValueAccessor {
-    private final Class<?> _type;
-    private final boolean _isReadOnly;
+    private final Class<?> type;
+    private final boolean isReadOnly;
 
-    private final Object _model;
+    private final Object model;
 
-    private final Object _ognlBaseTree;
-    private final Object _ognlElementTree;
-    private final IFModelValueAccessor _sizeMVA;
+    private final Object ognlBaseTree;
+    private final Object ognlElementTree;
+    private final IFModelValueAccessor sizeMVA;
     private String id;
 
     public OgnlSingleListIndexedMVA (Class<?> type, Boolean isReadOnly, Object model, String baseExpression, String elementExpression, IFModelValueAccessor sizeMVA) {
-        _type = type;
-        _model = model;
-        _sizeMVA = sizeMVA;
+        this.type = type;
+        this.model = model;
+        this.sizeMVA = sizeMVA;
         try {
-            _ognlBaseTree = Ognl.parseExpression (baseExpression);
-            _ognlElementTree = Ognl.parseExpression (elementExpression);
+        	this.ognlBaseTree = Ognl.parseExpression (baseExpression);
+        	this.ognlElementTree = Ognl.parseExpression (elementExpression);
         } catch (OgnlException exc) {
             ErrorHandler.handle (exc);
             throw new RuntimeException (); // for the compiler
         }
-        _isReadOnly = isReadOnly != null ? isReadOnly : guessReadOnly ();
-        id = _model.getClass().getName() + "." + baseExpression + "." + elementExpression;
+        this.isReadOnly = isReadOnly != null ? isReadOnly : guessReadOnly ();
+        id = this.model.getClass().getName() + "." + baseExpression + "." + elementExpression;
     }
 
     private boolean guessReadOnly () {
@@ -55,20 +55,20 @@ public class OgnlSingleListIndexedMVA implements IFIndexedModelValueAccessor {
     }
     
     public Class<?> getModelType () {
-        return _type;
+        return type;
     }
 
     public boolean isReadOnly () {
-        return _isReadOnly;
+        return isReadOnly;
     }
 
     
     public Object getValue (int index) {
         try {
-            final List<?> list = (List<?>) Ognl.getValue (_ognlBaseTree, _model);
+            final List<?> list = (List<?>) Ognl.getValue (ognlBaseTree, model);
             final Object baseValue = list.get (index);
 
-            return Ognl.getValue (_ognlElementTree, baseValue);
+            return Ognl.getValue (ognlElementTree, baseValue);
         }
         catch (OgnlException exc) {
             ErrorHandler.handle (exc);
@@ -95,9 +95,9 @@ public class OgnlSingleListIndexedMVA implements IFIndexedModelValueAccessor {
     @Override
     public void setValue (int index, Object value) {
         try {
-            final List<?> list = (List<?>) Ognl.getValue (_ognlBaseTree, _model);
+            final List<?> list = (List<?>) Ognl.getValue (ognlBaseTree, model);
             final Object baseValue = list.get (index);
-            Ognl.setValue (_ognlElementTree, baseValue, value);
+            Ognl.setValue (ognlElementTree, baseValue, value);
         }
         catch (OgnlException exc) {
             ErrorHandler.handle (exc);
@@ -111,7 +111,7 @@ public class OgnlSingleListIndexedMVA implements IFIndexedModelValueAccessor {
     
     @Override
     public int getSize() {
-    	return (Integer)_sizeMVA.getValue();
+    	return (Integer)sizeMVA.getValue();
     }
 
 	@Override
