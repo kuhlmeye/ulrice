@@ -147,7 +147,7 @@ public class Wizard {
 
     private void handleActionStates(StepFlow stepFlow) {
     	Step cStep = stepFlow.getCurrentStep();
-        cancelAction.setEnabled(!stepFlow.isFirst() && (cStep != null ? cStep.isCancelEnabled() : true));
+        cancelAction.setEnabled(cStep != null ? cStep.isCancelEnabled() : true);
         prevAction.setEnabled(!stepFlow.isFirst() && (cStep != null ? cStep.isPrevEnabled() : true));
         nextAction.setEnabled(!stepFlow.isLast() && (cStep != null ? cStep.isNextEnabled() : true));
         finishAction.setEnabled(
