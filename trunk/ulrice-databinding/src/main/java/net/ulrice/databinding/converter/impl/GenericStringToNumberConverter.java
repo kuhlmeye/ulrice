@@ -25,18 +25,24 @@ public class GenericStringToNumberConverter <X extends Number> implements IFValu
 	}
 
 	private static Class <? extends Number> asNonPrimitive (Class<? extends Number> cls) {
-		if (cls == Byte.TYPE)
+		if (cls == Byte.TYPE) {
 			return Byte.class;
-		if (cls == Short.TYPE)
+		}
+		if (cls == Short.TYPE) {
 			return Short.class;
-		if (cls == Integer.TYPE)
+		}
+		if (cls == Integer.TYPE) {
 			return Integer.class;
-		if (cls == Long.TYPE)
+		}
+		if (cls == Long.TYPE) {
 			return Long.class;
-		if (cls == Float.TYPE)
+		}
+		if (cls == Float.TYPE) {
 			return Float.class;
-		if (cls == Double.TYPE)
+		}
+		if (cls == Double.TYPE) {
 			return Double.class;
+		}
 			
 		return cls;
 	}
@@ -69,10 +75,12 @@ public class GenericStringToNumberConverter <X extends Number> implements IFValu
 	public X viewToModel(String o, IFAttributeInfo attributeInfo) {
 		try {
 			if (o == null || o.trim().length() == 0) {
-				if (modelClass == nonPrimitiveModelClass)
+				if (modelClass == nonPrimitiveModelClass) {
 					return null;
-				else
+				}
+				else {
 					o = "0";
+				}
 			}
 			return (X) valueOfMethod.invoke(null, o);
 		} catch (Exception e) {
