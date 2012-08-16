@@ -158,8 +158,7 @@ public class TabbedWorkarea extends JTabbedPane implements IFWorkarea, MouseList
         // TODO Identify tab component in a different way. component is not stable
         final JComponent controllerComponent = getControllerComponent(activeController);
         final GlassPanel glassPanel = glassPanelMap.get(controllerComponent);
-        int idx = indexOfComponent(glassPanel);
-        return idx;
+        return indexOfComponent(glassPanel);
     }
 
     /**
