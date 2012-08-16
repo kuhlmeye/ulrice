@@ -1,7 +1,47 @@
 package net.ulrice.remotecontrol.impl.keyboard;
 
-import static java.awt.event.KeyEvent.*;
-import static net.ulrice.remotecontrol.impl.keyboard.RemoteKeyboardInstruction.*;
+import static java.awt.event.KeyEvent.VK_0;
+import static java.awt.event.KeyEvent.VK_1;
+import static java.awt.event.KeyEvent.VK_2;
+import static java.awt.event.KeyEvent.VK_3;
+import static java.awt.event.KeyEvent.VK_4;
+import static java.awt.event.KeyEvent.VK_5;
+import static java.awt.event.KeyEvent.VK_6;
+import static java.awt.event.KeyEvent.VK_7;
+import static java.awt.event.KeyEvent.VK_8;
+import static java.awt.event.KeyEvent.VK_9;
+import static java.awt.event.KeyEvent.VK_A;
+import static java.awt.event.KeyEvent.VK_ALT;
+import static java.awt.event.KeyEvent.VK_BACK_SPACE;
+import static java.awt.event.KeyEvent.VK_COMMA;
+import static java.awt.event.KeyEvent.VK_CONTROL;
+import static java.awt.event.KeyEvent.VK_DEAD_ACUTE;
+import static java.awt.event.KeyEvent.VK_DEAD_CIRCUMFLEX;
+import static java.awt.event.KeyEvent.VK_E;
+import static java.awt.event.KeyEvent.VK_I;
+import static java.awt.event.KeyEvent.VK_LESS;
+import static java.awt.event.KeyEvent.VK_M;
+import static java.awt.event.KeyEvent.VK_MINUS;
+import static java.awt.event.KeyEvent.VK_NUMBER_SIGN;
+import static java.awt.event.KeyEvent.VK_NUMPAD0;
+import static java.awt.event.KeyEvent.VK_NUMPAD1;
+import static java.awt.event.KeyEvent.VK_NUMPAD2;
+import static java.awt.event.KeyEvent.VK_NUMPAD3;
+import static java.awt.event.KeyEvent.VK_NUMPAD4;
+import static java.awt.event.KeyEvent.VK_NUMPAD5;
+import static java.awt.event.KeyEvent.VK_NUMPAD6;
+import static java.awt.event.KeyEvent.VK_NUMPAD8;
+import static java.awt.event.KeyEvent.VK_NUMPAD9;
+import static java.awt.event.KeyEvent.VK_O;
+import static java.awt.event.KeyEvent.VK_PERIOD;
+import static java.awt.event.KeyEvent.VK_PLUS;
+import static java.awt.event.KeyEvent.VK_Q;
+import static java.awt.event.KeyEvent.VK_SHIFT;
+import static java.awt.event.KeyEvent.VK_SPACE;
+import static java.awt.event.KeyEvent.VK_U;
+import static java.awt.event.KeyEvent.VK_Y;
+import static net.ulrice.remotecontrol.impl.keyboard.RemoteKeyboardInstruction.press;
+import static net.ulrice.remotecontrol.impl.keyboard.RemoteKeyboardInstruction.release;
 
 public class RemoteKeyboardDE extends RemoteKeyboard
 {

@@ -6,14 +6,10 @@ import java.awt.event.ActionEvent;
 import javax.swing.AbstractAction;
 import javax.swing.JButton;
 import javax.swing.JComponent;
-import javax.swing.JDialog;
-import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 
-import net.ulrice.Ulrice;
-import net.ulrice.dialog.DialogManager.DialogMode;
 import net.ulrice.module.impl.AbstractController;
 import net.ulrice.module.impl.IFClosing;
 import net.ulrice.process.CtrlProcessExecutor;

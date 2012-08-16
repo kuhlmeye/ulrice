@@ -24,7 +24,6 @@ import net.ulrice.module.impl.action.CloseModuleAction;
 import net.ulrice.module.impl.action.ExitApplicationAction;
 import net.ulrice.module.impl.action.ModuleActionManager;
 import net.ulrice.module.impl.action.ModuleDelegationAction;
-import net.ulrice.sample.module.laflist.LafListModel;
 import net.ulrice.sample.module.masktextfield.MaskTextFieldModule;
 import net.ulrice.sample.module.processsample.ProcessSampleModule;
 import net.ulrice.sample.module.profiledmodulesample.ProfiledModuleSampleModule;

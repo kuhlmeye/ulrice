@@ -1,6 +1,6 @@
 package net.ulrice.remotecontrol.impl;
 
-import static net.ulrice.remotecontrol.ModuleMatcher.*;
+import static net.ulrice.remotecontrol.ModuleMatcher.and;
 
 import java.util.Collection;
 

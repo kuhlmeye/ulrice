@@ -1,7 +1,9 @@
 package net.ulrice.remotecontrol.impl.keyboard;
 
 import static java.awt.event.KeyEvent.*;
-import static net.ulrice.remotecontrol.impl.keyboard.RemoteKeyboardInstruction.*;
+import static net.ulrice.remotecontrol.impl.keyboard.RemoteKeyboardInstruction.pause;
+import static net.ulrice.remotecontrol.impl.keyboard.RemoteKeyboardInstruction.press;
+import static net.ulrice.remotecontrol.impl.keyboard.RemoteKeyboardInstruction.release;
 
 import java.util.ArrayList;
 import java.util.HashMap;
