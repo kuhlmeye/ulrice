@@ -8,9 +8,14 @@ import java.util.SortedMap;
 import java.util.jar.JarFile;
 import java.util.jar.Pack200;
 import java.util.jar.Pack200.Packer;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class CreateDescription {
 
+
+	private static final Logger LOG = Logger.getLogger(CreateDescription.class.getName());
+	
     /**
      * @param args
      */
@@ -47,7 +52,7 @@ public class CreateDescription {
                 fos.close();
             }
             catch (IOException ioe) {
-                ioe.printStackTrace();
+            	LOG.log(Level.SEVERE, "IO Exception.", ioe);
             }
         }
     }

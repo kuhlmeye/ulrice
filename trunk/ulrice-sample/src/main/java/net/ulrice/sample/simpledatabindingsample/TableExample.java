@@ -17,34 +17,34 @@ import net.ulrice.databinding.directbinding.table.TypedEditableColumnTableModel;
 
 
 public class TableExample {
-    private final JFrame _frame = new JFrame ("Binding-Demo");
-    private final PersonList _model = new PersonList ();
+    private final JFrame frame = new JFrame ("Binding-Demo");
+    private final PersonList model = new PersonList ();
 
-    private int _counter = 0;
+    private int counter = 0;
     
     public TableExample () {
-        _frame.setDefaultCloseOperation (JFrame.EXIT_ON_CLOSE);
+        frame.setDefaultCloseOperation (JFrame.EXIT_ON_CLOSE);
 
-        _frame.setBounds (50, 50, 800, 600);
-        _frame.setLayout (new BorderLayout ());
+        frame.setBounds (50, 50, 800, 600);
+        frame.setLayout (new BorderLayout ());
 
 //         final JTable table = new JTable ();
          final JTable table = new JTable (new TypedEditableColumnTableModel ());
-        _frame.add (new JScrollPane (table), BorderLayout.CENTER);
+        frame.add (new JScrollPane (table), BorderLayout.CENTER);
 
         final JButton button = new JButton ();
-        _frame.add (button, BorderLayout.SOUTH);
+        frame.add (button, BorderLayout.SOUTH);
         
         final JTextField text = new JTextField ();
-        _frame.add (text, BorderLayout.NORTH);
+        frame.add (text, BorderLayout.NORTH);
 
-        _model.addPerson (0, new PersonDTO ("Arno",   "Haase", 99, true));
-        _model.addPerson (1, new PersonDTO ("Fred",   "Haase", 59, false));
-        _model.addPerson (2, new PersonDTO ("Martin", "Haase", 79, true));
+        model.addPerson (0, new PersonDTO ("Arno",   "Haase", 99, true));
+        model.addPerson (1, new PersonDTO ("Fred",   "Haase", 59, false));
+        model.addPerson (2, new PersonDTO ("Martin", "Haase", 79, true));
 
         //-----------------------------------------------------------
 
-        final ModelBinding binding = new ModelBinding (_model);        
+        final ModelBinding binding = new ModelBinding (model);        
 
 //         binding.registerSingleListTable (table.getModel (), "personen", "vorname", "nachname", "name", "hatAuto", "zahl");
         binding.registerSingleListTable (table.getModel (), "personen", 
@@ -59,7 +59,7 @@ public class TableExample {
 
         //-----------------------------------------------------------
 
-        _frame.setVisible (true);
+        frame.setVisible (true);
 
         for (int i=0; i<10; i++)
             addPerson ();
@@ -84,11 +84,11 @@ public class TableExample {
     }
     
     private void addPerson () {
-        final PersonDTO person = new PersonDTO ("vorname-" + _counter, "nachname-" + _counter, _counter, _counter % 3 == 0);
-        _counter++;
+        final PersonDTO person = new PersonDTO ("vorname-" + counter, "nachname-" + counter, counter, counter % 3 == 0);
+        counter++;
         SwingUtilities.invokeLater (new Runnable () {
             public void run () {
-                _model.addPerson (1, person);
+                model.addPerson (1, person);
             }
         });
     }

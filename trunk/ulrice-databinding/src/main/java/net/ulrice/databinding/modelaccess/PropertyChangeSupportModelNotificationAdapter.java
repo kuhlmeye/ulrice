@@ -9,43 +9,43 @@ import java.util.List;
 
 
 public class PropertyChangeSupportModelNotificationAdapter implements ModelNotificationAdapter {
-    private final List<ModelChangeListener> _listeners = new ArrayList<ModelChangeListener> ();
-    private final Object _model;
+    private final List<ModelChangeListener> listeners = new ArrayList<ModelChangeListener> ();
+    private final Object model;
 
-    private final PropertyChangeListener _pcl = new PropertyChangeListener() {
+    private final PropertyChangeListener pcl = new PropertyChangeListener() {
         public void propertyChange (PropertyChangeEvent evt) {
-            for (ModelChangeListener l: _listeners)
+            for (ModelChangeListener l: listeners)
                 l.modelChanged ();
         }
     };
 
     public PropertyChangeSupportModelNotificationAdapter (Object model) {
-        _model = model;
+    	this.model = model;
     }
 
     private void addRemovePcl (String prefix) {
         try {
-            final Method m = _model.getClass ().getMethod (prefix + "PropertyChangeListener", PropertyChangeListener.class);
-            m.invoke (_model, _pcl);
+            final Method m = model.getClass ().getMethod (prefix + "PropertyChangeListener", PropertyChangeListener.class);
+            m.invoke (model, pcl);
         }
         catch (Exception exc) {
-            throw new IllegalArgumentException ("kein Getter / Setter für PropertyChangeListener im Model " + _model.getClass ().getName () + ".");
+            throw new IllegalArgumentException ("kein Getter / Setter für PropertyChangeListener im Model " + model.getClass ().getName () + ".");
         }
     }
 
     @Override
     public void addModelChangeListener (ModelChangeListener l) {
-        if (_listeners.isEmpty ()) 
+        if (listeners.isEmpty ()) 
             addRemovePcl ("add");
 
-        _listeners.add (l);
+        listeners.add (l);
     }
 
     @Override
     public void removeModelChangeListener (ModelChangeListener l) {
-        _listeners.remove (l);
+        listeners.remove (l);
 
-        if (_listeners.isEmpty ()) 
+        if (listeners.isEmpty ()) 
             addRemovePcl ("remove");
     }
 }
