@@ -4,14 +4,14 @@ import javax.swing.table.DefaultTableModel;
 
 
 public class DefaultTableModelAdapter implements TableModelAdapter {
-    private final DefaultTableModel _tableModel;
+    private final DefaultTableModel tableModel;
     
     public DefaultTableModelAdapter (DefaultTableModel tableModel) {
-        _tableModel = tableModel;
+    	this.tableModel = tableModel;
     }
 
     public void setSize (int numRows, int numCols) {
-        _tableModel.setRowCount    (numRows);
-        _tableModel.setColumnCount (numCols);
+        tableModel.setRowCount    (numRows);
+        tableModel.setColumnCount (numCols);
     }
 }
