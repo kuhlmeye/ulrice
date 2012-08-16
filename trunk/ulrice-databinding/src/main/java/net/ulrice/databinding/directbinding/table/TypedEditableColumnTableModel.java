@@ -8,32 +8,32 @@ import javax.swing.table.DefaultTableModel;
 
 
 public class TypedEditableColumnTableModel extends DefaultTableModel implements WithTypesPerColumn, EditableTableModel {
-    private List<Class<?>> _columnTypes;
-    private List<Boolean> _columnsEditable;
+    private List<Class<?>> columnTypes;
+    private List<Boolean> columnsEditable;
 
     @Override
     public Class<?> getColumnClass (int columnIndex) {
-        if (_columnTypes == null)
+        if (columnTypes == null)
             return super.getColumnClass (columnIndex);
         
-        return _columnTypes.get (columnIndex);
+        return columnTypes.get (columnIndex);
     }
     
     @Override
     public boolean isCellEditable (int row, int column) {
-        if (_columnsEditable == null)
+        if (columnsEditable == null)
             return false;
         
-        return _columnsEditable.get (column);
+        return columnsEditable.get (column);
     }
     
     @Override
     public void setColumnTypes (List<Class<?>> types) {
-        _columnTypes = types;
+        columnTypes = types;
     }
 
     @Override
     public void setEditable (List<Boolean> columnsEditable) {
-        _columnsEditable = columnsEditable;
+    	this.columnsEditable = columnsEditable;
     }
 }
