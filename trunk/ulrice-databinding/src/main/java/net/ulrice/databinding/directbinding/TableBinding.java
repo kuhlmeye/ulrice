@@ -7,21 +7,21 @@ import net.ulrice.databinding.directbinding.table.TableModelAdapter;
 
 
 class TableBinding {
-    private final TableModelAdapter _tableViewAdapter;
-    private final List<IndexedBinding> _columnBindings;
+    private final TableModelAdapter tableViewAdapter;
+    private final List<IndexedBinding> columnBindings;
 //TODO    private final Predicate _enabledPredicate;
     
     public TableBinding (TableModelAdapter tableViewAdapter, List<IndexedBinding> columnBindings) {
-        _tableViewAdapter = tableViewAdapter;
-        _columnBindings = columnBindings;
+    	this.tableViewAdapter = tableViewAdapter;
+        this.columnBindings = columnBindings;
     }
 
     public TableModelAdapter getTableViewAdapter () {
-        return _tableViewAdapter;
+        return tableViewAdapter;
     }
     
     public List<IndexedBinding> getColumnBindings () {
-        return _columnBindings;
+        return columnBindings;
     }
 }
 
