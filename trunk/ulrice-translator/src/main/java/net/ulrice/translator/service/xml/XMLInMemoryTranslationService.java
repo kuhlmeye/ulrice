@@ -1,17 +1,17 @@
 package net.ulrice.translator.service.xml;
 
-import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.PrintStream;
-import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import net.ulrice.translator.service.DictionaryEntryDTO;
 import net.ulrice.translator.service.IFTranslationService;
@@ -24,6 +24,7 @@ import org.xml.sax.XMLReader;
 import org.xml.sax.helpers.XMLReaderFactory;
 
 public class XMLInMemoryTranslationService implements IFTranslationService {
+	private static final Logger LOG = Logger.getLogger(XMLInMemoryTranslationService.class.getName());
 
 	private Map<String, DictionaryEntryDTO> dictionary = new HashMap<String, DictionaryEntryDTO>();
 	private Map<String, UsageDTO> usages = new HashMap<String, UsageDTO>();
@@ -110,20 +111,17 @@ public class XMLInMemoryTranslationService implements IFTranslationService {
 
 	@Override
 	public void createTranslation(TranslationDTO translation) {
-		// TODO Auto-generated method stub
-		
+		throw new IllegalAccessError("Not implemented.");
 	}
 
 	@Override
 	public void saveTranslation(TranslationDTO translation) {
-		// TODO Auto-generated method stub
-		
+		throw new IllegalAccessError("Not implemented.");
 	}
 
 	@Override
 	public void deleteTranslation(TranslationDTO translation) {
-		// TODO Auto-generated method stub
-		
+		throw new IllegalAccessError("Not implemented.");
 	}
 
 	@Override
@@ -154,11 +152,9 @@ public class XMLInMemoryTranslationService implements IFTranslationService {
 			xmlReader.parse(new InputSource(new FileInputStream("translations.xml")));
 			
 		} catch (SAXException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			LOG.log(Level.SEVERE, "Parse exception.", e);
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			LOG.log(Level.SEVERE, "IO exception.", e);
 		}
 	}
 	
@@ -223,11 +219,9 @@ public class XMLInMemoryTranslationService implements IFTranslationService {
 				ps.flush();
 				ps.close();
 			} catch (FileNotFoundException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				LOG.log(Level.SEVERE, "File not found.", e);
 			} catch (UnsupportedEncodingException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				LOG.log(Level.SEVERE, "Unsupported encoding.", e);
 			}
 		}
 	}
