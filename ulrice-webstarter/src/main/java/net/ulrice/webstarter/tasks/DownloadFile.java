@@ -172,14 +172,11 @@ public class DownloadFile extends AbstractTask {
 			}
 
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			LOG.log(Level.SEVERE, "IO exception during file download.", e);
 		} catch (InstantiationException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			LOG.log(Level.SEVERE, "Instanciation exception during file download.", e);
 		} catch (IllegalAccessException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			LOG.log(Level.SEVERE, "Access exception during file download.", e);
 		} finally {
 
 			thread.fireTaskFinished(this);
@@ -221,7 +218,7 @@ public class DownloadFile extends AbstractTask {
 			unpacker.unpack(inFile, jostream);
 			jostream.close();
 		} catch (IOException e) {
-			e.printStackTrace();
+			LOG.log(Level.SEVERE, "IO Exception unpacking file.", e);
 		}
 	}
 }
