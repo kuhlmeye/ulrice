@@ -137,6 +137,13 @@ public class Wizard {
         getView().currentStepChanged(stepFlow);
         fireStepChanged();
     }
+    
+    /**
+     * Could be called by the steps to update the action states of the wizard.
+     */
+    public void updateActionStates() {
+    	handleActionStates(getStepFlow());
+    }
 
     private void handleActionStates(StepFlow stepFlow) {
     	Step cStep = stepFlow.getCurrentStep();
