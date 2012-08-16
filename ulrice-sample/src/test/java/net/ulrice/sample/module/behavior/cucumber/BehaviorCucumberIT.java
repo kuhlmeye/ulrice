@@ -2,7 +2,6 @@ package net.ulrice.sample.module.behavior.cucumber;
 
 import org.junit.runner.RunWith;
 
-import cucumber.annotation.After;
 import cucumber.junit.Cucumber;
 import cucumber.junit.Feature;
 

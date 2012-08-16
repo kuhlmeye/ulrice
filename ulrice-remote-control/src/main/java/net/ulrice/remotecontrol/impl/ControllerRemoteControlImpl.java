@@ -1,8 +1,10 @@
 package net.ulrice.remotecontrol.impl;
 
-import static net.ulrice.remotecontrol.ComponentInteraction.*;
-import static net.ulrice.remotecontrol.ComponentMatcher.*;
-import static net.ulrice.remotecontrol.ControllerMatcher.*;
+import static net.ulrice.remotecontrol.ComponentInteraction.click;
+import static net.ulrice.remotecontrol.ComponentMatcher.ofType;
+import static net.ulrice.remotecontrol.ComponentMatcher.texted;
+import static net.ulrice.remotecontrol.ComponentMatcher.within;
+import static net.ulrice.remotecontrol.ControllerMatcher.and;
 
 import java.util.Collection;
 import java.util.LinkedHashSet;

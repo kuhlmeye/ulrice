@@ -3,8 +3,8 @@ package net.ulrice.sample.module.profiledmodulesample;
 import net.ulrice.Ulrice;
 import net.ulrice.module.ModuleType;
 import net.ulrice.module.impl.AuthReflectionModule;
-import net.ulrice.profile.Profile;
 import net.ulrice.profile.ProfilableModule;
+import net.ulrice.profile.Profile;
 
 public class ProfiledModuleSampleModule extends AuthReflectionModule implements ProfilableModule<ProfiledModuleSampleController> {
 

@@ -1,6 +1,6 @@
 package net.ulrice.remotecontrol.impl;
 
-import static net.ulrice.remotecontrol.ComponentMatcher.*;
+import static net.ulrice.remotecontrol.ComponentMatcher.and;
 
 import java.awt.Component;
 import java.awt.Robot;

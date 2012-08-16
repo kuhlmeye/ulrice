@@ -2,7 +2,6 @@ package net.ulrice.translator.service.xml;
 
 import java.util.Locale;
 
-import net.ulrice.translator.service.DictionaryEntryDTO;
 import net.ulrice.translator.service.IFTranslationService;
 import net.ulrice.translator.service.TranslationDTO;
 

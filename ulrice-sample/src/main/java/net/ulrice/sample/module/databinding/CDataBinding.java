@@ -3,16 +3,12 @@
  */
 package net.ulrice.sample.module.databinding;
 
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.UUID;
 
 import javax.swing.JComponent;
 import javax.swing.SwingWorker;
-import javax.swing.Timer;
 
 import net.ulrice.module.impl.AbstractController;
 import net.ulrice.module.impl.IFClosing;

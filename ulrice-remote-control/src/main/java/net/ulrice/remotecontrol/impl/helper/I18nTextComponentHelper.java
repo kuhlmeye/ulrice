@@ -4,8 +4,6 @@ import java.awt.Robot;
 import java.util.Locale;
 import java.util.Map;
 
-import javax.swing.text.JTextComponent;
-
 import net.ulrice.remotecontrol.RemoteControlException;
 import net.ulrice.remotecontrol.util.RemoteControlUtils;
 import net.ulrice.ui.components.I18nTextComponent;

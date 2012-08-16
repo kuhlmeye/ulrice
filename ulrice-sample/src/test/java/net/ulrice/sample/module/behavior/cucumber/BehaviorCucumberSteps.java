@@ -1,9 +1,25 @@
 package net.ulrice.sample.module.behavior.cucumber;
 
-import static net.ulrice.remotecontrol.ComponentInteraction.*;
-import static net.ulrice.remotecontrol.ComponentMatcher.*;
-import static net.ulrice.remotecontrol.RemoteControlCenter.*;
-import static org.junit.Assert.*;
+import static net.ulrice.remotecontrol.ComponentInteraction.click;
+import static net.ulrice.remotecontrol.ComponentInteraction.enter;
+import static net.ulrice.remotecontrol.ComponentInteraction.invoke;
+import static net.ulrice.remotecontrol.ComponentInteraction.selectAll;
+import static net.ulrice.remotecontrol.ComponentInteraction.sequence;
+import static net.ulrice.remotecontrol.ComponentInteraction.type;
+import static net.ulrice.remotecontrol.ComponentMatcher.labeled;
+import static net.ulrice.remotecontrol.ComponentMatcher.like;
+import static net.ulrice.remotecontrol.ComponentMatcher.ofType;
+import static net.ulrice.remotecontrol.ComponentMatcher.withId;
+import static net.ulrice.remotecontrol.ComponentMatcher.within;
+import static net.ulrice.remotecontrol.RemoteControlCenter.actionRC;
+import static net.ulrice.remotecontrol.RemoteControlCenter.componentRC;
+import static net.ulrice.remotecontrol.RemoteControlCenter.connectClient;
+import static net.ulrice.remotecontrol.RemoteControlCenter.controllerRC;
+import static net.ulrice.remotecontrol.RemoteControlCenter.isClientConnected;
+import static net.ulrice.remotecontrol.RemoteControlCenter.launchApplication;
+import static net.ulrice.remotecontrol.RemoteControlCenter.moduleRC;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 import java.util.List;
 import java.util.regex.Pattern;

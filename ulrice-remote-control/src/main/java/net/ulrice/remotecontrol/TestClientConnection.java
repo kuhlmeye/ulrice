@@ -1,6 +1,7 @@
 package net.ulrice.remotecontrol;
 
-import static net.ulrice.remotecontrol.RemoteControlCenter.*;
+import static net.ulrice.remotecontrol.RemoteControlCenter.applicationRC;
+import static net.ulrice.remotecontrol.RemoteControlCenter.connectClient;
 
 import java.io.FileOutputStream;
 import java.io.IOException;

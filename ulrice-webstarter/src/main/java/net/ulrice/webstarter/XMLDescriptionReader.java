@@ -14,7 +14,6 @@ import java.util.logging.Logger;
 import javax.swing.ImageIcon;
 
 import net.ulrice.webstarter.tasks.IFTask;
-import net.ulrice.webstarter.tools.CreateDescription;
 
 import org.xml.sax.Attributes;
 import org.xml.sax.InputSource;
