@@ -8,46 +8,45 @@ import net.ulrice.databinding.modelaccess.IndexedPredicate;
 
 class IndexedBinding {
 
-    private final ColumnAdapter _viewAdapter;
-    private final IFValueConverter _converter;
-    private final IndexedPredicate _enabledPredicate;
-    private final IFIndexedModelValueAccessor _modelValueAccessor;
-//TODO    private final List<Validator> _validators;
+    private final ColumnAdapter viewAdapter;
+    private final IFValueConverter converter;
+    private final IndexedPredicate enabledPredicate;
+    private final IFIndexedModelValueAccessor modelValueAccessor;
+    //TODO private final List<Validator> _validators;
     
-    private final boolean _isReadOnly;
+    private final boolean isReadOnly;
 
     public IndexedBinding (ColumnAdapter viewAdapter, IFValueConverter converter, IndexedPredicate enabledPredicate, IFIndexedModelValueAccessor modelValueAccessor, boolean isReadOnly) {
-
-        _viewAdapter = viewAdapter;
-        _converter = converter;
-        _enabledPredicate = enabledPredicate;
-        _modelValueAccessor = modelValueAccessor;
-        _isReadOnly = isReadOnly;
+        this.viewAdapter = viewAdapter;
+        this.converter = converter;
+        this.enabledPredicate = enabledPredicate;
+        this.modelValueAccessor = modelValueAccessor;
+        this.isReadOnly = isReadOnly;
     }
 
     
     public ColumnAdapter getViewAdapter () {
-        return _viewAdapter;
+        return viewAdapter;
     }
     
     public IFValueConverter getConverter () {
-        return _converter;
+        return converter;
     }
     
     public boolean isWidgetEnabled (boolean isValid, int index, Object model) {
-        return _enabledPredicate.getValue (isValid, index, model);
+        return enabledPredicate.getValue (isValid, index, model);
     }
     
     public IFIndexedModelValueAccessor getModelValueAccessor () {
-        return _modelValueAccessor;
+        return modelValueAccessor;
     }
     
     public boolean isReadOnly () {
-        return _isReadOnly;
+        return isReadOnly;
     }
     
     public boolean hasDataBinding () {
-        return _modelValueAccessor != null;
+        return modelValueAccessor != null;
     }
 
 }
