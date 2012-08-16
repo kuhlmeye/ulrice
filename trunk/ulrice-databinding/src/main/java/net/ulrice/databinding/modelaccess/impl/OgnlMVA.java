@@ -7,28 +7,28 @@ import ognl.OgnlException;
 
 
 public class OgnlMVA implements IFModelValueAccessor {
-    private final Object _model;
-    private final Object _ognlTree;
-    private final Class<?> _type;
-    private final boolean _readOnly;
+    private final Object model;
+    private final Object ognlTree;
+    private final Class<?> type;
+    private final boolean readOnly;
 	private String id;
     
     //TODO Typ und readOnly ermitteln
     
     public OgnlMVA (Object model, String ognlExpression, Class<?> type) {
-        _model = model;
-        _ognlTree = ognlParse (ognlExpression);
-        _type = type;
-        _readOnly = guessReadOnly ();
-        id = _model.getClass().getName() + "." + _ognlTree;
+    	this.model = model;
+    	this.ognlTree = ognlParse (ognlExpression);
+    	this.type = type;
+    	this.readOnly = guessReadOnly ();
+        id = this.model.getClass().getName() + "." + ognlTree;
     }
     
     public OgnlMVA (Object model, String ognlExpression, Class<?> type, boolean readOnly) {
-        _model = model;
-        _ognlTree = ognlParse (ognlExpression);
-        _type = type;
-        _readOnly = readOnly;
-        id = _model.getClass().getName() + "." + _ognlTree;
+    	this.model = model;
+    	this.ognlTree = ognlParse (ognlExpression);
+    	this.type = type;
+    	this.readOnly = readOnly;
+        id = this.model.getClass().getName() + "." + ognlTree;
     }
 
     private Object ognlParse (String ognlExpression) {
@@ -53,7 +53,7 @@ public class OgnlMVA implements IFModelValueAccessor {
     
     public Object getValue () {
         try {
-            return Ognl.getValue (_ognlTree, _model);
+            return Ognl.getValue (ognlTree, model);
         } catch (OgnlException e) {
             ErrorHandler.handle (e);
             return null; // für den Compiler
@@ -62,18 +62,18 @@ public class OgnlMVA implements IFModelValueAccessor {
     
     public void setValue (Object value) {
         try {
-            Ognl.setValue (_ognlTree, _model, value);
+            Ognl.setValue (ognlTree, model, value);
         } catch (OgnlException e) {
             ErrorHandler.handle (e);
         }
     }
 
     public boolean isReadOnly () {
-        return _readOnly;
+        return readOnly;
     }
     
     public Class<?> getModelType () {
-        return _type;
+        return type;
     }
 
 	@Override
