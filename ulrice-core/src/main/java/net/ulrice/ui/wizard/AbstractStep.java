@@ -8,6 +8,10 @@ public abstract class AbstractStep implements Step {
 
     private String id;
 
+    public abstract String getTitle();
+    
+    public abstract JComponent getView();
+    
     public AbstractStep() {
         this(UUID.randomUUID().toString());
     }
@@ -19,8 +23,23 @@ public abstract class AbstractStep implements Step {
     public String getId() {
         return id;
     }        
+    @Override
+    public boolean isCancelEnabled() {
+    	return false;
+    }
     
-    public abstract String getTitle();
+    @Override
+    public boolean isNextEnabled() {
+    	return false;
+    }
     
-    public abstract JComponent getView();
+    @Override
+    public boolean isFinishEnabled() {
+    	return false;
+    }
+    
+    @Override
+    public boolean isPrevEnabled() {
+    	return false;
+    }
 }
