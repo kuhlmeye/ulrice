@@ -72,9 +72,9 @@ public class ModelBinding {
             updateView (b);
         }
 
-        for (TableBinding b: tableBindings)
+        for (TableBinding b: tableBindings) {
             updateView (b);
-
+        }
     }
 
     private void updateView (final TableBinding b) {
@@ -103,23 +103,27 @@ public class ModelBinding {
         int result = 0;
         for (IndexedBinding colBinding: b.getColumnBindings ()) {
             final int colSize = (Integer) colBinding.getModelValueAccessor().getSize();
-            if (colSize > result)
+            if (colSize > result) {
                 result = colSize;
+            }
         }
         return result;
     }
 
     private void updateView (final Binding b) {
-        if (! b.hasDataBinding ())
+        if (! b.hasDataBinding ()) {
             return;
+        }
 
         final Object converted = b.getCurrentValue();
 
         final Object oldValue = b.getViewAdapter ().getValue ();
-        if (oldValue == null && converted == null)
+        if (oldValue == null && converted == null) {
             return;
-        if (oldValue != null && oldValue.equals (converted))
+        }
+        if (oldValue != null && oldValue.equals (converted)) {
             return;
+        }
 
         isUpdatingView = true;
         try {        
@@ -133,19 +137,23 @@ public class ModelBinding {
 
     private void updateModelFromTable (TableModel tableModel, List<IndexedBinding> columnBindings, TableModelEvent e) {
         try {
-            if (isUpdatingView)
+            if (isUpdatingView) {
                 return;
+            }
             
-            if (e.getType () != TableModelEvent.UPDATE)
+            if (e.getType () != TableModelEvent.UPDATE) {
                 return;
+            }
 
-            if (e.getColumn () == TableModelEvent.ALL_COLUMNS)
+            if (e.getColumn () == TableModelEvent.ALL_COLUMNS) {
                 return; //TODO anders behandeln?
+            }
 
             final IndexedBinding columnBinding = columnBindings.get (e.getColumn ());
 
-            if (columnBinding.isReadOnly ())
+            if (columnBinding.isReadOnly ()) {
                 return;
+            }
 
             final Object raw = tableModel.getValueAt (e.getFirstRow (), e.getColumn ());
             final Object converted = columnBinding.getConverter ().viewToModel (raw, null);
@@ -158,11 +166,13 @@ public class ModelBinding {
 
     private void updateModel (Binding b) {
         try {
-            if (isUpdatingView) 
+            if (isUpdatingView) {
                 return;
+            }
 
-            if (b.isReadOnly ())
+            if (b.isReadOnly ()) {
                 return;
+            }
 
             try {
                 final Object raw = b.getViewAdapter ().getValue ();
@@ -197,8 +207,9 @@ public class ModelBinding {
 	private void validateAll () {
         final ValidationResult validationResult = new ValidationResult ();
 
-        for (Binding b: bindings)
+        for (Binding b: bindings) {
             validate (b, validationResult);
+        }
 
         for (Binding b: bindings) {
             final List<String> raw = validationResult.getMessagesByBinding(b);
@@ -210,8 +221,9 @@ public class ModelBinding {
     }
 
     private void validate (Binding b, ValidationResult validationResult) {
-        if (b.isReadOnly ())
+        if (b.isReadOnly ()) {
             return;
+        }
 
         try {
             final Object raw = b.getViewAdapter ().getValue ();
@@ -290,8 +302,9 @@ public class ModelBinding {
     //TODO flexibleres Tabellen-Binding ohne BaseExpression, dafür mit #index
     public void registerSingleListTable (Object oTableModel, String baseExpression, String... columnExpressions) {
         final ExpressionColumnSpec[] columnSpecs = new ExpressionColumnSpec [columnExpressions.length];
-        for (int i=0; i<columnExpressions.length; i++)
+        for (int i=0; i<columnExpressions.length; i++) {
             columnSpecs[i] = new ExpressionColumnSpec (columnExpressions[i], String.class);
+        }
 
         registerSingleListTable (oTableModel, baseExpression, columnSpecs);
     }
@@ -320,16 +333,18 @@ public class ModelBinding {
 
         if (tableModel instanceof WithTypesPerColumn) {
             final List<Class<?>> columnTypes = new ArrayList<Class<?>> ();
-            for (IndexedBinding b: columnBindings)
+            for (IndexedBinding b: columnBindings) {
                 columnTypes.add (b.getViewAdapter ().getViewType ());
+            }
 
             ((WithTypesPerColumn) tableModel).setColumnTypes (columnTypes);
         }
 
         if (canBeEditable) {
             final List<Boolean> columnsEditable = new ArrayList<Boolean> ();
-            for (IndexedBinding b: columnBindings)
+            for (IndexedBinding b: columnBindings) {
                 columnsEditable.add (! b.isReadOnly ());
+            }
 
             ((EditableTableModel) tableModel).setEditable (columnsEditable);
         }
@@ -338,7 +353,6 @@ public class ModelBinding {
 
         tableModel.addTableModelListener (new TableModelListener () {
             public void tableChanged (TableModelEvent e) {
-                System.out.println (e.getType () + ", " + e.getFirstRow () + ", " + e.getColumn ());
                 updateModelFromTable (tableModel, columnBindings, e);
             }
         });
@@ -378,21 +392,3 @@ public class ModelBinding {
     	return result;
     }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
