@@ -6,13 +6,16 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * Normal linear step flow.
+ * 
+ * @author DL10KUH
+ */
 public class LinearStepFlow extends AbstractStepFlow {
     
     private Map<String, Step> steps = new HashMap<String, Step>();
     private List<String> stepOrder = new ArrayList<String>();
     private int currentIdx = 0; 
-    
-    
     
     public void addStep(Step step) {
         steps.put(step.getId(), step);
@@ -122,5 +125,4 @@ public class LinearStepFlow extends AbstractStepFlow {
             
         };
     }
-
 }
