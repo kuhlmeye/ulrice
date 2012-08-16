@@ -25,21 +25,21 @@ public abstract class AbstractStep implements Step {
     }        
     @Override
     public boolean isCancelEnabled() {
-    	return false;
+    	return true;
     }
     
     @Override
     public boolean isNextEnabled() {
-    	return false;
+    	return true;
     }
     
     @Override
     public boolean isFinishEnabled() {
-    	return false;
+    	return true;
     }
     
     @Override
     public boolean isPrevEnabled() {
-    	return false;
+    	return true;
     }
 }
