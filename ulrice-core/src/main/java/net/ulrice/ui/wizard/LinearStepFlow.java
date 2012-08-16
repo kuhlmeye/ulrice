@@ -30,6 +30,9 @@ public class LinearStepFlow extends AbstractStepFlow {
 
     @Override
     public Step getStepById(String id) {
+    	if(id == null) {
+    		return null;
+    	}
         return steps.get(id);
     }
     
@@ -87,7 +90,11 @@ public class LinearStepFlow extends AbstractStepFlow {
     }
 
     @Override
-    public String getCurrentStepId() {
+    public String getCurrentStepId() {  
+    	if(stepOrder == null || stepOrder.size() == 0 || currentIdx < 0 || currentIdx >= stepOrder.size()) {
+    		return null;    		
+    	}
+    	
         return stepOrder.get(currentIdx);
     }
     
