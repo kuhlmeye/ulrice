@@ -1735,8 +1735,9 @@ public class TableAM implements IFAttributeModel {
                     }
                     if (isForTreeTable()) {
                         Element found = element.getChildByCurrentValue(object);
-                        if (found != null)
+                        if (found != null) {
                             return found;
+                        }
                     }
                 }
             }
@@ -1772,8 +1773,9 @@ public class TableAM implements IFAttributeModel {
                     }
                     if (isForTreeTable()) {
                         Element found = element.getChildByCurrentValue(object);
-                        if (found != null)
+                        if (found != null) {
                             return found;
+                        }
                     }
                 }
             }
