@@ -458,62 +458,108 @@ public class UTableViewAdapter extends AbstractViewAdapter implements TableModel
         table.removeListSelectionListener(listSelectionListener);
     }
 
+    /**
+     * Resize the columns of the table according to the content and the header value, if flagged
+     */
     public void sizeColumns(boolean includeHeader) {
         table.sizeColumns(includeHeader);
     }
 
+    /**
+     * Add a mouse listener to the list of listeners.
+     */
     public void addMouseListener(MouseListener mouseListener) {
         table.addMouseListener(mouseListener);
     }
 
+    /**
+     * Removes a mouse listener from the list of available listeners.
+     */
     public void removeMouseListener(MouseListener mouseListener) {
         table.removeMouseListener(mouseListener);
     }
     
+    /**
+     * Return the view index of the selected row.
+     */
     public int getSelectedRowViewIndex() {
         return table.getSelectionModel().getMinSelectionIndex();
     }
 
+    /**
+     * Returns the model index of the selected row.
+     * @return
+     */
     public int getSelectedRowModelIndex() {
         return table.getSelectedRowModelIndex();
     }
     
+    /**
+     * Returns an array of view indices that are selected
+     */
     public int[] getSelectedRowsViewIndex() {
         return table.getSelectedRowsViewIndex();
     }
   
+    /**
+     * Returns an array of model indices that are selected
+     */
     public int[] getSelectedRowsModelIndex() {
         return table.getSelectedRowsModelIndex();
     }
     
+    /**
+     * Add a new and empty row to the table
+     */
     public void addRow() {
         table.addRow();
     }
 
+    /**
+     * Delete the row with the given model index.
+     */
     public void delRowWithModelIndex(int modelIndex) {
         table.delRowWithModelIndex(modelIndex);
     }
 
+    /**
+     * Delete the row with the given view index.
+     */
     public void delRowWithViewIndex(int viewIndex) {
         table.delRowWithViewIndex(viewIndex);
     }
 
+    /**
+     * Delete the selected rows
+     */
     public void delSelectedRows() {
         table.delSelectedRows();
     }
 
+    /**
+     * Returns the list of objects of the selected elements 
+     */
     public List getSelectedObjects() {
         return table.getSelectedObjects();
     }
 
+    /**
+     * Returns the list of selected elements
+     */
     public List<Element> getSelectedElements() {
         return table.getSelectedElements();
     }
     
+    /**
+     * Returns the object of the selected element.
+     */
     public Object getSelectedObject() {
         return table.getSelectedObject();
     }
 
+    /**
+     * Select the element with the given index
+     */
     public void selectElement(int index) {
         table.selectElement(index);
     }
