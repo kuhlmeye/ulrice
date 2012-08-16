@@ -10,11 +10,11 @@ import ognl.OgnlException;
 
 
 public class OgnlPredicate implements Predicate {
-    private final Object _ognlTree;
+    private final Object ognlTree;
     
     public OgnlPredicate (String expression) {
         try {
-            _ognlTree = Ognl.parseExpression (expression);
+            ognlTree = Ognl.parseExpression (expression);
         } catch (OgnlException exc) {
             ErrorHandler.handle (exc);
             throw new RuntimeException (); // für den Compiler
@@ -26,7 +26,7 @@ public class OgnlPredicate implements Predicate {
         context.put ("isValid", isValid);
         
         try {
-            return Boolean.TRUE.equals (Ognl.getValue (_ognlTree, context, model));
+            return Boolean.TRUE.equals (Ognl.getValue (ognlTree, context, model));
         } catch (OgnlException exc) {
             ErrorHandler.handle (exc);
             return false; // für den Compiler
