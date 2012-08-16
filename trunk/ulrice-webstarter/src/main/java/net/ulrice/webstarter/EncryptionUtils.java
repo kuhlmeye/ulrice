@@ -19,7 +19,7 @@ import javax.crypto.spec.PBEParameterSpec;
 
 public class EncryptionUtils {
 
-	private static final Logger LOG = Logger.getLogger(Application.class.getName());
+	private static final Logger LOG = Logger.getLogger(EncryptionUtils.class.getName());
 	
     private static byte[] salt = {
         (byte)0xA9, (byte)0x9B, (byte)0xC8, (byte)0x32,
