@@ -8,13 +8,16 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Properties;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import net.ulrice.webstarter.Placeholder;
 import net.ulrice.webstarter.ProcessThread;
 import net.ulrice.webstarter.TaskDescription;
 
 public class ReadDescription extends AbstractTask {
-
+	
+	private static final Logger LOG = Logger.getLogger(ReadDescription.class.getName());
 	private static final String FILE_URL_PLACEHOLDER = "${FILE_URL}";
 	private static final String URL_PARAM_NAME = "descriptionUrl";
 	private static final String BASE_URL = "baseUrl";
@@ -50,11 +53,9 @@ public class ReadDescription extends AbstractTask {
 					}
 					
 				} catch (InstantiationException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
+					LOG.log(Level.SEVERE, "Error instanciating subtask", e);
 				} catch (IllegalAccessException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
+					LOG.log(Level.SEVERE, "Error accessing subtask", e);
 				}								
 			}
 			thread.addSubTasks(this, subTaskList.toArray(new IFTask[subTaskList.size()]));
@@ -90,11 +91,9 @@ public class ReadDescription extends AbstractTask {
 			return prop;
 						
 		} catch (MalformedURLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			LOG.log(Level.SEVERE, "Malformed url.", e);
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			LOG.log(Level.SEVERE, "IO exception.", e);
 		}
 		
 		return null;
