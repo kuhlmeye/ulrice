@@ -36,13 +36,10 @@ public class RegExValidator<T extends Object> extends AbstractValidator<T> {
 
         if(attribute != null) {
             if(!pattern.matcher(attribute.toString()).matches()) {
-                ValidationResult errors = new ValidationResult(new ValidationError(bindingId, message, null));
-                return errors;
+                return new ValidationResult(new ValidationError(bindingId, message, null));
             }
         }
-        
-        
+
         return null;
     }
-
 }
