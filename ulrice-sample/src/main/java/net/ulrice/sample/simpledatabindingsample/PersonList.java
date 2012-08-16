@@ -9,35 +9,35 @@ import java.util.List;
 
 
 public class PersonList {
-    private final PropertyChangeSupport _pcs = new PropertyChangeSupport (this);
-    private final List<PersonDTO> _personen = new ArrayList<PersonDTO> ();
+    private final PropertyChangeSupport pcs = new PropertyChangeSupport (this);
+    private final List<PersonDTO> personen = new ArrayList<PersonDTO> ();
 
-    private final PropertyChangeListener _childListener = new PropertyChangeListener() {
+    private final PropertyChangeListener childListener = new PropertyChangeListener() {
         public void propertyChange (PropertyChangeEvent evt) {
-            _pcs.firePropertyChange (evt);
+            pcs.firePropertyChange (evt);
         }
     };
     
     public void addPropertyChangeListener (PropertyChangeListener l) {
-        _pcs.addPropertyChangeListener (l);
+        pcs.addPropertyChangeListener (l);
     }
 
     public void removePropertyChangeListener (PropertyChangeListener l) {
-        _pcs.removePropertyChangeListener (l);
+        pcs.removePropertyChangeListener (l);
     }
     
     public List<PersonDTO> getPersonen () {
-        return Collections.unmodifiableList (_personen);
+        return Collections.unmodifiableList (personen);
     }
     
     public void addPerson (int index, PersonDTO person) {
-        person.addPropertyChangeListener (_childListener);
-        _personen.add (index, person);
-        _pcs.firePropertyChange ("personen", null, _personen);
+        person.addPropertyChangeListener (childListener);
+        personen.add (index, person);
+        pcs.firePropertyChange ("personen", null, personen);
     }
     
     public void removePerson (int index) {
-        _personen.remove (index).removePropertyChangeListener (_childListener);
-        _pcs.firePropertyChange ("personen", null, _personen);
+        personen.remove (index).removePropertyChangeListener (childListener);
+        pcs.firePropertyChange ("personen", null, personen);
     }
 }
