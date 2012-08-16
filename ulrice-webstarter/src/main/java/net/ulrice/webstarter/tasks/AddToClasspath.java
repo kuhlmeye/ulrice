@@ -3,11 +3,15 @@ package net.ulrice.webstarter.tasks;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import net.ulrice.webstarter.ProcessThread;
+import net.ulrice.webstarter.XMLDescriptionReader;
 
 public class AddToClasspath extends AbstractTask {
 
+	private static final Logger LOG = Logger.getLogger(XMLDescriptionReader.class.getName());
 	public static final String FILTER_PARAM = "filter";
 	public static final String URL_PARAM = "url";
 
@@ -24,8 +28,7 @@ public class AddToClasspath extends AbstractTask {
 			try {
 				fileUrl = new URL(urlStr);
 			} catch (MalformedURLException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+            	LOG.log(Level.SEVERE, "Malformed url.", e);
 			}
 		}
 		

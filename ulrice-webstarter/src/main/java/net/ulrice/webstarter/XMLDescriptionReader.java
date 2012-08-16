@@ -8,10 +8,13 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Stack;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.swing.ImageIcon;
 
 import net.ulrice.webstarter.tasks.IFTask;
+import net.ulrice.webstarter.tools.CreateDescription;
 
 import org.xml.sax.Attributes;
 import org.xml.sax.InputSource;
@@ -26,6 +29,7 @@ import org.xml.sax.helpers.XMLReaderFactory;
  * @author christof
  */
 public class XMLDescriptionReader extends DefaultHandler {
+	private static final Logger LOG = Logger.getLogger(XMLDescriptionReader.class.getName());
 
 	private ApplicationDescription appDescription;
 
@@ -81,8 +85,7 @@ public class XMLDescriptionReader extends DefaultHandler {
 					}
 				}
 			} catch (ClassNotFoundException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+            	LOG.log(Level.SEVERE, "Class not found.", e);
 			}
 		} else if ("appparameter".equalsIgnoreCase(localName)) {
 

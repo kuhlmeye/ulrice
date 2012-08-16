@@ -8,6 +8,8 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Properties;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import net.ulrice.Ulrice;
 import net.ulrice.module.IFController;
@@ -15,6 +17,7 @@ import net.ulrice.process.AbstractProcess;
 import net.ulrice.translator.service.TranslationDTO;
 
 public class PGenerateProperties extends AbstractProcess<Void, Void> {
+	private static final Logger LOG = Logger.getLogger(PGenerateProperties.class.getName());
 
 	private MTranslator model;
 	private Locale[] locales;
@@ -50,11 +53,9 @@ public class PGenerateProperties extends AbstractProcess<Void, Void> {
 			try {
 				properties.store(new FileOutputStream("Test_" + locale), "");
 			} catch (FileNotFoundException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				LOG.log(Level.SEVERE, "File not found.", e);
 			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				LOG.log(Level.SEVERE, "IO Exception.", e);
 			}
 		}
 		

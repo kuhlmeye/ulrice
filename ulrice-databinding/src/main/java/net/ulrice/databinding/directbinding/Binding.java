@@ -10,16 +10,19 @@ import net.ulrice.databinding.validation.IFValidator;
 import net.ulrice.databinding.viewadapter.IFViewAdapter;
 
 
-
-
+/**
+ * Direct binding class.
+ * 
+ * @author DL10KUH
+ */
 public class Binding implements IFBinding {
-    private final IFViewAdapter _viewAdapter;
-    private final IFValueConverter _converter;
-    private final Predicate _enabledPredicate;
-    private final IFModelValueAccessor _modelValueAccessor;
-    private final List<IFValidator<?>> _validators;
+    private final IFViewAdapter viewAdapter;
+    private final IFValueConverter converter;
+    private final Predicate enabledPredicate;
+    private final IFModelValueAccessor modelValueAccessor;
+    private final List<IFValidator<?>> validators;
     
-    private final boolean _isReadOnly;
+    private final boolean isReadOnly;
     
     
 	private Object originalValue;
@@ -28,46 +31,46 @@ public class Binding implements IFBinding {
 	private boolean valid;
 
     public Binding (IFViewAdapter viewAdapter, IFValueConverter converter, Predicate enabledPredicate, IFModelValueAccessor modelValueAccessor, List<IFValidator<?>> validators, boolean isReadOnly) {
-        _viewAdapter = viewAdapter;
-        _converter = converter;
-        _enabledPredicate = enabledPredicate;
-        _modelValueAccessor = modelValueAccessor;
-        _validators = validators;
-        _isReadOnly = isReadOnly;
+        this.viewAdapter = viewAdapter;
+        this.converter = converter;
+        this.enabledPredicate = enabledPredicate;
+        this.modelValueAccessor = modelValueAccessor;
+        this.validators = validators;
+        this.isReadOnly = isReadOnly;
         setValid(true);
         setDirty(false);
 
         if(modelValueAccessor != null) {
-	        originalValue = modelValueAccessor.getValue();
+        	this.originalValue = modelValueAccessor.getValue();
         }
     }
 
     public IFViewAdapter getViewAdapter () {
-        return _viewAdapter;
+        return viewAdapter;
     }
     
     public IFValueConverter getConverter () {
-        return _converter;
+        return converter;
     }
     
     public boolean isWidgetEnabled (boolean isValid, Object model) {
-        return _enabledPredicate.getValue (isValid, model);
+        return enabledPredicate.getValue (isValid, model);
     }
     
     public IFModelValueAccessor getModelValueAccessor () {
-        return _modelValueAccessor;
+        return modelValueAccessor;
     }
     
     public List<IFValidator<?>> getValidators () {
-        return _validators;
+        return validators;
     }
     
     public boolean isReadOnly () {
-        return _isReadOnly;
+        return isReadOnly;
     }
     
     public boolean hasDataBinding () {
-        return _modelValueAccessor != null;
+        return modelValueAccessor != null;
     }
 
 	@Override
@@ -98,14 +101,14 @@ public class Binding implements IFBinding {
 	@Override
 	public Object getCurrentValue() {
 		if(getModelValueAccessor() != null ){
-			return getConverter().modelToView(getModelValueAccessor().getValue(), _viewAdapter.getAttributeInfo());
+			return getConverter().modelToView(getModelValueAccessor().getValue(), viewAdapter.getAttributeInfo());
 		}
 		return null;
 	}
 	
 	protected void setCurrentValue(Object currentValue) {
 		if(getModelValueAccessor() != null ){
-			getModelValueAccessor().setValue(getConverter().viewToModel(currentValue, _viewAdapter.getAttributeInfo()));
+			getModelValueAccessor().setValue(getConverter().viewToModel(currentValue, viewAdapter.getAttributeInfo()));
 		}
 	}
 
