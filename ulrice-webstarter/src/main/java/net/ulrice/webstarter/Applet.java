@@ -1,14 +1,11 @@
 package net.ulrice.webstarter;
 
 import java.awt.BorderLayout;
-import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.net.URI;
-import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.StringTokenizer;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import net.ulrice.webstarter.tasks.IFTask;
@@ -32,15 +29,9 @@ public class Applet extends java.applet.Applet implements IFProcessEventListener
 	public void init() {
 		super.init();
 
-		
-		
-		
 		String applicationUrl = getParameter("applicationUrl");
 		String userId = getParameter("userId");
 		String cookieString = getParameter("cookie");
-
-		
-		
 		
 		view = new AppletComponent();
 		setLayout(new BorderLayout());
@@ -83,11 +74,11 @@ public class Applet extends java.applet.Applet implements IFProcessEventListener
 				thread.startProcess();
 
 			} catch (FileNotFoundException e) {
-				e.printStackTrace();
+				LOG.log(Level.SEVERE, "File not found.", e);
 			} catch (SAXException e) {
-				e.printStackTrace();
+				LOG.log(Level.SEVERE, "Parse Exception.", e);
 			} catch (IOException e) {
-				e.printStackTrace();
+				LOG.log(Level.SEVERE, "IO Exception.", e);
 			}
 		}
 	}
