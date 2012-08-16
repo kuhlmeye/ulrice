@@ -27,7 +27,7 @@ import net.ulrice.module.event.AbstractModuleEventAdapter;
 public class InstanceTreeModel implements TreeModel {
 
 	/** The root of the tree. */
-	private final Object ROOT_OBJECT = new String("ROOT");
+	private final Object ROOTOBJECT = new String("ROOT");
 
 	/** The module manager. */
 	private IFModuleManager moduleManager;
@@ -84,7 +84,7 @@ public class InstanceTreeModel implements TreeModel {
 	public Object getChild(Object node, int index) {
 		// If the root of the tree is given, the number of modules is the
 		// child-count
-		if (ROOT_OBJECT.equals(node)) {
+		if (ROOTOBJECT.equals(node)) {
 			return moduleList == null ? -1 : moduleList.get(index);
 		}
 
@@ -111,7 +111,7 @@ public class InstanceTreeModel implements TreeModel {
 
 		// If the root of the tree is given, the number of modules is the
 		// child-count
-		if (ROOT_OBJECT.equals(node)) {
+		if (ROOTOBJECT.equals(node)) {
 			return instanceMap.size();
 		}
 
@@ -139,7 +139,7 @@ public class InstanceTreeModel implements TreeModel {
 
 		// If the root of the tree is given, the number of modules is the
 		// child-count
-		if (ROOT_OBJECT.equals(node)) {
+		if (ROOTOBJECT.equals(node)) {
 			return moduleList == null ? -1 : moduleList.indexOf(object);
 		}
 
@@ -163,7 +163,7 @@ public class InstanceTreeModel implements TreeModel {
 	 */
 	@Override
 	public Object getRoot() {
-		return ROOT_OBJECT;
+		return ROOTOBJECT;
 	}
 
 	/**
