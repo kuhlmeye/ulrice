@@ -174,6 +174,9 @@ public class UTableComponent extends JPanel {
 
     }
 
+    /**
+     * Initialize the table component with the view adapter.
+     */
     public void init(final UTableViewAdapter viewAdapter) {
 
 
@@ -282,34 +285,58 @@ public class UTableComponent extends JPanel {
         }
     }
 
+    /**
+     * Returns the array of registered mouse listeners
+     */
     public MouseListener[] getMouseListeners() {
         return listenerList.getListeners(MouseListener.class);
     }
 
+    /**
+     * Adds a mouse listener
+     */
     public void addMouseListener(MouseListener l) {
         listenerList.add(MouseListener.class, l);
     }
 
+    /**
+     * Removes a mouse listener
+     */
     public void removeMouseListener(MouseListener l) {
         listenerList.remove(MouseListener.class, l);
     }
 
+    /**
+     * Returns the array of list selection listeners
+     */
     public ListSelectionListener[] getListSelectionListeners() {
         return listenerList.getListeners(ListSelectionListener.class);
     }
 
+    /**
+     * Add a list selection listener
+     */
     public void addListSelectionListener(ListSelectionListener l) {
         listenerList.add(ListSelectionListener.class, l);
     }
 
+    /**
+     * Remove a list selection listener.
+     */
     public void removeListSelectionListener(ListSelectionListener l) {
         listenerList.remove(ListSelectionListener.class, l);
     }
 
+    /**
+     * Returns the left part of the table containing all fixed columns.
+     */
     public JTable getStaticTable() {
         return staticTable;
     }
 
+    /**
+     * Returns the right part of the table containing all non-fixed columns
+     */
     public JTable getScrollTable() {
         return scrollTable;
     }
