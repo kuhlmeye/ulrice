@@ -18,6 +18,37 @@ import javax.swing.JPanel;
 public class ExpandColapsePanel extends JPanel {
 
     private static final long serialVersionUID = 1L;
+    
+    private boolean expanded = false;
+    
+    public ExpandColapsePanel(final ExpandColapseListener listener, boolean expanded) {
+        setLayout(new FlowLayout(FlowLayout.LEFT, 0, 0));
+
+        this.expanded = expanded;
+        
+        final JButton btnExpand = new JButton(expanded?"-":"+");
+        btnExpand.setBorder(null);
+        btnExpand.setPreferredSize(new Dimension(22, 22));
+        btnExpand.setFont(btnExpand.getFont().deriveFont(10));
+        
+        this.setOpaque(false);
+        add(btnExpand);
+        btnExpand.addActionListener(new ActionListener() {
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                btnExpand.setText(ExpandColapsePanel.this.expanded?"+":"-");
+                if(ExpandColapsePanel.this.expanded){
+                    listener.collapseAll();
+                }else{
+                    listener.expandAll();
+                }
+                ExpandColapsePanel.this.expanded = !ExpandColapsePanel.this.expanded;
+            }
+        });
+
+    }
+    
 
     public ExpandColapsePanel(final ExpandColapseListener listener) {
         setLayout(new FlowLayout(FlowLayout.LEFT, 0, 0));
