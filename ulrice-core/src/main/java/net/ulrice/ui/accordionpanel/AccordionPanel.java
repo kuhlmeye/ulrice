@@ -76,9 +76,11 @@ public class AccordionPanel extends JPanel implements ActionListener {
      * Add a foldable with specific seperator color
      */
     public AccordionContentPanel addFoldable(String title, JComponent content, Color seperatorColor) {
-        AccordionContentPanel panel = new AccordionContentPanel(title, content, seperatorColor);
+        return addFoldable(new AccordionContentPanel(title, content, seperatorColor));
+    }
 
-        panel.addActionListener(this);
+	public AccordionContentPanel addFoldable(AccordionContentPanel panel) {
+		panel.addActionListener(this);
         panel.setFolded(foldables.size() > 0);
 
         foldables.add(panel);
@@ -87,12 +89,11 @@ public class AccordionPanel extends JPanel implements ActionListener {
         constraints.gridy += 1;
 
         return panel;
-    }
+	}
 
     public void removeFoldable(AccordionContentPanel panel) {
         foldables.remove(panel);
         topPanel.remove(panel);
-
     }
 
     public AccordionPanel setContent(JComponent content) {
@@ -110,7 +111,7 @@ public class AccordionPanel extends JPanel implements ActionListener {
         invalidate();
         if (foldables.contains(panel)) {
             for (AccordionContentPanel foldable : foldables) {
-                if (foldable == panel) {
+                if (foldable.getContent() == panel) {
                     foldable.setFolded(!foldable.isFolded());
                 }
                 else {

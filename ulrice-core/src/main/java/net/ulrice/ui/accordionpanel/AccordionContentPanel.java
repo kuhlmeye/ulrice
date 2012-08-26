@@ -72,4 +72,8 @@ public class AccordionContentPanel extends JPanel implements ActionListener {
     public void actionPerformed(ActionEvent e) {
         fireActionPerformed(e);
     }
+    
+    public JComponent getContent() {
+		return content;
+	}
 }
