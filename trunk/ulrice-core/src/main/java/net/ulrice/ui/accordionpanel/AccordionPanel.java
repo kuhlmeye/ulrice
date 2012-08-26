@@ -111,7 +111,7 @@ public class AccordionPanel extends JPanel implements ActionListener {
         invalidate();
         if (foldables.contains(panel)) {
             for (AccordionContentPanel foldable : foldables) {
-                if (foldable.getContent() == panel) {
+                if (foldable == panel || foldable.getContent() == panel) {
                     foldable.setFolded(!foldable.isFolded());
                 }
                 else {
