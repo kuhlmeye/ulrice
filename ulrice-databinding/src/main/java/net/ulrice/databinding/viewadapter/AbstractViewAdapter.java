@@ -60,16 +60,15 @@ public abstract class AbstractViewAdapter<M, V> implements IFViewAdapter<M, V> {
         }
     }
 
+    @Override
     public void addBindingListener(ViewAdapterBindingListener l) {
         listenerList.add(ViewAdapterBindingListener.class, l);
     }
     
+    @Override
     public void removeBindingListener(ViewAdapterBindingListener l) {
         listenerList.remove(ViewAdapterBindingListener.class, l);
     }
-    
-    
-
 
     protected void fireAttributeModelBound(IFBinding binding) {
         ViewAdapterBindingListener[] listeners = listenerList.getListeners(ViewAdapterBindingListener.class);
@@ -103,12 +102,7 @@ public abstract class AbstractViewAdapter<M, V> implements IFViewAdapter<M, V> {
             setReadOnlyBinding(binding.isReadOnly());
             setValue((M) binding.getCurrentValue());
 
-            if(binding.isReadOnly() && isComponentEnabled()) {
-                setComponentEnabled(false);
-            }
-            if(!binding.isReadOnly() && isEditable()) {
-                setComponentEnabled(true);
-            }
+            setEditable(!binding.isReadOnly());
             
             addComponentListener();
         }
@@ -126,14 +120,17 @@ public abstract class AbstractViewAdapter<M, V> implements IFViewAdapter<M, V> {
     }
     
     @Override
-    public final void setEditable(boolean editable) {
-        this.editable = editable;
-        onSetEditable(editable);
+    public final void setEditable(boolean newEditable) {
+        final boolean oldEditable = this.editable;
+        this.editable = newEditable;
+        setEditableInternal(newEditable);
+        if (oldEditable == newEditable) {
+            return;
+        }
         fireViewChange();
     }
     
-    protected void onSetEditable(final boolean editable) {
-    }
+    protected abstract void setEditableInternal(final boolean editable);
     
     protected abstract void addComponentListener();
 
@@ -186,10 +183,12 @@ public abstract class AbstractViewAdapter<M, V> implements IFViewAdapter<M, V> {
         return bindWithoutValue;
     }
 
+    @Override
     public void setBindWithoutValue(boolean bindWithoutValue) {
         this.bindWithoutValue = bindWithoutValue;
     }
 
+    @Override
     @SuppressWarnings("unchecked")
     public void setValueConverter(IFValueConverter<M, V> valueConverter) {
         this.valueConverter = valueConverter;
@@ -220,6 +219,7 @@ public abstract class AbstractViewAdapter<M, V> implements IFViewAdapter<M, V> {
         this.useAutoValueConverter = useAutoValueConverter;
     }
     
+    @Override
     public IFAttributeInfo getAttributeInfo() {
         return this.attributeInfo;
     }

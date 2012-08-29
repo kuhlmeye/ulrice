@@ -82,16 +82,6 @@ public interface IFViewAdapter <M, V> {
 	 */
 	void setBindWithoutValue(boolean withoutData);
     
-	/**
-	 * Enabled the swing component.
-	 */
-    void setComponentEnabled (boolean enabled);
-    
-    /**
-     * Returns true, if the swing component is enabled.
-     */
-    boolean isComponentEnabled();
-    
     /**
      * Sets the swing component to editable state.
      */

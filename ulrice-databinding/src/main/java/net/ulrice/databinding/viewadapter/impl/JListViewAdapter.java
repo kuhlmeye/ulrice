@@ -22,7 +22,7 @@ public class JListViewAdapter extends AbstractViewAdapter implements ListModel {
     public JListViewAdapter(JList list, IFAttributeInfo attributeInfo) {
     	super(List.class, attributeInfo);
     	this.list = list;
-        setEditable(isComponentEnabled());
+        setEditable(list.isEnabled());
     }
     
 	@Override
@@ -41,6 +41,11 @@ public class JListViewAdapter extends AbstractViewAdapter implements ListModel {
 		}
 	}
 	
+    @Override
+    protected void setEditableInternal(boolean editable) {
+        list.setEnabled(editable);
+    }
+	
     private void fireListChanged(ListDataEvent e) {
     	ListDataListener[] listeners = listenerList.getListeners(ListDataListener.class);
         if (listeners != null) {
@@ -52,16 +57,6 @@ public class JListViewAdapter extends AbstractViewAdapter implements ListModel {
 	@Override
 	public JList getComponent() {
 		return list;
-	}
-
-	@Override
-	public void setComponentEnabled(boolean enabled) {
-		list.setEnabled(true);
-	}
-
-	@Override
-	public boolean isComponentEnabled() {
-		return list.isEnabled();
 	}
 
 	@Override

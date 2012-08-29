@@ -11,7 +11,6 @@ import javax.swing.event.DocumentListener;
 import javax.swing.text.JTextComponent;
 
 import net.ulrice.databinding.bufferedbinding.IFAttributeInfo;
-import net.ulrice.databinding.ui.BindingUI;
 import net.ulrice.databinding.viewadapter.AbstractViewAdapter;
 
 /**
@@ -24,19 +23,15 @@ public class JTextComponentViewAdapter extends AbstractViewAdapter implements Do
 	
 	private JTextComponent textComponent;
 	private boolean convertEmptyToNull = true;
-	private boolean enableSelectionIfComponentDisabled = false;
 
 	public JTextComponentViewAdapter(JTextComponent textComponent, IFAttributeInfo attributeInfo) {
-	    
 		super(String.class, attributeInfo);
-		
-		this.enableSelectionIfComponentDisabled = BindingUI.getBoolean(BindingUI.MARKABLE_DURING_DISABLED_STATE, Boolean.FALSE);
 
 		this.textComponent = textComponent;
-        setEditable(isComponentEnabled());
+        setEditable(textComponent.isEditable());
         textComponent.getDocument().addDocumentListener(this);
         textComponent.addPropertyChangeListener(this);
-        setEditable(isComponentEnabled());
+        setEditable(textComponent.isEditable());
 	}
 	
 	@Override
@@ -57,39 +52,11 @@ public class JTextComponentViewAdapter extends AbstractViewAdapter implements Do
 	public JTextComponent getComponent() {
 		return textComponent;
 	}
-	
-	@Override
-	protected void onSetEditable(boolean editable) {
-	    textComponent.setEditable(editable);
-	}
-	
-	public void setEnableSelectionIfComponentDisabled(boolean enableSelectionIfComponentDisabled) {
-        this.enableSelectionIfComponentDisabled = enableSelectionIfComponentDisabled;
-    }
-	
-	public boolean isEnableSelectionIfComponentDisabled() {
-        return enableSelectionIfComponentDisabled;
-    }
 
-	@Override
-	public void setComponentEnabled(boolean enabled) {
-            if(isEnableSelectionIfComponentDisabled()) {
-    	        textComponent.setEditable(enabled);
-    	        textComponent.setEnabled(true);
-            } else {
-                textComponent.setEnabled(enabled);
-            }
-	}
-	
-	@Override
-	public boolean isComponentEnabled() {
-        if(isEnableSelectionIfComponentDisabled()) {
-            return textComponent.isEditable();
-        } else {
-            return textComponent.isEnabled();
-        }
-	}
-
+    @Override
+    protected void setEditableInternal(boolean editable) {
+        textComponent.setEditable(editable);
+    }
 
     @Override
     public void changedUpdate(DocumentEvent e) {

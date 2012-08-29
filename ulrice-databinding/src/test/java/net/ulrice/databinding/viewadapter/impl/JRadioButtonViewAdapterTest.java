@@ -22,20 +22,22 @@ public class JRadioButtonViewAdapterTest extends TestCase {
 	JRadioButton greenButton;
 	JRadioButton blueButton;
 	
-	JRadioButtonViewAdapter redAdapter;
-	JRadioButtonViewAdapter greenAdapter;
-	JRadioButtonViewAdapter blueAdapter;
+	JRadioButtonViewAdapter<Color> redAdapter;
+	JRadioButtonViewAdapter<Color> greenAdapter;
+	JRadioButtonViewAdapter<Color> blueAdapter;
 	
 	@Override
 	protected void setUp() throws Exception {
 		super.setUp();
 		bg = new BindingGroup();
 		colorSet = new ColorSet();
-		
 		colorSet.setC(Color.blue);
 		
-		colorAM = new GenericAM<Color>(new ReflectionMVA(ReflectionMVA.createID(this, "colorSet.c"), this,
-                "colorSet.c", false, UlriceReflectionUtils.getFieldType(ColorSet.class, "c")), new IFAttributeInfo() {});
+		final String id = ReflectionMVA.createID(this, "colorSet.c");
+        final Class< ?> fieldType = UlriceReflectionUtils.getFieldType(ColorSet.class, "c");
+        colorAM = new GenericAM<Color>(
+		        new ReflectionMVA(id, this, "colorSet.c", false, fieldType), 
+		        new IFAttributeInfo() {});
 		
 		redButton = new JRadioButton();
 		greenButton = new JRadioButton();
@@ -46,9 +48,9 @@ public class JRadioButtonViewAdapterTest extends TestCase {
 		buttonGroup.add(greenButton);
 		buttonGroup.add(blueButton);
 		
-		redAdapter = new JRadioButtonViewAdapter(redButton, colorAM.getAttributeInfo(), Color.red);
-		greenAdapter = new JRadioButtonViewAdapter(greenButton, colorAM.getAttributeInfo(), Color.green);
-		blueAdapter = new JRadioButtonViewAdapter(blueButton, colorAM.getAttributeInfo(), Color.blue);
+		redAdapter = new JRadioButtonViewAdapter<Color>(redButton, colorAM.getAttributeInfo(), Color.red);
+		greenAdapter = new JRadioButtonViewAdapter<Color>(greenButton, colorAM.getAttributeInfo(), Color.green);
+		blueAdapter = new JRadioButtonViewAdapter<Color>(blueButton, colorAM.getAttributeInfo(), Color.blue);
 		
 		bg.bind(colorAM, redAdapter);
 		bg.bind(colorAM, greenAdapter);
