@@ -143,7 +143,8 @@ public class UTreeTableComponent extends UTableComponent implements ExpandColaps
                     }
                 }
                 if(ambiguousSelection){
-                    final String messageText = Ulrice.getTranslationProvider().getUlriceTranslation(TranslationUsage.Message, "AmbiguousSelection").getText();
+                    final String messageText = "Selection is not definite";
+                    
                     Ulrice.getMessageHandler().handleMessage(new Message(MessageSeverity.Warning, messageText));
                 }
             }
