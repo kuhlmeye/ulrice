@@ -216,7 +216,7 @@ public class ModelBinding {
             b.setValidationFailures(raw != null ? raw : new ArrayList<String> ());
             calculateState(b);
             b.getViewAdapter ().updateFromBinding(b);
-            b.getViewAdapter ().setComponentEnabled (b.isWidgetEnabled (validationResult.isValid (), model));
+            b.getViewAdapter ().setEditable(b.isWidgetEnabled (validationResult.isValid (), model));
         }
     }
 

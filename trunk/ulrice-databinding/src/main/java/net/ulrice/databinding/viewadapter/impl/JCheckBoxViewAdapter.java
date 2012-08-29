@@ -16,7 +16,7 @@ public class JCheckBoxViewAdapter extends AbstractViewAdapter implements ActionL
         super (Boolean.class, attributeInfo);        
         this.checkBox = checkBox;        
         this.checkBox.addActionListener (this);
-        setEditable(isComponentEnabled());
+        setEditable(checkBox.isEnabled());
     }
 
 	@Override
@@ -26,6 +26,11 @@ public class JCheckBoxViewAdapter extends AbstractViewAdapter implements ActionL
 
     public Object getValue () {
         return viewToModel(checkBox.isSelected());
+    }
+    
+    @Override
+    protected void setEditableInternal(boolean editable) {
+        checkBox.setEnabled(editable);
     }
 
 	@Override
@@ -38,16 +43,6 @@ public class JCheckBoxViewAdapter extends AbstractViewAdapter implements ActionL
 		    checkBox.setSelected(false);
 		}
 	}
-
-    public void setComponentEnabled (boolean enabled) {
-        checkBox.setEnabled (enabled);
-    }
-    
-	@Override
-	public boolean isComponentEnabled() {
-		return checkBox.isEnabled();
-	}
-
 
 	@Override
 	public void actionPerformed(ActionEvent e) {

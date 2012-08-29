@@ -10,22 +10,9 @@ public class JTextComponentViewAdpaterTest extends TestCase {
         JTextField textField = new JTextField();
         JTextComponentViewAdapter textVA = new JTextComponentViewAdapter(textField, null);
         
-        textVA.setEnableSelectionIfComponentDisabled(true);
-        textVA.setComponentEnabled(false);
+        textVA.setEditable(false);
         
-        //Is this even possible? JavaDoc of component.setEnabled says that a component
-        //is not editable after a call of setEnabled(false). Vice versa?
         assertTrue(textField.isEnabled());
         assertFalse(textField.isEditable());
     }
-    
-    public void testSetComponentEditable() {
-        JTextField textField = new JTextField();
-        JTextComponentViewAdapter textVA = new JTextComponentViewAdapter(textField, null);
-        
-        textVA.setEditable(false);
-        
-        assertFalse(textField.isEditable());
-    }
-    
 }

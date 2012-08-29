@@ -74,7 +74,7 @@ public class UTableViewAdapter extends AbstractViewAdapter implements TableModel
         super(List.class, attributeInfo);
 
         this.table = table;        
-        setEditable(isComponentEnabled());
+        setEditable(table.isEnabled());
     }
 
     /**
@@ -85,8 +85,10 @@ public class UTableViewAdapter extends AbstractViewAdapter implements TableModel
         return table;
     }
 
-    
-   
+    @Override
+    protected void setEditableInternal(boolean editable) {
+        table.setEnabled(editable);
+    }
     
     /**
      * @see net.ulrice.databinding.IFGuiAccessor#getAttributeModel()
@@ -361,16 +363,6 @@ public class UTableViewAdapter extends AbstractViewAdapter implements TableModel
         int row = attributeModel.getIndexOfElement(element);
         fireTableChanged(new TableModelEvent(this, row));
         return row;
-    }
-
-    @Override
-    public void setComponentEnabled(boolean enabled) {
-        table.setEnabled(enabled);
-    }
-
-    @Override
-    public boolean isComponentEnabled() {
-        return table.isEnabled();
     }
 
     @Override

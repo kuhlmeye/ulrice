@@ -40,7 +40,7 @@ public class JTableViewAdapter extends AbstractViewAdapter implements TableModel
 
 		table.setModel(this);
 		table.setAutoCreateColumnsFromModel(false);
-        setEditable(isComponentEnabled());
+        setEditable(table.isEnabled());
 	}
 
 	/**
@@ -50,6 +50,11 @@ public class JTableViewAdapter extends AbstractViewAdapter implements TableModel
 	public JTable getComponent() {
 		return table;
 	}
+	
+    @Override
+    protected void setEditableInternal(boolean editable) {
+        table.setEnabled(editable);
+    }	
 
 	/**
 	 * @see net.ulrice.databinding.IFGuiAccessor#getAttributeModel()
@@ -248,12 +253,7 @@ public class JTableViewAdapter extends AbstractViewAdapter implements TableModel
 		fireTableChanged(new TableModelEvent(this, row));
 		return row;
 	}
-
-	@Override
-	public void setComponentEnabled(boolean enabled) {
-		table.setEnabled(enabled);
-	}
-
+	
 	@Override
 	public Object getValue() {
 		return null;
@@ -310,11 +310,6 @@ public class JTableViewAdapter extends AbstractViewAdapter implements TableModel
 	public void delRow(int index) {
 		getAttributeModel().delElement(index);
 	}
-
-    @Override
-    public boolean isComponentEnabled() {
-        return table.isEnabled();
-    }
 
     @Override
     public Object getDisplayedValue() {
