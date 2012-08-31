@@ -2,6 +2,7 @@ package net.ulrice.databinding.viewadapter.impl;
 
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 
@@ -14,16 +15,16 @@ import net.ulrice.ui.components.I18nTextComponent;
 
 /**
  * Gui accessor for i18n text fields.
- * 
+ *
  * @author christof
  */
 @SuppressWarnings("rawtypes")
 public class I18nTextComponentViewAdapter extends AbstractViewAdapter implements DocumentListener, PropertyChangeListener {
 
-	
+
 	private I18nTextComponent textComponent;
 
-	public I18nTextComponentViewAdapter(I18nTextComponent textComponent, IFAttributeInfo attributeInfo) {	    
+	public I18nTextComponentViewAdapter(I18nTextComponent textComponent, IFAttributeInfo attributeInfo) {
 		super(Map.class, attributeInfo);
 
 		this.textComponent = textComponent;
@@ -32,7 +33,7 @@ public class I18nTextComponentViewAdapter extends AbstractViewAdapter implements
         textComponent.addPropertyChangeListener(this);
         setEditable(textComponent.isEnabled());
 	}
-	
+
 	@SuppressWarnings("unchecked")
 	@Override
 	public Object getValue() {
@@ -43,6 +44,10 @@ public class I18nTextComponentViewAdapter extends AbstractViewAdapter implements
 	@SuppressWarnings("unchecked")
 	@Override
 	protected void setValue(Object value) {
+        // TODO quickfix
+        if (value == null) {
+            value = new HashMap<Locale, String>();
+        }
 		textComponent.setData((Map<Locale, String>) modelToView(value));
 	}
 
@@ -50,7 +55,7 @@ public class I18nTextComponentViewAdapter extends AbstractViewAdapter implements
 	public I18nTextComponent getComponent() {
 		return textComponent;
 	}
-	
+
 	@Override
 	protected void setEditableInternal(boolean editable) {
 	    textComponent.setEditable(editable);
@@ -73,14 +78,14 @@ public class I18nTextComponentViewAdapter extends AbstractViewAdapter implements
 
 	@Override
 	protected void addComponentListener() {
-		textComponent.addDocumentListener(this);	
+		textComponent.addDocumentListener(this);
 	}
 
 	@Override
 	protected void removeComponentListener() {
 		textComponent.removeDocumentListener(this);
 	}
-	
+
     @Override
     public void propertyChange(PropertyChangeEvent evt) {
         if (evt.getPropertyName().equals("editable")) {
