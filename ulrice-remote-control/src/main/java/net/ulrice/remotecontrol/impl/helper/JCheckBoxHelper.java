@@ -20,6 +20,10 @@ public class JCheckBoxHelper extends AbstractJComponentHelper<JCheckBox> {
         final boolean currentValue = component.isSelected();
 
         if (valueToSet != currentValue) {
+            if (!component.isEnabled()) {
+                throw new RemoteControlException("Failed to select/deselect checkbox. Checkbox is disabled");
+            }
+            
             try {
                 RemoteControlUtils.invokeInSwing(new Runnable() {
                     @Override
