@@ -29,7 +29,8 @@ public class RegularMatcher implements Serializable {
     }
 
     public boolean matches(String value) {
-
+        value = value != null ? value.trim() : "";
+        
         if ((pattern != null) && (pattern.matcher(value).matches())) {
             return true;
         }
