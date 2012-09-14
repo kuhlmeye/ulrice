@@ -1,11 +1,10 @@
 package net.ulrice.databinding.bufferedbinding.impl;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import javax.swing.event.EventListenerList;
 
 import net.ulrice.databinding.IFBinding;
 import net.ulrice.databinding.bufferedbinding.IFAttributeModel;
@@ -19,7 +18,7 @@ import net.ulrice.databinding.validation.ValidationResult;
 /**
  * The element of the list attribute model. It manages the models for all
  * attributes of a data row.
- * 
+ *
  * @author christof
  */
 public class Element {
@@ -60,7 +59,7 @@ public class Element {
 
 	/**
 	 * Creates a new element.
-	 * 
+	 *
 	 * @param tableAM
 	 * @param uniqueId
 	 *            The unique identifier.
@@ -111,7 +110,7 @@ public class Element {
 
 	/**
 	 * Returns, if a cell is readonly.
-	 * 
+	 *
 	 * @param columnIndex
 	 *            The index of the column.
 	 * @return True, if the value is readonly. False otherwise.
@@ -143,7 +142,7 @@ public class Element {
 
 	/**
 	 * Returns the cell value.
-	 * 
+	 *
 	 * @param columnIndex
 	 *            The index of the column
 	 * @return The cell value as an object.
@@ -159,7 +158,7 @@ public class Element {
 
 	/**
 	 * Returns the cell value.
-	 * 
+	 *
 	 * @param columnId
 	 *            The identifier of the column
 	 * @return The cell value as an object.
@@ -195,7 +194,7 @@ public class Element {
 
 	/**
 	 * Set the value of a cell.
-	 * 
+	 *
 	 * @param columnIndex
 	 *            Index of the column
 	 * @param aValue
@@ -214,7 +213,7 @@ public class Element {
 
 	/**
 	 * Set the value of a cell
-	 * 
+	 *
 	 * @param columnId
 	 *            The identifier of the column
 	 * @param aValue
@@ -227,7 +226,7 @@ public class Element {
 
 	/**
 	 * Internal method for setting a value.
-	 * 
+	 *
 	 * @param model
 	 *            The attribute model
 	 * @param columnId
@@ -289,7 +288,7 @@ public class Element {
 
 	/**
 	 * Fires the event that the state changed.
-	 * 
+	 *
 	 * @param newState
 	 *            The new state
 	 * @param oldState
@@ -311,7 +310,7 @@ public class Element {
 
 	/**
 	 * Write the object managed by the element in the value object.
-	 * 
+	 *
 	 * @return The value object
 	 */
 	@SuppressWarnings("unchecked")
@@ -383,7 +382,7 @@ public class Element {
 	}
 
 	/**
-	 * Return the current value of this element. 
+	 * Return the current value of this element.
 	 */
 	public Object getCurrentValue() {
 		Object result = tableAM.cloneObject(getOriginalValue());
@@ -460,7 +459,7 @@ public class Element {
 
 	/**
 	 * Return the current value object.
-	 * 
+	 *
 	 * @return The value object.
 	 */
 	public Object getOriginalValue() {
@@ -469,7 +468,7 @@ public class Element {
 
 	/**
 	 * Return the unique id.
-	 * 
+	 *
 	 * @return the uniqueId
 	 */
 	public String getUniqueId() {
@@ -575,7 +574,7 @@ public class Element {
 	}
 
 	/**
-	 * Add an element validation error to this element. An element validation error is a global 
+	 * Add an element validation error to this element. An element validation error is a global
 	 * validation error for the whole element that could not be assigned to a single cell.
 	 */
 	public void addElementValidationError(ValidationError validationError) {
@@ -622,7 +621,7 @@ public class Element {
 	public ValidationResult getElementValidationErrors() {
 		return validationResult;
 	}
-	
+
 	/**
 	 * Clear all element validation errors.
 	 */
@@ -713,7 +712,7 @@ public class Element {
 		}
 		return idModelMap.containsKey(columnId) ? idModelMap.get(columnId).isDirty() : false;
 	}
-	
+
 	/**
 	 * Returns, if a column identified by the column id is valid
 	 */
@@ -833,6 +832,13 @@ public class Element {
 		childElements.add(element);
 		element.setParent(this);
 	}
+
+    public List<Element> getChilds() {
+        if (childElements == null) {
+            return Collections.<Element> emptyList();
+        }
+        return childElements;
+    }
 
 	/**
 	 * Returns the parent element or null, if this is a root element.
