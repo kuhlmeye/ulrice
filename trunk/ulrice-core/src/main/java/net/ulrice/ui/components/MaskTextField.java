@@ -212,7 +212,9 @@ public class MaskTextField extends JTextField {
                 case ALL_MASK_LOWERCASE_CHAR:
                 case ALL_MASK_UPPERCASE_CHAR:
                 case CHARACTER_OR_NUMBER_CHAR:
-                    return inputChar <= 0xff;
+                    boolean valid = Character.isLetter(inputChar)
+                        || Character.isDigit(inputChar);
+                    return valid;
                 case NUM_MASK_CHAR:
                     return Character.isDigit(inputChar);
                 default:
