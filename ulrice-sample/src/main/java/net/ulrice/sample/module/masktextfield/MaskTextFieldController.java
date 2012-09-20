@@ -21,7 +21,11 @@ public class MaskTextFieldController extends AbstractController {
 	private MaskTextField maskTF = new MaskTextField();
 
 	public MaskTextFieldController() {
-		maskTF.setMask("#### - **** '# (**)");
+	    String mask = "(" + MaskTextField.ALL_MASK_CHAR + ") - '#" + MaskTextField.NUM_MASK_CHAR +
+	            " - " + MaskTextField.CHARACTER_MASK_CHAR + " - " + MaskTextField.CHARACTER_UPPERCASE_MASK_CHAR +
+	            " - " + MaskTextField.CHARACTER_LOWERCASE_MASK_CHAR + " - " + MaskTextField.ALL_MASK_UPPERCASE_CHAR +
+	            " - " + MaskTextField.ALL_MASK_LOWERCASE_CHAR + " - " + MaskTextField.CHARACTER_OR_NUMBER_CHAR;
+	    maskTF.setMask(mask);
 		view.setLayout(new BorderLayout());
 		view.add(new JLabel("Sample module for MaskTextField"), BorderLayout.CENTER);
 		view.add(maskTF, BorderLayout.NORTH);
