@@ -25,7 +25,9 @@ public class MaskTextFieldController extends AbstractController {
 	            " - " + MaskTextField.CHARACTER_MASK_CHAR + " - " + MaskTextField.CHARACTER_UPPERCASE_MASK_CHAR +
 	            " - " + MaskTextField.CHARACTER_LOWERCASE_MASK_CHAR + " - " + MaskTextField.ALL_MASK_UPPERCASE_CHAR +
 	            " - " + MaskTextField.ALL_MASK_LOWERCASE_CHAR + " - " + MaskTextField.CHARACTER_OR_NUMBER_CHAR +
-	            " - " + MaskTextField.CHARACTER_OR_NUMBER_LOWERCASE_CHAR + " - " + MaskTextField.CHARACTER_OR_NUMBER_UPPERCASE_CHAR;
+	            " - " + MaskTextField.CHARACTER_OR_NUMBER_LOWERCASE_CHAR + " - " + MaskTextField.CHARACTER_OR_NUMBER_UPPERCASE_CHAR +
+	            " - " + MaskTextField.CHARACTER_OR_NUMBER_SPECIAL_CHAR + " - " + MaskTextField.CHARACTER_OR_NUMBER_SPECIAL_LOWERCASE_CHAR +
+	            " - " + MaskTextField.CHARACTER_OR_NUMBER_SPECIAL_UPPERCASE_CHAR;
 	    maskTF.setMask(mask);
 		view.setLayout(new BorderLayout());
 		view.add(new JLabel("Sample module for MaskTextField"), BorderLayout.CENTER);
