@@ -21,6 +21,7 @@ public class ComponentHelperRegistry {
         register(new JComboBoxHelper());
         register(new JLabelHelper());
         register(new JListHelper());
+        register(new JPanelHelper());
         register(new JProgressBarHelper());
         register(new JTabbedPaneHelper());
         register(new JTableHelper());
