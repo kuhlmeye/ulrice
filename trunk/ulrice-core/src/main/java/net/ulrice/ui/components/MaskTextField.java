@@ -45,8 +45,17 @@ public class MaskTextField extends JTextField {
     public static final char CHARACTER_OR_NUMBER_CHAR = 'A';
     public static final char CHARACTER_OR_NUMBER_UPPERCASE_CHAR = 'C';
     public static final char CHARACTER_OR_NUMBER_LOWERCASE_CHAR = 'c';
+    /**
+     * Can contain character, number, underscore _ or hyphen -
+     */
+    public static final char CHARACTER_OR_NUMBER_SPECIAL_CHAR = 'g';
+    public static final char CHARACTER_OR_NUMBER_SPECIAL_UPPERCASE_CHAR = 'H';
+    public static final char CHARACTER_OR_NUMBER_SPECIAL_LOWERCASE_CHAR = 'h';
     public static final char ESCAPE_CHAR = '\'';
 
+    private static final char HYPHEN = '-';
+    private static final char UNDERSCORE = '_';
+    
     private List<Boolean> maskCharList = new ArrayList<Boolean>();
 
     private int maskLen = 0;
@@ -105,7 +114,9 @@ public class MaskTextField extends JTextField {
     private boolean isMaskChar(char chr) {
         return chr == ALL_MASK_CHAR || chr == NUM_MASK_CHAR || chr == CHARACTER_MASK_CHAR || chr == CHARACTER_OR_NUMBER_CHAR || chr == CHARACTER_LOWERCASE_MASK_CHAR
                 || chr == CHARACTER_UPPERCASE_MASK_CHAR || chr == ALL_MASK_LOWERCASE_CHAR || chr == ALL_MASK_UPPERCASE_CHAR
-                || chr == CHARACTER_OR_NUMBER_UPPERCASE_CHAR || chr == CHARACTER_OR_NUMBER_LOWERCASE_CHAR;
+                || chr == CHARACTER_OR_NUMBER_UPPERCASE_CHAR || chr == CHARACTER_OR_NUMBER_LOWERCASE_CHAR
+                || chr == CHARACTER_OR_NUMBER_SPECIAL_CHAR || chr == CHARACTER_OR_NUMBER_SPECIAL_LOWERCASE_CHAR
+                || chr == CHARACTER_OR_NUMBER_SPECIAL_UPPERCASE_CHAR;
     }
 
     @Override
@@ -169,11 +180,13 @@ public class MaskTextField extends JTextField {
                                 case ALL_MASK_LOWERCASE_CHAR:
                                 case CHARACTER_LOWERCASE_MASK_CHAR:
                                 case CHARACTER_OR_NUMBER_LOWERCASE_CHAR:
+                                case CHARACTER_OR_NUMBER_SPECIAL_LOWERCASE_CHAR:
                                     resultStr.append(Character.toLowerCase(inputChar));
                                     break;
                                 case ALL_MASK_UPPERCASE_CHAR:
                                 case CHARACTER_UPPERCASE_MASK_CHAR:
                                 case CHARACTER_OR_NUMBER_UPPERCASE_CHAR:
+                                case CHARACTER_OR_NUMBER_SPECIAL_UPPERCASE_CHAR:
                                     resultStr.append(Character.toUpperCase(inputChar));
                                     break;
                                 default:
@@ -223,6 +236,12 @@ public class MaskTextField extends JTextField {
                     boolean valid = Character.isLetter(inputChar)
                         || Character.isDigit(inputChar);
                     return valid;
+                case CHARACTER_OR_NUMBER_SPECIAL_CHAR:
+                case CHARACTER_OR_NUMBER_SPECIAL_LOWERCASE_CHAR:
+                case CHARACTER_OR_NUMBER_SPECIAL_UPPERCASE_CHAR:
+                    boolean validSpecial = Character.isLetter(inputChar)
+                    || Character.isDigit(inputChar) || inputChar == HYPHEN || inputChar == UNDERSCORE;
+                    return validSpecial;          
                 case NUM_MASK_CHAR:
                     return Character.isDigit(inputChar);
                 default:
