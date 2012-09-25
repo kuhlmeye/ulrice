@@ -126,7 +126,7 @@ public class RemoteControlUtils {
     }
 
     /**
-     * Calls the invoke and wait method of the {@link SwingUtilities}
+     * Calls the invoke and wait method of the {@link SwingUtilities} and waits for it to finish.
      * 
      * @param runnable the runnable
      * @throws RemoteControlException on occasion

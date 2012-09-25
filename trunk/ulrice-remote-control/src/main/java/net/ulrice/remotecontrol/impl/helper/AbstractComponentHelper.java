@@ -6,6 +6,7 @@ import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.Robot;
 import java.awt.event.InputEvent;
+import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 
 import javax.swing.JComponent;
@@ -16,6 +17,7 @@ import net.ulrice.remotecontrol.impl.keyboard.RemoteKeyboardDE;
 import net.ulrice.remotecontrol.impl.keyboard.RemoteKeyboardInstruction;
 import net.ulrice.remotecontrol.util.ComponentUtils;
 import net.ulrice.remotecontrol.util.RemoteControlUtils;
+import net.ulrice.remotecontrol.util.Result;
 
 public abstract class AbstractComponentHelper<TYPE extends Component> implements ComponentHelper<TYPE> {
 
@@ -222,28 +224,52 @@ public abstract class AbstractComponentHelper<TYPE extends Component> implements
      * {@inheritDoc}
      */
     @Override
-    public boolean selectAll(Robot robot, TYPE component) throws RemoteControlException {
-        try {
-            component.getClass().getMethod("selectAll").invoke(component);
-            return true;
-        }
-        catch (Exception e) {
-            return false;
-        }
+    public boolean selectAll(Robot robot, final TYPE component) throws RemoteControlException {
+        final Result<Boolean> result = new Result<Boolean>(15);
+        
+        RemoteControlUtils.invokeInSwing(new Runnable() {
+
+            @Override
+            public void run() {
+                try {
+                    component.getClass().getMethod("selectAll").invoke(component);
+                }
+                catch (Exception e) {
+                    result.fireException(new RemoteControlException("Failed to invoke selectAll on component", e));
+                }
+                
+                result.fireResult(Boolean.TRUE);
+            }
+            
+        });
+        
+        return result.aquireResult();
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public boolean selectNone(Robot robot, TYPE component) throws RemoteControlException {
-        try {
-            component.getClass().getMethod("clearSelection").invoke(component);
-            return true;
-        }
-        catch (Exception e) {
-            return false;
-        }
+    public boolean selectNone(Robot robot, final TYPE component) throws RemoteControlException {
+        final Result<Boolean> result = new Result<Boolean>(15);
+        
+        RemoteControlUtils.invokeInSwing(new Runnable() {
+
+            @Override
+            public void run() {
+                try {
+                    component.getClass().getMethod("clearSelection").invoke(component);
+                }
+                catch (Exception e) {
+                    result.fireException(new RemoteControlException("Failed to invoke clearSelection on component", e));
+                }
+                
+                result.fireResult(Boolean.TRUE);
+            }
+            
+        });
+        
+        return result.aquireResult();
     }
 
     /**
