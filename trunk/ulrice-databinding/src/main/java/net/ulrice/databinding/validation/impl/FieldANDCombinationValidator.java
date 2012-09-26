@@ -12,14 +12,13 @@ import net.ulrice.databinding.validation.ValidationResult;
  * Checks if all of the fields are filled.
  */
 
-/* Rawtypes is ok as we just check if the object is null or other objects are filled */
 @SuppressWarnings("rawtypes")
-public class FieldORCombinationValidator2 extends AbstractValidator {
+public class FieldANDCombinationValidator extends AbstractValidator {
 
     protected ArrayList<GenericAM< ?>> modelList = new ArrayList<GenericAM< ?>>();
     protected String idString = new String();
 
-    public FieldORCombinationValidator2(GenericAM< ?>... models) {
+    public FieldANDCombinationValidator(GenericAM< ?>... models) {
         for (GenericAM< ?> model : models) {
             modelList.add(model);
             idString = idString + " " + model.getId();
