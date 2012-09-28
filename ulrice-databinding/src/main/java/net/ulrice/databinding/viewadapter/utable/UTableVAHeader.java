@@ -24,11 +24,11 @@ import javax.swing.table.TableColumn;
 import javax.swing.table.TableColumnModel;
 
 /**
- * Extended table header, adding the preferred height of the layout to its
- * preferred height and revalidates when the dragged column is released.
+ * Extended table header, adding the preferred height of the layout to its preferred height and revalidates when the
+ * dragged column is released.
  */
 public class UTableVAHeader extends JTableHeader {
-    
+
     /**
      * if the components (serach filter should extend the heigt of the table header
      */
@@ -69,14 +69,14 @@ public class UTableVAHeader extends JTableHeader {
             repaint();
         }
     }
-    
+
     /**
      * @see javax.swing.JComponent#processKeyBinding(javax.swing.KeyStroke, java.awt.event.KeyEvent, int, boolean)
      */
     @Override
     protected boolean processKeyBinding(KeyStroke ks, KeyEvent e, int condition, boolean pressed) {
-        if(ks.getKeyCode() == KeyEvent.VK_SPACE && ks.getKeyEventType() == KeyEvent.KEY_PRESSED){ 
-            return true; //BUG: 2896 catch space event for preventing sort toggle
+        if (ks.getKeyCode() == KeyEvent.VK_SPACE && ks.getKeyEventType() == KeyEvent.KEY_PRESSED) {
+            return true; // BUG: 2896 catch space event for preventing sort toggle
         }
         return super.processKeyBinding(ks, e, condition, pressed);
     }
@@ -104,17 +104,16 @@ public class UTableVAHeader extends JTableHeader {
         final Dimension size = super.getPreferredSize();
         final LayoutManager layout = getLayout();
         if (layout != null) {
-            if(isExtendInHeight()){
+            if (isExtendInHeight()) {
                 size.height += layout.preferredLayoutSize(this).height;
-            }else{
+            }
+            else {
                 size.height = Math.max(layout.preferredLayoutSize(this).height, size.height);
             }
-            
+
         }
         return size;
     }
-    
-    
 
     public boolean isExtendInHeight() {
         return extendInHeight;
@@ -124,15 +123,11 @@ public class UTableVAHeader extends JTableHeader {
         this.extendInHeight = extendInHeight;
     }
 
-
-
     /**
-     * Layout of the table header of the tablega-table component. This layout
-     * allows the creation of jcomponents below/above the header label. This is
-     * normally used for the filter components.
+     * Layout of the table header of the tablega-table component. This layout allows the creation of jcomponents
+     * below/above the header label. This is normally used for the filter components.
      * 
      * @author christof
-     * 
      */
     private final class TableGAHeaderLayout implements LayoutManager2, Serializable {
 
@@ -153,8 +148,7 @@ public class UTableVAHeader extends JTableHeader {
         }
 
         /**
-         * @see java.awt.LayoutManager2#addLayoutComponent(java.awt.Component,
-         *      java.lang.Object)
+         * @see java.awt.LayoutManager2#addLayoutComponent(java.awt.Component, java.lang.Object)
          */
         @Override
         public void addLayoutComponent(Component comp, Object constraints) {
@@ -167,8 +161,7 @@ public class UTableVAHeader extends JTableHeader {
         }
 
         /**
-         * @see java.awt.LayoutManager#addLayoutComponent(java.lang.String,
-         *      java.awt.Component)
+         * @see java.awt.LayoutManager#addLayoutComponent(java.lang.String, java.awt.Component)
          */
         @Override
         public void addLayoutComponent(String name, Component comp) {
@@ -180,9 +173,9 @@ public class UTableVAHeader extends JTableHeader {
          */
         @Override
         public void removeLayoutComponent(Component comp) {
-            if(componentMap.containsValue(comp)) {
-                for(Entry<String, Component> entry : componentMap.entrySet()) {
-                    if(entry.getValue().equals(comp)) {
+            if (componentMap.containsValue(comp)) {
+                for (Entry<String, Component> entry : componentMap.entrySet()) {
+                    if (entry.getValue().equals(comp)) {
                         componentMap.remove(entry.getKey());
                         return;
                     }
@@ -195,6 +188,7 @@ public class UTableVAHeader extends JTableHeader {
          */
         @Override
         public void layoutContainer(Container parent) {
+            System.out.println("layout ");
             JTableHeader header = (JTableHeader) parent;
             TableColumnModel columnModel = header.getColumnModel();
             for (int i = 0; i < columnModel.getColumnCount(); i++) {
@@ -212,23 +206,24 @@ public class UTableVAHeader extends JTableHeader {
                         rect.y += rect.height - size.height;
                         rect.height = size.height;
                     }
-                    if(!isExtendInHeight()){
-                        rect.y =  margin.top;
+                    if (!isExtendInHeight()) {
+                        rect.y = margin.top;
+                        rect.x = rect.x + rect.width-size.width;
                     }
                     filterComponent.setBounds(rect);
                 }
             }
         }
-        
+
         /**
          * @see java.awt.LayoutManager#preferredLayoutSize(java.awt.Container)
          */
         @Override
         public Dimension preferredLayoutSize(Container parent) {
             Collection<Component> values = componentMap.values();
-            int h = 0; 
-            if(values != null) {
-                for(Component component : values) {
+            int h = 0;
+            if (values != null) {
+                for (Component component : values) {
                     h = Math.max(h, component.getPreferredSize().height);
                 }
             }
