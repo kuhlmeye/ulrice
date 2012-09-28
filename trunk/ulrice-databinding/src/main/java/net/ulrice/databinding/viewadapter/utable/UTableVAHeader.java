@@ -188,7 +188,6 @@ public class UTableVAHeader extends JTableHeader {
          */
         @Override
         public void layoutContainer(Container parent) {
-            System.out.println("layout ");
             JTableHeader header = (JTableHeader) parent;
             TableColumnModel columnModel = header.getColumnModel();
             for (int i = 0; i < columnModel.getColumnCount(); i++) {
