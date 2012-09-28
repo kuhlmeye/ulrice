@@ -102,7 +102,7 @@ public abstract class AbstractViewAdapter<M, V> implements IFViewAdapter<M, V> {
             setReadOnlyBinding(binding.isReadOnly());
             setValue((M) binding.getCurrentValue());
 
-            setEditable(isEditable() && !binding.isReadOnly());
+            setEditable(!binding.isReadOnly());
             
             addComponentListener();
         }
