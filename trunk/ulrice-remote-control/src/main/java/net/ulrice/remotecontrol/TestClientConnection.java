@@ -1,7 +1,6 @@
 package net.ulrice.remotecontrol;
 
-import static net.ulrice.remotecontrol.RemoteControlCenter.applicationRC;
-import static net.ulrice.remotecontrol.RemoteControlCenter.connectClient;
+import static net.ulrice.remotecontrol.RemoteControlCenter.*;
 
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -13,7 +12,7 @@ public class TestClientConnection {
     public static void main(String[] args) throws RemoteControlException, IOException {
         connectClient("localhost", Ulrice.DEFAULT_REMOTE_CONTROL_PORT, 1);
 
-        byte[] bytes = applicationRC().screenshot();
+        byte[] bytes = applicationRC().screenshot(null, false);
 
         FileOutputStream out = new FileOutputStream("D:/foo.png");
         try {

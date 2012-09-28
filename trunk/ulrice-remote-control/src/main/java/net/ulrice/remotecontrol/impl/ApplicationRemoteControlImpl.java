@@ -1,12 +1,22 @@
 package net.ulrice.remotecontrol.impl;
 
 import java.awt.AWTException;
+import java.awt.Color;
+import java.awt.Font;
+import java.awt.Graphics2D;
 import java.awt.Rectangle;
+import java.awt.RenderingHints;
 import java.awt.Robot;
 import java.awt.Window;
+import java.awt.font.FontRenderContext;
+import java.awt.font.LineBreakMeasurer;
+import java.awt.font.TextAttribute;
+import java.awt.font.TextLayout;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.text.AttributedCharacterIterator;
+import java.text.AttributedString;
 import java.util.Collection;
 
 import javax.imageio.ImageIO;
@@ -29,6 +39,8 @@ import net.ulrice.remotecontrol.util.ResultClosure;
  * @author Manfred HANTSCHEL
  */
 public class ApplicationRemoteControlImpl implements ApplicationRemoteControl {
+
+    private static final int DESCRIPTION_HEIGHT = 80;
 
     /**
      * {@inheritDoc}
@@ -53,10 +65,10 @@ public class ApplicationRemoteControlImpl implements ApplicationRemoteControl {
     /**
      * {@inheritDoc}
      * 
-     * @see net.ulrice.remotecontrol.ApplicationRemoteControl#screenshot()
+     * @see net.ulrice.remotecontrol.ApplicationRemoteControl#screenshot(String, boolean)
      */
     @Override
-    public byte[] screenshot() throws RemoteControlException {
+    public byte[] screenshot(String description, boolean failure) throws RemoteControlException {
         Window[] windows = Window.getWindows();
         Rectangle rectangle = null;
 
@@ -80,6 +92,43 @@ public class ApplicationRemoteControlImpl implements ApplicationRemoteControl {
         }
 
         BufferedImage screenshot = robot.createScreenCapture(rectangle);
+
+        if (description != null) {
+            Graphics2D g = screenshot.createGraphics();
+
+            int h = DESCRIPTION_HEIGHT;
+            int w = screenshot.getWidth() - 32;
+            int x = 16;
+            int y = screenshot.getHeight() - h - 10;
+
+            g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+
+            g.setColor((failure) ? new Color(0xa0ffa0a0, true) : new Color(0xa0ffffff, true));
+            g.fillRoundRect(x, y, w, h, 16, 16);
+
+            g.setColor(new Color(0xa0000000, true));
+            g.drawRoundRect(x, y, w, h, 16, 16);
+
+            g.clipRect(x, y, w, h);
+            y = y + 10;
+
+            for (String d : description.split("\\n")) {
+                AttributedString s = new AttributedString(d);
+                s.addAttribute(TextAttribute.FONT, new Font(Font.MONOSPACED, Font.PLAIN, 10));
+                s.addAttribute(TextAttribute.FOREGROUND, Color.BLACK);
+    
+                AttributedCharacterIterator iterator = s.getIterator();
+                FontRenderContext fontRenderContext = g.getFontRenderContext();
+                LineBreakMeasurer lineBreakMeasurer = new LineBreakMeasurer(iterator, fontRenderContext);
+    
+                while (lineBreakMeasurer.getPosition() < iterator.getEndIndex()) {
+                    TextLayout textLayout = lineBreakMeasurer.nextLayout(w - 32);
+                    y += textLayout.getAscent();
+                    textLayout.draw(g, x + 16, y);
+                    y += textLayout.getDescent() + textLayout.getLeading();
+                }
+            }
+        }
 
         ByteArrayOutputStream out;
 
@@ -118,21 +167,17 @@ public class ApplicationRemoteControlImpl implements ApplicationRemoteControl {
      *      net.ulrice.remotecontrol.ComponentMatcher, net.ulrice.remotecontrol.ControllerMatcher)
      */
     @Override
-    public boolean combinedWaitFor(double timeoutInSeconds, final ComponentMatcher componentMatcher,
-        final ControllerMatcher controllerMatcher) throws RemoteControlException {
+    public boolean combinedWaitFor(double timeoutInSeconds, final ComponentMatcher componentMatcher, final ControllerMatcher controllerMatcher) throws RemoteControlException {
 
         try {
             return RemoteControlUtils.repeatInThread(timeoutInSeconds, new ResultClosure<Boolean>() {
 
                 @Override
                 public void invoke(Result<Boolean> result) throws RemoteControlException {
-                    Collection<ComponentState> componentStates =
-                            RemoteControlCenter.componentRC().statesOf(componentMatcher);
-                    Collection<ControllerState> controllerStates =
-                            RemoteControlCenter.controllerRC().statesOf(controllerMatcher);
+                    Collection<ComponentState> componentStates = RemoteControlCenter.componentRC().statesOf(componentMatcher);
+                    Collection<ControllerState> controllerStates = RemoteControlCenter.controllerRC().statesOf(controllerMatcher);
 
-                    if (((componentStates != null) && (componentStates.size() > 0))
-                        || ((controllerStates != null) && (controllerStates.size() > 0))) {
+                    if (((componentStates != null) && (componentStates.size() > 0)) || ((controllerStates != null) && (controllerStates.size() > 0))) {
                         result.fireResult(true);
                     }
                 }
@@ -140,8 +185,8 @@ public class ApplicationRemoteControlImpl implements ApplicationRemoteControl {
             });
         }
         catch (RemoteControlException e) {
-            throw new RemoteControlException(String.format("Failed to wait %,.1f s for all components or controllers: %s or %s",
-                timeoutInSeconds, componentMatcher, controllerMatcher), e);
+            throw new RemoteControlException(String.format("Failed to wait %,.1f s for all components or controllers: %s or %s", timeoutInSeconds, componentMatcher,
+                controllerMatcher), e);
         }
     }
 
