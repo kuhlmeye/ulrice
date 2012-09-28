@@ -23,6 +23,7 @@ public class AccordionSeparatorPanel extends JPanel {
 
     private String actionCommand;
     private JLabel foldLabel;
+    private JLabel titleLabel;
 
     public AccordionSeparatorPanel(String title, Color backgroundColor) {
         super(new BorderLayout());
@@ -33,7 +34,8 @@ public class AccordionSeparatorPanel extends JPanel {
         foldLabel = new JLabel();
 
         add(foldLabel, BorderLayout.WEST);
-        add(new JLabel(title), BorderLayout.CENTER);
+        titleLabel =new JLabel(title);
+        add(titleLabel, BorderLayout.CENTER);
 
         addMouseListener(new MouseAdapter() {
 
@@ -98,5 +100,9 @@ public class AccordionSeparatorPanel extends JPanel {
         else {
             foldLabel.setIcon(new ImageIcon(AccordionSeparatorPanel.class.getResource("closed.gif")));
         }
+    }
+    
+    public void setTitle(String title) {
+        titleLabel.setText(title);
     }
 }

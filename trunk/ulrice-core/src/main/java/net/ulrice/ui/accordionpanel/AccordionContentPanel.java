@@ -28,6 +28,8 @@ public class AccordionContentPanel extends JPanel implements ActionListener {
         add(content, BorderLayout.CENTER);
         add(separatorPanel, BorderLayout.NORTH);
     }
+    
+    
 
     public String getActionCommand() {
         return actionCommand;
@@ -66,6 +68,10 @@ public class AccordionContentPanel extends JPanel implements ActionListener {
     public void setFolded(boolean folded) {
         separatorPanel.setOpened(!folded);
         content.setVisible(!folded);
+    }
+    
+    public void setTitle(String title) {
+        separatorPanel.setTitle(title);
     }
 
     @Override
