@@ -123,7 +123,7 @@ public class AccordionPanel extends JPanel implements ActionListener {
         }
         validate();
     }
-
+    
     @Override
     public void actionPerformed(ActionEvent e) {
         Object source = e.getSource();
