@@ -34,7 +34,7 @@ public class I18nTextAM implements IFAttributeModel<Map<Locale, String>>, IFView
 	private IFAttributeInfo attributeInfo;
 	private boolean readOnly;
 	private boolean removeEmptyLanguages = false;
-	
+
     private List<IFValidator<Map<Locale, String>>> validators = new ArrayList<IFValidator<Map<Locale, String>>>();
 	private List<IFViewAdapter<Map<Locale, String>, ?>> viewAdapterList = new ArrayList<IFViewAdapter<Map<Locale, String>, ?>>();
 
@@ -44,12 +44,12 @@ public class I18nTextAM implements IFAttributeModel<Map<Locale, String>>, IFView
 
     @SuppressWarnings("rawtypes")
 	private IFValueConverter valueConverter;
-	
+
     private List<ValidationError> externalValidationErrors = new LinkedList<ValidationError>();
-   
+
 	private Map<Locale, String> originalValue;
 	private Map<Locale, String> currentValue;
-	
+
 	private boolean initialized = false;
 	private boolean dirty = false;
 	private boolean valid = true;
@@ -57,11 +57,11 @@ public class I18nTextAM implements IFAttributeModel<Map<Locale, String>>, IFView
 	public I18nTextAM(String id) {
 		this.id = id;
 	}
-	
+
 	public I18nTextAM(IFModelValueAccessor<?> modelAccessor, IFAttributeInfo attributeInfo) {
 		this.modelAccessor = modelAccessor;
 		this.attributeInfo = attributeInfo;
-		this.id = modelAccessor.getAttributeId();		
+		this.id = modelAccessor.getAttributeId();
 	}
 
 	public I18nTextAM(String id, IFAttributeInfo attributeInfo, boolean readOnly) {
@@ -85,7 +85,7 @@ public class I18nTextAM implements IFAttributeModel<Map<Locale, String>>, IFView
 			I18nTextComponentViewAdapter i18nVA = (I18nTextComponentViewAdapter) viewAdapter;
 			i18nVA.getComponent().setAvailableLocales(localeItems);
 		}
-        
+
         if (getValueConverter() != null) {
             modelType = getValueConverter().getViewType(modelType);
         }
@@ -113,12 +113,12 @@ public class I18nTextAM implements IFAttributeModel<Map<Locale, String>>, IFView
         viewAdapter.detach(this);
     }
 
-	
+
 	public void setAvailableLocales(LocaleSelectorItem... localeItems) {
 		if(localeItems == null) {
 			throw new IllegalArgumentException("LocaleItems must not be null.");
 		}
-		
+
 		this.localeItems = localeItems;
 		if(viewAdapterList != null) {
 			for(@SuppressWarnings("rawtypes") IFViewAdapter viewAdapter : viewAdapterList) {
@@ -127,10 +127,10 @@ public class I18nTextAM implements IFAttributeModel<Map<Locale, String>>, IFView
 					i18nVA.getComponent().setAvailableLocales(localeItems);
 				}
 			}
-		}		
+		}
 	}
 
-    
+
 	@Override
 	public Map<Locale, String> getCurrentValue() {
 		return currentValue;
@@ -159,7 +159,7 @@ public class I18nTextAM implements IFAttributeModel<Map<Locale, String>>, IFView
     	for(LocaleSelectorItem item : localeItems) {
     		this.originalValue.put(item.getLocale(), value.get(item.getLocale()));
     	}
-    	
+
         setCurrentValue(value);
     }
 
@@ -175,20 +175,20 @@ public class I18nTextAM implements IFAttributeModel<Map<Locale, String>>, IFView
             modelAccessor.setValue(getValueConverter() != null ? getValueConverter().viewToModel(value, attributeInfo) : value);
         }
     }
-    
+
     public Map<Locale, String> directWrite() {
     	Map<Locale, String> result = new HashMap<Locale, String>();
 		for(LocaleSelectorItem localeItem : localeItems) {
 			if(currentValue.containsKey(localeItem.getLocale())) {
-				String value = currentValue.get(localeItem.getLocale());				
-				if((value == null || "".equals(value.trim())) && isRemoveEmptyLanguages()) {
+				String value = currentValue.get(localeItem.getLocale());
+                if (value == null || ("".equals(value.trim()) && isRemoveEmptyLanguages())) {
 					result.remove(localeItem.getLocale());
 				} else {
 					result.put(localeItem.getLocale(), value);
 				}
 			}
-		}	
-    	
+		}
+
         return result;
     }
 
@@ -199,13 +199,13 @@ public class I18nTextAM implements IFAttributeModel<Map<Locale, String>>, IFView
         calculateState(viewAdapter);
         fireDataChanged(viewAdapter);
 	}
-	
+
 	public void setCurrentValue(Map<Locale, String> value) {
         setCurrentValueIntern(value);
         calculateState(null);
         fireDataChanged(null);
     }
-	
+
 	private void setCurrentValueIntern(Map<Locale, String> value) {
         this.initialized = true;
         clearExternalValidationErrors();
@@ -228,7 +228,7 @@ public class I18nTextAM implements IFAttributeModel<Map<Locale, String>>, IFView
 	public List<IFValidator<Map<Locale, String>>> getValidators() {
 		return validators;
 	}
-	
+
     @Override
     public ValidationResult getValidationResult() {
         ValidationResult result = new ValidationResult();
@@ -267,7 +267,7 @@ public class I18nTextAM implements IFAttributeModel<Map<Locale, String>>, IFView
 	public void setValueConverter(@SuppressWarnings("rawtypes") IFValueConverter valueConverter) {
         this.valueConverter = valueConverter;
 	}
-	
+
 	@SuppressWarnings("rawtypes")
 	public IFValueConverter getValueConverter() {
 		return valueConverter;
@@ -281,7 +281,7 @@ public class I18nTextAM implements IFAttributeModel<Map<Locale, String>>, IFView
             fireUpdateViews();
         }
     }
-	
+
     @Override
     public void addExternalValidationError(String translatedMessage) {
         addExternalValidationError(new ValidationError(this, translatedMessage, null));
@@ -339,11 +339,11 @@ public class I18nTextAM implements IFAttributeModel<Map<Locale, String>>, IFView
             }
         }
     }
-    
+
     public void fireDataChanged(final IFViewAdapter<Map<Locale, String>, ?> viewAdapter) {
         @SuppressWarnings("unchecked")
 		IFAttributeModelEventListener<Map<Locale, String>>[] listeners = listenerList.getListeners(IFAttributeModelEventListener.class);
-        
+
         if (listeners != null) {
             for (final IFAttributeModelEventListener<Map<Locale, String>> listener : listeners) {
                 if (!SwingUtilities.isEventDispatchThread()) {
@@ -427,12 +427,12 @@ public class I18nTextAM implements IFAttributeModel<Map<Locale, String>>, IFView
     }
 
 
-    
+
     @Override
     public void clearExternalValidationErrors() {
-        externalValidationErrors.clear();        
+        externalValidationErrors.clear();
     }
-    
+
 	@Override
 	public String getId() {
 		return id;
@@ -463,12 +463,12 @@ public class I18nTextAM implements IFAttributeModel<Map<Locale, String>>, IFView
 	@Override
 	public IFAttributeInfo getAttributeInfo() {
 		return attributeInfo;
-	}	
-	
+	}
+
 	public boolean isRemoveEmptyLanguages() {
 		return removeEmptyLanguages;
 	}
-	
+
 	public void setRemoveEmptyLanguages(boolean removeEmptyLanguages) {
 		this.removeEmptyLanguages = removeEmptyLanguages;
 	}
