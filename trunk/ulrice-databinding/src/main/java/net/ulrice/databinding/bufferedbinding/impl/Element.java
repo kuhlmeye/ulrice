@@ -252,9 +252,9 @@ public class Element {
 		boolean oldValid = valid;
 		boolean oldDirty = dirty;
 
-		if (childElements != null && childElements.size() > 0) {
-			valid = true;
-			dirty = false;
+        if (childElements != null && childElements.size() > 0 && tableAM.isVirtualTreeNodes()) {
+            valid = true;
+            dirty = false;
 			for (Element child : childElements) {
 				if (!child.isValid()) {
 					valid = false;
@@ -702,7 +702,7 @@ public class Element {
 	 * Returns, if a column identified by the column id is dirty
 	 */
 	public boolean isColumnDirty(String columnId) {
-		if (getChildCount() > 0) {
+        if (getChildCount() > 0 && tableAM.isVirtualTreeNodes()) {
 			for (Element child : childElements) {
 				if (child.isColumnDirty(columnId)) {
 					return true;
