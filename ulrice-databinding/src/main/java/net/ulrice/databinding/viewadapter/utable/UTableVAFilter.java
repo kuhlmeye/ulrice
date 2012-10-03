@@ -288,7 +288,7 @@ public class UTableVAFilter extends RowFilter<UTableViewAdapter, String> impleme
                 HeaderCapable item = (HeaderCapable) element.getCurrentValue();
                 if (!item.isHeader() && (collapsedRowFilterMap.get(columnId).contains(entry.getStringValue(i)))) {
                     return false;
-                }                
+                }
             }
 
             if (element != null && element.getOriginalValue() instanceof HeaderCapable) {
@@ -494,7 +494,7 @@ public class UTableVAFilter extends RowFilter<UTableViewAdapter, String> impleme
                         regex = correctRegEx(regex);
 
                     try {
-                        final Pattern pattern = Pattern.compile(regex, Pattern.CASE_INSENSITIVE);
+                        final Pattern pattern = Pattern.compile(regex, Pattern.CASE_INSENSITIVE | Pattern.DOTALL);
                         regexExpressionMap.put(columnId, pattern);
                     }
                     catch (PatternSyntaxException e) {
