@@ -1029,4 +1029,23 @@ public class UTableComponent extends JPanel {
             attributeModel.rollbackElement(getSelectedElement());
         }
     }
+    
+    public void disableUserSorting(){
+        setUserSortingEnabled(scrollTable, false);
+        setUserSortingEnabled(staticTable, false);       
+    }
+    
+    public void enableUserSorting(){
+        setUserSortingEnabled(scrollTable, true);
+        setUserSortingEnabled(staticTable, true);       
+    }
+    
+    private void setUserSortingEnabled(UTable table, boolean enabled){
+        MouseListener[] listeners = table.getTableHeader().getMouseListeners();
+        for (MouseListener listner : listeners) {
+            if (listner instanceof UTableHeaderListener) {
+                ((UTableHeaderListener) listner).setSortingDisabled(!enabled);
+            }
+        }
+    }
 }
