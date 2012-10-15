@@ -24,6 +24,7 @@ public class AccordionPanel extends JPanel implements ActionListener {
     private final GridBagConstraints constraints;
 
     private JComponent content;
+    private JComponent footer;
 
     private boolean justOneOpen = false;
 
@@ -103,6 +104,17 @@ public class AccordionPanel extends JPanel implements ActionListener {
 
         this.content = content;
         add(content, BorderLayout.CENTER);
+
+        return this;
+    }
+
+    public AccordionPanel setFooter(JComponent footer) {
+        if (this.footer != null) {
+            remove(this.footer);
+        }
+
+        this.footer = footer;
+        add(footer, BorderLayout.SOUTH);
 
         return this;
     }
