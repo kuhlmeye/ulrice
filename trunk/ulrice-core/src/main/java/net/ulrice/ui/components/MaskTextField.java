@@ -55,8 +55,8 @@ public class MaskTextField extends JTextField {
 
     private static final char HYPHEN = '-';
     private static final char UNDERSCORE = '_';
-    
-    private List<Boolean> maskCharList = new ArrayList<Boolean>();
+
+    private final List<Boolean> maskCharList = new ArrayList<Boolean>();
 
     private int maskLen = 0;
     private String mask = null;
@@ -76,7 +76,7 @@ public class MaskTextField extends JTextField {
         if (mask == null) {
             return;
         }
-        if ((oldMask == null && mask != null) || (oldMask != null && !oldMask.equals(mask))) {
+        if (((oldMask == null) && (mask != null)) || ((oldMask != null) && !oldMask.equals(mask))) {
 
             StringBuilder builderDisplay = new StringBuilder();
             StringBuilder builderMask = new StringBuilder();
@@ -89,12 +89,13 @@ public class MaskTextField extends JTextField {
                     maskCharList.add(Boolean.TRUE);
                     builderDisplay.append(PLACEHOLDER_CHAR);
                     builderMask.append(curMaskChar);
-                } else if ((!lastWasEscape && curMaskChar != ESCAPE_CHAR) || (lastWasEscape)) {
+                }
+                else if ((!lastWasEscape && (curMaskChar != ESCAPE_CHAR)) || (lastWasEscape)) {
                     maskCharList.add(Boolean.FALSE);
                     builderDisplay.append(curMaskChar);
                     builderMask.append(curMaskChar);
                 }
-                lastWasEscape = !lastWasEscape && curMaskChar == ESCAPE_CHAR;
+                lastWasEscape = !lastWasEscape && (curMaskChar == ESCAPE_CHAR);
             }
             this.mask = mask;
             this.cleanedMask = builderMask.toString();
@@ -112,18 +113,18 @@ public class MaskTextField extends JTextField {
     }
 
     private boolean isMaskChar(char chr) {
-        return chr == ALL_MASK_CHAR || chr == NUM_MASK_CHAR || chr == CHARACTER_MASK_CHAR || chr == CHARACTER_OR_NUMBER_CHAR || chr == CHARACTER_LOWERCASE_MASK_CHAR
-                || chr == CHARACTER_UPPERCASE_MASK_CHAR || chr == ALL_MASK_LOWERCASE_CHAR || chr == ALL_MASK_UPPERCASE_CHAR
-                || chr == CHARACTER_OR_NUMBER_UPPERCASE_CHAR || chr == CHARACTER_OR_NUMBER_LOWERCASE_CHAR
-                || chr == CHARACTER_OR_NUMBER_SPECIAL_CHAR || chr == CHARACTER_OR_NUMBER_SPECIAL_LOWERCASE_CHAR
-                || chr == CHARACTER_OR_NUMBER_SPECIAL_UPPERCASE_CHAR;
+        return (chr == ALL_MASK_CHAR) || (chr == NUM_MASK_CHAR) || (chr == CHARACTER_MASK_CHAR) || (chr == CHARACTER_OR_NUMBER_CHAR) || (chr == CHARACTER_LOWERCASE_MASK_CHAR)
+            || (chr == CHARACTER_UPPERCASE_MASK_CHAR) || (chr == ALL_MASK_LOWERCASE_CHAR) || (chr == ALL_MASK_UPPERCASE_CHAR) || (chr == CHARACTER_OR_NUMBER_UPPERCASE_CHAR)
+            || (chr == CHARACTER_OR_NUMBER_LOWERCASE_CHAR) || (chr == CHARACTER_OR_NUMBER_SPECIAL_CHAR) || (chr == CHARACTER_OR_NUMBER_SPECIAL_LOWERCASE_CHAR)
+            || (chr == CHARACTER_OR_NUMBER_SPECIAL_UPPERCASE_CHAR);
     }
 
     @Override
     public Color getBackground() {
-        if(isEditable()) {
+        if (isEditable()) {
             return UIManager.getColor("TextField.background");
-        } else {
+        }
+        else {
             return UIManager.getColor("TextField.disabledBackground");
         }
     }
@@ -139,6 +140,7 @@ public class MaskTextField extends JTextField {
         return new MaskTextFieldDocument();
     }
 
+    @Override
     public void replaceSelection(String content) {
         int p0 = Math.min(getCaret().getDot(), getCaret().getMark());
         int p1 = Math.max(getCaret().getDot(), getCaret().getMark());
@@ -162,15 +164,15 @@ public class MaskTextField extends JTextField {
                 return;
             }
             // Check input..
-            if (cleanedMask != null && !"".equals(cleanedMask)) {
+            if ((cleanedMask != null) && !"".equals(cleanedMask)) {
                 StringBuilder resultStr = new StringBuilder();
                 char[] maskArr = cleanedMask.toCharArray();
                 int idxMask = 0;
                 int idxStr = 0;
-                for (int i = 0; i < maskArr.length && idxStr < str.length(); i++) {
+                for (int i = 0; (i < maskArr.length) && (idxStr < str.length()); i++) {
                     char maskChar = maskArr[i];
                     if (isMaskChar(i)) {
-                        if (idxMask >= offs && idxMask < offs + str.length()) {
+                        if ((idxMask >= offs) && (idxMask < (offs + str.length()))) {
                             char inputChar = str.charAt(idxStr);
 
                             if (!validInputChar(inputChar, maskChar)) {
@@ -199,17 +201,17 @@ public class MaskTextField extends JTextField {
                         idxMask++;
                     }
                 }
-                int lenAfterInsert = maxLen - str.length() + 1;
+                int lenAfterInsert = (maxLen - str.length()) + 1;
                 String text = resultStr.toString();
                 if (lenAfterInsert < 0) {
                     text = str.substring(0, -(lenAfterInsert + 1));
                 }
 
-                if (offs < getLength() && !textWasMarked) {
+                if ((offs < getLength()) && !textWasMarked) {
                     // super.remove(offs, text.length()); no override
                 }
 
-                if (getLength() + str.length() > maxLen) {
+                if ((getLength() + str.length()) > maxLen) {
                     return; // return if full
                 }
 
@@ -226,22 +228,20 @@ public class MaskTextField extends JTextField {
                 case CHARACTER_LOWERCASE_MASK_CHAR:
                 case CHARACTER_UPPERCASE_MASK_CHAR:
                 case CHARACTER_MASK_CHAR:
-                    return Character.isLetter(inputChar) || inputChar == ' ';
+                    return Character.isLetter(inputChar) || (inputChar == ' ');
                 case ALL_MASK_LOWERCASE_CHAR:
                 case ALL_MASK_UPPERCASE_CHAR:
-                	return inputChar <= 0xff;
+                    return inputChar <= 0xff;
                 case CHARACTER_OR_NUMBER_CHAR:
                 case CHARACTER_OR_NUMBER_UPPERCASE_CHAR:
                 case CHARACTER_OR_NUMBER_LOWERCASE_CHAR:
-                    boolean valid = Character.isLetter(inputChar)
-                        || Character.isDigit(inputChar);
+                    boolean valid = Character.isLetter(inputChar) || Character.isDigit(inputChar);
                     return valid;
                 case CHARACTER_OR_NUMBER_SPECIAL_CHAR:
                 case CHARACTER_OR_NUMBER_SPECIAL_LOWERCASE_CHAR:
                 case CHARACTER_OR_NUMBER_SPECIAL_UPPERCASE_CHAR:
-                    boolean validSpecial = Character.isLetter(inputChar)
-                    || Character.isDigit(inputChar) || inputChar == HYPHEN || inputChar == UNDERSCORE;
-                    return validSpecial;          
+                    boolean validSpecial = Character.isLetter(inputChar) || Character.isDigit(inputChar) || (inputChar == HYPHEN) || (inputChar == UNDERSCORE);
+                    return validSpecial;
                 case NUM_MASK_CHAR:
                     return Character.isDigit(inputChar);
                 default:
@@ -254,10 +254,11 @@ public class MaskTextField extends JTextField {
 
         @Override
         public View create(Element elem) {
-            if(mask != null) {
+            if (mask != null) {
                 return new MaskFieldView(elem);
-            } else {
-                return super.create(elem);              
+            }
+            else {
+                return super.create(elem);
             }
         }
     }
@@ -269,9 +270,9 @@ public class MaskTextField extends JTextField {
         private char[] displayMaskChars = new char[0];
         private int[] markerOffsets = new int[0];
 
-        private Segment workSegment = new Segment();
-        private Segment maskSegment = new Segment();
-        private Segment contentSegment = new Segment();
+        private final Segment workSegment = new Segment();
+        private final Segment maskSegment = new Segment();
+        private final Segment contentSegment = new Segment();
 
         public MaskFieldView(Element elem) {
             super(elem);
@@ -281,10 +282,10 @@ public class MaskTextField extends JTextField {
 
         @Override
         public Shape modelToView(int pos, Shape a, Bias b) throws BadLocationException {
-            if(cleanedMask == null) {
+            if (cleanedMask == null) {
                 return super.modelToView(pos, a, b);
             }
-            
+
             a = adjustAllocation(a);
             Rectangle rect = new Rectangle(a.getBounds());
             rect.height = getFontMetrics().getHeight();
@@ -293,9 +294,11 @@ public class MaskTextField extends JTextField {
 
             if (pos < markerOffsets.length) {
                 contentSegment.count = markerOffsets[pos];
-            } else if (markerOffsets.length > 0) {
+            }
+            else if (markerOffsets.length > 0) {
                 contentSegment.count = markerOffsets[markerOffsets.length - 1] + 1;
-            } else {
+            }
+            else {
                 contentSegment.count = 0;
             }
 
@@ -310,10 +313,10 @@ public class MaskTextField extends JTextField {
 
         @Override
         public int viewToModel(float fx, float fy, Shape a, Position.Bias[] bias) {
-            if(cleanedMask == null) {
+            if (cleanedMask == null) {
                 return super.viewToModel(fx, fy, a, bias);
             }
-            
+
             a = adjustAllocation(a);
             bias[0] = Position.Bias.Forward;
 
@@ -323,9 +326,10 @@ public class MaskTextField extends JTextField {
             int startOffset = getElement().getStartOffset();
             int endOffset = getElement().getEndOffset();
 
-            if (x < rect.x || y < rect.y) {
+            if ((x < rect.x) || (y < rect.y)) {
                 return startOffset;
-            } else if (x > rect.x + rect.width || y > rect.y + rect.height) {
+            }
+            else if ((x > (rect.x + rect.width)) || (y > (rect.y + rect.height))) {
                 return endOffset - 1;
             }
 
@@ -338,7 +342,7 @@ public class MaskTextField extends JTextField {
                 }
             }
 
-            if (offset > endOffset - 1) {
+            if (offset > (endOffset - 1)) {
                 offset = endOffset - 1;
             }
             return offset;
@@ -346,19 +350,21 @@ public class MaskTextField extends JTextField {
 
         @Override
         public void insertUpdate(DocumentEvent changes, Shape a, ViewFactory f) {
-            if(cleanedMask == null) {
+            if (cleanedMask == null) {
                 super.insertUpdate(changes, a, f);
-            } else {
-                super.insertUpdate(changes, adjustAllocation(a), f);            
+            }
+            else {
+                super.insertUpdate(changes, adjustAllocation(a), f);
                 buildContent();
             }
         }
 
         @Override
         public void removeUpdate(DocumentEvent changes, Shape a, ViewFactory f) {
-            if(cleanedMask == null) {
+            if (cleanedMask == null) {
                 super.insertUpdate(changes, a, f);
-            } else {
+            }
+            else {
                 super.removeUpdate(changes, adjustAllocation(a), f);
                 buildContent();
             }
@@ -366,7 +372,7 @@ public class MaskTextField extends JTextField {
 
         @Override
         protected void drawLine(int line, Graphics g, int x, int y) {
-            if(cleanedMask == null) {
+            if (cleanedMask == null) {
                 super.drawLine(line, g, x, y);
                 return;
             }
@@ -378,7 +384,7 @@ public class MaskTextField extends JTextField {
 
             try {
 
-                if (p0 == p1 || sel0 == sel1 || inView(p0, p1, sel0, sel1) == false) {
+                if ((p0 == p1) || (sel0 == sel1) || (inView(p0, p1, sel0, sel1) == false)) {
                     drawUnselectedText(g, x, y, 0, contentSegment.count);
                     return;
                 }
@@ -394,14 +400,15 @@ public class MaskTextField extends JTextField {
                 if (mappedSel1 < contentSegment.count) {
                     drawUnselectedText(g, x, y, mappedSel1, contentSegment.count);
                 }
-            } catch (BadLocationException e) {
+            }
+            catch (BadLocationException e) {
                 //
             }
         }
 
         @Override
         protected int drawUnselectedText(Graphics g, int x, int y, int p0, int p1) throws BadLocationException {
-            if(cleanedMask == null) {
+            if (cleanedMask == null) {
                 return super.drawSelectedText(g, x, y, p0, p1);
             }
             g.setColor(getUnselectedColor());
@@ -413,7 +420,7 @@ public class MaskTextField extends JTextField {
 
         @Override
         protected int drawSelectedText(Graphics g, int x, int y, int p0, int p1) throws BadLocationException {
-            if(cleanedMask == null) {
+            if (cleanedMask == null) {
                 return super.drawSelectedText(g, x, y, p0, p1);
             }
             workSegment.array = contentSegment.array;
@@ -427,17 +434,18 @@ public class MaskTextField extends JTextField {
             pos -= getElement().getStartOffset();
             if (pos >= markerOffsets.length) {
                 return contentSegment.count;
-            } else {
+            }
+            else {
                 return markerOffsets[pos];
             }
         }
 
         private boolean inView(int p0, int p1, int sel0, int sel1) {
-            if (sel0 >= p0 && sel0 < p1) {
+            if ((sel0 >= p0) && (sel0 < p1)) {
                 return true;
             }
 
-            if (sel0 < p0 && sel1 >= p0) {
+            if ((sel0 < p0) && (sel1 >= p0)) {
                 return true;
             }
 
@@ -463,7 +471,8 @@ public class MaskTextField extends JTextField {
 
                 if (maskLen == 0) {
                     doc.getText(startOffset, length, contentSegment);
-                } else {
+                }
+                else {
                     doc.getText(startOffset, length, workSegment);
                     System.arraycopy(displayMaskChars, 0, contentChars, 0, maskLen);
 
@@ -474,7 +483,8 @@ public class MaskTextField extends JTextField {
                         contentChars[markerOffsets[i]] = workSegment.array[i + firstOffset];
                     }
                 }
-            } catch (BadLocationException e) {
+            }
+            catch (BadLocationException e) {
                 contentSegment.count = 0;
             }
         }
@@ -504,8 +514,8 @@ public class MaskTextField extends JTextField {
         }
 
         @Override
-        public float getPreferredSpan(int axis) {           
-            if (axis == View.Y_AXIS || cleanedMask == null) {
+        public float getPreferredSpan(int axis) {
+            if ((axis == View.Y_AXIS) || (cleanedMask == null)) {
                 return super.getPreferredSpan(axis);
             }
             return Math.max(getSegmentWidth(maskSegment), getSegmentWidth(contentSegment));
