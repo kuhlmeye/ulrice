@@ -57,10 +57,9 @@ public class AccordionPanel extends JPanel implements ActionListener {
      * @param preferredHeight - The height of the component has to be set in order to get scrollPane to work
      */
     public AccordionContentPanel addFoldableWithScrollPane(String title, JComponent content, int preferredHeight) {
-
         JScrollPane sp = new JScrollPane(content, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
         sp.setBorder(BorderFactory.createEmptyBorder());
-
+        sp.setBackground(content.getBackground());
         sp.setPreferredSize(new Dimension(0, preferredHeight));
 
         return addFoldable(title, sp);
@@ -70,7 +69,7 @@ public class AccordionPanel extends JPanel implements ActionListener {
      * Default foldable with light blue color
      */
     public AccordionContentPanel addFoldable(String title, JComponent content) {
-        return addFoldable(title, content, new Color(0xecf4fb));
+        return addFoldable(title, content, content.getBackground());
     }
 
     /**
