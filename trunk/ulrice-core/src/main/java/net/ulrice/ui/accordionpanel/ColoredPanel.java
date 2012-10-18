@@ -109,7 +109,7 @@ public class ColoredPanel extends JPanel {
 
         add(content);
         setBackground(new Color(0xecf4fb));
-        setOpaque(false);
+        setOpaque(true);
         add(new JSeparator(), BorderLayout.SOUTH);
     }
 
