@@ -88,13 +88,15 @@ public class UBorder implements Border {
         Stroke stroke = g2d.getStroke();
         g2d.setStroke(new BasicStroke(2, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND));
 
+        boolean focus = isFocusOwner(c);
+        
         // draw the highlight
         if (highlight != null) {
-            g2d.setColor(Colors.translucent(highlight, (c.isFocusOwner()) ? 1 : 0.33));
+            g2d.setColor(Colors.translucent(highlight, (focus) ? 1 : 0.33));
             g2d.drawRoundRect(x + 1, y + 1, width - 3, height - 3, 4, 4);
         }
         // draw focus
-        else if (c.isFocusOwner()) {
+        else if (focus) {
             g2d.setColor(new Color(0x73a4d1));
             g2d.drawRoundRect(x + 1, y + 1, width - 3, height - 3, 4, 4);
         }
@@ -115,4 +117,19 @@ public class UBorder implements Border {
         g2d.fillRect(x + 2, y + 2, width - 4, 2);
     }
 
+    private boolean isFocusOwner(Component component) {
+        if (component.isFocusOwner()) {
+            return true;
+        }
+
+        if (component instanceof Container) {
+            for (Component inner : ((Container) component).getComponents()) {
+                if (isFocusOwner(inner)) {
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    }
 }
