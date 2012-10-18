@@ -4,6 +4,8 @@ import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Rectangle;
 import java.awt.Shape;
+import java.awt.event.FocusEvent;
+import java.awt.event.FocusListener;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -30,7 +32,7 @@ import javax.swing.text.ViewFactory;
  * 
  * @author christof
  */
-public class MaskTextField extends JTextField {
+public class MaskTextField extends JTextField implements FocusListener {
 
     private static final long serialVersionUID = 5133016182441447477L;
 
@@ -69,6 +71,8 @@ public class MaskTextField extends JTextField {
 
     public MaskTextField() {
         super();
+        
+        addFocusListener(this);
     }
 
     public void setMask(String mask) {
@@ -248,6 +252,16 @@ public class MaskTextField extends JTextField {
                     return true;
             }
         }
+    }
+    
+    @Override
+    public void focusGained(FocusEvent e) {
+        repaint();
+    }
+
+    @Override
+    public void focusLost(FocusEvent e) {
+        repaint();
     }
 
     private class MaskTextFieldUI extends MetalTextFieldUI {
