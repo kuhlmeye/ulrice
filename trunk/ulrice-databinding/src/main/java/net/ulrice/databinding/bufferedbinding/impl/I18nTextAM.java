@@ -157,6 +157,11 @@ public class I18nTextAM implements IFAttributeModel<Map<Locale, String>>, IFView
     public void directRead(Map<Locale, String> value) {
     	this.originalValue = new HashMap<Locale, String>();
     	for(LocaleSelectorItem item : localeItems) {
+    	    
+    	    if(value == null){ //FIXME should never happen
+    	        return;
+    	    }
+    	    
     		this.originalValue.put(item.getLocale(), value.get(item.getLocale()));
     	}
 
