@@ -69,6 +69,8 @@ public class UTableComponent extends JPanel {
     protected TableAM attributeModel;
 
     protected List<UTableAction> popupMenuActions = new ArrayList<UTableAction>();
+    
+    protected boolean lowerInfoAreaDisabled;
 
     public UTableComponent(final int fixedColumns) {
         this.fixedColumns = fixedColumns;
@@ -1048,4 +1050,16 @@ public class UTableComponent extends JPanel {
             }
         }
     }
+
+    public boolean isLowerInfoAreaDisabled() {
+        return lowerInfoAreaDisabled;
+    }
+
+    public void setLowerInfoAreaDisabled(boolean lowerInfoAreaDisabled) {
+        this.lowerInfoAreaDisabled = lowerInfoAreaDisabled;
+    }
+    
+    
 }
+
+
