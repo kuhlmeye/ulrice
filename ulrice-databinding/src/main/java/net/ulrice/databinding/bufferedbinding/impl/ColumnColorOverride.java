@@ -10,47 +10,16 @@ import java.awt.Color;
  */
 public class ColumnColorOverride {
     
-    private Color evenNormalColor;
-    private Color oddNormalColor;
-    private Color evenReadOnlyColor;
-    private Color oddReadOnlyColor;
+    private Color color;
     
-    public ColumnColorOverride(Color evenNormalColor, Color oddNormalColor, Color evenReadOnlyColor,
-        Color oddReadOnlyColor) {
+    public ColumnColorOverride(Color color) {
         super();
-        this.evenNormalColor = evenNormalColor;
-        this.oddNormalColor = oddNormalColor;
-        this.evenReadOnlyColor = evenReadOnlyColor;
-        this.oddReadOnlyColor = oddReadOnlyColor;
+        
+        this.color = color;
     }
     
-    public ColumnColorOverride(Color evenColor, Color oddColor) {
-        this(evenColor, oddColor, evenColor, oddColor);
-       
+    public Color getColor() {
+        return color;
     }
     
-    public Color getEvenNormalColor() {
-        return evenNormalColor;
-    }
-    public void setEvenNormalColor(Color evenNormalColor) {
-        this.evenNormalColor = evenNormalColor;
-    }
-    public Color getOddNormalColor() {
-        return oddNormalColor;
-    }
-    public void setOddNormalColor(Color oddNormalColor) {
-        this.oddNormalColor = oddNormalColor;
-    }
-    public Color getEvenReadOnlyColor() {
-        return evenReadOnlyColor;
-    }
-    public void setEvenReadOnlyColor(Color evenReadOnlyColor) {
-        this.evenReadOnlyColor = evenReadOnlyColor;
-    }
-    public Color getOddReadOnlyColor() {
-        return oddReadOnlyColor;
-    }
-    public void setOddReadOnlyColor(Color oddReadOnlyColor) {
-        this.oddReadOnlyColor = oddReadOnlyColor;
-    }
 }

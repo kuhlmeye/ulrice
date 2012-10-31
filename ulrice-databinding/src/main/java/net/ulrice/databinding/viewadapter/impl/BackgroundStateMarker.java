@@ -13,16 +13,11 @@ import net.ulrice.util.Colors;
 
 public class BackgroundStateMarker implements IFStateMarker, IFCellStateMarker {
 
-    private static final Color evenNormalBackground = BindingUI.getColor(BindingUI.BACKGROUND_STATE_MARKER_NORMAL_EVEN, new Color(230, 230, 230));
-    private static final Color oddNormalBackground = BindingUI.getColor(BindingUI.BACKGROUND_STATE_MARKER_NORMAL_ODD, new Color(200, 200, 200));
-    private static final Color evenReadOnlyBackground = BindingUI.getColor(BindingUI.BACKGROUND_STATE_MARKER_READONLY_EVEN, new Color(200, 230, 200));
-    private static final Color oddReadOnlyBackground = BindingUI.getColor(BindingUI.BACKGROUND_STATE_MARKER_READONLY_ODD, new Color(170, 200, 170));
-    private static final Color selectedBackground = BindingUI.getColor(BindingUI.BACKGROUND_STATE_MARKER_SELECTED, new Color(200, 200, 255));
-
-    private static final Color REMOVED_BG_COLOR = BindingUI.getColor(BindingUI.BACKGROUND_STATE_MARKER_REMOVED_BG, new Color(150, 150, 150));
-    private static final Color REMOVED_FG_COLOR = BindingUI.getColor(BindingUI.BACKGROUND_STATE_MARKER_REMOVED_FG, new Color(80, 80, 80));
+    private static final Color NORMAL_BG_COLOR = BindingUI.getColor(BindingUI.BACKGROUND_STATE_MARKER_NORMAL_EVEN, new Color(230, 230, 230));
     private static final Color INVALID_BG_COLOR = BindingUI.getColor(BindingUI.BACKGROUND_STATE_MARKER_INVALID, new Color(200, 130, 130));
     private static final Color CHANGED_BG_COLOR = BindingUI.getColor(BindingUI.BACKGROUND_STATE_MARKER_CHANGED, new Color(186, 207, 226));
+    private static final Color SELECTED_BG_COLOR = BindingUI.getColor(BindingUI.BACKGROUND_STATE_MARKER_SELECTED, new Color(200, 200, 255));
+
     private Color normalFGColor;
     private Color normalBGColor;
 
@@ -43,42 +38,35 @@ public class BackgroundStateMarker implements IFStateMarker, IFCellStateMarker {
 
     @Override
     public void updateState(Element value, int row, boolean selected, boolean editable, boolean dirty, boolean valid, ColumnColorOverride columnColorOverride, JComponent component) {
-        if (value.isRemoved() && !selected) {
-            component.setForeground(REMOVED_FG_COLOR);
-            component.setBackground(REMOVED_BG_COLOR);
-        }
-        else if (!valid) {
-            component.setForeground(normalFGColor);
-            component.setBackground(INVALID_BG_COLOR);
+        Color foreground = normalFGColor;
+        Color background = columnColorOverride == null ? NORMAL_BG_COLOR : columnColorOverride.getColor();
+        
+        if (value.isRemoved()) {
+            foreground = Colors.blend(foreground, Color.WHITE, 0.25);
         }
         else {
-            if (dirty && !value.isRemoved()) {
-                component.setForeground(normalFGColor);
-                component.setBackground(CHANGED_BG_COLOR);
+            if (!editable) {
+                background = Colors.blend(background, Color.BLACK, 0.85);
             }
-            else {
-                component.setForeground(normalFGColor);
-                if (!editable) {
-                    if (row % 2 == 0) {
-                        component.setBackground(columnColorOverride == null ? evenReadOnlyBackground : columnColorOverride.getEvenReadOnlyColor());
-                    }
-                    else {
-                        component.setBackground(columnColorOverride == null ? oddReadOnlyBackground : columnColorOverride.getOddReadOnlyColor());
-                    }
-                }
-                else {
-                    if (row % 2 == 0) {
-                        component.setBackground(columnColorOverride == null ? evenNormalBackground : columnColorOverride.getEvenNormalColor());
-                    }
-                    else {
-                        component.setBackground(columnColorOverride == null ? oddNormalBackground : columnColorOverride.getOddNormalColor());
-                    }
-                }
+
+            if (!valid) {
+                background = Colors.blend(background, INVALID_BG_COLOR, 0.85);
+            }
+            else if (dirty) {
+                background = Colors.blend(background, CHANGED_BG_COLOR, 0.85);
             }
         }
+
+        if ((row % 2) == 1) {
+            background = Colors.blend(background, Color.BLACK, 0.95);
+        }
+
         if (selected) {
-            component.setBackground(makeColorSelected(component.getBackground()));
+            background = Colors.blend(background, SELECTED_BG_COLOR, 0.5);
         }
+
+        component.setForeground(foreground);
+        component.setBackground(background);
     }
 
     @Override
@@ -90,14 +78,5 @@ public class BackgroundStateMarker implements IFStateMarker, IFCellStateMarker {
             this.normalBGColor = component.getBackground();
         }
     }
-
-    /**
-     * to get a consistend selection colour behavior TODO: description
-     */
-    public static Color makeColorSelected(Color color) {
-        return Colors.blend(color, selectedBackground, 0.5);
-    }
-
-   
 
 }
