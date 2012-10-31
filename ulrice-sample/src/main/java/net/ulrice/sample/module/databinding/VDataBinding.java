@@ -18,51 +18,52 @@ import net.ulrice.databinding.viewadapter.impl.JTextComponentViewAdapter;
 
 /**
  * @author christof
- *
  */
 public class VDataBinding extends JPanel {
 
-	private final JTextComponentViewAdapter textFieldGA1;
-	private final JTextComponentViewAdapter textFieldGA2;
+    private static final long serialVersionUID = -3696333575593895827L;
+
+    private final JTextComponentViewAdapter textFieldGA1;
+    private final JTextComponentViewAdapter textFieldGA2;
     private final JTableViewAdapter listGA = new JTableViewAdapter(new JTable(), null);
 
-	public VDataBinding() {
-		final JTextField tf1 = new JTextField();
-		final JTextField tf2 = new JTextField();
-		
-		textFieldGA1 = new JTextComponentViewAdapter(tf1, null);
-		BorderStateMarker borderStateMarker = new BorderStateMarker(textFieldGA1.getComponent().getBorder());
-		textFieldGA1.setStateMarker(borderStateMarker);
-		textFieldGA1.setTooltipHandler(new DetailedTooltipHandler());
-		tf1.setBorder(borderStateMarker);
-		textFieldGA2 = new JTextComponentViewAdapter(tf2, null);
-		
-		setLayout(new BorderLayout());
-		add(textFieldGA1.getComponent(), BorderLayout.NORTH);
+    public VDataBinding() {
+        final JTextField tf1 = new JTextField();
+        final JTextField tf2 = new JTextField();
+
+        textFieldGA1 = new JTextComponentViewAdapter(tf1, null);
+        BorderStateMarker borderStateMarker = new BorderStateMarker(textFieldGA1.getComponent().getBorder() != null, false, false);
+        textFieldGA1.setStateMarker(borderStateMarker);
+        textFieldGA1.setTooltipHandler(new DetailedTooltipHandler());
+        tf1.setBorder(borderStateMarker);
+        textFieldGA2 = new JTextComponentViewAdapter(tf2, null);
+
+        setLayout(new BorderLayout());
+        add(textFieldGA1.getComponent(), BorderLayout.NORTH);
         add(new JScrollPane(listGA.getComponent()), BorderLayout.CENTER);
-		add(textFieldGA2.getComponent(), BorderLayout.SOUTH);
-	}
-	
-	/**
-	 * @see net.ulrice.module.IFView#getView()
-	 */
-	public JComponent getView() {
-		return this;
-	}
+        add(textFieldGA2.getComponent(), BorderLayout.SOUTH);
+    }
 
-	/**
-	 * @return the textFieldGA1
-	 */
-	public JTextComponentViewAdapter getTextFieldGA1() {
-		return textFieldGA1;
-	}
+    /**
+     * @see net.ulrice.module.IFView#getView()
+     */
+    public JComponent getView() {
+        return this;
+    }
 
-	/**
-	 * @return the textFieldGA2
-	 */
-	public JTextComponentViewAdapter getTextFieldGA2() {
-		return textFieldGA2;
-	}
+    /**
+     * @return the textFieldGA1
+     */
+    public JTextComponentViewAdapter getTextFieldGA1() {
+        return textFieldGA1;
+    }
+
+    /**
+     * @return the textFieldGA2
+     */
+    public JTextComponentViewAdapter getTextFieldGA2() {
+        return textFieldGA2;
+    }
 
     /**
      * @return the listGA

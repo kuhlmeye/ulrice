@@ -8,7 +8,6 @@ import java.awt.image.ImageObserver;
 import javax.swing.Icon;
 import javax.swing.JComponent;
 import javax.swing.UIManager;
-import javax.swing.border.Border;
 
 import net.ulrice.databinding.ui.BindingUIConstants;
 import net.ulrice.databinding.viewadapter.IFStateMarker;
@@ -36,8 +35,8 @@ public class BorderStateMarker extends UBorder implements ImageObserver, IFState
     /**
      * Creates a new border state marker.
      */
-    public BorderStateMarker(Border normalBorder) {
-        this(BorderStateMarkerStrategy.BORDER_ONLY, normalBorder);
+    public BorderStateMarker(boolean borderVisible, boolean clipLeft, boolean clipRight) {
+        this(BorderStateMarkerStrategy.BORDER_ONLY, borderVisible, clipLeft, clipRight);
     }
 
     /**
@@ -45,8 +44,8 @@ public class BorderStateMarker extends UBorder implements ImageObserver, IFState
      * 
      * @param iconOnly true, if only the icon should be shown.
      */
-    public BorderStateMarker(BorderStateMarkerStrategy strategy, Border normalBorder) {
-        super(normalBorder);
+    public BorderStateMarker(BorderStateMarkerStrategy strategy, boolean borderVisible, boolean clipLeft, boolean clipRight) {
+        super(borderVisible, clipLeft, clipRight);
 
         changedIcon = UIManager.getIcon(BindingUIConstants.BORDER_STATE_MARKER_CHANGED_IMAGE);
         invalidIcon = UIManager.getIcon(BindingUIConstants.BORDER_STATE_MARKER_INVALID_IMAGE);
@@ -82,7 +81,7 @@ public class BorderStateMarker extends UBorder implements ImageObserver, IFState
      * @param height The height of the component.
      */
     private void drawNormal(Component c, Graphics g, int x, int y, int width, int height) {
-        if (getNormalBorder() != null) {
+        if (isBorderVisible()) {
             drawBorder(c, g, null, x, y, width, height);
         }
     }

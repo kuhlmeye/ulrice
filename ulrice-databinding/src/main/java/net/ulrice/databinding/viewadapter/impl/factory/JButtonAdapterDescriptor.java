@@ -9,27 +9,27 @@ import net.ulrice.databinding.viewadapter.impl.BorderStateMarker;
 import net.ulrice.databinding.viewadapter.impl.DetailedTooltipHandler;
 import net.ulrice.databinding.viewadapter.impl.JButtonViewAdapter;
 
-
-
 public class JButtonAdapterDescriptor implements IFViewAdapterDescriptor {
-    public boolean canHandle (Object widget) {
+    @Override
+    public boolean canHandle(Object widget) {
         return widget instanceof JButton;
     }
 
-    public IFViewAdapter createInstance (Object widget, IFAttributeInfo attributeInfo) {
-        
+    @Override
+    public IFViewAdapter createInstance(Object widget, IFAttributeInfo attributeInfo) {
+
         JButton button = (JButton) widget;
         JButtonViewAdapter viewAdapter = new JButtonViewAdapter(button, attributeInfo);
 
         DetailedTooltipHandler tooltipHandler = new DetailedTooltipHandler();
-        BorderStateMarker stateMarker = new BorderStateMarker(button.getBorder());
-    	
-		viewAdapter.setTooltipHandler(tooltipHandler);
-		viewAdapter.setStateMarker(stateMarker);
-		
-		button.setBorder(stateMarker);
-		
-		return viewAdapter;
-        
+        BorderStateMarker stateMarker = new BorderStateMarker(button.getBorder() != null, false, false);
+
+        viewAdapter.setTooltipHandler(tooltipHandler);
+        viewAdapter.setStateMarker(stateMarker);
+
+        button.setBorder(stateMarker);
+
+        return viewAdapter;
+
     }
 }

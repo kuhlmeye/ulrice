@@ -9,25 +9,25 @@ import net.ulrice.databinding.viewadapter.impl.BorderStateMarker;
 import net.ulrice.databinding.viewadapter.impl.DetailedTooltipHandler;
 import net.ulrice.databinding.viewadapter.impl.JCheckBoxViewAdapter;
 
-
-
 public class JCheckboxAdapterDescriptor implements IFViewAdapterDescriptor {
-    public boolean canHandle (Object widget) {
+    @Override
+    public boolean canHandle(Object widget) {
         return widget instanceof JCheckBox;
     }
 
-    public IFViewAdapter createInstance (Object widget, IFAttributeInfo attributeInfo) {
+    @Override
+    public IFViewAdapter createInstance(Object widget, IFAttributeInfo attributeInfo) {
         JCheckBox checkBox = (JCheckBox) widget;
         JCheckBoxViewAdapter viewAdapter = new JCheckBoxViewAdapter(checkBox, attributeInfo);
 
         DetailedTooltipHandler tooltipHandler = new DetailedTooltipHandler();
-        BorderStateMarker stateMarker = new BorderStateMarker(checkBox.getBorder());
-    	
-		viewAdapter.setTooltipHandler(tooltipHandler);
-		viewAdapter.setStateMarker(stateMarker);
-		
-		checkBox.setBorder(stateMarker);
-		
-		return viewAdapter;
+        BorderStateMarker stateMarker = new BorderStateMarker(checkBox.getBorder() != null, false, false);
+
+        viewAdapter.setTooltipHandler(tooltipHandler);
+        viewAdapter.setStateMarker(stateMarker);
+
+        checkBox.setBorder(stateMarker);
+
+        return viewAdapter;
     }
 }
