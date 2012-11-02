@@ -1,7 +1,9 @@
 package net.ulrice.process;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Logger;
@@ -27,6 +29,7 @@ public class ProcessManager implements IFProcessListener {
     private Map<String, IFBackgroundProcess> idProcessMap = new HashMap<String, IFBackgroundProcess>();
     private Map<IFBackgroundProcess, String> processIdMap = new HashMap<IFBackgroundProcess, String>();
     private List<IFBackgroundProcess> globalProcesses = new ArrayList<IFBackgroundProcess>();
+    private Map<String, List<Runnable>> executeAfterProcessMap = new Hashtable<String, List<Runnable>>();
 
     private EventListenerList listenerList = new EventListenerList();
 
@@ -79,10 +82,16 @@ public class ProcessManager implements IFProcessListener {
         if (ProcessState.Started.equals(process.getProcessState()) && process.getOwningController() != null && process.blocksWorkarea()) {
             Ulrice.getModuleManager().addBlocker(process.getOwningController(), process);                
         }
+        
+    	String processId = getIdOfProcess(process);
+    	if((ProcessState.Cancelled.equals(process.getProcessState()) || ProcessState.Done.equals(process.getProcessState())) && executeAfterProcessMap.containsKey(processId)) {
+    		executeRunnables(executeAfterProcessMap.remove(processId));
+    	}
+        
         if (ProcessState.Done.equals(process.getProcessState())) {
             if (process.getOwningController() != null && process.blocksWorkarea()) {
                 Ulrice.getModuleManager().removeBlocker(process.getOwningController(), process);
-            }
+            } 
 
             String uniqueId = processIdMap.get(process);
             idProcessMap.remove(uniqueId);
@@ -107,12 +116,41 @@ public class ProcessManager implements IFProcessListener {
     public IFBackgroundProcess getProcessById(String uniqueId) {
         return idProcessMap.get(uniqueId);
     }
+    
+    public String getIdOfProcess(IFBackgroundProcess process) {
+    	return processIdMap.get(process);
+    }
+    
+    /**
+     * Starts the runnable 
+     */
+    public void doAfterProcess(final String processId, Runnable runnable) {
+    	if(executeAfterProcessMap.containsKey(processId)) {
+    		executeAfterProcessMap.get(processId).add(runnable);
+    	} else {
+        	executeAfterProcessMap.put(processId, Collections.singletonList(runnable));
+    	}
+    	
+    	IFBackgroundProcess process = getProcessById(processId);
+    	if(process == null || !executeAfterProcessMap.containsKey(processId)) {
+    		executeRunnables(executeAfterProcessMap.remove(processId));    		
+    	}
+    }
 
-    public void fireStateChanged(final IFBackgroundProcess process) {
+    private void executeRunnables(List<Runnable> runnableList) {
+		if(runnableList != null) {
+			for(Runnable runnable : runnableList) {
+				runnable.run();
+			}
+		}
+	}
+
+	public void fireStateChanged(final IFBackgroundProcess process) {
         SwingUtilities.invokeLater(new Runnable() {
             
             @Override
             public void run() {
+            	
                 IFProcessListener[] listeners = listenerList.getListeners(IFProcessListener.class);
                 if (listeners != null) {
                     for (IFProcessListener listener : listeners) {
