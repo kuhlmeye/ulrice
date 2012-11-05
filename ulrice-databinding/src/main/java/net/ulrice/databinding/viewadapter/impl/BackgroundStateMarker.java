@@ -43,6 +43,10 @@ public class BackgroundStateMarker implements IFStateMarker, IFCellStateMarker {
         
         if (value.isRemoved()) {
             foreground = Colors.blend(foreground, Color.WHITE, 0.25);
+            
+            if ((!valid) || (dirty)) {
+                background = Colors.blend(background, INVALID_BG_COLOR, 0.85);
+            }
         }
         else {
             if (!editable) {
