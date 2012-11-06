@@ -43,9 +43,9 @@ public class BackgroundStateMarker implements IFStateMarker, IFCellStateMarker {
         
         if (value.isRemoved()) {
             foreground = Colors.blend(foreground, Color.WHITE, 0.25);
-            
-            if ((!valid) || (dirty)) {
-                background = Colors.blend(background, INVALID_BG_COLOR, 0.85);
+
+            if (!valid) {
+                background = Colors.blend(background, INVALID_BG_COLOR, 0.5);
             }
         }
         else {
@@ -54,7 +54,7 @@ public class BackgroundStateMarker implements IFStateMarker, IFCellStateMarker {
             }
 
             if (!valid) {
-                background = Colors.blend(background, INVALID_BG_COLOR, 0.85);
+                background = Colors.blend(background, INVALID_BG_COLOR, 0.66);
             }
             else if (dirty) {
                 background = Colors.blend(background, CHANGED_BG_COLOR, 0.85);
