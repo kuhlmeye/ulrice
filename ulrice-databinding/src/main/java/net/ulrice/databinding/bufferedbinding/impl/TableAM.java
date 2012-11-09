@@ -621,12 +621,23 @@ public class TableAM implements IFAttributeModel {
         }
     }
 
+
     /**
      * Add a column to this table model
      * 
      * @param columnDefinition The definition of the column that should be added.
      */
     public void addColumn(final ColumnDefinition< ?> columnDefinition) {
+        addColumn(columnDefinition, -1);
+    }
+    
+    /**
+     * Add a column to this table model on a specific position
+     * 
+     * @param columnDefinition The definition of the column that should be added.
+     * @param index the position of the new column
+     */
+    public void addColumn(final ColumnDefinition< ?> columnDefinition, int index) {
         columnDefinition.addChangeListener(new ColumnDefinitionChangedListener() {
             @Override
             public void valueRangeChanged(final ColumnDefinition< ?> colDef) {
@@ -667,7 +678,12 @@ public class TableAM implements IFAttributeModel {
                 }
             }
         });
-        columns.add(columnDefinition);
+        if(index != -1){
+            columns.add(index, columnDefinition);
+        }else{
+            columns.add(columnDefinition);
+        }
+        
         columnIdMap.put(columnDefinition.getId(), columnDefinition);
 
         for(Element element : elements) {
