@@ -235,6 +235,10 @@ public class UTableViewAdapter extends AbstractViewAdapter implements TableModel
      */
     @Override
     public boolean isCellEditable(int rowIndex, int columnIndex) {
+        if(!isEditable() || attributeModel.isReadOnly()) {
+            return false;
+        }
+        
         if(getTreeTableModelAdapter() != null) {
             return getTreeTableModelAdapter().isCellEditable(rowIndex, columnIndex);
         } else if (getAttributeModel() != null) {
