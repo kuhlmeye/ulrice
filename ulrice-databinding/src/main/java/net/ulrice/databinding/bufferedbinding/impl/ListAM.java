@@ -146,4 +146,8 @@ public class ListAM<T> extends GenericAM<List<T>> implements ListModel {
         }
     }
 
+    public boolean contains(Object item) {
+        return getCurrentValue().contains(item);
+    }
+
 }
