@@ -57,7 +57,7 @@ public class BackgroundStateMarker implements IFStateMarker, IFCellStateMarker {
                 background = Colors.blend(background, INVALID_BG_COLOR, 0.66);
             }
             else if (dirty) {
-                background = Colors.blend(background, CHANGED_BG_COLOR, 0.85);
+                background = Colors.blend(background, CHANGED_BG_COLOR, 0.75);
             }
         }
 
