@@ -82,4 +82,10 @@ public class AccordionContentPanel extends JPanel implements ActionListener {
     public JComponent getContent() {
 		return content;
 	}
+
+
+
+    public AccordionSeparatorPanel getSeparatorPanel() {
+        return separatorPanel;
+    }
 }

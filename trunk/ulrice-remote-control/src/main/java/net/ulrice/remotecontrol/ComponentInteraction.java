@@ -11,6 +11,7 @@ import net.ulrice.remotecontrol.impl.helper.ComponentHelperRegistry;
 import net.ulrice.remotecontrol.impl.keyboard.RemoteKeyboardDE;
 import net.ulrice.remotecontrol.impl.keyboard.RemoteKeyboardInstruction;
 import net.ulrice.remotecontrol.util.RemoteControlUtils;
+import net.ulrice.remotecontrol.util.Result;
 import ognl.Ognl;
 import ognl.OgnlException;
 
@@ -725,18 +726,31 @@ public abstract class ComponentInteraction implements Serializable {
              * @see net.ulrice.remotecontrol.ComponentInteraction#interact(java.awt.Component, java.awt.Robot)
              */
             @Override
-            public boolean interact(Component component, Robot robot) throws RemoteControlException {
+            public boolean interact(final Component component, Robot robot) throws RemoteControlException {
+                final Result<Boolean> result = new Result<Boolean>(5);
+
+                RemoteControlUtils.invokeInSwing(new Runnable() {
+                    public void run() {
+                        try {
+                            Ognl.getValue(expression, component);
+                        }
+                        catch (Exception e) {
+                            result.fireException(e);
+                        }
+                        finally {
+                            RemoteControlUtils.pause();
+                        }
+
+                        result.fireResult(Boolean.TRUE);
+                    }
+                });
+
                 try {
-                    Ognl.getValue(expression, component);
+                    return result.aquireResult();
                 }
-                catch (OgnlException e) {
+                catch (RemoteControlException e) {
                     throw new RemoteControlException("Invocation failed: " + expression, e);
                 }
-                finally {
-                    RemoteControlUtils.pause();
-                }
-
-                return true;
             }
 
             @Override

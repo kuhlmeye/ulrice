@@ -105,4 +105,8 @@ public class AccordionSeparatorPanel extends JPanel {
     public void setTitle(String title) {
         titleLabel.setText(title);
     }
+    
+    public String getTitle(){
+        return titleLabel.getText();
+    }
 }
