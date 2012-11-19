@@ -1,33 +1,38 @@
 package net.ulrice.databinding.viewadapter.impl;
 
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
+
+import javax.swing.DefaultListModel;
 import javax.swing.JList;
 import javax.swing.ListModel;
 import javax.swing.event.ListDataEvent;
 import javax.swing.event.ListDataListener;
 
 import net.ulrice.databinding.bufferedbinding.IFAttributeInfo;
-import net.ulrice.databinding.bufferedbinding.impl.ListAM;
 import net.ulrice.databinding.viewadapter.AbstractViewAdapter;
 
 public class UListViewAdapter extends AbstractViewAdapter implements ListModel, ListDataListener {
 
     private JList listComponent;
-    private ListAM model;
+    private DefaultListModel model;
 
-    public UListViewAdapter(JList listComponent, ListAM model, Class viewType, IFAttributeInfo attributeInfo) {
+    public UListViewAdapter(JList listComponent, Class viewType, IFAttributeInfo attributeInfo) {
         super(viewType, attributeInfo);
         this.listComponent = listComponent;
-        this.model = model;
+        this.model = new DefaultListModel();
+        listComponent.setModel(model);
     }
 
     @Override
-    public Object getValue() {
-        return model.getCurrentValue();
+    public List getValue() {
+        return Collections.list(model.elements());
     }
 
     @Override
-    public Object getDisplayedValue() {
-        return model.getCurrentValue();
+    public List getDisplayedValue() {
+        return Collections.list(model.elements());
     }
 
     @Override
@@ -37,26 +42,25 @@ public class UListViewAdapter extends AbstractViewAdapter implements ListModel, 
 
     @Override
     public int getSize() {
-        return listComponent.getComponentCount();
+        return model.getSize();
     }
 
     @Override
     public Object getElementAt(int index) {
         if (getSize() > index) {
-            return listComponent.getModel().getElementAt(index);
+            return model.getElementAt(index);
         }
         return null;
     }
 
     @Override
     public void addListDataListener(ListDataListener l) {
-        listComponent.getModel().addListDataListener(l);
+        model.addListDataListener(l);
     }
 
     @Override
     public void removeListDataListener(ListDataListener l) {
-        listComponent.getModel().removeListDataListener(l);
-
+        model.removeListDataListener(l);
     }
 
     @Override
@@ -66,19 +70,27 @@ public class UListViewAdapter extends AbstractViewAdapter implements ListModel, 
 
     @Override
     protected void addComponentListener() {
-        listComponent.getModel().addListDataListener(this);
-
+        model.addListDataListener(this);
+        fireViewChange();
     }
 
     @Override
     protected void setValue(Object value) {
-        ((ListAM) listComponent.getModel()).add(value);
+        model.removeAllElements();
+        if(value instanceof Collection){
+            for(Object item : (Collection)value){
+                model.addElement(item);
+            }
+        }
+        else {
+            model.addElement(value);
+        }
+        fireViewChange();
     }
 
     @Override
     protected void removeComponentListener() {
-        listComponent.getModel().removeListDataListener(this);
-
+        model.removeListDataListener(this);
     }
 
     @Override
@@ -101,7 +113,12 @@ public class UListViewAdapter extends AbstractViewAdapter implements ListModel, 
         return model.contains(item);
     }
 
-    public ListAM getModel() {
-        return model;
+    public void add(Object item) {
+        model.addElement(item);
     }
+
+    public void remove(int index) {
+        model.remove(index);
+    }
+
 }
