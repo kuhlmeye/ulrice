@@ -28,6 +28,7 @@ public class ComponentHelperRegistry {
         register(new JTextComponentHelper());
         register(new UTableComponentHelper());
         register(new WindowHelper());
+        register(new AccordionContentPanelHelper());
         register(new I18nTextComponentHelper());
     }
 
