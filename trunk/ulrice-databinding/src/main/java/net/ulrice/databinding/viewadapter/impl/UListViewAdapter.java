@@ -119,6 +119,11 @@ public class UListViewAdapter extends AbstractViewAdapter implements ListModel, 
 
     public void remove(int index) {
         model.remove(index);
+
+    }
+
+    public void remove(Object value) {
+        model.removeElement(value);
     }
 
 }
