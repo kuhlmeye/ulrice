@@ -126,4 +126,7 @@ public class UListViewAdapter extends AbstractViewAdapter implements ListModel, 
         model.removeElement(value);
     }
 
+    public void clear() {
+        model.removeAllElements();
+    }
 }
