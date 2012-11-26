@@ -64,6 +64,9 @@ public class TableAM implements IFAttributeModel {
     private boolean initialized = false;
     private boolean dirty = false;
     private boolean valid = true;
+    
+    /** Holds the state of the table */
+    private boolean tableValid = true;
 
     // prevent update ui, for mass editing
     private boolean massEditMode = false;
@@ -505,6 +508,11 @@ public class TableAM implements IFAttributeModel {
 //            }
 //            checkAddedOrChangedElementAgainstDeletedElements(element);
         }
+        
+        boolean stateChanged = handleValidity();
+        if (stateChanged){
+            fireStateChanged();
+        }
 
         // Inform the event listeners.
         ElementLifecycleListener[] listeners = listenerList.getListeners(ElementLifecycleListener.class);
@@ -525,6 +533,18 @@ public class TableAM implements IFAttributeModel {
 
         fireDataChanged();
     }
+
+	private void handleTableValidation() {
+		List<IFValidator> tableValidators = getValidators();        
+        if(tableValidators != null) {
+        	tableValid = true;
+        	for(IFValidator val : tableValidators) {
+        		@SuppressWarnings("unchecked")
+				ValidationResult valResult = val.isValid(this, elements, elements);        		
+        		tableValid &= valResult == null || valResult.isValid();
+        	}
+        }
+	}
     
     
 
@@ -556,19 +576,31 @@ public class TableAM implements IFAttributeModel {
         if (!element.isDirty() && elementIdMap.containsKey(element.getUniqueId())) {
             modElements.remove(element);
         }
-
-        boolean oldValid = valid;
-        boolean oldDirty = dirty;
-
-        valid = invElements.isEmpty();
-        dirty = !modElements.isEmpty() || !delElements.isEmpty() || !newElements.isEmpty();
+        
+        boolean stateChanged = handleValidity();
 
         fireElementStatusChanged(element);
 
-        if (oldValid != valid || oldDirty != dirty) {
+        if (stateChanged){
             fireStateChanged();
         }
     }
+
+    /**
+     * @return True, if validation state has been changed
+     */
+	private boolean handleValidity() {
+		boolean oldTableValid = tableValid;
+        boolean oldValid = valid;
+        boolean oldDirty = dirty;
+        
+        handleTableValidation();
+        
+        valid = invElements.isEmpty() && tableValid;
+        dirty = !modElements.isEmpty() || !delElements.isEmpty() || !newElements.isEmpty();
+
+        return (oldValid != valid || oldDirty != dirty || oldTableValid != tableValid);
+	}
 
     /**
      * Inform the model event listeners about a data change.
@@ -956,6 +988,10 @@ public class TableAM implements IFAttributeModel {
             fireElementAdded(elem);
         }
         fireUpdateViews();
+        
+        if (handleValidity()){
+            fireStateChanged();
+        }
     }
 
     public AbstractProcess<Void, Void> createLoader(final IFController controller, final boolean blocking, final ListDataProvider<?> provider) {
@@ -1026,6 +1062,10 @@ public class TableAM implements IFAttributeModel {
                     }
                 }
                 fireUpdateViews();
+                
+                if (handleValidity()){
+                    fireStateChanged();
+                }
                 
                 if(finishCallback != null) {
                     finishCallback.run();
@@ -1111,6 +1151,10 @@ public class TableAM implements IFAttributeModel {
                         tableViewAdapter.getComponent().getRowSorter().reEnableRowSorter();
                         tableViewAdapter.getComponent().sizeColumns(true);
                     }
+                    
+                    if (handleValidity()){
+                        fireStateChanged();
+                    }
                 }
             }
 
@@ -1143,6 +1187,11 @@ public class TableAM implements IFAttributeModel {
             fireElementAdded(elem);
         }
         fireUpdateViews();
+
+        
+        if (handleValidity()){
+            fireStateChanged();
+        }
     }
 
     /**
@@ -1168,6 +1217,11 @@ public class TableAM implements IFAttributeModel {
             fireElementAdded(elem);
         }
         fireUpdateViews();
+
+        
+        if (handleValidity()){
+            fireStateChanged();
+        }
     }
 
     /**
@@ -1343,6 +1397,7 @@ public class TableAM implements IFAttributeModel {
         }
         setTreeStayOpen();
         fireUpdateViews(element);
+        
         return true;
     }
 
@@ -1595,6 +1650,10 @@ public class TableAM implements IFAttributeModel {
             checkUniqueConstraint(element);
         }
 
+        if (handleValidity()){
+            fireStateChanged();
+        }
+
         ElementLifecycleListener[] listeners = listenerList.getListeners(ElementLifecycleListener.class);
         if (listeners != null) {
             for (final ElementLifecycleListener constraint : listeners) {
@@ -1633,6 +1692,10 @@ public class TableAM implements IFAttributeModel {
             checkKeyChangeAndUpdateDatastructure(element.getUniqueId(), null);
 
             // uniqueConstraint.elementRemoved(this, element);
+        }
+
+        if (handleValidity()){
+            fireStateChanged();
         }
 
         ElementLifecycleListener[] listeners = listenerList.getListeners(ElementLifecycleListener.class);
