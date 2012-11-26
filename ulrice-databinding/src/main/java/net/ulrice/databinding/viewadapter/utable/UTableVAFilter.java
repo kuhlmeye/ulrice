@@ -74,7 +74,7 @@ public class UTableVAFilter extends RowFilter<UTableViewAdapter, String> impleme
 
     private UTableVAHeader scrollTableHeader;
 
-	private boolean showDirtyAndInvalidElements;
+	private boolean showDirtyAndInvalidElements = true;
 
     private enum BooleanFilter {
         All, Yes, No;
