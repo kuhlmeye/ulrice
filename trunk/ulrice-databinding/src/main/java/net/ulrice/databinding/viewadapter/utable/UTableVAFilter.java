@@ -74,6 +74,8 @@ public class UTableVAFilter extends RowFilter<UTableViewAdapter, String> impleme
 
     private UTableVAHeader scrollTableHeader;
 
+	private boolean showDirtyAndInvalidElements;
+
     private enum BooleanFilter {
         All, Yes, No;
     }
@@ -276,7 +278,7 @@ public class UTableVAFilter extends RowFilter<UTableViewAdapter, String> impleme
         boolean include = true;
         String id = entry.getIdentifier();
         Element element = entry.getModel().getComponent().getElementById(id);
-        if (element != null && (element.isDirty() || !element.isValid())) {
+        if (showDirtyAndInvalidElements && element != null && (element.isDirty() || !element.isValid())) {
             return true;
         }
         int count = entry.getValueCount();
@@ -864,4 +866,11 @@ public class UTableVAFilter extends RowFilter<UTableViewAdapter, String> impleme
         this.formatLocale = locale;
     }
 
+    public boolean isShowDirtyAndInvalidElements() {
+		return showDirtyAndInvalidElements;
+	}
+    
+    public void setShowDirtyAndInvalidElements(boolean showDirtyAndInvalidElements) {
+		this.showDirtyAndInvalidElements = showDirtyAndInvalidElements;
+	}
 }
