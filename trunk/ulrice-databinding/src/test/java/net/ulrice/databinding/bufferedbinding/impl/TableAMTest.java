@@ -5,12 +5,17 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
+import net.ulrice.databinding.IFBinding;
 import net.ulrice.databinding.bufferedbinding.impl.ColumnDefinition.ColumnType;
 import net.ulrice.databinding.modelaccess.impl.DynamicReflectionMVA;
 import net.ulrice.databinding.modelaccess.impl.IndexedReflectionMVA;
+import net.ulrice.databinding.validation.AbstractValidator;
+import net.ulrice.databinding.validation.ValidationError;
+import net.ulrice.databinding.validation.ValidationResult;
 
 import org.junit.After;
 import org.junit.Assert;
@@ -717,6 +722,94 @@ public class TableAMTest {
     	Assert.assertEquals(20, p.age);
     }
     
+    
+    @Test
+    public void emptyTableValidationCheck() {
+    	tableAM.addValidator(new AbstractValidator() {
+
+			@Override
+			protected ValidationResult validate(IFBinding bindingId, Object attribute, Object rawAttribute) {
+				ValidationResult result = new ValidationResult();
+				if(tableAM.getRowCount() == 0) {
+					result.addValidationError(new ValidationError(bindingId, "Table must not be empty.", null));
+				}
+				return result;
+			}
+		});
+    	
+    	tableAM.read(new ArrayList<Person>(), false);
+    	Assert.assertFalse(tableAM.isValid());
+    	
+    	tableAM.addElement(new Person());
+    	Assert.assertTrue(tableAM.isValid());
+    	
+    	tableAM.delElement(0);
+    	Assert.assertFalse(tableAM.isValid());
+    } 
+    
+    @Test
+    public void tableValidationInformedAboutCellUpdates() {
+    	tableAM.addValidator(new AbstractValidator() {
+
+			@Override
+			protected ValidationResult validate(IFBinding bindingId, Object attribute, Object rawAttribute) {
+				ValidationResult result = new ValidationResult();
+				List<Element> elements = (List<Element>) attribute;
+				if(elements.size() != 1 || !"A".equals(elements.get(0).getValueAt(0))) {
+					result.addValidationError(new ValidationError(bindingId, "Check not successful.", null));
+				}
+				return result;
+			}
+		});
+    	
+    	tableAM.read(new ArrayList<Person>(), false);
+    	Assert.assertFalse(tableAM.isValid());
+    	
+    	tableAM.addElement(new Person());
+    	tableAM.getElementAt(0).setValueAt(0, "A");
+    	Assert.assertTrue(tableAM.isValid());
+
+    	tableAM.getElementAt(0).setValueAt(0, "B");
+    	Assert.assertFalse(tableAM.isValid());
+    }
+    
+    @Test
+    public void tableValidationInteractionWithCellValidator() {
+    	tableAM.addValidator(new AbstractValidator() {
+
+			@Override
+			protected ValidationResult validate(IFBinding bindingId, Object attribute, Object rawAttribute) {
+				ValidationResult result = new ValidationResult();
+				List<Element> elements = (List<Element>) attribute;
+				if(elements.size() != 1) {
+					result.addValidationError(new ValidationError(bindingId, "Check not successful.", null));
+				}
+				return result;
+			}
+		});
+    	
+    	tableAM.getColumns().get(0).addValidator(new AbstractValidator() {
+
+			@Override
+			protected ValidationResult validate(IFBinding bindingId, Object attribute, Object rawAttribute) {
+				ValidationResult result = new ValidationResult();
+				if(attribute == null || !"A".equals(attribute)) {
+					result.addValidationError(new ValidationError(bindingId, "Check not successful.", null));
+				}
+				return result;
+			}
+		});
+    	
+    	tableAM.read(new ArrayList<Person>(), false);
+    	Assert.assertFalse(tableAM.isValid());
+    	
+    	tableAM.addElement(new Person());
+    	tableAM.getElementAt(0).setValueAt(0, "A");
+    	Assert.assertTrue(tableAM.isValid());
+
+    	tableAM.getElementAt(0).setValueAt(0, "B");
+    	Assert.assertFalse(tableAM.isValid());
+    }
     
 	
 	public static class Person {
