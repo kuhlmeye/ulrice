@@ -1,6 +1,7 @@
 package net.ulrice.databinding.validation;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -80,7 +81,7 @@ public class ValidationResult {
 		addValidationError(new ValidationError(bindingId, message, null));
 	}    
 	
-    public void addValidationErrors(List<ValidationError> validationErrors) {
+    public void addValidationErrors(Collection<ValidationError> validationErrors) {
     	if(validationErrors != null) {
     		for(ValidationError error : validationErrors) {
     			addValidationError(error);
