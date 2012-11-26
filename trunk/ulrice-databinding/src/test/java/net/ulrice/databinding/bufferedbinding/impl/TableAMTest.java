@@ -270,11 +270,6 @@ public class TableAMTest {
     }
     
     @Test
-    @Ignore
-    /**
-     * TODO: christof: neu, editieren, neu, neu.. kracht
-     *
-     */
     public void addRowAndModifyAndAddTwice() {
         tableAM.read();
         Assert.assertEquals(2, tableAM.getRowCount());
@@ -669,59 +664,7 @@ public class TableAMTest {
         Element element = tableAM.getElementAt(0);
         tableAM.delElement(0);        
         Assert.assertNotNull(tableAM.getElementById(element.getUniqueId()));
-    }       
-    
-    @Test
-    @Ignore
-    public void removeAndAddElementWithSameUniqueKey() {
-    	tableAM.read();
-    	Element element = tableAM.getElementAt(1);
-    	tableAM.delElement(element);
-    	
-    	Person samePerson = new Person();
-    	samePerson.name = "Petra Musterfrau";
-    	samePerson.age = 20;
-    	tableAM.addElement(samePerson);
-    	
-    	Assert.assertEquals(0, tableAM.getDeletedCount());
-    	Assert.assertEquals(false, tableAM.isDirty());
-    }
-    
-    @Test
-    @Ignore
-    public void removeAndAddElementWithSameUniqueKeyButDifferentData() {
-    	tableAM.read();
-    	tableAM.delElement(1);
-    	
-    	Person samePerson = new Person();
-    	samePerson.name = "Petra Musterfrau";
-    	samePerson.age = 21;
-    	tableAM.addElement(samePerson);
-    	
-    	Assert.assertEquals(0, tableAM.getDeletedCount());
-    	Assert.assertEquals(true, tableAM.isDirty());
-    	
-    	Person p = (Person) tableAM.getCurrentValueAt(1);
-    	Assert.assertEquals(21, p.age);
-    }
-    
-    @Test
-    @Ignore
-    public void removeAndChangeElementToDeletedData() {
-    	tableAM.read();
-    	Object currentValue1 = tableAM.getElementAt(1).getCurrentValue();
-    	tableAM.delElement(1);
-    	
-    	tableAM.getElementAt(0).setCurrentValue(currentValue1);
-    	
-    	Assert.assertEquals(true, tableAM.isDirty());
-    	Assert.assertEquals(0, tableAM.getDeletedCount());
-    	Assert.assertEquals(true, tableAM.isDirty());
-    	
-    	Person p = (Person) tableAM.getCurrentValueAt(1);
-    	Assert.assertEquals(20, p.age);
-    }
-    
+    }     
     
     @Test
     public void emptyTableValidationCheck() {
