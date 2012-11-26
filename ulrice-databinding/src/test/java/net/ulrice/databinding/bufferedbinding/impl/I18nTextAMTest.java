@@ -9,6 +9,7 @@ import java.util.Map;
 import net.ulrice.databinding.IFBinding;
 import net.ulrice.databinding.bufferedbinding.IFAttributeInfo;
 import net.ulrice.databinding.modelaccess.impl.ReflectionMVA;
+import net.ulrice.databinding.validation.AbstractValidator;
 import net.ulrice.databinding.validation.IFValidator;
 import net.ulrice.databinding.validation.ValidationError;
 import net.ulrice.databinding.validation.ValidationResult;
@@ -125,7 +126,7 @@ public class I18nTextAMTest {
 		assertEquals(false, textAM1.isDirty());
 		assertEquals(true, textAM1.isValid());
 
-		textAM1.getCurrentValue().put(Locale.GERMAN, "Changed");		
+		textAM1.getCurrentValue().put(Locale.GERMAN, "Changed");
 		assertEquals(true, textAM1.isInitialized());
 		assertEquals(true, textAM1.isDirty());
 		assertEquals(true, textAM1.isValid());
@@ -151,67 +152,96 @@ public class I18nTextAMTest {
 		assertEquals(true, textAM2.isValid());
 
 	}
-	
-	 @Test
-	 public void externalErrorMessage() {
-		 textAM1.read();
-		 assertEquals(true, textAM1.isInitialized());
-		 assertEquals(false, textAM1.isDirty());
-		 assertEquals(true, textAM1.isValid());
-		
-		 textAM1.addExternalValidationError("Test");
-		 assertEquals(false, textAM1.isDirty());
-		 assertEquals(false, textAM1.isValid());
 
-		 textAM1.getCurrentValue().put(Locale.GERMAN, "Changed");
-		 textAM1.clearExternalValidationErrors();
-		 assertEquals(true, textAM1.isDirty());
-		 assertEquals(true, textAM1.isValid());
-	 }
-	 
-	 @Test
-	 public void removeEmptyLocales() {
-		 textAM1.setRemoveEmptyLanguages(true);
-		 textAM1.read();
-		 Map<Locale, String> map = textAM1.getCurrentValue();
-		 map.put(Locale.GERMAN, "");
-		 textAM1.setCurrentValue(map);
-		 textAM1.write();
-		 
-		 assertEquals(2, map1.size());
-	 }
-	 
-	 @Test
-	 public void removeEmptyLocalesTrim() {
-		 textAM1.setRemoveEmptyLanguages(true);
-		 textAM1.read();
-		 Map<Locale, String> map = textAM1.getCurrentValue();
-		 map.put(Locale.GERMAN, " ");
-		 textAM1.setCurrentValue(map);
-		 textAM1.write();
-		 
-		 assertEquals(2, map1.size());
-	 }
-	 
-	 @Test
-	 public void notRemoveEmptyLocales() {
-		 textAM1.read();
-		 Map<Locale, String> map = textAM1.getCurrentValue();
-		 map.put(Locale.GERMAN, "");
-		 textAM1.setCurrentValue(map);
-		 textAM1.write();
-		 
-		 assertEquals(3, map1.size());
-	 }
-	 
-	 @Test
-	 public void notRemoveEmptyLocalesTrim() {
-		 textAM1.read();
-		 Map<Locale, String> map = textAM1.getCurrentValue();
-		 map.put(Locale.GERMAN, " ");
-		 textAM1.setCurrentValue(map);
-		 textAM1.write();
-		 
-		 assertEquals(3, map1.size());
-	 }
+	@Test
+	public void externalErrorMessage() {
+		textAM1.read();
+		assertEquals(true, textAM1.isInitialized());
+		assertEquals(false, textAM1.isDirty());
+		assertEquals(true, textAM1.isValid());
+
+		textAM1.addExternalValidationError("Test");
+		assertEquals(false, textAM1.isDirty());
+		assertEquals(false, textAM1.isValid());
+
+		textAM1.getCurrentValue().put(Locale.GERMAN, "Changed");
+		textAM1.clearExternalValidationErrors();
+		assertEquals(true, textAM1.isDirty());
+		assertEquals(true, textAM1.isValid());
+	}
+
+	@Test
+	public void removeEmptyLocales() {
+		textAM1.setRemoveEmptyLanguages(true);
+		textAM1.read();
+		Map<Locale, String> map = textAM1.getCurrentValue();
+		map.put(Locale.GERMAN, "");
+		textAM1.setCurrentValue(map);
+		textAM1.write();
+
+		assertEquals(2, map1.size());
+	}
+
+	@Test
+	public void removeEmptyLocalesTrim() {
+		textAM1.setRemoveEmptyLanguages(true);
+		textAM1.read();
+		Map<Locale, String> map = textAM1.getCurrentValue();
+		map.put(Locale.GERMAN, " ");
+		textAM1.setCurrentValue(map);
+		textAM1.write();
+
+		assertEquals(2, map1.size());
+	}
+
+	@Test
+	public void notRemoveEmptyLocales() {
+		textAM1.read();
+		Map<Locale, String> map = textAM1.getCurrentValue();
+		map.put(Locale.GERMAN, "");
+		textAM1.setCurrentValue(map);
+		textAM1.write();
+
+		assertEquals(3, map1.size());
+	}
+
+	@Test
+	public void notRemoveEmptyLocalesTrim() {
+		textAM1.read();
+		Map<Locale, String> map = textAM1.getCurrentValue();
+		map.put(Locale.GERMAN, " ");
+		textAM1.setCurrentValue(map);
+		textAM1.write();
+
+		assertEquals(3, map1.size());
+	}
+
+	@Test
+	public void testValidator() {
+
+		textAM1.addValidator(new AbstractValidator<Map<Locale, String>>() {
+
+			@Override
+			protected ValidationResult validate(IFBinding bindingId, Map<Locale, String> attribute, Object rawAttribute) {
+				if("".equals(attribute.get(Locale.GERMAN))) {				
+					return new ValidationResult(new ValidationError(bindingId, "Failure", null));
+				} else {				
+					return null;
+				}
+			}
+		});
+		
+		textAM1.read();
+		assertEquals(true, textAM1.isValid());
+		
+		Map<Locale, String> map = textAM1.getCurrentValue();
+		map.put(Locale.GERMAN, "");
+		textAM1.setCurrentValue(map);
+		assertEquals(false, textAM1.isValid());
+		
+		map = textAM1.getCurrentValue();
+		map.put(Locale.GERMAN, "Value");
+		textAM1.setCurrentValue(map);
+		assertEquals(true, textAM1.isValid());
+	}
 }
