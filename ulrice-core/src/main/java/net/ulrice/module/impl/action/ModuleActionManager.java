@@ -65,6 +65,7 @@ public class ModuleActionManager implements IFModuleEventListener, PropertyChang
         KeyboardFocusManager.getCurrentKeyboardFocusManager().removeKeyEventDispatcher(this);
 	}
 	  
+    @Override
     public boolean dispatchKeyEvent(KeyEvent keyEvent) {    
         KeyStroke ks = KeyStroke.getKeyStrokeForEvent(keyEvent);
 
@@ -296,17 +297,15 @@ public class ModuleActionManager implements IFModuleEventListener, PropertyChang
 
 		List<UlriceAction> actionOrder = new ArrayList<UlriceAction>(moduleActionStates.size());
 		Map<UlriceAction, ModuleActionState> actionStateMap = new HashMap<UlriceAction, ModuleActionState>();
-		if (moduleActionStates != null) {
-			for (ModuleActionState moduleActionState : moduleActionStates) {
-				UlriceAction moduleAction = moduleActionState.getAction();
-				if (Ulrice.getSecurityManager().allowRegisterAction(activeController, moduleAction)) {
-	                actionOrder.add(moduleAction);
-	                actionStateMap.put(moduleActionState.getAction(), moduleActionState);
-				} else {
-                    LOG.info("Action [Id: " + moduleAction.getUniqueId() + ", Module: "
-                            + Ulrice.getModuleManager().getModule(activeController).getModuleTitle(Usage.Default)
-                            + "] will not be added. Not authorized by ulrice security manager.");
-				}
+		for (ModuleActionState moduleActionState : moduleActionStates) {
+			UlriceAction moduleAction = moduleActionState.getAction();
+			if (Ulrice.getSecurityManager().allowRegisterAction(activeController, moduleAction)) {
+                actionOrder.add(moduleAction);
+                actionStateMap.put(moduleActionState.getAction(), moduleActionState);
+			} else {
+                LOG.info("Action [Id: " + moduleAction.getUniqueId() + ", Module: "
+                        + Ulrice.getModuleManager().getModule(activeController).getModuleTitle(Usage.Default)
+                        + "] will not be added. Not authorized by ulrice security manager.");
 			}
 		}
 		controllerActionOrderMap.put(activeController, actionOrder);
@@ -388,25 +387,24 @@ public class ModuleActionManager implements IFModuleEventListener, PropertyChang
 	    fireApplicationActionsChanged();
 	}
 	
-	public void setActionStates(final IFController controller, final List<String> actionIds, final boolean enabled) {
-	    
-	    final Map<UlriceAction, ModuleActionState> map = controllerActionStateMap.get(controller);
-	    if (map == null) {
-	        return;
-	    }
-	    
-	    final Collection<ModuleActionState> values = map.values();
-	    
-	    for(ModuleActionState state : values) {
-	        for (String actionId : actionIds) {
-	            if(state.getAction().getUniqueId().equals(actionId)) {
-	                state.setEnabled(enabled);
-	            }
-	        }
-	    }
-	    
-	    adaptActionStates();
-	    fireApplicationActionsChanged();
+	public void setActionStates(final IFController controller, final List<UActionState> actionStates) {
+        final Map<UlriceAction, ModuleActionState> map = controllerActionStateMap.get(controller);
+        if (map == null) {
+            return;
+        }
+        
+        final Collection<ModuleActionState> values = map.values();
+        
+        for (ModuleActionState state : values) {
+            for (UActionState actionState : actionStates) {
+                if (state.getAction().getUniqueId().equals(actionState.getActionId())) {
+                    state.setEnabled(actionState.isEnabled());
+                }
+            }
+        }
+        
+        adaptActionStates();
+        fireApplicationActionsChanged();
 	}
 	
 	@Override
