@@ -143,17 +143,17 @@ public class Element {
 	/**
 	 * Returns the cell value.
 	 *
-	 * @param columnIndex
+	 * @param modelColumnIndex
 	 *            The index of the column
 	 * @return The cell value as an object.
 	 * @throws IndexOutOfBoundsException
 	 *             If the column index is not a valid index.
 	 */
-	public Object getValueAt(int columnIndex) {
-		if (columnIndex < 0 || columnIndex >= modelList.size()) {
-			throw new IndexOutOfBoundsException("ColumnIndex: " + columnIndex + ", Size: " + modelList.size());
+	public Object getValueAt(int modelColumnIndex) {
+		if (modelColumnIndex < 0 || modelColumnIndex >= modelList.size()) {
+			throw new IndexOutOfBoundsException("ColumnIndex: " + modelColumnIndex + ", Size: " + modelList.size());
 		}
-		return modelList.get(columnIndex).getCurrentValue();
+		return modelList.get(modelColumnIndex).getCurrentValue();
 	}
 
 	/**
