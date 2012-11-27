@@ -355,6 +355,8 @@ public class UTableViewAdapter extends AbstractViewAdapter implements TableModel
         if (getStateMarker() != null) {
             getStateMarker().updateState(binding, binding.isReadOnly() && isEditable(), isDirty(), isValid(), table);
         }
+        
+        table.updateUI(); //because of row specific event, we have to repaint the table
     }
     @Override
     public void updateFromBinding(IFBinding binding) {
