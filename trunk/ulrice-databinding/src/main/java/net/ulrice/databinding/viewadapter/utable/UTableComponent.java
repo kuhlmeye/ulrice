@@ -80,7 +80,7 @@ public class UTableComponent extends JPanel {
     protected List<UTableAction> popupMenuActions = new ArrayList<UTableAction>();
     
     protected boolean lowerInfoAreaDisabled;
-	private Clipboard systemClipboard;
+	private Clipboard systemClipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
 
     public UTableComponent(final int fixedColumns) {
         this.fixedColumns = fixedColumns;
@@ -1070,8 +1070,8 @@ public class UTableComponent extends JPanel {
     }
 
     
-    public void setEnableCopyPaste(boolean enable) {
-    	if(enable) {
+    public void setEnableCopyPaste(boolean enableCopy, boolean enablePaste) {
+    	if(enableCopy) {
     		ActionListener copyActionListener = new ActionListener() {
 
 				@Override
@@ -1128,6 +1128,13 @@ public class UTableComponent extends JPanel {
 				}    			
     		};
 
+	        registerKeyboardAction(copyActionListener, KeyStroke.getKeyStroke(KeyEvent.VK_C, ActionEvent.CTRL_MASK, false), JComponent.WHEN_FOCUSED);
+	        
+    	} else {	        
+    		unregisterKeyboardAction(KeyStroke.getKeyStroke(KeyEvent.VK_C, ActionEvent.CTRL_MASK, false));
+    	}
+    	
+    	if(enablePaste) {
     		ActionListener pasteActionListener = new ActionListener() {
 
 				@Override
@@ -1163,14 +1170,9 @@ public class UTableComponent extends JPanel {
 				}    			
     		};
     		
-	        registerKeyboardAction(copyActionListener, KeyStroke.getKeyStroke(KeyEvent.VK_C, ActionEvent.CTRL_MASK, false), JComponent.WHEN_FOCUSED);
 	        registerKeyboardAction(pasteActionListener, KeyStroke.getKeyStroke(KeyEvent.VK_V, ActionEvent.CTRL_MASK, false), JComponent.WHEN_FOCUSED);
-	        this.systemClipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
     	} else {
-	        unregisterKeyboardAction(KeyStroke.getKeyStroke(KeyEvent.VK_C, ActionEvent.CTRL_MASK, false));
-	        unregisterKeyboardAction(KeyStroke.getKeyStroke(KeyEvent.VK_V, ActionEvent.CTRL_MASK, false));
-	        this.systemClipboard = null;
-    		
+	        unregisterKeyboardAction(KeyStroke.getKeyStroke(KeyEvent.VK_V, ActionEvent.CTRL_MASK, false));	       
     	}
     }
     
