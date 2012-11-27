@@ -4,12 +4,20 @@ import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.Point;
 import java.awt.Rectangle;
+import java.awt.Toolkit;
+import java.awt.datatransfer.Clipboard;
+import java.awt.datatransfer.DataFlavor;
+import java.awt.datatransfer.StringSelection;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import java.util.StringTokenizer;
 
 import javax.swing.DefaultListSelectionModel;
 import javax.swing.JComponent;
@@ -17,6 +25,7 @@ import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
+import javax.swing.KeyStroke;
 import javax.swing.ListSelectionModel;
 import javax.swing.RowSorter.SortKey;
 import javax.swing.event.EventListenerList;
@@ -71,6 +80,7 @@ public class UTableComponent extends JPanel {
     protected List<UTableAction> popupMenuActions = new ArrayList<UTableAction>();
     
     protected boolean lowerInfoAreaDisabled;
+	private Clipboard systemClipboard;
 
     public UTableComponent(final int fixedColumns) {
         this.fixedColumns = fixedColumns;
@@ -270,11 +280,6 @@ public class UTableComponent extends JPanel {
         //for multi column sorting
         setAlteredTableHeaderListener(staticTable);
         setAlteredTableHeaderListener(scrollTable);
-    }
-    
-    public TableCellRenderer getDefaultRenderer(Class columnClass) {
-    	// Always use scroll table. Default renderer should be the same in fixed and scroll table.
-    	return scrollTable.getDefaultRenderer(columnClass);
     }
 
     protected void setAlteredTableHeaderListener(JTable table) {
@@ -1063,7 +1068,111 @@ public class UTableComponent extends JPanel {
     public void setLowerInfoAreaDisabled(boolean lowerInfoAreaDisabled) {
         this.lowerInfoAreaDisabled = lowerInfoAreaDisabled;
     }
+
     
+    public void setEnableCopyPaste(boolean enable) {
+    	if(enable) {
+    		ActionListener copyActionListener = new ActionListener() {
+
+				@Override
+				public void actionPerformed(ActionEvent arg0) {
+		            StringBuilder sbf = new StringBuilder();
+		            // Check to ensure we have selected only a contiguous block of cells
+		            
+		            int selColumn = getSelectedColumn();
+		            
+		            for(int i = 0; i < getViewRowCount(); i++) {
+		                if(selColumn < 0) {
+		                    for(int j = 0; j < getColumnCount(); j++) {
+		                        appendStringCellValueToBuffer(sbf, i, j);
+		                    }
+		                } else {		                        
+		                	appendStringCellValueToBuffer(sbf, i, selColumn);
+		                }
+		                sbf.append('\n');
+		            }
+
+		            StringSelection stsel = new StringSelection(sbf.toString());
+		            systemClipboard.setContents(stsel, stsel);
+				}
+
+				private void appendStringCellValueToBuffer(StringBuilder sbf, int row, int column) {
+					String columnId = getColumnByViewIndex(column).getId();
+					ColumnDefinition< ?> colDef = getColumnById(columnId);
+					Element element = getElementAtViewIndex(row);
+					Object value = element.getValueAt(columnId);
+					String strValue = null;
+
+					UTable table = null;
+					if(column < fixedColumns) {
+						table = staticTable;
+					} else {
+						table = scrollTable;
+					}
+
+					TableCellRenderer tableCellRenderer = colDef.getCellRenderer();
+					if (tableCellRenderer == null) {
+					    tableCellRenderer = table.getDefaultRenderer(colDef.getColumnClass());
+					}
+					if (tableCellRenderer != null && StringBasedTableCellRenderer.class.isAssignableFrom(tableCellRenderer.getClass())) {
+					    StringBasedTableCellRenderer c = (StringBasedTableCellRenderer) tableCellRenderer;
+					    strValue = c.getString(value, table, colDef);
+					}
+					else {
+						strValue = value != null ? value.toString() : null;
+					}	
+					if(strValue != null) {
+						sbf.append(strValue);
+					}
+					sbf.append("\t");
+				}    			
+    		};
+
+    		ActionListener pasteActionListener = new ActionListener() {
+
+				@Override
+				public void actionPerformed(ActionEvent arg0) {
+		            int startRow = (getSelectedRowsViewIndex())[0];
+		            int startCol = getSelectedColumn() == -1 ? 0 : getSelectedColumn();
+		            try {
+		                String tableData = (String) (systemClipboard.getContents(this).getTransferData(DataFlavor.stringFlavor));
+		                		                
+		                StringTokenizer rowTokenizer = new StringTokenizer(tableData, "\n");
+		                for (int i = 0; rowTokenizer.hasMoreTokens(); i++) {
+		                    String rowstring = rowTokenizer.nextToken();
+		                    StringTokenizer columnString = new StringTokenizer(rowstring, "\t");
+		                    for (int j = 0; columnString.hasMoreTokens(); j++) {
+		                        String value = (String) columnString.nextToken();
+
+		    					int row = startRow + i;
+		                        int col = startCol + j;
+		                        
+		                        if (row < getViewRowCount() && col < getColumnCount() && isCellEditable(row, col)) {
+			    					String columnId = getColumnByViewIndex(col).getId();
+			    					ColumnDefinition< ?> colDef = getColumnById(columnId);
+			    					
+			    					// TODO how to handle non string values
+			    					getElementAtViewIndex(row).setValueAt(columnId, value);
+		                        }
+		                    }
+		                }
+		            }
+		            catch (Exception ex) {
+		                ex.printStackTrace();
+		            }
+				}    			
+    		};
+    		
+	        registerKeyboardAction(copyActionListener, KeyStroke.getKeyStroke(KeyEvent.VK_C, ActionEvent.CTRL_MASK, false), JComponent.WHEN_FOCUSED);
+	        registerKeyboardAction(pasteActionListener, KeyStroke.getKeyStroke(KeyEvent.VK_V, ActionEvent.CTRL_MASK, false), JComponent.WHEN_FOCUSED);
+	        this.systemClipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
+    	} else {
+	        unregisterKeyboardAction(KeyStroke.getKeyStroke(KeyEvent.VK_C, ActionEvent.CTRL_MASK, false));
+	        unregisterKeyboardAction(KeyStroke.getKeyStroke(KeyEvent.VK_V, ActionEvent.CTRL_MASK, false));
+	        this.systemClipboard = null;
+    		
+    	}
+    }
     
 }
 
