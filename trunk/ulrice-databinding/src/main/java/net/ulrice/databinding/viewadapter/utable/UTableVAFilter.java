@@ -38,6 +38,7 @@ import net.ulrice.databinding.ObjectWithPresentation;
 import net.ulrice.databinding.bufferedbinding.impl.ColumnDefinition;
 import net.ulrice.databinding.bufferedbinding.impl.Element;
 import net.ulrice.databinding.bufferedbinding.impl.FilterMode;
+import net.ulrice.ui.components.ContextMenuMouseListener;
 
 /**
  * @author christof
@@ -143,6 +144,7 @@ public class UTableVAFilter extends RowFilter<UTableViewAdapter, String> impleme
                     field.setName(columnDefinition.getId());
                     field.getDocument().putProperty(DOCUMENT_PROPERTY_FIELD_ID, columnDefinition.getId());
                     field.getDocument().addDocumentListener(this);
+                    field.addMouseListener(new ContextMenuMouseListener());
                     component = field;
                     break;
 
