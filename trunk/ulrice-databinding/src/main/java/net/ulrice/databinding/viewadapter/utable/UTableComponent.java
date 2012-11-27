@@ -271,6 +271,11 @@ public class UTableComponent extends JPanel {
         setAlteredTableHeaderListener(staticTable);
         setAlteredTableHeaderListener(scrollTable);
     }
+    
+    public TableCellRenderer getDefaultRenderer(Class columnClass) {
+    	// Always use scroll table. Default renderer should be the same in fixed and scroll table.
+    	return scrollTable.getDefaultRenderer(columnClass);
+    }
 
     protected void setAlteredTableHeaderListener(JTable table) {
         JTableHeader header = table.getTableHeader();
