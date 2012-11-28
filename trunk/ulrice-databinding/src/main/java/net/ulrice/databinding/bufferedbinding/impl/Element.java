@@ -342,7 +342,7 @@ public class Element {
 	/**
 	 * Sets the current value of this element with possibility to set dirty and
 	 * valid state from outside. This could be used, if the internal validators
-	 * are not enough to determine the corrent state.
+	 * are not enough to determine the correct state.
 	 */
 	public void setCurrentValue(Object currentValue, boolean dirty, boolean valid) {
 		setCurrentValue(currentValue, dirty, valid, false);
@@ -353,8 +353,8 @@ public class Element {
 		this.originalValueValid = valid;
 		this.originalValue = currentValue;
 
-		clearElementValidationErrors(); // RAD wie bei setValueAt
-
+		clearElementValidationErrors();
+		
 		if (modelList != null) {
 			for (int i = 0; i < modelList.size(); i++) {
 				if (isReadOnly(i) && omitReadOnly) {
@@ -363,7 +363,7 @@ public class Element {
 
 				GenericAM model = modelList.get(i);
 				IFDynamicModelValueAccessor dataAccessor = columns.get(i).getDataAccessor();
-
+				
 				Object value = dataAccessor.getValue(currentValue);
 				Object converted = (model.getValueConverter() != null ? model.getValueConverter().modelToView(value, model.getAttributeInfo()) : value);
 				model.setValue(converted);
