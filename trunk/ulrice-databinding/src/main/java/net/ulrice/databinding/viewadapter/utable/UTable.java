@@ -23,7 +23,7 @@ public class UTable extends JTable {
 		setAutoResizeMode(AUTO_RESIZE_OFF);
 		setColumnSelectionAllowed(false);
 		setRowSelectionAllowed(true);
-		
+
 		putClientProperty("JTable.autoStartsEdit", Boolean.TRUE);
 		putClientProperty("terminateEditOnFocusLost", Boolean.TRUE);
 		
@@ -44,13 +44,7 @@ public class UTable extends JTable {
         setDefaultRenderer(BigInteger.class, new UTableVANumericCellRenderer());
         setDefaultRenderer(Boolean.class, new UTableVABooleanCellRenderer());
         setDefaultRenderer(Boolean.TYPE, new UTableVABooleanCellRenderer());
-        setDefaultEditor(Character.class, new DefaultCellEditor(new JTextField()));
-        // TODO add additional renderer
-//        setDefaultRenderer(Object.class, new YTableTextCellRenderer()); // needed, or handled by default?
-//        setDefaultRenderer(Icon.class, new UTableVAIconCellRenderer());
-//        setDefaultRenderer(ImageIcon.class, new UTableVAIconCellRenderer());
-//        setDefaultRenderer(JComboBox.class, new UTableVAComboBoxCellRenderer());
-//        setDefaultRenderer(List.class, new UTableVATextCellRenderer()); // needed, or handled by default?                    
+        setDefaultEditor(Character.class, new DefaultCellEditor(new JTextField()));                 
 	}
 
 	

@@ -75,6 +75,9 @@ public class UTableComponent extends JPanel {
     protected IFCellTooltipHandler tooltipHandler;
     protected IFCellStateMarker stateMarker;
 
+    private boolean columnSelectionAllowed;
+    private boolean rowSelectionAllowed;
+    
     protected TableAM attributeModel;
 
     protected List<UTableAction> popupMenuActions = new ArrayList<UTableAction>();
@@ -1068,6 +1071,26 @@ public class UTableComponent extends JPanel {
     public void setLowerInfoAreaDisabled(boolean lowerInfoAreaDisabled) {
         this.lowerInfoAreaDisabled = lowerInfoAreaDisabled;
     }
+    
+    public boolean isRowSelectionAllowed() {
+		return rowSelectionAllowed;
+	}
+    
+    public void setRowSelectionAllowed(boolean rowSelectionAllowed) {
+		this.rowSelectionAllowed = rowSelectionAllowed;
+		this.staticTable.setRowSelectionAllowed(rowSelectionAllowed);
+		this.scrollTable.setRowSelectionAllowed(rowSelectionAllowed);
+	}
+    
+    public boolean isColumnSelectionAllowed() {
+		return columnSelectionAllowed;
+	}
+    
+    public void setColumnSelectionAllowed(boolean columnSelectionAllowed) {
+		this.columnSelectionAllowed = columnSelectionAllowed;
+		this.staticTable.setColumnSelectionAllowed(columnSelectionAllowed);
+		this.scrollTable.setColumnSelectionAllowed(columnSelectionAllowed);
+	}
 
     
     public void setEnableCopyPaste(boolean enableCopy, boolean enablePaste) {
@@ -1076,18 +1099,29 @@ public class UTableComponent extends JPanel {
 
 				@Override
 				public void actionPerformed(ActionEvent arg0) {
-		            StringBuilder sbf = new StringBuilder();
-		            // Check to ensure we have selected only a contiguous block of cells
+		            StringBuilder sbf = new StringBuilder();					
+					int[] selRows = getSelectedRowsViewIndex();					
+					int[] selCols = null;
+					if(isColumnSelectionAllowed()) {
+						int[] selectedStaticColumns = staticTable.getSelectedColumns();
+						int[] selectedScrollColumns = scrollTable.getSelectedColumns();
+						
+						selCols = new int[selectedStaticColumns.length + selectedScrollColumns.length];
+						System.arraycopy(selectedStaticColumns, 0, selCols, 0, selectedStaticColumns.length);
+						System.arraycopy(selectedScrollColumns, 0, selCols, selectedStaticColumns.length, selectedScrollColumns.length);
+					} else {
+						selCols = new int[getColumnCount()];
+						for(int i = 0; i < selCols.length; i++) {
+							selCols[i] = i;
+						}
+					}
 		            
-		            int selColumn = getSelectedColumn();
-		            
-		            for(int i = 0; i < getViewRowCount(); i++) {
-		                if(selColumn < 0) {
-		                    for(int j = 0; j < getColumnCount(); j++) {
-		                        appendStringCellValueToBuffer(sbf, i, j);
-		                    }
-		                } else {		                        
-		                	appendStringCellValueToBuffer(sbf, i, selColumn);
+		            for(int i = 0; i < selRows.length; i++) {
+			            for(int j = 0; j < selCols.length; j++) {
+			            	if(j > 0) {
+			            		sbf.append("\t");
+			            	}
+	                        appendStringCellValueToBuffer(sbf, selRows[i], selCols[j]);
 		                }
 		                sbf.append('\n');
 		            }
@@ -1124,14 +1158,15 @@ public class UTableComponent extends JPanel {
 					if(strValue != null) {
 						sbf.append(strValue);
 					}
-					sbf.append("\t");
 				}    			
     		};
 
-	        registerKeyboardAction(copyActionListener, KeyStroke.getKeyStroke(KeyEvent.VK_C, ActionEvent.CTRL_MASK, false), JComponent.WHEN_FOCUSED);
+    		staticTable.registerKeyboardAction(copyActionListener, KeyStroke.getKeyStroke(KeyEvent.VK_C, ActionEvent.CTRL_MASK, false), JComponent.WHEN_FOCUSED);
+    		scrollTable.registerKeyboardAction(copyActionListener, KeyStroke.getKeyStroke(KeyEvent.VK_C, ActionEvent.CTRL_MASK, false), JComponent.WHEN_FOCUSED);
 	        
     	} else {	        
-    		unregisterKeyboardAction(KeyStroke.getKeyStroke(KeyEvent.VK_C, ActionEvent.CTRL_MASK, false));
+    		staticTable.unregisterKeyboardAction(KeyStroke.getKeyStroke(KeyEvent.VK_C, ActionEvent.CTRL_MASK, false));
+    		scrollTable.unregisterKeyboardAction(KeyStroke.getKeyStroke(KeyEvent.VK_C, ActionEvent.CTRL_MASK, false));
     	}
     	
     	if(enablePaste) {
@@ -1139,8 +1174,24 @@ public class UTableComponent extends JPanel {
 
 				@Override
 				public void actionPerformed(ActionEvent arg0) {
-		            int startRow = (getSelectedRowsViewIndex())[0];
-		            int startCol = getSelectedColumn() == -1 ? 0 : getSelectedColumn();
+					
+					int startRow = getSelectionModel().getLeadSelectionIndex();					
+
+					int selStaticColumn = staticTable.getColumnModel().getSelectionModel().getLeadSelectionIndex();
+					int selScrollColumn = scrollTable.getColumnModel().getSelectionModel().getLeadSelectionIndex();
+					
+					int startCol = -1;
+					if(selStaticColumn < 0) {
+						startCol = selScrollColumn;
+					} else {
+						startCol = selStaticColumn;
+					}
+					
+					
+					if(startRow < 0 || startCol < 0) {
+						return;
+					}
+					
 		            try {
 		                String tableData = (String) (systemClipboard.getContents(this).getTransferData(DataFlavor.stringFlavor));
 		                		                
@@ -1156,7 +1207,6 @@ public class UTableComponent extends JPanel {
 		                        
 		                        if (row < getViewRowCount() && col < getColumnCount() && isCellEditable(row, col)) {
 			    					String columnId = getColumnByViewIndex(col).getId();
-			    					ColumnDefinition< ?> colDef = getColumnById(columnId);
 			    					
 			    					// TODO how to handle non string values
 			    					getElementAtViewIndex(row).setValueAt(columnId, value);
@@ -1170,12 +1220,11 @@ public class UTableComponent extends JPanel {
 				}    			
     		};
     		
-	        registerKeyboardAction(pasteActionListener, KeyStroke.getKeyStroke(KeyEvent.VK_V, ActionEvent.CTRL_MASK, false), JComponent.WHEN_FOCUSED);
+	        staticTable.registerKeyboardAction(pasteActionListener, KeyStroke.getKeyStroke(KeyEvent.VK_V, ActionEvent.CTRL_MASK, false), JComponent.WHEN_FOCUSED);
+	        scrollTable.registerKeyboardAction(pasteActionListener, KeyStroke.getKeyStroke(KeyEvent.VK_V, ActionEvent.CTRL_MASK, false), JComponent.WHEN_FOCUSED);
     	} else {
-	        unregisterKeyboardAction(KeyStroke.getKeyStroke(KeyEvent.VK_V, ActionEvent.CTRL_MASK, false));	       
+    		staticTable.unregisterKeyboardAction(KeyStroke.getKeyStroke(KeyEvent.VK_V, ActionEvent.CTRL_MASK, false));	       
+    		scrollTable.unregisterKeyboardAction(KeyStroke.getKeyStroke(KeyEvent.VK_V, ActionEvent.CTRL_MASK, false));	       
     	}
-    }
-    
+    }    
 }
-
-
