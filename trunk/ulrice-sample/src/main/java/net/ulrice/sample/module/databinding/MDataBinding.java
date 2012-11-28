@@ -20,36 +20,31 @@ import net.ulrice.databinding.validation.impl.RegExValidator;
  */
 public class MDataBinding {
 
-    public String name;
-    public List<Person> personList = new ArrayList<Person>();
+	public String name;
+	public List<Person> personList = new ArrayList<Person>();
 
-    private GenericAM<String> nameAM;
-    private TableAM tableAM;
+	private GenericAM<String> nameAM;
+	private TableAM tableAM;
 
-    public MDataBinding() {
-        IFAttributeInfo attributeInfo = new IFAttributeInfo() {
-        };
+	public MDataBinding() {
+		IFAttributeInfo attributeInfo = new IFAttributeInfo() {
+		};
 
-        nameAM = new GenericAM<String>(new ReflectionMVA(this, "name"), attributeInfo);
-        nameAM.addValidator(new RegExValidator<String>("(hallo|hi)",
-            "Validation failed. Only 'hallo' or 'hi' is allowed"));
-        name = "hallo";
+		nameAM = new GenericAM<String>(new ReflectionMVA(this, "name"), attributeInfo);
+		nameAM.addValidator(new RegExValidator<String>("(hallo|hi)", "Validation failed. Only 'hallo' or 'hi' is allowed"));
+		name = "hallo";
 
-        personList.add(new Person("Max", "Mustermann", 18));
-        personList.add(new Person("Petra", "Musterfrau", 20));
-        personList.add(new Person("Otto", "Normal", 20));              
+		tableAM = new TableAM(new IndexedReflectionMVA(this, "personList"), attributeInfo);
+		tableAM.addColumn(new ColumnDefinition<String>(new DynamicReflectionMVA(Person.class, "lastName"), String.class));
+		tableAM.addColumn(new ColumnDefinition<String>(new DynamicReflectionMVA(Person.class, "firstName"), String.class));
+		tableAM.addColumn(new ColumnDefinition<Integer>(new DynamicReflectionMVA(Person.class, "age"), Integer.class));
+	}
 
-        tableAM = new TableAM(new IndexedReflectionMVA(this, "personList"), attributeInfo);
-        tableAM.addColumn(new ColumnDefinition<String>(new DynamicReflectionMVA(Person.class, "lastName"), String.class));
-        tableAM.addColumn(new ColumnDefinition<String>(new DynamicReflectionMVA(Person.class, "firstName"), String.class));
-        tableAM.addColumn(new ColumnDefinition<Integer>(new DynamicReflectionMVA(Person.class, "age"), Integer.class));
-    }
+	public GenericAM<String> getNameAM() {
+		return nameAM;
+	}
 
-    public GenericAM<String> getNameAM() {
-        return nameAM;
-    }
-
-    public TableAM getTableAM() {
-        return tableAM;
-    }
+	public TableAM getTableAM() {
+		return tableAM;
+	}
 }
