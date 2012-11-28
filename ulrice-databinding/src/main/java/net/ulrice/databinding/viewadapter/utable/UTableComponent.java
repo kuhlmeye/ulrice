@@ -16,7 +16,9 @@ import java.awt.event.MouseListener;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.StringTokenizer;
 
 import javax.swing.DefaultListSelectionModel;
@@ -81,9 +83,11 @@ public class UTableComponent extends JPanel {
     protected TableAM attributeModel;
 
     protected List<UTableAction> popupMenuActions = new ArrayList<UTableAction>();
+
+    // Copy paste
+    private Map<String, UTableCopyPasteCellConverter> copyPasteConverterMap;
     
     protected boolean lowerInfoAreaDisabled;
-	private Clipboard systemClipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
 
     public UTableComponent(final int fixedColumns) {
         this.fixedColumns = fixedColumns;
@@ -1092,8 +1096,40 @@ public class UTableComponent extends JPanel {
 		this.scrollTable.setColumnSelectionAllowed(columnSelectionAllowed);
 	}
 
+    /**
+     * Registers a copy paste cell converter. This is used to convert values going to / coming from the clipboard to the table.
+     */
+    public void registerCopyPasteCellConverter(String columnId, UTableCopyPasteCellConverter converter) {
+    	if(copyPasteConverterMap == null) {
+    		copyPasteConverterMap = new HashMap<String, UTableCopyPasteCellConverter>();
+    	}
+    	copyPasteConverterMap.put(columnId, converter);
+    }
     
+    /**
+     * Unregisters a copy paste cell converter
+     */
+    public void unregisterCopyPasteCellConverter(String columnId) {
+    	if(copyPasteConverterMap != null) {
+        	copyPasteConverterMap.remove(columnId);
+    	}
+    }
+    
+    /**
+     * Returns the copy paste cell converter that is currently registered for a column, or null, if no converter is registered
+     */
+    public UTableCopyPasteCellConverter getCopyPasteCellConverter(String columnId) {
+    	if(copyPasteConverterMap != null) {
+        	return copyPasteConverterMap.get(columnId);
+    	}
+    	return null;
+    }
+    
+    /**
+     * Enables/Disables copy & paste 
+     */
     public void setEnableCopyPaste(boolean enableCopy, boolean enablePaste) {
+    	
     	if(enableCopy) {
     		ActionListener copyActionListener = new ActionListener() {
 
@@ -1127,7 +1163,7 @@ public class UTableComponent extends JPanel {
 		            }
 
 		            StringSelection stsel = new StringSelection(sbf.toString());
-		            systemClipboard.setContents(stsel, stsel);
+		            Toolkit.getDefaultToolkit().getSystemClipboard().setContents(stsel, stsel);
 				}
 
 				private void appendStringCellValueToBuffer(StringBuilder sbf, int row, int column) {
@@ -1144,20 +1180,26 @@ public class UTableComponent extends JPanel {
 						table = scrollTable;
 					}
 
-					TableCellRenderer tableCellRenderer = colDef.getCellRenderer();
-					if (tableCellRenderer == null) {
-					    tableCellRenderer = table.getDefaultRenderer(colDef.getColumnClass());
-					}
-					if (tableCellRenderer != null && StringBasedTableCellRenderer.class.isAssignableFrom(tableCellRenderer.getClass())) {
-					    StringBasedTableCellRenderer c = (StringBasedTableCellRenderer) tableCellRenderer;
-					    strValue = c.getString(value, table, colDef);
-					}
-					else {
-						strValue = value != null ? value.toString() : null;
-					}	
-					if(strValue != null) {
-						sbf.append(strValue);
-					}
+					
+					UTableCopyPasteCellConverter cellConverter = getCopyPasteCellConverter(columnId);
+					if(cellConverter != null) {
+    					getElementAtViewIndex(row).setValueAt(columnId, cellConverter.cellToClipboard(value));
+					} else {
+						TableCellRenderer tableCellRenderer = colDef.getCellRenderer();
+						if (tableCellRenderer == null) {
+						    tableCellRenderer = table.getDefaultRenderer(colDef.getColumnClass());
+						}
+						if (tableCellRenderer != null && StringBasedTableCellRenderer.class.isAssignableFrom(tableCellRenderer.getClass())) {
+						    StringBasedTableCellRenderer c = (StringBasedTableCellRenderer) tableCellRenderer;
+						    strValue = c.getString(value, table, colDef);
+						}
+						else {
+							strValue = value != null ? value.toString() : null;
+						}	
+						if(strValue != null) {
+							sbf.append(strValue);
+						}
+					} 
 				}    			
     		};
 
@@ -1193,7 +1235,7 @@ public class UTableComponent extends JPanel {
 					}
 					
 		            try {
-		                String tableData = (String) (systemClipboard.getContents(this).getTransferData(DataFlavor.stringFlavor));
+		                String tableData = (String) (Toolkit.getDefaultToolkit().getSystemClipboard().getContents(this).getTransferData(DataFlavor.stringFlavor));
 		                		                
 		                StringTokenizer rowTokenizer = new StringTokenizer(tableData, "\n");
 		                for (int i = 0; rowTokenizer.hasMoreTokens(); i++) {
@@ -1208,8 +1250,12 @@ public class UTableComponent extends JPanel {
 		                        if (row < getViewRowCount() && col < getColumnCount() && isCellEditable(row, col)) {
 			    					String columnId = getColumnByViewIndex(col).getId();
 			    					
-			    					// TODO how to handle non string values
-			    					getElementAtViewIndex(row).setValueAt(columnId, value);
+			    					UTableCopyPasteCellConverter cellConverter = getCopyPasteCellConverter(columnId);
+			    					if(cellConverter != null) {
+				    					getElementAtViewIndex(row).setValueAt(columnId, cellConverter.clipboardToCell(value));
+			    					} else {
+			    						getElementAtViewIndex(row).setValueAt(columnId, value);
+			    					}
 		                        }
 		                    }
 		                }
