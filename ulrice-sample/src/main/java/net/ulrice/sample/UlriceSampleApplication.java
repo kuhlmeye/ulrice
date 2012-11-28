@@ -153,7 +153,7 @@ public class UlriceSampleApplication {
 		// Show main frame.
 		JFrame mainFrame = Ulrice.getMainFrame().getFrame();
 		mainFrame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
-		mainFrame.setSize(640, 468);
+		mainFrame.setSize(1024, 768);
 		mainFrame.setLocationRelativeTo(null);
 		mainFrame.setVisible(true);
 		

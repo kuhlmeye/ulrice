@@ -10,6 +10,7 @@ import java.util.List;
 import javax.swing.JComponent;
 import javax.swing.SwingWorker;
 
+import net.ulrice.databinding.viewadapter.utable.UTableViewAdapter;
 import net.ulrice.module.impl.AbstractController;
 import net.ulrice.module.impl.IFClosing;
 
@@ -36,7 +37,13 @@ public class CDataBinding extends AbstractController {
         model.getNameAM().addViewAdapter(view.getTextFieldGA1());
         model.getNameAM().addViewAdapter(view.getTextFieldGA2());
         
-        model.getTableAM().addViewAdapter(view.getListGA());
+        UTableViewAdapter tableVA = new UTableViewAdapter(view.getTable(), null);
+        model.getTableAM().addViewAdapter(tableVA);
+
+        view.getTable().init(tableVA);
+        view.getTable().updateColumnModel();
+        
+        view.getTable().setEnableCopyPaste(true, true);
 
         model.personList = new LinkedList<Person>();
 
@@ -49,10 +56,10 @@ public class CDataBinding extends AbstractController {
 			protected List<Person> doInBackground() throws Exception {
 
 		        List<List<Person>> list = new ArrayList<List<Person>>();
-		        for (int i = 0; i < 100; i++) {
+		        for (int i = 0; i < 2; i++) {
 		        	list.add(new ArrayList<Person>(1000));
-		            for (int j = 0; j < 1000; j++) {
-		            	list.get(i).add(Person.createRandomPerson());
+		            for (int j = 0; j < 100; j++) {
+		            	list.get(i).add(PersonGenerator.createRandomPerson());
 		            }
 					System.out.println("Publish #" + i);
 		        	publish(list.get(i));
@@ -65,14 +72,15 @@ public class CDataBinding extends AbstractController {
 			protected void process(List<List<Person>> chunks) {
 		        for (int i = 0; i < chunks.size(); i++) {
 		        	model.getTableAM().read(chunks.get(i), true);
-				}				
+				}			
+		        view.getTable().sizeColumns(true);
 			}        	
         };
 
         worker.execute();
 
 
-        view.getListGA().sizeColumns(false);
+        view.getTable().sizeColumns(false);
     }
     
     @Override
