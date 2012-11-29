@@ -92,8 +92,13 @@ public class BindingGroup extends AbstractBindingGroup {
                 am.removeViewAdapter(va);
             }
         }
+        
+        changedSet.remove(id);
+        invalidSet.remove(id);
+        checkDirtyAndValidStateAndWriteIt();
+        
         am.removeAttributeModelEventListener(this);
-        amMap.remove(id);        
+        amMap.remove(id);
     }
     
     /**
@@ -206,9 +211,13 @@ public class BindingGroup extends AbstractBindingGroup {
         	changedSet.add(id);
         }
 
+        checkDirtyAndValidStateAndWriteIt();
+	}
+    
+    private void checkDirtyAndValidStateAndWriteIt() {
         dirty = !changedSet.isEmpty();
         valid = invalidSet.isEmpty();		
-	}
+    }
 
     @Override
     protected void dataChangedInternal(IFViewAdapter viewAdapter, IFAttributeModel amSource) {
