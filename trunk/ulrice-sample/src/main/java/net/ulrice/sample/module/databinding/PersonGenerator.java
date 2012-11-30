@@ -27,11 +27,29 @@ public class PersonGenerator {
 		"LOUISE", "SARA", "ANNE", "JACQUELINE", "WANDA", "BONNIE", "JULIA", "RUBY", "LOIS", "TINA", "PHYLLIS", "NORMA", "PAULA", "DIANA", "ANNIE", "LILLIAN", "EMILY", "ROBIN"
 		};
 	
-
+	public static final String STREET_ARR[] = new String[] {
+		"Main Street", "Church Street", "High Street", "Elm Street", "Chestnut Street", "Walnut Street", "Maple Street", "Washington Street", "2nd Street", "Broad Street", "Center Street", "Maple Avenue", 
+		"Park Avenue", "South Street", "Pine Street", "Water Street", "Market Street", "Oak Street", "School Street", "Union Street", "North Street", "Spring Street", "River Road", "Court Street", 
+		"Prospect Street", "Park Street", "3rd Street", "Cedar Street", "Front Street", "Cherry Street", "Washington Avenue", "Franklin Street", "Spruce Street", "West Street", "Central Avenue"
+	};
+	
+	public static final String CITY_NAME[] = new String[] {
+		"Midway", "Fairview", "Oak Grove", "Five Points", "Riverside", "Pleasant Hill", "Mount Pleasant", "Bethel", "Centerville", 
+		"New Hope", "Liberty", "Oakland", "Union", "Pleasant Valley", "Shady Grove", "Pine Grove", "Salem", "Greenwood", "Pleasant Grove", 
+		"Forest Hills", "Oak Hill", "Georgetown", "Lakeview", "Shiloh", "Glendale", "Lakewood", "Concord", "Cedar Grove", "Highland Park"
+	};
+	
     public static Person createRandomPerson() {
     	Person person = new Person();
     	person.setFirstName(new String(FIRSTNAME_ARR[(int)(Math.random()* FIRSTNAME_ARR.length)]));
     	person.setLastName(new String(LASTNAME_ARR[(int)(Math.random()* LASTNAME_ARR.length)]));
+    	
+    	StringBuilder builder = new StringBuilder();
+    	builder.append(Math.round(Math.random()*100)).append(" ");
+    	builder.append(new String(STREET_ARR[(int)(Math.random()* STREET_ARR.length)])).append("\n");
+    	builder.append(Math.round(Math.random()*100000)).append(" ");
+    	builder.append(new String(CITY_NAME[(int)(Math.random()* CITY_NAME.length)]));
+    	person.setAddress(builder.toString());
     	person.setAge((int)(Math.random() * 100));
     	
     	return person;
