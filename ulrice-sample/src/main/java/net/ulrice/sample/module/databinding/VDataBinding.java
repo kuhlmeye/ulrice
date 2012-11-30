@@ -26,7 +26,7 @@ public class VDataBinding extends JPanel {
     private final JTextComponentViewAdapter textFieldGA1;
     private final JTextComponentViewAdapter textFieldGA2;
     
-    private final UTableComponent table = new UTableComponent(0);
+    private final UTableComponent table = new UTableComponent(1);
 
     public VDataBinding() {
         final JTextField tf1 = new JTextField();

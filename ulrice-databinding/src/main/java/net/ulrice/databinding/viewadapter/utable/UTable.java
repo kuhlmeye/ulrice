@@ -15,7 +15,7 @@ public class UTable extends JTable {
     private UTableVAHeader uTableHeader;
 	private UTable assocTable;
 
-    private UTableComponent tableComponent;
+    private UTableComponent tableComponent;    
 
 	public UTable(UTableComponent tableComponent) {
 	    this.tableComponent = tableComponent;
@@ -47,7 +47,20 @@ public class UTable extends JTable {
         setDefaultEditor(Character.class, new DefaultCellEditor(new JTextField()));                 
 	}
 
+	public void setRowHeight(int rowHeight) {
+		super.setRowHeight(rowHeight);
+		if(assocTable != null && assocTable.getRowHeight() != rowHeight) {
+			assocTable.setRowHeight(rowHeight);
+		}
+	}
 	
+	
+	public void setRowHeight(int row, int rowHeight) {
+		super.setRowHeight(row, rowHeight);
+		if(assocTable != null && assocTable.getRowHeight(row) != rowHeight) {
+			assocTable.setRowHeight(row, rowHeight);
+		}
+	}
 
 	public void setAssocTable(UTable assocTable) {
 		this.assocTable = assocTable;

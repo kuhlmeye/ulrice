@@ -43,9 +43,11 @@ public class CDataBinding extends AbstractController {
         view.getTable().init(tableVA);
         view.getTable().updateColumnModel();
         
+        
+        
         view.getTable().setEnableCopyPaste(true, true);
 
-        model.personList = new LinkedList<Person>();
+        model.personList = new LinkedList<Person>();        
 
         model.getNameAM().read();        
         model.getTableAM().read();
