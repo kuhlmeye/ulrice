@@ -41,8 +41,12 @@ public class I18nTextArea extends I18nTextComponent {
 		});
 		
 		getLocaleSelector().setShowTextAndIcon(true);
-		getTextComponent().setBorder(BorderFactory.createEmptyBorder());
+		getLocaleSelector().setBorder(BorderFactory.createEmptyBorder(0, 6, 0, 0));
+		getTextComponent().setBorder(BorderFactory.createEmptyBorder(1, 3, 1, 3));
 		getTextComponent().setOpaque(false);
+		
+		setBorder(BorderFactory.createEmptyBorder());
+		
 		add(getLocaleSelector(), BorderLayout.NORTH);
 		add(new JScrollPane(getTextComponent()), BorderLayout.CENTER);
 	}

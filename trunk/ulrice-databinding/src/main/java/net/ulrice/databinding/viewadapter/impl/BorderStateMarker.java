@@ -3,6 +3,7 @@ package net.ulrice.databinding.viewadapter.impl;
 import java.awt.Component;
 import java.awt.Graphics;
 import java.awt.Image;
+import java.awt.Insets;
 import java.awt.image.ImageObserver;
 
 import javax.swing.Icon;
@@ -36,7 +37,14 @@ public class BorderStateMarker extends UBorder implements ImageObserver, IFState
      * Creates a new border state marker.
      */
     public BorderStateMarker(boolean borderVisible, boolean clipLeft, boolean clipRight) {
-        this(BorderStateMarkerStrategy.BORDER_ONLY, borderVisible, clipLeft, clipRight);
+        this(borderVisible, null, clipLeft, clipRight);
+    }
+
+    /**
+     * Creates a new border state marker.
+     */
+    public BorderStateMarker(boolean borderVisible, Insets baseInsets, boolean clipLeft, boolean clipRight) {
+        this(BorderStateMarkerStrategy.BORDER_ONLY, borderVisible, baseInsets, clipLeft, clipRight);
     }
 
     /**
@@ -45,7 +53,16 @@ public class BorderStateMarker extends UBorder implements ImageObserver, IFState
      * @param iconOnly true, if only the icon should be shown.
      */
     public BorderStateMarker(BorderStateMarkerStrategy strategy, boolean borderVisible, boolean clipLeft, boolean clipRight) {
-        super(borderVisible, clipLeft, clipRight);
+        this(strategy, borderVisible, null, clipLeft, clipRight);
+    }
+
+    /**
+     * Creates a new border state marker.
+     * 
+     * @param iconOnly true, if only the icon should be shown.
+     */
+    public BorderStateMarker(BorderStateMarkerStrategy strategy, boolean borderVisible, Insets baseInsets, boolean clipLeft, boolean clipRight) {
+        super(borderVisible, baseInsets, clipLeft, clipRight);
 
         changedIcon = UIManager.getIcon(BindingUIConstants.BORDER_STATE_MARKER_CHANGED_IMAGE);
         invalidIcon = UIManager.getIcon(BindingUIConstants.BORDER_STATE_MARKER_INVALID_IMAGE);
