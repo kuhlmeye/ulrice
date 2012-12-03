@@ -1916,7 +1916,7 @@ public class TableAM implements IFAttributeModel {
     }
 
     /**
-     * TODO RAD Comment me..
+     * set a list of default sort keys for the table
      */
     public void setDefaultSortKeys(List<SortKey> defaultSortKeys) {
         this.defaultSortKeys = defaultSortKeys;
