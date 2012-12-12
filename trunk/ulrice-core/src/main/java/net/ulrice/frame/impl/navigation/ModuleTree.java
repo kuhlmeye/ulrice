@@ -34,6 +34,9 @@ public class ModuleTree extends JTree implements IFMainFrameComponent, MouseList
         setRootVisible(false);
         setShowsRootHandles(true);
         setCellRenderer(new ModuleTreeCellRenderer());
+        // this seems to be the only way to alter the height
+        // the height of the renderer gets ignored all the time 
+        setRowHeight(18);
         addMouseListener(this);
         
         addKeyListener(new KeyAdapter() {
