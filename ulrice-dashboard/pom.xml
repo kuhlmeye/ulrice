@@ -41,7 +41,6 @@
 		<dependency>
 			<groupId>net.ulrice</groupId>
 			<artifactId>ulrice-core</artifactId>
-			<version>0.2.5.10-SNAPSHOT</version>
 		</dependency>
 <!-- 		<dependency>
 			<groupId>net.ulrice</groupId>
