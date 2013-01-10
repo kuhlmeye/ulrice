@@ -196,6 +196,7 @@
 		<module>../ulrice-translator</module>
 		<module>../ulrice-webstarter</module>
 		<module>../ulrice-webstarter-maven-plugin</module>
+		<module>../ulrice-recorder</module>
 	</modules>
 
 </project>
