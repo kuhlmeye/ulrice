@@ -59,11 +59,6 @@
 				<artifactId>ulrice-remote-control</artifactId>
 				<version>${project.version}</version>
 			</dependency>
- 			<dependency>
-				<groupId>net.ulrice</groupId>
-				<artifactId>ulrice-sample</artifactId>
-				<version>${project.version}</version>
-			</dependency>
 			<dependency>
 				<groupId>net.ulrice</groupId>
 				<artifactId>ulrice-translator</artifactId>
@@ -77,6 +72,11 @@
 			<dependency>
 				<groupId>net.ulrice</groupId>
 				<artifactId>ulrice-webstarter-maven-plugin</artifactId>
+				<version>${project.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>net.ulrice</groupId>
+				<artifactId>ulrice-sample</artifactId>
 				<version>${project.version}</version>
 			</dependency>
 			<dependency>
