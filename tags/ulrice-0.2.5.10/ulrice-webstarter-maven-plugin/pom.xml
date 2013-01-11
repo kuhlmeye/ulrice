@@ -46,6 +46,7 @@
 		<dependency>
 			<groupId>net.ulrice</groupId>
 			<artifactId>ulrice-webstarter</artifactId>
+			<version>${project.version}</version>
 		</dependency>
 	</dependencies>
 	<build>
