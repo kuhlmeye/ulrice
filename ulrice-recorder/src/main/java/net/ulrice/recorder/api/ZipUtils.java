@@ -16,73 +16,66 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 import java.util.zip.ZipOutputStream;
 
-import net.ulrice.Ulrice;
-
 class ZipUtils {
 
 	static void decompressFile(File file, File outputDirectory, String... extensionsToDecompress) throws IOException {
 		Set<String> extensions = new HashSet<String>(Arrays.asList(extensionsToDecompress));
-		
+
 		ZipFile zipFile = new ZipFile(file);
 		Enumeration<? extends ZipEntry> entries = zipFile.entries();
 
 		while (entries.hasMoreElements()) {
-			ZipEntry entry = (ZipEntry) entries.nextElement();			
+			ZipEntry entry = (ZipEntry) entries.nextElement();
 
 			int dotIdx = entry.getName().lastIndexOf('.');
-			if(dotIdx >= 0) {
+			if (dotIdx >= 0) {
 				String extension = entry.getName().substring(dotIdx + 1);
-				if(!extensions.contains(extension)) {
+				if (!extensions.contains(extension)) {
 					continue;
 				}
 			}
-			
-			
+
 			if (entry.isDirectory()) {
 				(new File(entry.getName())).mkdirs();
 				continue;
 			}
-			
-		    byte[] buffer = new byte[1024];
-		    InputStream in = zipFile.getInputStream(entry);
-		    OutputStream out = new BufferedOutputStream(new FileOutputStream(new File(outputDirectory, entry.getName())));
-		   
-		    int len;
-		    while((len = in.read(buffer)) >= 0)
-		      out.write(buffer, 0, len);
 
-		    in.close();
-		    out.close();
+			byte[] buffer = new byte[1024];
+			InputStream in = zipFile.getInputStream(entry);
+			OutputStream out = new BufferedOutputStream(new FileOutputStream(new File(outputDirectory, entry.getName())));
+
+			int len;
+			while ((len = in.read(buffer)) >= 0)
+				out.write(buffer, 0, len);
+
+			in.close();
+			out.close();
 		}
 
 		zipFile.close();
 	}
 
-	static void compressOutput(File outputFile, List<File> files) {
+	static void compressOutput(File outputFile, List<File> files) throws IOException {
 
 		byte[] buf = new byte[1024];
 
-		try {
-			ZipOutputStream out = new ZipOutputStream(new FileOutputStream(outputFile));
+		ZipOutputStream out = new ZipOutputStream(new FileOutputStream(outputFile));
 
-			for (int i = 0; i < files.size(); i++) {
-				FileInputStream in = new FileInputStream(files.get(i));
-				out.putNextEntry(new ZipEntry(files.get(i).getName()));
-				int len;
-				while ((len = in.read(buf)) > 0) {
-					out.write(buf, 0, len);
-				}
-				out.closeEntry();
-				in.close();
+		for (int i = 0; i < files.size(); i++) {
+			FileInputStream in = new FileInputStream(files.get(i));
+			out.putNextEntry(new ZipEntry(files.get(i).getName()));
+			int len;
+			while ((len = in.read(buf)) > 0) {
+				out.write(buf, 0, len);
 			}
+			out.closeEntry();
+			in.close();
+		}
 
-			out.close();
+		out.close();
 
-			for (File file : files) {
-				file.delete();
-			}
-		} catch (IOException e) {
-			Ulrice.getMessageHandler().handleException(e);
+		for (File file : files) {
+			file.delete();
 		}
 	}
 }
