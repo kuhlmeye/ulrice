@@ -3,6 +3,7 @@ package net.ulrice.recorder.gui;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.image.BufferedImage;
 import java.net.URL;
 
 import javax.swing.BorderFactory;
@@ -11,7 +12,6 @@ import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComponent;
-import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -20,14 +20,12 @@ import javax.swing.JTextField;
 import javax.swing.JToggleButton;
 import javax.swing.border.EtchedBorder;
 
-import net.ulrice.Ulrice;
-
 /**
  * Dialog for controlling the recorder
  * 
  * @author christof
  */
-public class RecorderDialog extends JDialog {
+public class RecorderView extends JPanel {
 
 	private static final long serialVersionUID = 1L;
 
@@ -43,10 +41,8 @@ public class RecorderDialog extends JDialog {
 	private JButton stopButton;
 	private JButton saveButton;
 
-	public RecorderDialog() {
-		super(Ulrice.getMainFrame().getFrame());
-
-		setTitle("Recorder");
+	public RecorderView() {
+		super();
 
 		titleField = new JTextField();
 		categoryField = new JTextField();
@@ -86,9 +82,6 @@ public class RecorderDialog extends JDialog {
 		recordButton = new JToggleButton(createIcon("record.png"));
 		saveButton = new JButton(createIcon("save.png"));
 
-		screenTitle.setEnabled(false);
-		screenDescription.setEnabled(false);
-
 		JPanel buttonPanel = new JPanel();
 		buttonPanel.setBorder(BorderFactory.createEmptyBorder(2, 2, 2, 2));
 		buttonPanel.setLayout(new BoxLayout(buttonPanel, BoxLayout.X_AXIS));
@@ -96,10 +89,36 @@ public class RecorderDialog extends JDialog {
 		buttonPanel.add(stopButton);
 		buttonPanel.add(saveButton);
 
-		getContentPane().setLayout(new BorderLayout());
-		getContentPane().add(titlePanel, BorderLayout.NORTH);
-		getContentPane().add(screenPanel, BorderLayout.CENTER);
-		getContentPane().add(buttonPanel, BorderLayout.SOUTH);
+		setLayout(new BorderLayout());
+		add(titlePanel, BorderLayout.NORTH);
+		add(screenPanel, BorderLayout.CENTER);
+		add(buttonPanel, BorderLayout.SOUTH);
+
+		reinit();
+	}
+	
+	public void reinit() {
+		getRecordButton().setSelected(false);
+		getScreenTitle().setEnabled(false);
+		getScreenDescription().setEnabled(false);
+		
+		getTitleField().setText("");
+		getCategoryField().setText("");
+		getDescriptionArea().setText("");
+		getScreenshot().setIcon(null);
+		getScreenTitle().setText("");
+		getScreenDescription().setText("");
+	}
+
+	public void showNewScreen(BufferedImage image) {
+		getScreenTitle().setEnabled(true);
+		getScreenDescription().setEnabled(true);
+
+		getScreenshot().setIcon(new ImageIcon(image));
+		getScreenTitle().setText("");
+		getScreenDescription().setText("");
+		invalidate();
+		repaint();
 	}
 
 	private Icon createIcon(String iconName) {

@@ -22,10 +22,10 @@ import javax.imageio.ImageIO;
 import javax.swing.SwingUtilities;
 import javax.xml.parsers.ParserConfigurationException;
 
+import net.ulrice.recorder.Recorder;
 import net.ulrice.recorder.domain.RecordedScreen;
 import net.ulrice.recorder.domain.Recording;
 import net.ulrice.recorder.domain.RecordingInfo;
-import net.ulrice.recorder.gui.Recorder;
 
 import org.xml.sax.SAXException;
 

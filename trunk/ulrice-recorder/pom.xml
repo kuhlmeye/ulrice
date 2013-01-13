@@ -37,13 +37,6 @@
 		</developer>
 	</developers>
 	
-	<dependencies>
-	    <dependency>
-	        <groupId>net.ulrice</groupId>
-	        <artifactId>ulrice-core</artifactId>
-	    </dependency>
-	</dependencies>
-	
 	<build>
 		<plugins>
 			<plugin>
