@@ -1,4 +1,4 @@
-package net.ulrice.recorder;
+package net.ulrice.recorder.gui;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
