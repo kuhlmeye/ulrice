@@ -50,7 +50,7 @@ public class Recorder {
 		view.getRecordButton().addActionListener(new ActionListener() {
 
 			@Override
-			public void actionPerformed(ActionEvent e) {
+			public void actionPerformed(ActionEvent e) {				
 				start();
 			}
 
@@ -108,7 +108,7 @@ public class Recorder {
 						} else {
 							currentScreen = recording.getScreens().get(0);
 						}
-						view.showRecording(recording);
+						view.showRecording(recording);							
 					}
 
 				} catch(Throwable th) {
@@ -127,6 +127,10 @@ public class Recorder {
 					updateScreenTexts();
 					currentScreen = recording.getScreens().get(idx-1);
 					view.showScreen(currentScreen);
+					view.getPrevButton().setEnabled(true);
+					view.getNextButton().setEnabled(true);		
+				} else {
+					view.getPrevButton().setEnabled(false);					
 				}
 			}
 
@@ -141,6 +145,10 @@ public class Recorder {
 					updateScreenTexts();
 					currentScreen = recording.getScreens().get(idx+1);
 					view.showScreen(currentScreen);
+					view.getPrevButton().setEnabled(true);
+					view.getNextButton().setEnabled(true);					
+				} else {
+					view.getNextButton().setEnabled(false);
 				}
 			}
 
@@ -155,9 +163,11 @@ public class Recorder {
 				if (keyEvent.getID() == KeyEvent.KEY_RELEASED && keyCode == keyEvent.getKeyCode()) {
 					try {
 						updateScreenTexts();
-
+						if(!recording.getScreens().isEmpty()) {
+							view.getPrevButton().setEnabled(true);
+						}
 						RecordedScreen screen = RecorderAPI.recordScreen(component, 320, 200);
-						currentScreen = screen;
+						currentScreen = screen;						
 						recording.getScreens().add(screen);
 						view.showScreen(screen);
 					} catch (Throwable th) {
@@ -173,6 +183,10 @@ public class Recorder {
 		recording.setScreens(new LinkedList<RecordedScreen>());	
 		
 		view.getRecordButton().setSelected(true);
+		view.getTitleField().setEnabled(true);
+		view.getDescriptionArea().setEnabled(true);
+		view.getCategoryField().setEnabled(true);
+		view.getStopButton().setEnabled(true);
 		
 		Toolkit.getDefaultToolkit().removeAWTEventListener(eventListener);
 		Toolkit.getDefaultToolkit().addAWTEventListener(eventListener, AWTEvent.KEY_EVENT_MASK);
@@ -182,6 +196,7 @@ public class Recorder {
 		Toolkit.getDefaultToolkit().removeAWTEventListener(eventListener);
 		updateScreenTexts();			
 		view.getRecordButton().setSelected(false);
+		view.getStopButton().setEnabled(false);
 		
 		recording.setTitle(view.getTitleField().getText());
 		recording.setCategory(view.getCategoryField().getText());
