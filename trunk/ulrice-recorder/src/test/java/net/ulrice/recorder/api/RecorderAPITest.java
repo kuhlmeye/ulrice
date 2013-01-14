@@ -24,25 +24,21 @@ public class RecorderAPITest {
 		screen0.setTitle("Screen 0");
 		screen0.setDescription("Description of Screen 0");
 		screen0.setFullImage(new BufferedImage(100, 100, BufferedImage.TYPE_INT_RGB));
-		screen0.setSmallImage(new BufferedImage(10, 10, BufferedImage.TYPE_INT_RGB));
 		
 		RecordedScreen screen1 = new RecordedScreen();
 		screen1.setTitle("Screen 1");
 		screen1.setDescription("Description of Screen 1");
 		screen1.setFullImage(new BufferedImage(100, 100, BufferedImage.TYPE_INT_RGB));
-		screen1.setSmallImage(new BufferedImage(10, 10, BufferedImage.TYPE_INT_RGB));
 
 		RecordedScreen screen2 = new RecordedScreen();
 		screen2.setTitle("Screen 2");
 		screen2.setDescription("Description of Screen 2");
 		screen2.setFullImage(new BufferedImage(100, 100, BufferedImage.TYPE_INT_RGB));
-		screen2.setSmallImage(new BufferedImage(10, 10, BufferedImage.TYPE_INT_RGB));
 
 		RecordedScreen screen3 = new RecordedScreen();
 		screen3.setTitle("Screen 3");
 		screen3.setDescription("Description of Screen 3");
 		screen3.setFullImage(new BufferedImage(100, 100, BufferedImage.TYPE_INT_RGB));
-		screen3.setSmallImage(new BufferedImage(10, 10, BufferedImage.TYPE_INT_RGB));
 		
 
 		recording = new Recording();

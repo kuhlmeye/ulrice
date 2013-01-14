@@ -37,16 +37,16 @@ class XmlIO {
 				RecordedScreen screen = recording.getScreens().get(i);
 				File screenshot = File.createTempFile("screen-" + i, "jpg");
 				files.add(screenshot);
-				File screenshot_small = File.createTempFile("screen-" + i + "_small", "jpg");
-				files.add(screenshot_small);
 
 				ImageIO.write(screen.getFullImage(), "JPG", screenshot);
-				ImageIO.write(screen.getSmallImage(), "JPG", screenshot_small);
 				pw.println("    <Screen>");
 				pw.println(String.format("      <ScreenTitle>%s</ScreenTitle>", screen.getTitle()));
 				pw.println(String.format("      <ScreenDescription>%s</ScreenDescription>", screen.getDescription()));
 				pw.println(String.format("      <FullImage>%s</FullImage>", screenshot.getName()));
-				pw.println(String.format("      <SmallImage>%s</SmallImage>", screenshot_small.getName()));
+				pw.println(String.format("      <ClipX>%d</ClipX>", screen.getClipX()));
+				pw.println(String.format("      <ClipY>%d</ClipY>", screen.getClipY()));
+				pw.println(String.format("      <ClipW>%d</ClipW>", screen.getClipW()));
+				pw.println(String.format("      <ClipH>%d</ClipH>", screen.getClipH()));
 				pw.println("    </Screen>");
 			}
 			pw.println("  </Screens>");
@@ -108,8 +108,14 @@ class XmlIO {
 				result.setDescription(child.getTextContent());
 			} else if("FullImage".equals(child.getNodeName())) {
 				result.setFullImage(ImageIO.read(new File(directory, child.getTextContent())));
-			} else if("SmallImage".equals(child.getNodeName())) {
-				result.setSmallImage(ImageIO.read(new File(directory, child.getTextContent())));
+			} else if("ClipX".equals(child.getNodeName())) {
+				result.setClipX(Integer.valueOf(child.getTextContent()));
+			} else if("ClipY".equals(child.getNodeName())) {
+				result.setClipY(Integer.valueOf(child.getTextContent()));
+			} else if("ClipW".equals(child.getNodeName())) {
+				result.setClipW(Integer.valueOf(child.getTextContent()));
+			} else if("ClipH".equals(child.getNodeName())) {
+				result.setClipH(Integer.valueOf(child.getTextContent()));
 			} 
 		}
 		return result;

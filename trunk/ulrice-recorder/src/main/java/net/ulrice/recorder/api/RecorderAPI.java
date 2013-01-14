@@ -43,7 +43,6 @@ public class RecorderAPI {
 
 		RecordedScreen screen = new RecordedScreen();
 		screen.setFullImage(screenCapture);
-		screen.setSmallImage(ImageUtils.scaleImage(screenCapture, smallImageWidth, smallImageHeight));
 
 		return screen;
 	}
@@ -229,9 +228,9 @@ public class RecorderAPI {
 				pw.println("\t\t\t<ul id=\"smallPictureList\">");
 				for(int k = 0; k < recording.getScreens().size(); k++) {
 					if(k == j) {
-						pw.println("\t\t\t\t<li id=\"current\" class=\"smallPicture\"><img src=\"screen_" + i + "_" + k + "_small.jpg\"></li>");
+						pw.println("\t\t\t\t<li id=\"current\" class=\"smallPicture\"><img src=\"screen_" + i + "_" + k + ".jpg\"></li>");
 					} else {
-						pw.println("\t\t\t\t<li class=\"smallPicture\"><a href=\"recording_" + i + "_" + k + ".html\"><img src=\"screen_" + i + "_" + k + "_small.jpg\"></a></li>");
+						pw.println("\t\t\t\t<li class=\"smallPicture\"><a href=\"recording_" + i + "_" + k + ".html\"><img src=\"screen_" + i + "_" + k + ".jpg\"></a></li>");
 					}
 				}
 				pw.println("\t\t\t</li>");
@@ -241,8 +240,8 @@ public class RecorderAPI {
 				
 				pw.close();
 
-				ImageIO.write(screen.getFullImage(), "JPG", new File(outputDirectory, "screen_" + i + "_" + j + ".jpg"));
-				ImageIO.write(screen.getFullImage(), "JPG", new File(outputDirectory, "screen_" + i + "_" + j + "_small.jpg"));
+				BufferedImage clippedImage = ImageUtils.clipImage(screen.getFullImage(), screen.getClipX(), screen.getClipY(), screen.getClipW(), screen.getClipH());
+				ImageIO.write(clippedImage, "JPG", new File(outputDirectory, "screen_" + i + "_" + j + ".jpg"));
 			}			
 		}
 	}

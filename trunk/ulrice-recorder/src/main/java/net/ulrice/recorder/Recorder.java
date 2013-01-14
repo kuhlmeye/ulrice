@@ -102,7 +102,12 @@ public class Recorder {
 					List<RecordingInfo> recordings = dialog.getSelectedRecordings();
 					if(recordings.size() > 0) {
 						Recording loadedRecording = RecorderAPI.loadRecording(recordings.get(0).getFile());
-						recording = loadedRecording;						
+						recording = loadedRecording;
+						if(recording.getScreens().isEmpty()) {
+							currentScreen = null;
+						} else {
+							currentScreen = recording.getScreens().get(0);
+						}
 						view.showRecording(recording);
 					}
 
@@ -119,6 +124,7 @@ public class Recorder {
 			public void actionPerformed(ActionEvent e) {
 				int idx = recording.getScreens().indexOf(currentScreen);
 				if(idx > 0) {
+					updateScreenTexts();
 					currentScreen = recording.getScreens().get(idx-1);
 					view.showScreen(currentScreen);
 				}
@@ -132,6 +138,7 @@ public class Recorder {
 			public void actionPerformed(ActionEvent e) {
 				int idx = recording.getScreens().indexOf(currentScreen);
 				if(idx < recording.getScreens().size() - 1) {
+					updateScreenTexts();
 					currentScreen = recording.getScreens().get(idx+1);
 					view.showScreen(currentScreen);
 				}
@@ -192,10 +199,13 @@ public class Recorder {
 	}
 
 	private void updateScreenTexts() {
-		if (recording.getScreens().size() > 0) {
-			RecordedScreen lastScreen = recording.getScreens().get(recording.getScreens().size() - 1);
-			lastScreen.setTitle(view.getScreenTitle().getText());
-			lastScreen.setDescription(view.getScreenDescription().getText());
+		if (currentScreen != null) {
+			currentScreen.setTitle(view.getScreenTitle().getText());
+			currentScreen.setDescription(view.getScreenDescription().getText());
+			currentScreen.setClipX(view.getScreenshot().getClipRect().x);
+			currentScreen.setClipY(view.getScreenshot().getClipRect().y);
+			currentScreen.setClipW(view.getScreenshot().getClipRect().width);
+			currentScreen.setClipH(view.getScreenshot().getClipRect().height);
 		}
 	}
 

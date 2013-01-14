@@ -3,7 +3,7 @@ package net.ulrice.recorder.gui;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
-import java.awt.image.BufferedImage;
+import java.awt.Rectangle;
 import java.net.URL;
 
 import javax.swing.AbstractButton;
@@ -37,7 +37,7 @@ public class RecorderView extends JPanel {
 	private JTextField categoryField;
 	private JTextArea descriptionArea;
 
-	private JLabel screenshot;
+	private ScreenView screenshot;
 	private JTextField screenTitle;
 	private JTextArea screenDescription;
 
@@ -65,11 +65,8 @@ public class RecorderView extends JPanel {
 		titlePanel.add(createComponentWithLabel("Category", categoryField, LEFT_ALIGNMENT));
 		titlePanel.add(createComponentWithLabel("Description", new JScrollPane(descriptionArea), LEFT_ALIGNMENT));
 
-		screenshot = new JLabel();
+		screenshot = new ScreenView();
 		screenshot.setOpaque(true);
-		screenshot.setHorizontalAlignment(JLabel.CENTER);
-		screenshot.setVerticalTextPosition(JLabel.BOTTOM);
-		screenshot.setHorizontalTextPosition(JLabel.CENTER);
 		screenshot.setBackground(Color.BLACK);
 		screenshot.setAlignmentX(CENTER_ALIGNMENT);
 		screenshot.setAlignmentY(CENTER_ALIGNMENT);
@@ -137,7 +134,7 @@ public class RecorderView extends JPanel {
 		getTitleField().setText("");
 		getCategoryField().setText("");
 		getDescriptionArea().setText("");
-		getScreenshot().setIcon(null);
+		getScreenshot().setImage(null);
 		getScreenTitle().setText("");
 		getScreenDescription().setText("");
 	}
@@ -146,7 +143,9 @@ public class RecorderView extends JPanel {
 		getScreenTitle().setEnabled(true);
 		getScreenDescription().setEnabled(true);
 
-		getScreenshot().setIcon(new ImageIcon(screen.getSmallImage()));
+		getScreenshot().setImage(screen.getFullImage());
+		getScreenshot().setClipRect(new Rectangle(screen.getClipX(), screen.getClipY(), screen.getClipW(), screen.getClipH()));
+		
 		getScreenTitle().setText(screen.getTitle());
 		getScreenDescription().setText(screen.getDescription());
 		invalidate();
@@ -190,7 +189,7 @@ public class RecorderView extends JPanel {
 		return panel;
 	}
 
-	public JLabel getScreenshot() {
+	public ScreenView getScreenshot() {
 		return screenshot;
 	}
 
