@@ -1634,6 +1634,10 @@ public class TableAM implements IFAttributeModel {
     public void addElementLifecycleListener(ElementLifecycleListener constraint) {
         listenerList.add(ElementLifecycleListener.class, constraint);
     }
+    
+    public ElementLifecycleListener[] getElementLifecycleListeners() {
+        return listenerList.getListeners(ElementLifecycleListener.class);
+    }
 
     /**
      * Remove an element lifecycle listener from the list of listeners.
