@@ -97,7 +97,7 @@ public class Element {
 		}
 		idModelMap.get(columnId).setReadOnly(readOnly);
 	}
-
+	
 	/**
 	 * Changes the readonly state of a column by column index
 	 */
@@ -457,6 +457,10 @@ public class Element {
 		}
 	}
 
+	public int getModelListSize(){
+        return modelList.size();
+    }
+	
 	/**
 	 * Return the current value object.
 	 *
@@ -474,7 +478,7 @@ public class Element {
 	public String getUniqueId() {
 		return uniqueId;
 	}
-
+	
 	/**
 	 * Returns the attribute model of a cell.
 	 */
