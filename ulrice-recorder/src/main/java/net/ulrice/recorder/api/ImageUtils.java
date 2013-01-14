@@ -2,11 +2,25 @@ package net.ulrice.recorder.api;
 
 import java.awt.Graphics2D;
 import java.awt.Image;
+import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
 import java.awt.image.ImageObserver;
 import java.awt.image.VolatileImage;
 
 class ImageUtils {
+	
+	static BufferedImage clipImage(BufferedImage image, int clipX, int clipY, int clipW, int clipH) {
+		if(clipW == 0|| clipH == 0) {
+			return image;
+		}
+		
+		Rectangle clipRect = new Rectangle(clipX, clipY, clipW, clipH);
+		clipRect = clipRect.intersection(new Rectangle(image.getWidth(), image.getHeight()));
+		
+		BufferedImage clippedImg = image.getSubimage(clipRect.x, clipRect.y, clipRect.width, clipRect.height);
+		
+		return clippedImg;		
+	}
 
 	static BufferedImage scaleImage(BufferedImage screenCapture, int scaledWidth, int scaledHeight) {
 
