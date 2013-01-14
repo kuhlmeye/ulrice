@@ -103,6 +103,7 @@ public class RecorderView extends JPanel {
 		buttonPanel.add(exportButton);
 		buttonPanel.add(prevButton);
 		buttonPanel.add(nextButton);
+		
 
 		setLayout(new BorderLayout());
 		add(titlePanel, BorderLayout.NORTH);
@@ -130,6 +131,7 @@ public class RecorderView extends JPanel {
 		getDescriptionArea().setEnabled(false);
 		getScreenTitle().setEnabled(false);
 		getScreenDescription().setEnabled(false);
+		stopButton.setEnabled(false);
 
 		getTitleField().setText("");
 		getCategoryField().setText("");
@@ -153,8 +155,16 @@ public class RecorderView extends JPanel {
 	}
 
 	public void showRecording(Recording recording) {
-		resetFields();
+		resetFields();		
 		if(recording != null) {
+
+			getPrevButton().setEnabled(false);
+			getNextButton().setEnabled(!recording.getScreens().isEmpty());	
+			
+			getTitleField().setEnabled(true);
+			getDescriptionArea().setEnabled(true);
+			getCategoryField().setEnabled(true);
+			
 			titleField.setText(recording.getTitle());
 			descriptionArea.setText(recording.getDescription());
 			categoryField.setText(recording.getCategory());
