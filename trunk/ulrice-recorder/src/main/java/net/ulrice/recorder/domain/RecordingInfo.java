@@ -1,10 +1,13 @@
 package net.ulrice.recorder.domain;
 
+import java.io.File;
+
 public class RecordingInfo {
 
 	private String title;
 	private String category;
 	private String description;
+	private File file;
 
 	public String getTitle() {
 		return title;
@@ -29,6 +32,14 @@ public class RecordingInfo {
 	public void setDescription(String description) {
 		this.description = description;
 	}
+	
+	public File getFile() {
+		return file;
+	}
+	
+	public void setFile(File file) {
+		this.file = file;
+	}
 
 	@Override
 	public int hashCode() {
@@ -36,6 +47,7 @@ public class RecordingInfo {
 		int result = 1;
 		result = prime * result + ((category == null) ? 0 : category.hashCode());
 		result = prime * result + ((description == null) ? 0 : description.hashCode());
+		result = prime * result + ((file == null) ? 0 : file.hashCode());
 		result = prime * result + ((title == null) ? 0 : title.hashCode());
 		return result;
 	}
@@ -59,6 +71,11 @@ public class RecordingInfo {
 				return false;
 		} else if (!description.equals(other.description))
 			return false;
+		if (file == null) {
+			if (other.file != null)
+				return false;
+		} else if (!file.equals(other.file))
+			return false;
 		if (title == null) {
 			if (other.title != null)
 				return false;
@@ -69,7 +86,7 @@ public class RecordingInfo {
 
 	@Override
 	public String toString() {
-		return "RecordingInfo [title=" + title + ", category=" + category + ", description=" + description + "]";
+		return "RecordingInfo [title=" + title + ", category=" + category + ", description=" + description + ", file=" + file + "]";
 	}
 
 }

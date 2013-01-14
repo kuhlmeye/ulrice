@@ -22,7 +22,6 @@ import javax.imageio.ImageIO;
 import javax.swing.SwingUtilities;
 import javax.xml.parsers.ParserConfigurationException;
 
-import net.ulrice.recorder.Recorder;
 import net.ulrice.recorder.domain.RecordedScreen;
 import net.ulrice.recorder.domain.Recording;
 import net.ulrice.recorder.domain.RecordingInfo;
@@ -35,7 +34,7 @@ public class RecorderAPI {
 		BufferedImage screenCapture = new BufferedImage(component.getWidth(), component.getHeight(), BufferedImage.TYPE_INT_RGB);
 		component.paint(screenCapture.getGraphics());
 
-		Image cursor = ImageIO.read(Recorder.class.getResourceAsStream("pointer.png"));
+		Image cursor = ImageIO.read(RecorderAPI.class.getResourceAsStream("pointer.png"));
 		Point mousePointer = MouseInfo.getPointerInfo().getLocation();
 		SwingUtilities.convertPointFromScreen(mousePointer, component);
 
@@ -109,6 +108,7 @@ public class RecorderAPI {
 		result.setCategory(recording.getCategory());
 		result.setTitle(recording.getTitle());
 		result.setDescription(recording.getDescription());
+		result.setFile(recordingFile);
 		
 		return result;
 	}
@@ -171,7 +171,7 @@ public class RecorderAPI {
 		pw.close();
 
 		// Export index
-		pw = new PrintWriter(new File(outputDirectory, "index.html"));
+		pw = new PrintWriter(new File(outputDirectory, "index.html"), "UTF-8");
 		pw.println("<html>");
 		pw.println("\t<head>");
 		pw.println("\t\t<link rel=\"stylesheet\" type=\"text/css\" href=\"style.css\">");
@@ -182,8 +182,8 @@ public class RecorderAPI {
 			Recording recording = recordings.get(i);
 			
 			pw.println("\t\t\t<tr class=\"indexTable\">");			
-			pw.println("\t\t\t\t<td class=\"categoryCell\">" + recording.getCategory() + "</td>");			
-			pw.println("\t\t\t\t<td class=\"titleCell\"><a href=\"recording_" + i + "_0.html\">" + recording.getTitle() + "</a></td>");			
+			pw.println("\t\t\t\t<td class=\"categoryCell\">" + fixHTML(recording.getCategory()) + "</td>");			
+			pw.println("\t\t\t\t<td class=\"titleCell\"><a href=\"recording_" + i + "_0.html\">" + fixHTML(recording.getTitle()) + "</a></td>");			
 			pw.println("\t\t\t</tr>");
 		}
 		pw.println("\t\t</table>");
@@ -198,7 +198,7 @@ public class RecorderAPI {
 			for(int j = 0; j < recording.getScreens().size(); j++) {
 				RecordedScreen screen = recording.getScreens().get(j);
 			
-				pw = new PrintWriter(new File(outputDirectory, "recording_" + i + "_" + j + ".html"));
+				pw = new PrintWriter(new File(outputDirectory, "recording_" + i + "_" + j + ".html"), "UTF-8");
 	
 				pw.println("<html>");
 				pw.println("\t<head>");
@@ -206,19 +206,19 @@ public class RecorderAPI {
 				pw.println("\t</head>");
 				pw.println("\t<body>");
 				pw.println("\t\t<div id=\"recordingInformation\">");
-				pw.println("\t\t\t<div id=\"category\">" + recording.getCategory() + "</div>");
-				pw.println("\t\t\t<div id=\"title\">" + recording.getTitle() + "</div>");
-				pw.println("\t\t\t<div id=\"description\">" + recording.getDescription() + "</div>");
+				pw.println("\t\t\t<div id=\"category\">" + fixHTML(recording.getCategory()) + "</div>");
+				pw.println("\t\t\t<div id=\"title\">" + fixHTML(recording.getTitle()) + "</div>");
+				pw.println("\t\t\t<div id=\"description\">" + fixHTML(recording.getDescription()) + "</div>");
 				pw.println("\t\t</div>");
 				pw.println("\t\t<div id=\"screen\">");
-				pw.println("\t\t\t<div id=\"screenTitle\">" + screen.getTitle() + "</div>");
+				pw.println("\t\t\t<div id=\"screenTitle\">" + fixHTML(screen.getTitle()) + "</div>");
 				pw.println("\t\t\t<div id=\"screenImage\"><img src=\"screen_" + i + "_" + j + ".jpg\"></div>");
 				if(j-1 < 0) {
 					pw.println("\t\t\t<div id=\"leftLink\"><a href=\"index.html\">&lt;</a></div>");
 				} else {
 					pw.println("\t\t\t<div id=\"leftLink\"><a href=\"recording_" + i + "_" + (j-1) + ".html\">&lt;</a></div>");
 				}
-				pw.println("\t\t\t<div id=\"screenDescription\">" + screen.getDescription() + "</div>");
+				pw.println("\t\t\t<div id=\"screenDescription\">" + fixHTML(screen.getDescription()) + "</div>");
 				if(j+1 >= recording.getScreens().size()) {
 					pw.println("\t\t\t<div id=\"rightLink\"><a href=\"index.html\">&gt;</a></div>");
 				} else {
@@ -245,5 +245,20 @@ public class RecorderAPI {
 				ImageIO.write(screen.getFullImage(), "JPG", new File(outputDirectory, "screen_" + i + "_" + j + "_small.jpg"));
 			}			
 		}
+	}
+
+	private static String fixHTML(String text) {
+		text = text.replace("ü", "&uuml;");
+		text = text.replace("Ü", "&Uuml;");
+
+		text = text.replace("ä", "&auml;");
+		text = text.replace("Ä", "&Auml;");
+
+		text = text.replace("ö", "&ouml;");
+		text = text.replace("Ö", "&Ouml;");
+		
+		text = text.replace("\n", "<br>");
+
+		return text;
 	}
 }
