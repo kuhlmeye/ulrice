@@ -6,6 +6,7 @@ import java.awt.Dimension;
 import java.awt.image.BufferedImage;
 import java.net.URL;
 
+import javax.swing.AbstractButton;
 import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
 import javax.swing.Icon;
@@ -19,6 +20,9 @@ import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.JToggleButton;
 import javax.swing.border.EtchedBorder;
+
+import net.ulrice.recorder.domain.RecordedScreen;
+import net.ulrice.recorder.domain.Recording;
 
 /**
  * Dialog for controlling the recorder
@@ -40,6 +44,10 @@ public class RecorderView extends JPanel {
 	private JToggleButton recordButton;
 	private JButton stopButton;
 	private JButton saveButton;
+	private JButton loadButton;
+	private JButton exportButton;
+	private JButton nextButton;
+	private JButton prevButton;
 
 	public RecorderView() {
 		super();
@@ -81,6 +89,12 @@ public class RecorderView extends JPanel {
 		stopButton = new JButton(createIcon("stop.png"));
 		recordButton = new JToggleButton(createIcon("record.png"));
 		saveButton = new JButton(createIcon("save.png"));
+		loadButton = new JButton(createIcon("load.png"));
+		exportButton = new JButton(createIcon("export.png"));
+		prevButton = new JButton(createIcon("prev.png"));
+		nextButton = new JButton(createIcon("next.png"));
+		
+		modifyButton(stopButton, recordButton, saveButton, loadButton, exportButton, prevButton, nextButton);
 
 		JPanel buttonPanel = new JPanel();
 		buttonPanel.setBorder(BorderFactory.createEmptyBorder(2, 2, 2, 2));
@@ -88,20 +102,38 @@ public class RecorderView extends JPanel {
 		buttonPanel.add(recordButton);
 		buttonPanel.add(stopButton);
 		buttonPanel.add(saveButton);
+		buttonPanel.add(loadButton);
+		buttonPanel.add(exportButton);
+		buttonPanel.add(prevButton);
+		buttonPanel.add(nextButton);
 
 		setLayout(new BorderLayout());
 		add(titlePanel, BorderLayout.NORTH);
 		add(screenPanel, BorderLayout.CENTER);
 		add(buttonPanel, BorderLayout.SOUTH);
 
-		reinit();
+		resetFields();
+		getTitleField().setEnabled(false);
+		getCategoryField().setEnabled(false);
+		getDescriptionArea().setEnabled(false);
 	}
 	
-	public void reinit() {
+	public void modifyButton(AbstractButton...buttons) {
+		for(AbstractButton button : buttons) {
+			button.setRolloverEnabled(false);
+			button.setContentAreaFilled(true);
+			button.setBackground(Color.DARK_GRAY);
+		}
+	}
+
+	public void resetFields() {
 		getRecordButton().setSelected(false);
+		getTitleField().setEnabled(false);
+		getCategoryField().setEnabled(false);
+		getDescriptionArea().setEnabled(false);
 		getScreenTitle().setEnabled(false);
 		getScreenDescription().setEnabled(false);
-		
+
 		getTitleField().setText("");
 		getCategoryField().setText("");
 		getDescriptionArea().setText("");
@@ -110,15 +142,28 @@ public class RecorderView extends JPanel {
 		getScreenDescription().setText("");
 	}
 
-	public void showNewScreen(BufferedImage image) {
+	public void showScreen(RecordedScreen screen) {
 		getScreenTitle().setEnabled(true);
 		getScreenDescription().setEnabled(true);
 
-		getScreenshot().setIcon(new ImageIcon(image));
-		getScreenTitle().setText("");
-		getScreenDescription().setText("");
+		getScreenshot().setIcon(new ImageIcon(screen.getSmallImage()));
+		getScreenTitle().setText(screen.getTitle());
+		getScreenDescription().setText(screen.getDescription());
 		invalidate();
 		repaint();
+	}
+
+	public void showRecording(Recording recording) {
+		resetFields();
+		if(recording != null) {
+			titleField.setText(recording.getTitle());
+			descriptionArea.setText(recording.getDescription());
+			categoryField.setText(recording.getCategory());
+			
+			if(!recording.getScreens().isEmpty()) {
+				showScreen(recording.getScreens().get(0));
+			}
+		}
 	}
 
 	private Icon createIcon(String iconName) {
@@ -180,4 +225,22 @@ public class RecorderView extends JPanel {
 	public JButton getSaveButton() {
 		return saveButton;
 	}
+
+	public JButton getLoadButton() {
+		return loadButton;
+	}
+
+	public JButton getExportButton() {
+		return exportButton;
+	}
+
+	public JButton getNextButton() {
+		return nextButton;
+	}
+
+	public JButton getPrevButton() {
+		return prevButton;
+	}
+
+
 }

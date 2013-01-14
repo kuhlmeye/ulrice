@@ -46,7 +46,7 @@ class XmlIO {
 				pw.println(String.format("      <ScreenTitle>%s</ScreenTitle>", screen.getTitle()));
 				pw.println(String.format("      <ScreenDescription>%s</ScreenDescription>", screen.getDescription()));
 				pw.println(String.format("      <FullImage>%s</FullImage>", screenshot.getName()));
-				pw.println(String.format("      <SmallImage>%s</SmallImage>", screenshot.getName()));
+				pw.println(String.format("      <SmallImage>%s</SmallImage>", screenshot_small.getName()));
 				pw.println("    </Screen>");
 			}
 			pw.println("  </Screens>");
