@@ -64,6 +64,11 @@ public class AccordionContentPanel extends JPanel implements ActionListener {
     public boolean isFolded() {
         return !content.isVisible();
     }
+    
+    public void setInitialFolded(boolean folded) {
+        separatorPanel.setOpened(!folded);
+        content.setVisible(!folded);
+    }
 
     public void setFolded(boolean folded) {
         separatorPanel.setOpened(!folded);
@@ -107,7 +112,7 @@ public class AccordionContentPanel extends JPanel implements ActionListener {
                         final int height = xx;
 
                         SwingUtilities.invokeLater(new Runnable() {
-                            public void run() {
+                            public void run() {                                
                                 content.setPreferredSize(new Dimension(maxw, height));
                                 revalidate();
                                 if (height <= ANIMATION_STEP_SIZE) {

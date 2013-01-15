@@ -81,7 +81,7 @@ public class AccordionPanel extends JPanel implements ActionListener {
 
 	public AccordionContentPanel addFoldable(AccordionContentPanel panel) {
 		panel.addActionListener(this);
-        panel.setFolded(foldables.size() > 0);
+        panel.setInitialFolded(foldables.size() > 0);
 
         foldables.add(panel);
         topPanel.add(panel, constraints);
