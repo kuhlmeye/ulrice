@@ -45,6 +45,7 @@ public class RecorderView extends JPanel {
 	private JButton stopButton;
 	private JButton saveButton;
 	private JButton loadButton;
+	private JButton deleteButton;
 	private JButton exportButton;
 	private JButton nextButton;
 	private JButton prevButton;
@@ -87,11 +88,12 @@ public class RecorderView extends JPanel {
 		recordButton = new JToggleButton(createIcon("record.png"));
 		saveButton = new JButton(createIcon("save.png"));
 		loadButton = new JButton(createIcon("load.png"));
+		deleteButton = new JButton(createIcon("delete.png"));
 		exportButton = new JButton(createIcon("export.png"));
 		prevButton = new JButton(createIcon("prev.png"));
 		nextButton = new JButton(createIcon("next.png"));
 		
-		modifyButton(stopButton, recordButton, saveButton, loadButton, exportButton, prevButton, nextButton);
+		modifyButton(stopButton, recordButton, saveButton, loadButton, deleteButton, exportButton, prevButton, nextButton);
 
 		JPanel buttonPanel = new JPanel();
 		buttonPanel.setBorder(BorderFactory.createEmptyBorder(2, 2, 2, 2));
@@ -100,11 +102,11 @@ public class RecorderView extends JPanel {
 		buttonPanel.add(stopButton);
 		buttonPanel.add(saveButton);
 		buttonPanel.add(loadButton);
+		buttonPanel.add(deleteButton);
 		buttonPanel.add(exportButton);
 		buttonPanel.add(prevButton);
 		buttonPanel.add(nextButton);
 		
-
 		setLayout(new BorderLayout());
 		add(titlePanel, BorderLayout.NORTH);
 		add(screenPanel, BorderLayout.CENTER);
@@ -251,5 +253,8 @@ public class RecorderView extends JPanel {
 		return prevButton;
 	}
 
+	public JButton getDeleteButton() {
+		return deleteButton;
+	}
 
 }

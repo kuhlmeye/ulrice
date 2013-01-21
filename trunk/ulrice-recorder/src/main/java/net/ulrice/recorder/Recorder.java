@@ -65,6 +65,15 @@ public class Recorder {
 
 		});
 
+		view.getDeleteButton().addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				deleteRecordedScreen(outputDirectory, exceptionHandler);
+			}
+			
+		});
+		
 		view.getExportButton().addActionListener(new ActionListener() {
 
 			@Override
@@ -213,6 +222,21 @@ public class Recorder {
 		}
 	}
 
+	private void deleteRecordedScreen(File outputDirectory, ExceptionHandler exceptionHandler) {
+		int idx = recording.getScreens().indexOf(currentScreen);
+		if (isLastScreen(idx)) {
+			if (recording.getScreens().size() == 1) {
+				recording.setScreens(new LinkedList<RecordedScreen>());
+			} else {
+				currentScreen = recording.getScreens().get(idx - 1);
+			}
+		} else {
+			currentScreen = recording.getScreens().get(idx + 1);
+		}
+		recording.getScreens().remove(idx);
+		view.showScreen(currentScreen);
+	}
+
 	private void updateScreenTexts() {
 		if (currentScreen != null) {
 			currentScreen.setTitle(view.getScreenTitle().getText());
@@ -224,6 +248,16 @@ public class Recorder {
 		}
 	}
 
+	private boolean isLastScreen(int index) {
+		if (recording.getScreens() == null) {
+			return true;
+		} else if (index == recording.getScreens().size() - 1) {
+			return true;
+		}else {
+			return false;
+		}
+	}
+	
 	public RecorderView getView() {
 		return view;
 	}
