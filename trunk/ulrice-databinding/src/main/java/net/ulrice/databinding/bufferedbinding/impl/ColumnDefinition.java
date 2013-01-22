@@ -4,6 +4,7 @@ import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.Iterator;
 import java.util.List;
 
 import javax.swing.border.Border;
@@ -19,7 +20,7 @@ import net.ulrice.databinding.viewadapter.utable.UTableRenderer;
 
 /**
  * Defines a column in the table am.
- * 
+ *
  * @author christof
  */
 public class ColumnDefinition<T extends Object> implements PropertyChangeListener {
@@ -136,7 +137,7 @@ public class ColumnDefinition<T extends Object> implements PropertyChangeListene
         }
 		return genericAM;
     }
-   
+
     private ColumnDefinition<T> setFilterMode(Class<T> columnClass) {
         if (Number.class.isAssignableFrom(columnClass)) {
             setFilterMode(FilterMode.Numeric);
@@ -265,7 +266,7 @@ public class ColumnDefinition<T extends Object> implements PropertyChangeListene
 		this.useAutoValueConverter = useAutoValueConverter;
 		return this;
 	}
-    
+
     /**
      * Sets the name of the column.
      */
@@ -546,4 +547,20 @@ public class ColumnDefinition<T extends Object> implements PropertyChangeListene
         return this;
     }
 
+    @SuppressWarnings("rawtypes")
+    public ColumnDefinition<T> removeValidators(Class< ? extends IFValidator>... validators) {
+        if(getValidators() != null && validators != null && validators.length > 0){
+            for (Iterator<IFValidator> iterator = getValidators().iterator(); iterator.hasNext();) {
+                IFValidator validator = iterator.next();
+                if(validator != null){
+                    for(Class<? extends IFValidator> type : validators){
+                        if(type.isAssignableFrom(validator.getClass())){
+                            iterator.remove();
+                        }
+                    }
+                }
+            }
+        }
+        return this;
+    }
 }
