@@ -258,7 +258,7 @@ public class ControllerRemoteControlImpl implements ControllerRemoteControl {
         ComponentRemoteControl componentRC = RemoteControlCenter.get(ComponentRemoteControl.class);
 
         componentRC.interact(click(), ComponentMatcher.like(".*Yes.*"), ofType(JButton.class),
-            within(ofType(JDialog.class), ComponentMatcher.contains(texted(".*discard changes.*"))));
+            within(ofType(JDialog.class), ComponentMatcher.contains(texted(".*discard.*"))));
         componentRC.interact(click(), ComponentMatcher.like(".*No.*"), ofType(JButton.class),
             within(ofType(JDialog.class)));
         componentRC.interact(click(), ComponentMatcher.like(".*Close.*"), ofType(JButton.class),
