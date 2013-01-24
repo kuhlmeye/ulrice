@@ -11,6 +11,7 @@ import net.ulrice.recorder.domain.RecordingInfo;
 
 import org.junit.Assert;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 
 public class RecorderAPITest {
@@ -54,6 +55,7 @@ public class RecorderAPITest {
 	
 	
 	@Test
+	@Ignore
 	public void testSaveAndLoad() throws IOException {
 		File outputFile = RecorderAPI.saveRecording(new File(System.getProperty("java.io.tmpdir")), recording);
 		Assert.assertNotNull(outputFile);
