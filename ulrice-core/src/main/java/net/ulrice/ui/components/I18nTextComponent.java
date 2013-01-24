@@ -2,11 +2,8 @@ package net.ulrice.ui.components;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
-import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
@@ -21,6 +18,8 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.text.JTextComponent;
+
+import net.ulrice.ui.components.JPopupMenuTriggerListener.TriggerType;
 
 public class I18nTextComponent extends JPanel {
 
@@ -96,7 +95,8 @@ public class I18nTextComponent extends JPanel {
 		}
 	}
 
-	public void updateUI() {
+	@Override
+    public void updateUI() {
 		super.updateUI();
 		setOpaque(true);
 
@@ -126,13 +126,13 @@ public class I18nTextComponent extends JPanel {
 	}
 	
 	public Locale getSelectedLocale() {
-		return (Locale) localeSelector.getSelectedLocale();
+		return localeSelector.getSelectedLocale();
 	}
 	
 	public void setData(Map<Locale, String> valueMap) {
 		this.valueMap = valueMap;
 		updateTextField();
-	};
+	}
 	
 	public Map<Locale, String> getData() {
 		updateTextMap();
@@ -153,27 +153,10 @@ public class I18nTextComponent extends JPanel {
 	    public LocaleSelector() {
 	        super();
 	        
-	        
 	        setBorder(new EmptyBorder(1, 1, 1, 1));
 	        setOpaque(false);
 
-	        addMouseListener(new MouseAdapter() {
-	            
-	            @Override
-	            public void mouseClicked(MouseEvent e) {
-	                if (LocaleSelector.this.dropDownMenu == null) {
-	                    return;
-	                }
-	                if (!dropDownMenu.isVisible()) {
-	                    Point p = LocaleSelector.this.getLocationOnScreen();
-	                    dropDownMenu.setLocation((int) p.getX(), (int) p.getY() + LocaleSelector.this.getHeight());
-	                    dropDownMenu.setVisible(true);
-	                }
-	                else {
-	                    dropDownMenu.setVisible(false);                    
-	                }
-	            }
-	        });        
+	        addMouseListener(new JPopupMenuTriggerListener(dropDownMenu, TriggerType.ALL_MOUSE_BUTTONS));
 	    }
 
 		public void setSelectedLocale(LocaleSelectorItem localeItem) {
@@ -205,8 +188,8 @@ public class I18nTextComponent extends JPanel {
 	        final JMenuItem menuItem = new JMenuItem(localeItem.getText(), localeItem.getIcon());
 	        menuItem.addActionListener(new ActionListener() {
 
-	            public void actionPerformed(ActionEvent e) {
-	                dropDownMenu.setVisible(false);
+	            @Override
+                public void actionPerformed(ActionEvent e) {
 	                setSelectedLocale(localeItem);
 	                listener.actionPerformed(e);
 	            }
