@@ -49,7 +49,7 @@ public class Ulrice {
     private static ProcessManager processManager;
 
     private static ProfileManager profileManager;
-    
+
     /** Contains the I18N-Support */
     private static TranslationProvider translationProvider;
 
@@ -60,7 +60,7 @@ public class Ulrice {
 
     private static EventListenerList listenerList = new EventListenerList();
 
-	private static IFAppPrefs appPrefs;
+    private static IFAppPrefs appPrefs;
 
     /**
      * Initializes ulrice.
@@ -79,7 +79,7 @@ public class Ulrice {
         Ulrice.dialogManager = new DialogManager();
         Ulrice.translationProvider = configuration.getTranslationProvider();
         Ulrice.profileManager = new ProfileManager(configuration.getProfilePersister());
-        
+
         if (configuration.getAuthCallback() != null) {
             Ulrice.securityManager = configuration.getAuthCallback();
         }
@@ -91,10 +91,10 @@ public class Ulrice {
         if (Ulrice.mainFrame != null) {
             try {
                 SwingUtilities.invokeAndWait(new Runnable() {
-                    
+
                     @Override
                     public void run() {
-                        Ulrice.mainFrame.inializeLayout(); 
+                        Ulrice.mainFrame.inializeLayout();
                     }
                 });
             }
@@ -113,12 +113,16 @@ public class Ulrice {
             }
         }
 
-        initializeRemoteControl();
+        try {
+            initializeRemoteControl();
+        }
+        catch (Exception e) {
+            System.err.println("Failed to initialize remote control: " + e.getMessage());
+        }
     }
 
-
     public static void shutdown() {
-    	ApplicationOptions.clearOptionsModules();
+        ApplicationOptions.clearOptionsModules();
         Ulrice.actionManager.dispose();
     }
 
@@ -167,8 +171,7 @@ public class Ulrice {
             Class< ?> remoteControlCenter = Class.forName("net.ulrice.remotecontrol.RemoteControlCenter");
 
             try {
-                remoteControlCenter.getMethod("registerNative", Class.class, Object.class).invoke(null, type,
-                    instance);
+                remoteControlCenter.getMethod("registerNative", Class.class, Object.class).invoke(null, type, instance);
             }
             catch (IllegalArgumentException e) {
                 throw new ConfigurationException("Failed to register remote control", e);
@@ -247,9 +250,9 @@ public class Ulrice {
     public static DialogManager getDialogManager() {
         return dialogManager;
     }
-    
+
     public static IFAppPrefs getAppPrefs() {
-    	return appPrefs;
+        return appPrefs;
     }
 
     /**
@@ -268,8 +271,8 @@ public class Ulrice {
     public static void removeConfigurationListener(ConfigurationListener listener) {
         listenerList.remove(ConfigurationListener.class, listener);
     }
-    
+
     public static ProfileManager getProfileManager() {
-    	return profileManager;
+        return profileManager;
     }
 }
