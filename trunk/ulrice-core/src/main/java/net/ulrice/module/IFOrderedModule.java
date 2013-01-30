@@ -7,7 +7,7 @@ package net.ulrice.module;
  * 
  * @author ckuhlmeyer
  */
-public interface IFOrderedModule extends IFModule { 
+public interface IFOrderedModule<T extends IFController> extends IFModule<T> { 
 
 	int getOrderNumber();
 }
