@@ -8,7 +8,7 @@ import javax.swing.ImageIcon;
  * 
  * @author ckuhlmeyer
  */
-public interface IFModule extends IFModuleTitleProvider { 
+public interface IFModule<T extends IFController> extends IFModuleTitleProvider { 
 
 	String getUniqueId();
 
@@ -19,5 +19,5 @@ public interface IFModule extends IFModuleTitleProvider {
 	/**
 	 * Creates a new instance of the module.
 	 */
-	void instantiateModule (ControllerProviderCallback callback);
+	void instantiateModule (ControllerProviderCallback<T> callback);
 }

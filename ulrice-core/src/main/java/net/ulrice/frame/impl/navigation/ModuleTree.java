@@ -113,7 +113,7 @@ public class ModuleTree extends JTree implements IFMainFrameComponent, MouseList
 	private void handleNodeActivated(ModuleTreeNode node) {
 		switch(node.getNodeType()) {
 			case Module:
-		        Ulrice.getModuleManager().openModule(node.getModule().getUniqueId(), new ControllerProviderCallback() {
+		        Ulrice.getModuleManager().openModule(node.getModule().getUniqueId(), new ControllerProviderCallback<IFController>() {
 		            @Override
 		            public void onFailure(ModuleInstantiationException exc) {
 		                Ulrice.getMessageHandler().handleException(exc);
@@ -125,7 +125,7 @@ public class ModuleTree extends JTree implements IFMainFrameComponent, MouseList
 		        });
 		        break;
 			case ProfiledModule:
-				Ulrice.getProfileManager().openProfiledModule(node.getProfiledModule(), new ControllerProviderCallback() {
+				Ulrice.getProfileManager().openProfiledModule(node.getProfiledModule(), new ControllerProviderCallback<IFController>() {
 					
 					@Override
 					public void onFailure(ModuleInstantiationException exc) {

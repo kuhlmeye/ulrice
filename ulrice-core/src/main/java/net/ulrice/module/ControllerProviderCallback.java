@@ -6,13 +6,13 @@ import net.ulrice.module.exception.ModuleInstantiationException;
 /**
  * Callback for the instantiation of a controller.
  */
-public abstract class ControllerProviderCallback {
+public abstract class ControllerProviderCallback<T extends IFController> {
 
 	/**
 	 * Called by the module manager after controller initialization is finished
 	 * and the controller is completely registered at the application.
 	 */
-	public void onControllerReady(IFController controller) {		
+	public void onControllerReady(T controller) {		
 	}
 
 	/**
@@ -20,7 +20,7 @@ public abstract class ControllerProviderCallback {
 	 * controller. The controller is not yet fully registered at the
 	 * application. In this method basic data initialization could be done.
 	 */
-	public void onControllerInitialization(IFController controller) {	
+	public void onControllerInitialization(T controller) {	
 	}
 
 	/**
