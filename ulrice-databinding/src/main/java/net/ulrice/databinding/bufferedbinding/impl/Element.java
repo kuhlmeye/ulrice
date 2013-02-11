@@ -206,7 +206,9 @@ public class Element {
 
 		if (tableAM.isVirtualTreeNodes()) {
 			for (Element elem : childElements) {
-				elem.setValueAt(columnIndex, aValue);
+			    if(!elem.isReadOnly(columnIndex)){
+			        elem.setValueAt(columnIndex, aValue);
+			    }
 			}
 		}
 	}
@@ -505,7 +507,10 @@ public class Element {
 	 */
 	public List<ValidationError> getValidationErrors() {
 		List<ValidationError> errors = new ArrayList<ValidationError>(validationResult.getValidationErrors());
-
+		
+		
+		
+		
 		if (modelList != null) {
 			for (GenericAM<?> model : modelList) {
 				if (model.getValidationResult() != null) {
