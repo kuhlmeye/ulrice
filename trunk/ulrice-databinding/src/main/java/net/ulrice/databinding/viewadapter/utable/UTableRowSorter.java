@@ -103,6 +103,9 @@ public class UTableRowSorter extends DefaultRowSorter<UTableViewAdapter, String>
      * @param sortKeys
      */
     public void setGlobalSortKeys(List<RowSorter.SortKey> sortKeys) {
+        if (disabled) {
+            return;
+        }
         List<RowSorter.SortKey> newStaticSortKeys = new ArrayList<RowSorter.SortKey>();
         List<RowSorter.SortKey> newScrollSortKeys = new ArrayList<RowSorter.SortKey>();
 
