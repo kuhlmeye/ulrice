@@ -5,7 +5,6 @@ import java.awt.Component;
 import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.Toolkit;
-import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.StringSelection;
 import java.awt.event.ActionEvent;
@@ -122,10 +121,12 @@ public class UTableComponent extends JPanel {
 
             @Override
             public void mouseReleased(MouseEvent e) {
-                MouseListener[] listeners = listenerList.getListeners(MouseListener.class);
-                if (listeners != null) {
-                    for (MouseListener listener : listeners) {
-                        listener.mouseReleased(adaptMouseEvent(e));
+                if (isClickOnItem(e)) {
+                    MouseListener[] listeners = listenerList.getListeners(MouseListener.class);
+                    if (listeners != null) {
+                        for (MouseListener listener : listeners) {
+                            listener.mouseReleased(adaptMouseEvent(e));
+                        }
                     }
                 }
 
@@ -136,10 +137,12 @@ public class UTableComponent extends JPanel {
 
             @Override
             public void mousePressed(MouseEvent e) {
-                MouseListener[] listeners = listenerList.getListeners(MouseListener.class);
-                if (listeners != null) {
-                    for (MouseListener listener : listeners) {
-                        listener.mousePressed(adaptMouseEvent(e));
+                if (isClickOnItem(e)) {
+                    MouseListener[] listeners = listenerList.getListeners(MouseListener.class);
+                    if (listeners != null) {
+                        for (MouseListener listener : listeners) {
+                            listener.mousePressed(adaptMouseEvent(e));
+                        }
                     }
                 }
 
@@ -170,10 +173,12 @@ public class UTableComponent extends JPanel {
 
             @Override
             public void mouseClicked(MouseEvent e) {
-                MouseListener[] listeners = listenerList.getListeners(MouseListener.class);
-                if (listeners != null) {
-                    for (MouseListener listener : listeners) {
-                        listener.mouseClicked(adaptMouseEvent(e));
+                if (isClickOnItem(e)) {
+                    MouseListener[] listeners = listenerList.getListeners(MouseListener.class);
+                    if (listeners != null) {
+                        for (MouseListener listener : listeners) {
+                            listener.mouseClicked(adaptMouseEvent(e));
+                        }
                     }
                 }
                 if (e.isPopupTrigger()) {
@@ -185,6 +190,12 @@ public class UTableComponent extends JPanel {
                 return new MouseEvent(UTableComponent.this, e.getID(), e.getWhen(), e.getModifiers(), e.getX(),
                     e.getY(), e.getXOnScreen(), e.getYOnScreen(), e.getClickCount(), e.isPopupTrigger(),
                     e.getButton());
+            }
+            
+            private boolean isClickOnItem(final MouseEvent e) {
+                final int col = scrollTable.columnAtPoint(e.getPoint());
+                final int row = scrollTable.rowAtPoint(e.getPoint());
+                return col >= 0 && row >= 0;
             }
         };
         staticTable.addMouseListener(mouseListener);
