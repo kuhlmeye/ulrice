@@ -1,5 +1,13 @@
 package net.ulrice.databinding.bufferedbinding.impl;
 
+/**
+ * 
+ * Adapter for the {@link ElementLifecycleListener}
+ * Extend this adapter if you need just one of the Methods from the Listener
+ * 
+ * @author rad
+ *
+ */
 public class ElementLifecycleAdapter implements ElementLifecycleListener{
 
     @Override

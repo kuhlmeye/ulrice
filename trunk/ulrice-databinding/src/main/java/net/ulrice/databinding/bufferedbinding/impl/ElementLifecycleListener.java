@@ -2,6 +2,7 @@ package net.ulrice.databinding.bufferedbinding.impl;
 
 import java.util.EventListener;
 
+
 public interface ElementLifecycleListener extends EventListener {
 
 	void elementChanged(TableAM table, Element element, String columnId);
