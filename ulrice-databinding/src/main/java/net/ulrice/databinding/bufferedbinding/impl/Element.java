@@ -76,7 +76,7 @@ public class Element {
 		this.originalValueValid = valid;
 		this.tableAM = tableAM;
 		this.uniqueId = uniqueId;
-		this.modelList = new ArrayList<GenericAM<? extends Object>>();
+		this.modelList = Collections.synchronizedList(new ArrayList<GenericAM<? extends Object>>());
 		this.idModelMap = new HashMap<String, GenericAM<? extends Object>>();
 		this.originalValue = tableAM.cloneObject(valueObject);
 		this.columns = columns;
@@ -637,9 +637,12 @@ public class Element {
 	public void clearElementValidationErrors() {
 		validationResult = new ValidationResult();
 		if (modelList != null) {
-			for (GenericAM<?> model : modelList) {
-				model.recalculateState();
-			}
+		    //synchronized (modelList) {
+		        for (GenericAM<?> model : modelList) {
+	                model.recalculateState();
+	            }
+            //}
+			
 		}
 		updateState();
 		if (parent != null) {
