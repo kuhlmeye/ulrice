@@ -738,7 +738,7 @@ public class UTableVAFilter extends RowFilter<UTableViewAdapter, String> impleme
 
         static enum Operator {
             Greater, Smaller, Interval, Exact, NotEqual;
-        };
+        }
 
         protected Operator op = null;
         protected Number valueA;
@@ -755,8 +755,14 @@ public class UTableVAFilter extends RowFilter<UTableViewAdapter, String> impleme
          * @return
          */
         public boolean matches(Object value) {
+            try {
+                Double.parseDouble(value.toString());
+            }
+            catch (NumberFormatException nfe) {
+                return false;
+            }
+            
             switch (op) {
-
                 case Greater:
                     return valueA.doubleValue() < Double.valueOf(value.toString());
                 case Smaller:
