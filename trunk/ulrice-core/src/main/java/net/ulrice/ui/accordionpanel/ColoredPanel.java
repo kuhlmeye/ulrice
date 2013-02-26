@@ -76,6 +76,8 @@ public class ColoredPanel extends JPanel {
         if (color != null) {
             result.setBackground(color);
         }
+        
+        result.add(new JSeparator(), BorderLayout.SOUTH);
 
         return result;
     }
@@ -110,14 +112,8 @@ public class ColoredPanel extends JPanel {
         add(content);
         setBackground(new Color(0xecf4fb));
         setOpaque(false);
-        add(new JSeparator(), BorderLayout.SOUTH);
     }
 
-    /**
-     * TODO: description
-     * 
-     * @param g
-     */
     @Override
     public void paintComponent(Graphics g) {
         Graphics2D g2 = (Graphics2D) g;
