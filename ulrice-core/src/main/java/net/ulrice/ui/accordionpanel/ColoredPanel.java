@@ -100,6 +100,8 @@ public class ColoredPanel extends JPanel {
 
     public ColoredPanel(JPanel content) {
         this(RAISED_PAINT, content);
+        
+        add(new JSeparator(), BorderLayout.SOUTH);
     }
 
     public ColoredPanel(PaintStrategy paintStrategy, JPanel content) {
