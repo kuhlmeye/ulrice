@@ -25,6 +25,8 @@ public class BorderPanel extends JPanel {
         setOpaque(false);
         setBorder(border);
 
-        add(component, BorderLayout.CENTER);
+        if (component != null) {
+            add(component, BorderLayout.CENTER);
+        }
     }
 }
