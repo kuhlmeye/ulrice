@@ -1,8 +1,10 @@
 package net.ulrice.databinding.viewadapter.utable;
 
+import java.awt.Color;
 import java.awt.Component;
 import java.awt.Container;
 import java.awt.Dimension;
+import java.awt.Graphics;
 import java.awt.Insets;
 import java.awt.LayoutManager;
 import java.awt.LayoutManager2;
@@ -121,6 +123,14 @@ public class UTableVAHeader extends JTableHeader {
 
     public void setExtendInHeight(boolean extendInHeight) {
         this.extendInHeight = extendInHeight;
+    }
+    
+    @Override
+    protected void paintComponent(Graphics g) {
+        super.paintComponent(g);
+        
+        g.setColor(new Color(0x9297a1));
+        g.drawLine(0, getHeight() - 1, getWidth(), getHeight() - 1);
     }
 
     /**
