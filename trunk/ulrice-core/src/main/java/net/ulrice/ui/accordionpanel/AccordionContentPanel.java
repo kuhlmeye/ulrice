@@ -12,7 +12,8 @@ import javax.swing.SwingUtilities;
 
 public class AccordionContentPanel extends JPanel implements ActionListener {
 
-    private static final int ANIMATION_STEP_SIZE = 8;
+    private static final int ANIMATION_STEPS_DIVISOR = 20;
+    private static final int ANIMATION_STEP_PAUSE = 5;
 
     private static final long serialVersionUID = 5734171488424370652L;
 
@@ -64,7 +65,7 @@ public class AccordionContentPanel extends JPanel implements ActionListener {
     public boolean isFolded() {
         return !content.isVisible();
     }
-    
+
     public void setInitialFolded(boolean folded) {
         separatorPanel.setOpened(!folded);
         content.setVisible(!folded);
@@ -79,13 +80,15 @@ public class AccordionContentPanel extends JPanel implements ActionListener {
         final int maxh = (int) content.getPreferredSize().getHeight();
         final int maxw = (int) content.getPreferredSize().getWidth();
 
+        final int stepSize = maxh / ANIMATION_STEPS_DIVISOR;
+
         if (!folded) {
             content.setPreferredSize(new Dimension(maxw, 0));
             content.setVisible(true);
-            final int offset = maxh % ANIMATION_STEP_SIZE;
+            final int offset = maxh % stepSize;
             Thread t = new Thread(new Runnable() {
                 public void run() {
-                    for (int xx = 0; xx < maxh; xx += ANIMATION_STEP_SIZE) {
+                    for (int xx = 0; xx < maxh; xx += stepSize) {
                         final int height = xx;
 
                         SwingUtilities.invokeLater(new Runnable() {
@@ -95,7 +98,7 @@ public class AccordionContentPanel extends JPanel implements ActionListener {
                             }
                         });
                         try {
-                            Thread.sleep(ANIMATION_STEP_SIZE);
+                            Thread.sleep(ANIMATION_STEP_PAUSE);
                         }
                         catch (InterruptedException e) {
                             e.printStackTrace();
@@ -108,21 +111,21 @@ public class AccordionContentPanel extends JPanel implements ActionListener {
         else {
             Thread t = new Thread(new Runnable() {
                 public void run() {
-                    for (int xx = maxh; xx > 0; xx -= ANIMATION_STEP_SIZE) {
+                    for (int xx = maxh; xx > 0; xx -= stepSize) {
                         final int height = xx;
 
                         SwingUtilities.invokeLater(new Runnable() {
-                            public void run() {                                
+                            public void run() {
                                 content.setPreferredSize(new Dimension(maxw, height));
                                 revalidate();
-                                if (height <= ANIMATION_STEP_SIZE) {
+                                if (height <= stepSize) {
                                     content.setVisible(false);
                                     content.setPreferredSize(null);
                                 }
                             }
                         });
                         try {
-                            Thread.sleep(ANIMATION_STEP_SIZE);
+                            Thread.sleep(ANIMATION_STEP_PAUSE);
                         }
                         catch (InterruptedException e) {
                             e.printStackTrace();
