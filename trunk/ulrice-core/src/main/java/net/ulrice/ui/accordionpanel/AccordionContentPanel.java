@@ -8,7 +8,6 @@ import java.awt.event.ActionListener;
 
 import javax.swing.BorderFactory;
 import javax.swing.JPanel;
-import javax.swing.JSeparator;
 
 import net.ulrice.ui.components.HorizontalScrollPane;
 
@@ -38,7 +37,6 @@ public class AccordionContentPanel extends JPanel implements ActionListener {
 
         add(separatorPanel, BorderLayout.NORTH);
         add(scrollPane, BorderLayout.CENTER);
-        add(new JSeparator(), BorderLayout.SOUTH);
     }
 
     public String getActionCommand() {
