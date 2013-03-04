@@ -2,6 +2,7 @@ package net.ulrice.ui.accordionpanel;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.LinearGradientPaint;
@@ -22,8 +23,8 @@ public class AccordionSeparatorPanel extends JPanel {
     private static final long serialVersionUID = 7528047902693951355L;
 
     private String actionCommand;
-    private JLabel foldLabel;
-    private JLabel titleLabel;
+    private final JLabel foldLabel;
+    private final JLabel titleLabel;
 
     public AccordionSeparatorPanel(String title, Color backgroundColor) {
         super(new BorderLayout());
@@ -34,7 +35,8 @@ public class AccordionSeparatorPanel extends JPanel {
         foldLabel = new JLabel();
 
         add(foldLabel, BorderLayout.WEST);
-        titleLabel =new JLabel(title);
+        titleLabel = new JLabel(title);
+        titleLabel.setFont(titleLabel.getFont().deriveFont(Font.BOLD));
         add(titleLabel, BorderLayout.CENTER);
 
         addMouseListener(new MouseAdapter() {
@@ -101,12 +103,12 @@ public class AccordionSeparatorPanel extends JPanel {
             foldLabel.setIcon(new ImageIcon(AccordionSeparatorPanel.class.getResource("closed.gif")));
         }
     }
-    
+
     public void setTitle(String title) {
         titleLabel.setText(title);
     }
-    
-    public String getTitle(){
+
+    public String getTitle() {
         return titleLabel.getText();
     }
 }

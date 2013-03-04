@@ -3,6 +3,7 @@ package net.ulrice.databinding.viewadapter.utable;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
+import java.awt.Dimension;
 import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.Toolkit;
@@ -47,7 +48,7 @@ import net.ulrice.databinding.bufferedbinding.impl.Element;
 import net.ulrice.databinding.bufferedbinding.impl.TableAM;
 import net.ulrice.databinding.viewadapter.IFCellStateMarker;
 import net.ulrice.databinding.viewadapter.IFCellTooltipHandler;
-import net.ulrice.ui.accordionpanel.BorderPanel;
+import net.ulrice.ui.components.BorderPanel;
 
 /**
  * Ulrice table component with some extended features like sorting, filtering, ...
@@ -206,7 +207,9 @@ public class UTableComponent extends JPanel {
         staticTable.addMouseListener(mouseListener);
         scrollTable.addMouseListener(mouseListener);
         scrollPane.addMouseListener(mouseListener);
-
+        
+        setOpaque(false);
+        setPreferredSize(new Dimension(128, 128));
     }
 
     /**

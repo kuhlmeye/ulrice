@@ -1,4 +1,4 @@
-package net.ulrice.ui.accordionpanel;
+package net.ulrice.ui.components;
 
 import java.awt.BorderLayout;
 import java.awt.Component;
