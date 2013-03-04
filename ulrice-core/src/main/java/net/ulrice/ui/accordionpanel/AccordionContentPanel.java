@@ -2,27 +2,30 @@ package net.ulrice.ui.accordionpanel;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
-import java.awt.Dimension;
+import java.awt.Component;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-import javax.swing.JComponent;
+import javax.swing.BorderFactory;
 import javax.swing.JPanel;
-import javax.swing.SwingUtilities;
+import javax.swing.JSeparator;
+
+import net.ulrice.ui.components.HorizontalScrollPane;
 
 public class AccordionContentPanel extends JPanel implements ActionListener {
 
-    private static final int ANIMATION_STEPS_DIVISOR = 20;
-    private static final int ANIMATION_STEP_PAUSE = 5;
+    // private static final int ANIMATION_STEPS_DIVISOR = 20;
+    // private static final int ANIMATION_STEP_PAUSE = 5;
 
     private static final long serialVersionUID = 5734171488424370652L;
 
     private final AccordionSeparatorPanel separatorPanel;
-    private final JComponent content;
+    private final HorizontalScrollPane scrollPane;
+    private final Component content;
 
     private String actionCommand;
 
-    public AccordionContentPanel(String title, JComponent content, Color seperatorBackgroundColor) {
+    public AccordionContentPanel(String title, Component content, Color seperatorBackgroundColor) {
         super(new BorderLayout());
 
         separatorPanel = new AccordionSeparatorPanel(title, seperatorBackgroundColor);
@@ -30,8 +33,12 @@ public class AccordionContentPanel extends JPanel implements ActionListener {
 
         this.content = content;
 
-        add(content, BorderLayout.CENTER);
+        scrollPane = new HorizontalScrollPane(content);
+        scrollPane.setBorder(BorderFactory.createEmptyBorder());
+
         add(separatorPanel, BorderLayout.NORTH);
+        add(scrollPane, BorderLayout.CENTER);
+        add(new JSeparator(), BorderLayout.SOUTH);
     }
 
     public String getActionCommand() {
@@ -63,79 +70,86 @@ public class AccordionContentPanel extends JPanel implements ActionListener {
     }
 
     public boolean isFolded() {
-        return !content.isVisible();
+        return !scrollPane.isVisible();
     }
 
     public void setInitialFolded(boolean folded) {
         separatorPanel.setOpened(!folded);
-        content.setVisible(!folded);
+        scrollPane.setVisible(!folded);
     }
 
     public void setFolded(boolean folded) {
         separatorPanel.setOpened(!folded);
-        doFoldingAnimation(folded);
+        scrollPane.setVisible(!folded);
+        // doFoldingAnimation(folded);
     }
 
-    private void doFoldingAnimation(final boolean folded) {
-        final int maxh = (int) content.getPreferredSize().getHeight();
-        final int maxw = (int) content.getPreferredSize().getWidth();
-
-        final int stepSize = maxh / ANIMATION_STEPS_DIVISOR;
-
-        if (!folded) {
-            content.setPreferredSize(new Dimension(maxw, 0));
-            content.setVisible(true);
-            final int offset = maxh % stepSize;
-            Thread t = new Thread(new Runnable() {
-                public void run() {
-                    for (int xx = 0; xx < maxh; xx += stepSize) {
-                        final int height = xx;
-
-                        SwingUtilities.invokeLater(new Runnable() {
-                            public void run() {
-                                content.setPreferredSize(new Dimension(maxw, height + offset));
-                                revalidate();
-                            }
-                        });
-                        try {
-                            Thread.sleep(ANIMATION_STEP_PAUSE);
-                        }
-                        catch (InterruptedException e) {
-                            e.printStackTrace();
-                        }
-                    }
-                }
-            });
-            t.start();
-        }
-        else {
-            Thread t = new Thread(new Runnable() {
-                public void run() {
-                    for (int xx = maxh; xx > 0; xx -= stepSize) {
-                        final int height = xx;
-
-                        SwingUtilities.invokeLater(new Runnable() {
-                            public void run() {
-                                content.setPreferredSize(new Dimension(maxw, height));
-                                revalidate();
-                                if (height <= stepSize) {
-                                    content.setVisible(false);
-                                    content.setPreferredSize(null);
-                                }
-                            }
-                        });
-                        try {
-                            Thread.sleep(ANIMATION_STEP_PAUSE);
-                        }
-                        catch (InterruptedException e) {
-                            e.printStackTrace();
-                        }
-                    }
-                }
-            });
-            t.start();
-        }
-    }
+    // private void doFoldingAnimation(final boolean folded) {
+    // Dimension preferredSize = scrollPane.getExpectedPreferredSize();
+    // final int maxh = preferredSize.height;
+    // final int maxw = preferredSize.width;
+    //
+    // final int stepSize = maxh / ANIMATION_STEPS_DIVISOR;
+    //
+    // if (!folded) {
+    // content.setPreferredSize(new Dimension(maxw, 0));
+    // content.setVisible(true);
+    // final int offset = maxh % stepSize;
+    // Thread t = new Thread(new Runnable() {
+    // @Override
+    // public void run() {
+    // for (int xx = 0; xx < maxh; xx += stepSize) {
+    // final int height = xx;
+    //
+    // SwingUtilities.invokeLater(new Runnable() {
+    // @Override
+    // public void run() {
+    // System.out.println(maxw + ", " + (height + offset));
+    // content.setPreferredSize(new Dimension(maxw, height + offset));
+    // revalidate();
+    // }
+    // });
+    // try {
+    // Thread.sleep(ANIMATION_STEP_PAUSE);
+    // }
+    // catch (InterruptedException e) {
+    // e.printStackTrace();
+    // }
+    // }
+    // }
+    // });
+    // t.start();
+    // }
+    // else {
+    // Thread t = new Thread(new Runnable() {
+    // @Override
+    // public void run() {
+    // for (int xx = maxh; xx > 0; xx -= stepSize) {
+    // final int height = xx;
+    //
+    // SwingUtilities.invokeLater(new Runnable() {
+    // @Override
+    // public void run() {
+    // content.setPreferredSize(new Dimension(maxw, height));
+    // revalidate();
+    // if (height <= stepSize) {
+    // content.setVisible(false);
+    // content.setPreferredSize(null);
+    // }
+    // }
+    // });
+    // try {
+    // Thread.sleep(ANIMATION_STEP_PAUSE);
+    // }
+    // catch (InterruptedException e) {
+    // e.printStackTrace();
+    // }
+    // }
+    // }
+    // });
+    // t.start();
+    // }
+    // }
 
     public void setTitle(String title) {
         separatorPanel.setTitle(title);
@@ -146,7 +160,7 @@ public class AccordionContentPanel extends JPanel implements ActionListener {
         fireActionPerformed(e);
     }
 
-    public JComponent getContent() {
+    public Component getContent() {
         return content;
     }
 

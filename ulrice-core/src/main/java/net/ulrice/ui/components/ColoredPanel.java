@@ -1,4 +1,4 @@
-package net.ulrice.ui.accordionpanel;
+package net.ulrice.ui.components;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -77,8 +77,6 @@ public class ColoredPanel extends JPanel {
             result.setBackground(color);
         }
         
-        result.add(new JSeparator(), BorderLayout.SOUTH);
-
         return result;
     }
 

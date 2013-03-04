@@ -41,4 +41,9 @@ public class VerticalScrollPane extends AbstractLimitedScrollPane {
         return currentPreferredSize.width != expectedPreferredSize.width;
     }
 
+    @Override
+    protected void fixViewSize(Dimension newSize) {
+        newSize.width = getViewportBorderBounds().width;
+    }
+
 }
