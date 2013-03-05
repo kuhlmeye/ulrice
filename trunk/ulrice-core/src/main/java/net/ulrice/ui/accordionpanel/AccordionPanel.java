@@ -27,7 +27,7 @@ public class AccordionPanel extends JPanel implements ActionListener {
     private final List<AccordionContentPanel> foldables;
 
     private Component header;
-    private final JPanel content;
+    private final JPanel contentPane;
     private Component footer;
     private Component mainContent;
 
@@ -43,17 +43,96 @@ public class AccordionPanel extends JPanel implements ActionListener {
         this.justOneOpen = justOneOpen;
 
         foldables = new ArrayList<AccordionContentPanel>();
-        content = new JPanel(new AccordionPanelLayout());
+        contentPane = new JPanel(new AccordionPanelLayout());
 
-        VerticalScrollPane scrollPane = new VerticalScrollPane(content);
+        VerticalScrollPane scrollPane = new VerticalScrollPane(contentPane);
 
         scrollPane.setBorder(BorderFactory.createEmptyBorder());
 
         super.add(scrollPane, BorderLayout.CENTER);
     }
 
+    @Deprecated
     public JPanel getContent() {
-        return content;
+        return getContentPane();
+    }
+
+    public JPanel getContentPane() {
+        return contentPane;
+    }
+
+    /**
+     * {@inheritDoc}
+     * 
+     * @see java.awt.Container#add(java.awt.Component)
+     */
+    @Override
+    public Component add(Component comp) {
+        contentPane.add(comp, 1d);
+
+        return comp;
+    }
+
+    /**
+     * {@inheritDoc}
+     * 
+     * @see java.awt.Container#add(java.awt.Component, int)
+     */
+    @Override
+    public Component add(Component comp, int index) {
+        contentPane.add(comp, 1d, index);
+
+        return comp;
+    }
+
+    /**
+     * {@inheritDoc}
+     * 
+     * @see java.awt.Container#add(java.awt.Component, java.lang.Object)
+     */
+    @Override
+    public void add(Component comp, Object constraints) {
+        contentPane.add(comp, constraints);
+    }
+
+    /**
+     * {@inheritDoc}
+     * 
+     * @see java.awt.Container#add(java.awt.Component, java.lang.Object, int)
+     */
+    @Override
+    public void add(Component comp, Object constraints, int index) {
+        contentPane.add(comp, constraints, index);
+    }
+
+    /**
+     * {@inheritDoc}
+     * 
+     * @see java.awt.Container#remove(int)
+     */
+    @Override
+    public void remove(int index) {
+        contentPane.remove(index);
+    }
+
+    /**
+     * {@inheritDoc}
+     * 
+     * @see java.awt.Container#remove(java.awt.Component)
+     */
+    @Override
+    public void remove(Component comp) {
+        contentPane.remove(comp);
+    }
+
+    /**
+     * {@inheritDoc}
+     * 
+     * @see java.awt.Container#removeAll()
+     */
+    @Override
+    public void removeAll() {
+        contentPane.removeAll();
     }
 
     /**
@@ -83,7 +162,7 @@ public class AccordionPanel extends JPanel implements ActionListener {
      * @return the accordion panel itself
      */
     public AccordionContentPanel addFoldable(String title, Component component, boolean folded) {
-        return addFoldable(content.getComponentCount(), title, component, component.getBackground(), folded);
+        return addFoldable(contentPane.getComponentCount(), title, component, component.getBackground(), folded);
     }
 
     /**
@@ -108,7 +187,7 @@ public class AccordionPanel extends JPanel implements ActionListener {
      * @return the accordion panel itself
      */
     public AccordionContentPanel addFoldable(String title, Component component, Color seperatorColor, boolean folded) {
-        return addFoldable(content.getComponentCount(), title, component, seperatorColor, folded);
+        return addFoldable(contentPane.getComponentCount(), title, component, seperatorColor, folded);
     }
 
     /**
@@ -136,7 +215,7 @@ public class AccordionPanel extends JPanel implements ActionListener {
      * @return
      */
     public AccordionPanel addFoldable(AccordionContentPanel panel, boolean folded) {
-        return addFoldable(content.getComponentCount(), panel, folded);
+        return addFoldable(contentPane.getComponentCount(), panel, folded);
     }
 
     /**
@@ -151,7 +230,7 @@ public class AccordionPanel extends JPanel implements ActionListener {
         panel.setInitialFolded(folded);
 
         foldables.add(panel);
-        content.add(panel, Double.valueOf(0), index);
+        contentPane.add(panel, Double.valueOf(0), index);
 
         return this;
     }
@@ -163,7 +242,7 @@ public class AccordionPanel extends JPanel implements ActionListener {
      */
     public void removeFoldable(AccordionContentPanel panel) {
         foldables.remove(panel);
-        remove(panel);
+        contentPane.remove(panel);
     }
 
     /**
@@ -203,7 +282,7 @@ public class AccordionPanel extends JPanel implements ActionListener {
      * @return the accordion panel itself
      */
     public AccordionPanel addContent(Component component, double weight) {
-        content.add(component, weight);
+        contentPane.add(component, weight);
 
         return this;
     }
@@ -215,7 +294,7 @@ public class AccordionPanel extends JPanel implements ActionListener {
      * @return the accordion panel itself
      */
     public AccordionPanel removeContent(Component component) {
-        content.remove(component);
+        contentPane.remove(component);
 
         return this;
     }
@@ -228,10 +307,10 @@ public class AccordionPanel extends JPanel implements ActionListener {
      */
     public AccordionPanel setFooter(Component component) {
         if (footer != null) {
-            remove(footer);
+            super.remove(footer);
         }
 
-        add(component, BorderLayout.SOUTH);
+        super.add(component, BorderLayout.SOUTH);
 
         footer = component;
 
