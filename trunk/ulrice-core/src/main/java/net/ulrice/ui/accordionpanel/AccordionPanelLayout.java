@@ -103,9 +103,10 @@ public class AccordionPanelLayout implements LayoutManager2, Serializable {
         for (Component component : parent.getComponents()) {
             if (component.isVisible()) {
                 Dimension size = component.getPreferredSize();
+                Dimension maximumSize = component.getMaximumSize();
 
                 width = Math.max(width, size.width);
-                height += size.height;
+                height += Math.min(size.height, maximumSize.height);
             }
         }
 
@@ -125,14 +126,15 @@ public class AccordionPanelLayout implements LayoutManager2, Serializable {
         for (Component component : parent.getComponents()) {
             if (component.isVisible()) {
                 Dimension size = component.getMinimumSize();
+                Dimension maximumSize = component.getMaximumSize();
 
                 width = Math.max(width, size.width);
 
                 if (getWeight(component) > 0) {
-                    height += size.height;
+                    height += Math.min(size.height, maximumSize.height);
                 }
                 else {
-                    height += component.getPreferredSize().height;
+                    height += Math.min(component.getPreferredSize().height, maximumSize.height);
                 }
             }
         }
@@ -177,10 +179,10 @@ public class AccordionPanelLayout implements LayoutManager2, Serializable {
                 totalWeight += weight;
 
                 if (weight > 0) {
-                    minimumHeight += component.getMinimumSize().height;
+                    minimumHeight += Math.min(component.getMinimumSize().height, component.getMaximumSize().height);
                 }
                 else {
-                    minimumHeight += component.getPreferredSize().height;
+                    minimumHeight += Math.min(component.getPreferredSize().height, component.getMaximumSize().height);
                 }
             }
         }
@@ -197,6 +199,8 @@ public class AccordionPanelLayout implements LayoutManager2, Serializable {
 
                 if (weight > 0) {
                     Dimension size = component.getMinimumSize();
+                    Dimension maximumSize = component.getMaximumSize();
+                    int height = Math.min(size.height, maximumSize.height);
 
                     if (restSpare > 0) {
                         int spare = (int) ((totalSpare / totalWeight) * weight);
@@ -205,19 +209,20 @@ public class AccordionPanelLayout implements LayoutManager2, Serializable {
                             spare = restSpare;
                         }
 
-                        bounds.height = size.height + spare;
+                        bounds.height = height + spare;
                         restSpare -= spare;
                     }
                     else {
-                        bounds.height = size.height;
+                        bounds.height = height;
                     }
                 }
                 else {
                     Dimension size = component.getPreferredSize();
+                    Dimension maximumSize = component.getMaximumSize();
 
-                    bounds.height = size.height;
+                    bounds.height = Math.min(size.height, maximumSize.height);
                 }
-
+                
                 component.setBounds(bounds);
 
                 bounds.y += bounds.height;

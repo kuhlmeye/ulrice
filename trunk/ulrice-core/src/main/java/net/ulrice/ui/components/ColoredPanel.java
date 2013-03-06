@@ -9,7 +9,6 @@ import java.awt.Paint;
 import java.awt.geom.Point2D;
 
 import javax.swing.JPanel;
-import javax.swing.JSeparator;
 
 import net.ulrice.util.Colors;
 
@@ -76,7 +75,7 @@ public class ColoredPanel extends JPanel {
         if (color != null) {
             result.setBackground(color);
         }
-        
+
         return result;
     }
 
@@ -98,8 +97,6 @@ public class ColoredPanel extends JPanel {
 
     public ColoredPanel(JPanel content) {
         this(RAISED_PAINT, content);
-        
-        add(new JSeparator(), BorderLayout.SOUTH);
     }
 
     public ColoredPanel(PaintStrategy paintStrategy, JPanel content) {

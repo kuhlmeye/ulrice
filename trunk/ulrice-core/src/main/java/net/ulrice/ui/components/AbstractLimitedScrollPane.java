@@ -29,6 +29,11 @@ public abstract class AbstractLimitedScrollPane extends JScrollPane {
          */
         @Override
         public void setViewSize(Dimension newSize) {
+            Dimension maxSize = getMaximumSize();
+            
+            newSize.width = Math.min(newSize.width, maxSize.width);
+            newSize.height = Math.min(newSize.height, maxSize.height);
+            
             final JScrollPane scrollPane = (JScrollPane) getParent();
             Dimension currentPreferredSize = scrollPane.getPreferredSize();
 
