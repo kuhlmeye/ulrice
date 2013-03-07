@@ -47,7 +47,7 @@
 	<parent>
 		<groupId>net.ulrice</groupId>
 		<artifactId>ulrice</artifactId>
-		<version>0.2.5.12-SNAPSHOT</version>
+		<version>0.2.5.13-SNAPSHOT</version>
 		<relativePath>../ulrice</relativePath>
 	</parent>
 	
