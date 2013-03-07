@@ -6,6 +6,7 @@ import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.lang.reflect.InvocationTargetException;
 
 import javax.swing.BorderFactory;
 import javax.swing.JPanel;
@@ -19,6 +20,8 @@ public class AccordionContentPanel extends JPanel implements ActionListener {
     private static final long ANIMATION_DURATION = 150;
 
     private static class Animation extends Thread {
+        
+        private static final int FPS = 30;
 
         private final long startMillis;
         private final AccordionContentPanel panel;
@@ -47,33 +50,42 @@ public class AccordionContentPanel extends JPanel implements ActionListener {
 
                 size.height = startHeight + (int) ((endHeight - startHeight) * time);
 
-                SwingUtilities.invokeLater(new Runnable() {
-                    @Override
-                    public void run() {
-                        if (millis > duration) {
-                            if (endHeight < startHeight) {
-                                panel.content.setVisible(false);
+                try {
+                    SwingUtilities.invokeAndWait(new Runnable() {
+                        @Override
+                        public void run() {
+                            if (millis > duration) {
+                                if (endHeight < startHeight) {
+                                    panel.content.setVisible(false);
+                                }
+                                else {
+                                    size.height = Integer.MAX_VALUE;
+                                }
                             }
-                            else {
-                                size.height = Integer.MAX_VALUE;
+                            else if (!panel.content.isVisible()) {
+                                panel.content.setVisible(true);
                             }
-                        }
-                        else if (!panel.content.isVisible()) {
-                            panel.content.setVisible(true);
-                        }
 
-                        panel.setMaximumSize(size);
-                        panel.revalidate();
+                            panel.setMaximumSize(size);
+                            panel.revalidate();
 
-                    }
-                });
+                        }
+                    });
+                }
+                catch (InterruptedException e) {
+                    break;
+                }
+                catch (InvocationTargetException e) {
+                    e.printStackTrace(System.err);
+                    break;
+                }
 
                 if (millis > duration) {
                     break;
                 }
 
                 try {
-                    Thread.sleep(15);
+                    Thread.sleep(Math.min(Math.max((millis + (1000 / FPS)) - (System.currentTimeMillis() - startMillis), 1), 1000));
                 }
                 catch (InterruptedException e) {
                     break;
