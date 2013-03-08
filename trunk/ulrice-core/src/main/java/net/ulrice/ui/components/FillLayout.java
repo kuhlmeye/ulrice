@@ -3,6 +3,7 @@ package net.ulrice.ui.components;
 import java.awt.Component;
 import java.awt.Container;
 import java.awt.Dimension;
+import java.awt.Insets;
 import java.awt.LayoutManager;
 import java.awt.Rectangle;
 import java.io.Serializable;
@@ -49,7 +50,12 @@ public class FillLayout implements LayoutManager, Serializable {
                 height = Math.max(height, size.height);
             }
         }
+        
+        Insets insets = parent.getInsets();
 
+        width += insets.left + insets.right;
+        height += insets.top + insets.bottom;
+        
         return new Dimension(width, height);
     }
 
@@ -71,7 +77,12 @@ public class FillLayout implements LayoutManager, Serializable {
                 height = Math.max(height, size.height);
             }
         }
+        
+        Insets insets = parent.getInsets();
 
+        width += insets.left + insets.right;
+        height += insets.top + insets.bottom;
+        
         return new Dimension(width, height);
     }
 
@@ -82,7 +93,8 @@ public class FillLayout implements LayoutManager, Serializable {
      */
     @Override
     public void layoutContainer(Container parent) {
-        Rectangle bounds = new Rectangle(0, 0, parent.getWidth(), parent.getHeight());
+        Insets insets = parent.getInsets();
+        Rectangle bounds = new Rectangle(insets.left, insets.top, parent.getWidth() - insets.left - insets.right, parent.getHeight() - insets.top - insets.bottom);
 
         for (Component component : parent.getComponents()) {
             if (component.isVisible()) {
