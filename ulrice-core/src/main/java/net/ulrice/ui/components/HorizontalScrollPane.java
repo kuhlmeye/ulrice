@@ -23,6 +23,8 @@ public class HorizontalScrollPane extends AbstractLimitedScrollPane {
 
     public HorizontalScrollPane(Component view, int hsbPolicy) {
         super(view, VERTICAL_SCROLLBAR_NEVER, hsbPolicy);
+        
+        setWheelScrollingEnabled(false);
     }
 
     public HorizontalScrollPane(Component view) {
@@ -31,6 +33,8 @@ public class HorizontalScrollPane extends AbstractLimitedScrollPane {
 
     public HorizontalScrollPane(int hsbPolicy) {
         super(VERTICAL_SCROLLBAR_NEVER, hsbPolicy);
+        
+        setWheelScrollingEnabled(false);
     }
 
     /**

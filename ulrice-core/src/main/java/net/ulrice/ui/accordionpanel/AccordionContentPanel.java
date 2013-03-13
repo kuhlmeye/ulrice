@@ -4,6 +4,7 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
+import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.lang.reflect.InvocationTargetException;
@@ -20,7 +21,7 @@ public class AccordionContentPanel extends JPanel implements ActionListener {
     private static final long ANIMATION_DURATION = 150;
 
     private static class Animation extends Thread {
-        
+
         private static final int FPS = 30;
 
         private final long startMillis;
@@ -28,6 +29,7 @@ public class AccordionContentPanel extends JPanel implements ActionListener {
         private final long duration;
         private final int startHeight;
         private final int endHeight;
+        private final boolean folding;
 
         public Animation(AccordionContentPanel panel, long duration, int startHeight, int endHeight) {
             super("Animation");
@@ -39,6 +41,8 @@ public class AccordionContentPanel extends JPanel implements ActionListener {
             this.duration = duration;
             this.startHeight = startHeight;
             this.endHeight = endHeight;
+
+            folding = (endHeight < startHeight);
         }
 
         @Override
@@ -55,7 +59,8 @@ public class AccordionContentPanel extends JPanel implements ActionListener {
                         @Override
                         public void run() {
                             if (millis > duration) {
-                                if (endHeight < startHeight) {
+                                // complete
+                                if (folding) {
                                     panel.content.setVisible(false);
                                 }
                                 else {
@@ -69,6 +74,10 @@ public class AccordionContentPanel extends JPanel implements ActionListener {
                             panel.setMaximumSize(size);
                             panel.revalidate();
 
+                            if ((millis > duration) && (!folding)) {
+                                // complete
+                                panel.scrollRectToVisible(new Rectangle(panel.getSize()));
+                            }
                         }
                     });
                 }
