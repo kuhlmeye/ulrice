@@ -45,10 +45,11 @@ import javax.swing.table.TableColumnModel;
 import net.ulrice.databinding.bufferedbinding.impl.ColumnDefinition;
 import net.ulrice.databinding.bufferedbinding.impl.ColumnDefinition.ColumnType;
 import net.ulrice.databinding.bufferedbinding.impl.Element;
+import net.ulrice.databinding.bufferedbinding.impl.FilterMode;
 import net.ulrice.databinding.bufferedbinding.impl.TableAM;
 import net.ulrice.databinding.viewadapter.IFCellStateMarker;
 import net.ulrice.databinding.viewadapter.IFCellTooltipHandler;
-import net.ulrice.ui.components.BorderPanel;
+import net.ulrice.ui.accordionpanel.BorderPanel;
 
 /**
  * Ulrice table component with some extended features like sorting, filtering, ...
@@ -626,6 +627,14 @@ public class UTableComponent extends JPanel {
                 // TODO find a clever way and place to calculate the a real value instead of setting just +15
                 maxWidth = comp.getPreferredSize().width + 15;
             }
+            
+            if(attributeModel != null) {
+				ColumnDefinition definition = attributeModel.getColumnByIndex(convertColumnIndexToModel(vColIndex));
+				if(FilterMode.ComboBox.equals(definition.getFilterMode())) {
+					//getFilter().
+				}
+			}
+            
         }
 
         for (int r = 0; r < table.getRowCount(); r++) {
@@ -635,7 +644,7 @@ public class UTableComponent extends JPanel {
                         vColIndex);
             maxWidth = Math.max(maxWidth, comp.getPreferredSize().width);
         }
-        return maxWidth;
+        return maxWidth + 3;
     }
 
     /**
