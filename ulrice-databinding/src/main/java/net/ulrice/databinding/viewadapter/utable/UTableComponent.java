@@ -49,7 +49,7 @@ import net.ulrice.databinding.bufferedbinding.impl.FilterMode;
 import net.ulrice.databinding.bufferedbinding.impl.TableAM;
 import net.ulrice.databinding.viewadapter.IFCellStateMarker;
 import net.ulrice.databinding.viewadapter.IFCellTooltipHandler;
-import net.ulrice.ui.accordionpanel.BorderPanel;
+import net.ulrice.ui.components.BorderPanel;
 
 /**
  * Ulrice table component with some extended features like sorting, filtering, ...
