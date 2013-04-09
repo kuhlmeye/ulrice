@@ -16,7 +16,7 @@ public class BorderPanel extends JPanel {
     private static final long serialVersionUID = 4952054987230225000L;
 
     public BorderPanel(Component component) {
-        this(component, BorderFactory.createEmptyBorder(7, 7, 7, 7));
+        this(component, BorderFactory.createEmptyBorder(5, 5, 5, 5));
     }
 
     public BorderPanel(Component component, Border border) {
