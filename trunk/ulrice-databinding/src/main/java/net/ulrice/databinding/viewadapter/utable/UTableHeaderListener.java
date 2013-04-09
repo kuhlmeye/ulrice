@@ -60,6 +60,11 @@ public class UTableHeaderListener implements MouseListener, MouseMotionListener 
         int colModel = uTable.convertColumnIndexToModel(colView);
          
         UTableRowSorter sorter = uTable.getRowSorter();  table.getRowSorter();
+        
+        if(sorter == null){
+            return;
+        }
+        
         List< ? extends SortKey> oldKeys = sorter.getGlobalSortKeys();
 
         List<SortKey> newKeys = new ArrayList<SortKey>();
