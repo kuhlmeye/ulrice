@@ -344,9 +344,10 @@ public class TableAM implements IFAttributeModel {
             Object child = mva.getValue(i);
             element.addChildElement(createElement(child, dirty, valid, inserted));
         }
-        if (mva.getSize() > 0) { // reset dirty flag
-            element.clearElementValidationErrors();
-        }
+      //do this only once in the end
+//        if (mva.getSize() > 0) {
+//            element.clearElementValidationErrors(); 
+//        }
     }
 
     /**
@@ -987,11 +988,22 @@ public class TableAM implements IFAttributeModel {
             elements.add(elem);
             fireElementAdded(elem);
         }
+        
+        if(isForTreeTable()){
+            clearAllElementValidationErrors();
+        }
+        
         fireUpdateViews();
         
         if (handleValidity()){
             fireStateChanged();
         }
+    }
+
+    private void clearAllElementValidationErrors() {
+        for(Element e :elements){
+               e.clearElementValidationErrors();
+           }
     }
 
     public AbstractProcess<Void, Void> createLoader(final IFController controller, final boolean blocking, final ListDataProvider<?> provider) {
