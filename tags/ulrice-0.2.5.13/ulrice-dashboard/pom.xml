@@ -1,0 +1,126 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<artifactId>ulrice-dashboard</artifactId>
+	<packaging>jar</packaging>
+	<name>Ulrice-Dashboard</name>
+	<description>Ulrice-Dashboard is an extension of Ulrice providing classes and interfaces for a dashboard view</description>
+	<url>http://ulrice.googlecode.com</url>
+	<licenses>
+		<license>
+			<name>GNU LESSER GENERAL PUBLIC LICENSE</name>
+			<url>http://www.gnu.org/licenses/lgpl.html</url>
+			<distribution>repo</distribution>
+		</license>
+	</licenses>
+	<scm>
+		<connection>scm:svn:https://ulrice.googlecode.com/svn/trunk/ulrice-dashboard</connection>
+		<developerConnection>scm:svn:https://ulrice.googlecode.com/svn/trunk/ulrice-dashboard</developerConnection>
+		<url>http://ulrice.googlecode.com/svn/</url>
+	</scm>
+	<developers>
+		<developer>
+			<id>ckuhlmeyer</id>
+			<name>Christof Kuhlmeyer</name>
+			<email />
+		</developer>
+		<developer>
+			<id>apunahassaphemapetilon@hotmail.com</id>
+			<name>Tobias Kavemann</name>
+			<email>apunahassaphemapetilon@hotmail.com</email>
+		</developer>
+	</developers>
+
+	<parent>
+		<groupId>net.ulrice</groupId>
+		<artifactId>ulrice</artifactId>
+		<version>0.2.5.13</version>
+		<relativePath>../ulrice</relativePath>
+	</parent>
+
+	<dependencies>
+		<dependency>
+			<groupId>net.ulrice</groupId>
+			<artifactId>ulrice-core</artifactId>
+		</dependency>
+<!-- 		<dependency>
+			<groupId>net.ulrice</groupId>
+			<artifactId>ulrice-databinding</artifactId>
+			<version>0.2-SNAPSHOT</version>
+		</dependency> -->
+	</dependencies>
+
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-release-plugin</artifactId>
+				<version>2.1</version>
+			</plugin>
+<!-- 			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-assembly-plugin</artifactId>
+				<version>2.2-beta-2</version>
+				<configuration>
+					<finalName>ulrice-dashboard</finalName>
+					<ignoreDirFormatExtensions>true</ignoreDirFormatExtensions>
+					<descriptors>
+						<descriptor>src/assemble/distribution.xml</descriptor>
+					</descriptors>
+				</configuration>
+				<executions>
+					<execution>
+						<phase>package</phase>
+						<goals>
+							<goal>single</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<groupId>net.ulrice</groupId>
+				<artifactId>ulrice-webstarter-maven-plugin</artifactId>
+				<version>0.2-SNAPSHOT</version>
+
+				<configuration>
+					<directories>
+						<java.io.File>${project.build.directory}/ulrice-dashboard-dir/</java.io.File>
+					</directories>
+					<targetDir>${project.build.directory}</targetDir>
+					<outputFilename>${project.build.directory}/${project.artifactId}-${project.version}.ws.xml</outputFilename>
+					<baseUrl>http://ulrice.googlecode.com/files/</baseUrl>
+					<usePack200>false</usePack200>
+					<filenameFilters>
+						<param>.*\.jar</param>
+						<param>.*\.txt</param>
+					</filenameFilters>
+				</configuration>
+				<executions>
+					<execution>
+						<phase>package</phase>
+						<goals>
+							<goal>create-description</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin> -->
+
+<!--
+			<plugin>
+				<groupId>org.riedelcastro</groupId>
+				<artifactId>gcupload-maven-plugin</artifactId>
+				<version>0.9</version>
+				<configuration>
+					<projectName>ulrice</projectName>
+					<allowSnapshots>true</allowSnapshots>
+					<uploads>
+						<upload>
+							<extensions>jar</extensions>
+							<labels>Featured</labels>
+						</upload>
+					</uploads>
+				</configuration>
+			</plugin>
+-->
+		</plugins>
+	</build>
+</project>
