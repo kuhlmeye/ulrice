@@ -2,8 +2,9 @@ package net.ulrice.recorder.domain;
 
 import java.util.List;
 
-public class Recording {
+import com.sun.org.apache.regexp.internal.recompile;
 
+public class Recording implements Comparable<Recording> {
 
 	private String title;
 	private String category;
@@ -90,4 +91,10 @@ public class Recording {
 	public String toString() {
 		return "Recording [title=" + title + ", category=" + category + ", description=" + description + "]";
 	}
+
+	@Override
+	public int compareTo(Recording other) {
+		return this.category.compareTo(other.category);
+	}
+
 }
