@@ -76,7 +76,6 @@ public class UTableVAFilter extends RowFilter<UTableViewAdapter, String> impleme
     private UTableVAHeader scrollTableHeader;
 
 	private boolean showDirtyAndInvalidElements = true;
-	private boolean rebuildOnColumnChanges = true;
 
     private enum BooleanFilter {
         All, Yes, No;
@@ -630,11 +629,11 @@ public class UTableVAFilter extends RowFilter<UTableViewAdapter, String> impleme
     public void columnAdded(TableColumnModelEvent e) {
         TableColumnModel colModel = (TableColumnModel) e.getSource();
         int toIndex = e.getToIndex();
-        if (colModel.equals(staticTableHeader.getColumnModel()) && rebuildOnColumnChanges) {
+        if (colModel.equals(staticTableHeader.getColumnModel())) {
             createFilterComponents(staticTableHeader);
             // createFilterComponents(staticTableHeader, toIndex);
         }
-        if (colModel.equals(scrollTableHeader.getColumnModel()) && rebuildOnColumnChanges) {
+        if (colModel.equals(scrollTableHeader.getColumnModel())) {
             createFilterComponents(scrollTableHeader);
             // createFilterComponents(scrollTableHeader, toIndex);
         }
@@ -653,10 +652,10 @@ public class UTableVAFilter extends RowFilter<UTableViewAdapter, String> impleme
     @Override
     public void columnRemoved(TableColumnModelEvent e) {
         TableColumnModel colModel = (TableColumnModel) e.getSource();
-        if (colModel.equals(staticTableHeader.getColumnModel()) && rebuildOnColumnChanges) {
+        if (colModel.equals(staticTableHeader.getColumnModel())) {
             createFilterComponents(staticTableHeader);
         }
-        if (colModel.equals(scrollTableHeader.getColumnModel()) && rebuildOnColumnChanges) {
+        if (colModel.equals(scrollTableHeader.getColumnModel())) {
             createFilterComponents(scrollTableHeader);
         }
     }
@@ -882,20 +881,4 @@ public class UTableVAFilter extends RowFilter<UTableViewAdapter, String> impleme
     public void setShowDirtyAndInvalidElements(boolean showDirtyAndInvalidElements) {
 		this.showDirtyAndInvalidElements = showDirtyAndInvalidElements;
 	}
-    
-    public boolean isRebuildOnColumnChanges() {
-        return rebuildOnColumnChanges;
-    }
-
-    /**
-     * With this trick you can temporarily disable the recalculation of the filters for every add/remove column.
-     * Recommended if a lot of columns should be added/removed
-     */
-    public void setRebuildOnColumnChanges(boolean rebuildOnColumnChanges) {
-        this.rebuildOnColumnChanges = rebuildOnColumnChanges;
-
-        if (rebuildOnColumnChanges) {
-            rebuildFilter();
-        }
-    }
 }

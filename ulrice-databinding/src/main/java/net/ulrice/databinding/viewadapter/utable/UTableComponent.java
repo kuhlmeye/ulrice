@@ -458,10 +458,7 @@ public class UTableComponent extends JPanel {
      * Update the column model of the table according to the column definitions
      */
     public void updateColumnModel() {
-        try{
-            if(filter != null){
-                filter.setRebuildOnColumnChanges(false);
-            }
+
         if (fixedColumns < originalFixedColumns) {
             setFixedColumns(originalFixedColumns);
         }
@@ -504,11 +501,6 @@ public class UTableComponent extends JPanel {
                 columnDefinition.setFixedColumn(false);
                 TableColumn col = addColumn(columnModel, i - fixedColumns, columnDefinition);
                 col.addPropertyChangeListener(columnDefinition);
-            }
-        }
-        }finally{
-            if(filter != null){
-                filter.setRebuildOnColumnChanges(true);
             }
         }
     }
