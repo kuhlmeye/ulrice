@@ -431,6 +431,19 @@ public class UTableComponent extends JPanel {
     public UTableRowSorter getRowSorter() {
         return sorter;
     }
+    
+    public void setRowSorter(UTableRowSorter sorter){
+        this.sorter = sorter;
+        
+        if(sorter == null){
+            staticTable.setRowSorter(null);
+            scrollTable.setRowSorter(null);
+            return;
+        }
+        sorter.reEnableRowSorter();
+        staticTable.setRowSorter(sorter.getStaticTableRowSorter());
+        scrollTable.setRowSorter(sorter.getScrollTableRowSorter());
+    }
 
     public UTableVAFilter getFilter() {
         return filter;
@@ -696,7 +709,7 @@ public class UTableComponent extends JPanel {
     public void selectElement(int index) {
         getSelectionModel().addSelectionInterval(index, index);
     }
-
+    
     /**
      * Returns true, if exactly one table row is selected.
      */
