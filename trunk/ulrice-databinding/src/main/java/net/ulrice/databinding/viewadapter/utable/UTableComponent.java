@@ -459,7 +459,9 @@ public class UTableComponent extends JPanel {
      */
     public void updateColumnModel() {
         try{
-            filter.setRebuildOnColumnChanges(false);
+            if(filter != null){
+                filter.setRebuildOnColumnChanges(false);
+            }
         if (fixedColumns < originalFixedColumns) {
             setFixedColumns(originalFixedColumns);
         }
@@ -505,7 +507,9 @@ public class UTableComponent extends JPanel {
             }
         }
         }finally{
-            filter.setRebuildOnColumnChanges(true);
+            if(filter != null){
+                filter.setRebuildOnColumnChanges(true);
+            }
         }
     }
 
