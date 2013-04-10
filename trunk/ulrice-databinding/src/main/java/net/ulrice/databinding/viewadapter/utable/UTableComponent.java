@@ -471,6 +471,11 @@ public class UTableComponent extends JPanel {
      * Update the column model of the table according to the column definitions
      */
     public void updateColumnModel() {
+        
+        if(attributeModel == null){
+            return;
+        }
+        
         try{
             if(filter != null){
                 filter.setRebuildOnColumnChanges(false);
