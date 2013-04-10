@@ -440,9 +440,9 @@ public class UTableComponent extends JPanel {
             scrollTable.setRowSorter(null);
             return;
         }
-        sorter.reEnableRowSorter();
         staticTable.setRowSorter(sorter.getStaticTableRowSorter());
         scrollTable.setRowSorter(sorter.getScrollTableRowSorter());
+        sorter.reEnableRowSorter();
     }
 
     public UTableVAFilter getFilter() {
