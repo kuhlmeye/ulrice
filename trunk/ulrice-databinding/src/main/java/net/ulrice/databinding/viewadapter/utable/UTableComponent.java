@@ -63,15 +63,18 @@ public class UTableComponent extends JPanel {
 
     protected EventListenerList listenerList = new EventListenerList();
 
-    protected UTable staticTable;
-    protected UTable scrollTable;
+    protected final UTable staticTable;
+    protected final UTable scrollTable;
+
+    protected final JScrollPane scrollPane;
 
     protected UTableModel staticTableModel;
     protected UTableModel scrollTableModel;
-
+    
     protected UTableVAFilter filter;
     protected UTableRowSorter sorter;
 
+    
     protected ListSelectionModel rowSelModel = new DefaultListSelectionModel();
 
     protected int fixedColumns;
@@ -87,7 +90,7 @@ public class UTableComponent extends JPanel {
     protected TableAM attributeModel;
 
     protected List<UTableAction> popupMenuActions = new ArrayList<UTableAction>();
-
+    
     // Copy paste
     private Map<String, UTableCopyPasteCellConverter> copyPasteConverterMap;
 
@@ -114,7 +117,7 @@ public class UTableComponent extends JPanel {
         staticViewport.addChangeListener(scrollViewport);
         scrollViewport.addChangeListener(staticViewport);
 
-        JScrollPane scrollPane = new JScrollPane();
+        scrollPane = new JScrollPane();
         scrollPane.setCorner(JScrollPane.UPPER_LEFT_CORNER, staticTable.getTableHeader());
         scrollPane.setCorner(JScrollPane.UPPER_RIGHT_CORNER, new BorderPanel(null, BorderFactory.createMatteBorder(0, 1, 1, 0, new Color(0x9297a1))));
         scrollPane.setCorner(JScrollPane.LOWER_LEADING_CORNER, new BorderPanel(null, BorderFactory.createMatteBorder(1, 0, 0, 0, new Color(0x9297a1))));
@@ -305,6 +308,10 @@ public class UTableComponent extends JPanel {
         // for multi column sorting
         setAlteredTableHeaderListener(staticTable);
         setAlteredTableHeaderListener(scrollTable);
+    }
+
+    public JScrollPane getScrollPane() {
+        return scrollPane;
     }
 
     protected void setAlteredTableHeaderListener(JTable table) {
