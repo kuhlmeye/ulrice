@@ -5,6 +5,7 @@ import java.awt.Color;
 import java.awt.Component;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.InputEvent;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -31,25 +32,35 @@ public class AccordionPanel extends JPanel implements ActionListener {
     private Component footer;
     private Component mainContent;
 
-    private boolean justOneOpen = false;
+    private boolean foldAutomatically = false;
+    private int gap = 0;
 
     public AccordionPanel() {
-        this(false);
+        this(true);
     }
 
-    public AccordionPanel(boolean justOneOpen) {
+    public AccordionPanel(boolean handleScrolling) {
         super(new BorderLayout());
-
-        this.justOneOpen = justOneOpen;
 
         foldables = new ArrayList<AccordionContentPanel>();
         contentPane = new JPanel(new AccordionPanelLayout());
 
-        VerticalScrollPane scrollPane = new VerticalScrollPane(contentPane);
+        if (handleScrolling) {
+            VerticalScrollPane scrollPane = new VerticalScrollPane(contentPane);
+            scrollPane.setBorder(BorderFactory.createEmptyBorder());
+            super.add(scrollPane, BorderLayout.CENTER);
+        }
+        else {
+            super.add(contentPane, BorderLayout.CENTER);
+        }
+    }
 
-        scrollPane.setBorder(BorderFactory.createEmptyBorder());
+    public boolean isFoldAutomatically() {
+        return foldAutomatically;
+    }
 
-        super.add(scrollPane, BorderLayout.CENTER);
+    public void setFoldAutomatically(boolean foldAutomatically) {
+        this.foldAutomatically = foldAutomatically;
     }
 
     @Deprecated
@@ -162,7 +173,20 @@ public class AccordionPanel extends JPanel implements ActionListener {
      * @return the accordion panel itself
      */
     public AccordionContentPanel addFoldable(String title, Component component, boolean folded) {
-        return addFoldable(contentPane.getComponentCount(), title, component, component.getBackground(), folded);
+        return addFoldable(contentPane.getComponentCount(), title, component, 0d, component.getBackground(), folded);
+    }
+
+    /**
+     * Adds a foldable with specified title and content. The content will be surrounded by a scrollpane.
+     * 
+     * @param title the title
+     * @param component the content
+     * @param weight the weight
+     * @param folded true if folded
+     * @return the accordion panel itself
+     */
+    public AccordionContentPanel addFoldable(String title, Component component, double weight, boolean folded) {
+        return addFoldable(contentPane.getComponentCount(), title, component, weight, component.getBackground(), folded);
     }
 
     /**
@@ -174,7 +198,20 @@ public class AccordionPanel extends JPanel implements ActionListener {
      * @return the accordion panel itself
      */
     public AccordionContentPanel addFoldable(int index, String title, Component component, boolean folded) {
-        return addFoldable(index, title, component, component.getBackground(), folded);
+        return addFoldable(index, title, component, 0d, component.getBackground(), folded);
+    }
+
+    /**
+     * Adds a foldable with specified title and content. The content will be surrounded by a scrollpane.
+     * 
+     * @param title the title
+     * @param component the content
+     * @param weight the weight
+     * @param folded true if folded
+     * @return the accordion panel itself
+     */
+    public AccordionContentPanel addFoldable(int index, String title, Component component, double weight, boolean folded) {
+        return addFoldable(index, title, component, weight, component.getBackground(), folded);
     }
 
     /**
@@ -187,7 +224,21 @@ public class AccordionPanel extends JPanel implements ActionListener {
      * @return the accordion panel itself
      */
     public AccordionContentPanel addFoldable(String title, Component component, Color seperatorColor, boolean folded) {
-        return addFoldable(contentPane.getComponentCount(), title, component, seperatorColor, folded);
+        return addFoldable(contentPane.getComponentCount(), title, component, 0d, seperatorColor, folded);
+    }
+
+    /**
+     * Adds a foldable with specified title and content. The content will be surrounded by a scrollpane.
+     * 
+     * @param title the title
+     * @param component the content
+     * @param weight the weight
+     * @param seperatorColor the color for the separator
+     * @param folded true if folded
+     * @return the accordion panel itself
+     */
+    public AccordionContentPanel addFoldable(String title, Component component, double weight, Color seperatorColor, boolean folded) {
+        return addFoldable(contentPane.getComponentCount(), title, component, weight, seperatorColor, folded);
     }
 
     /**
@@ -200,9 +251,23 @@ public class AccordionPanel extends JPanel implements ActionListener {
      * @return the accordion panel itself
      */
     public AccordionContentPanel addFoldable(int index, String title, Component component, Color seperatorColor, boolean folded) {
+        return addFoldable(index, title, component, 0d, seperatorColor, folded);
+    }
+
+    /**
+     * Adds a foldable with specified title and content. The content will be surrounded by a scrollpane.
+     * 
+     * @param title the title
+     * @param component the content
+     * @param weight the weight
+     * @param seperatorColor the color for the separator
+     * @param folded true if folded
+     * @return the accordion panel itself
+     */
+    public AccordionContentPanel addFoldable(int index, String title, Component component, double weight, Color seperatorColor, boolean folded) {
         AccordionContentPanel panel = new AccordionContentPanel(title, component, seperatorColor);
 
-        addFoldable(index, panel, folded);
+        addFoldable(index, panel, weight, folded);
 
         return panel;
     }
@@ -215,7 +280,19 @@ public class AccordionPanel extends JPanel implements ActionListener {
      * @return
      */
     public AccordionPanel addFoldable(AccordionContentPanel panel, boolean folded) {
-        return addFoldable(contentPane.getComponentCount(), panel, folded);
+        return addFoldable(contentPane.getComponentCount(), panel, 0d, folded);
+    }
+
+    /**
+     * Adds a foldable panel
+     * 
+     * @param panel the panel
+     * @param weight the weight
+     * @param folded true if folded
+     * @return
+     */
+    public AccordionPanel addFoldable(AccordionContentPanel panel, double weight, boolean folded) {
+        return addFoldable(contentPane.getComponentCount(), panel, weight, folded);
     }
 
     /**
@@ -223,14 +300,27 @@ public class AccordionPanel extends JPanel implements ActionListener {
      * 
      * @param panel the panel
      * @param folded true if folded
-     * @return
+     * @return the panel itself
      */
     public AccordionPanel addFoldable(int index, AccordionContentPanel panel, boolean folded) {
+        return addFoldable(index, panel, 0d, folded);
+    }
+
+    /**
+     * Adds a foldable panel
+     * 
+     * @param panel the panel
+     * @param weight the weight
+     * @param folded true if folded
+     * @return the panel itself
+     */
+    public AccordionPanel addFoldable(int index, AccordionContentPanel panel, double weight, boolean folded) {
         panel.addActionListener(this);
         panel.setInitialFolded(folded);
+        panel.setStandalone(false);
 
         foldables.add(panel);
-        contentPane.add(panel, Double.valueOf(0), index);
+        contentPane.add(panel, Double.valueOf(weight), index);
 
         return this;
     }
@@ -319,25 +409,57 @@ public class AccordionPanel extends JPanel implements ActionListener {
     }
 
     public void togglePanel(Object panel) {
+        if (foldAutomatically) {
+            openSinglePanel(panel);
+            return;
+        }
+
+        invalidate();
+        if ((panel instanceof AccordionContentPanel) && (foldables.contains(panel))) {
+            ((AccordionContentPanel) panel).setFolded(!((AccordionContentPanel) panel).isFolded());
+        }
+        validate();
+    }
+
+    public void openSinglePanel(Object panel) {
         invalidate();
         if (foldables.contains(panel)) {
             for (AccordionContentPanel foldable : foldables) {
-                if (foldable == panel) {
-                    foldable.setFolded(!foldable.isFolded());
-                }
-                else {
-                    if (justOneOpen) {
-                        foldable.setFolded(true);
-                    }
-                }
+                foldable.setFolded(foldable != panel);
             }
         }
         validate();
     }
 
+    public void openAllPanels() {
+        invalidate();
+        for (AccordionContentPanel foldable : foldables) {
+            foldable.setFolded(false);
+        }
+        validate();
+    }
+
+    public int getGap() {
+        return gap;
+    }
+
+    public void setGap(int gap) {
+        this.gap = gap;
+    }
+
     @Override
     public void actionPerformed(ActionEvent e) {
         Object source = e.getSource();
-        togglePanel(source);
+        int modifiers = e.getModifiers();
+
+        if ((modifiers & InputEvent.SHIFT_MASK) != 0) {
+            openAllPanels();
+        }
+        else if ((modifiers & InputEvent.CTRL_MASK) != 0) {
+            openSinglePanel(source);
+        }
+        else {
+            togglePanel(source);
+        }
     }
 }

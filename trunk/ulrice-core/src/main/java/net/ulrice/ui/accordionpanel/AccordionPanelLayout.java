@@ -3,6 +3,7 @@ package net.ulrice.ui.accordionpanel;
 import java.awt.Component;
 import java.awt.Container;
 import java.awt.Dimension;
+import java.awt.Insets;
 import java.awt.LayoutManager2;
 import java.awt.Rectangle;
 import java.io.Serializable;
@@ -33,14 +34,35 @@ public class AccordionPanelLayout implements LayoutManager2, Serializable {
 
     private final Map<Component, Entry> entries = new HashMap<Component, Entry>();
 
+    private AccordionPanel accordionPanel = null;
+
     public AccordionPanelLayout() {
         super();
     }
 
+    public AccordionPanel getAccordionPanel(Container container) {
+        if (accordionPanel != null) {
+            return accordionPanel;
+        }
+
+        while (container != null) {
+            if (container instanceof AccordionPanel) {
+                break;
+            }
+
+            container = container.getParent();
+        }
+
+        accordionPanel = (AccordionPanel) container;
+
+        return accordionPanel;
+    }
+
     public double getWeight(Component component) {
         Entry entry = entries.get(component);
+        double weight = (entry != null) ? entry.getWeight() : 0d;
 
-        return (entry != null) ? entry.getWeight() : 0d;
+        return weight;
     }
 
     /**
@@ -97,17 +119,52 @@ public class AccordionPanelLayout implements LayoutManager2, Serializable {
      */
     @Override
     public Dimension preferredLayoutSize(Container parent) {
+        AccordionPanel accordionPanel = getAccordionPanel(parent);
         int width = 0;
         int height = 0;
+        int count = 0;
 
         for (Component component : parent.getComponents()) {
             if (component.isVisible()) {
-                Dimension size = component.getPreferredSize();
-                Dimension maximumSize = component.getMaximumSize();
+                Dimension preferredSize = getPreferredSize(component);
 
-                width = Math.max(width, size.width);
-                height += Math.min(size.height, maximumSize.height);
+                width = Math.max(width, preferredSize.width);
+                height += preferredSize.height;
+                count += 1;
             }
+        }
+
+        if (count > 1) {
+            height += (count - 1) * accordionPanel.getGap();
+        }
+
+        Insets insets = parent.getInsets();
+
+        width += insets.left + insets.right;
+        height += insets.top + insets.bottom;
+
+        return new Dimension(width, height);
+    }
+
+    private Dimension getPreferredSize(Component component) {
+        if (!component.isVisible()) {
+            return new Dimension(0, 0);
+        }
+
+        Dimension maximumSize = component.getMaximumSize();
+        Dimension preferredSize = component.getPreferredSize();
+        int width = Math.min(preferredSize.width, maximumSize.height);
+        int height = Math.min(preferredSize.height, maximumSize.height);
+
+        if (component instanceof AccordionContentPanel) {
+            height = Math.min(component.getMinimumSize().height, maximumSize.height);
+
+            int foldingHeight = preferredSize.height - height;
+
+            height += (int) (foldingHeight * ((AccordionContentPanel) component).getUnfoldedFactor());
+        }
+        else if (getWeight(component) > 0) {
+            height = Math.min(component.getMinimumSize().height, maximumSize.height);
         }
 
         return new Dimension(width, height);
@@ -120,23 +177,54 @@ public class AccordionPanelLayout implements LayoutManager2, Serializable {
      */
     @Override
     public Dimension minimumLayoutSize(Container parent) {
+        AccordionPanel accordionPanel = getAccordionPanel(parent);
         int width = 0;
         int height = 0;
+        int count = 0;
 
         for (Component component : parent.getComponents()) {
             if (component.isVisible()) {
-                Dimension size = component.getMinimumSize();
-                Dimension maximumSize = component.getMaximumSize();
+                Dimension minimumSize = getMinimumSize(component);
 
-                width = Math.max(width, size.width);
-
-                if (getWeight(component) > 0) {
-                    height += Math.min(size.height, maximumSize.height);
-                }
-                else {
-                    height += Math.min(component.getPreferredSize().height, maximumSize.height);
-                }
+                width = Math.max(width, minimumSize.width);
+                height += minimumSize.height;
+                count += 1;
             }
+        }
+
+        if (count > 1) {
+            height += (count - 1) * accordionPanel.getGap();
+        }
+
+        Insets insets = parent.getInsets();
+
+        width += insets.left + insets.right;
+        height += insets.top + insets.bottom;
+
+        return new Dimension(width, height);
+    }
+
+    /**
+     * Returns the minimum size of the component. If the component is an {@link AccordionContentPanel} the minimum
+     * height is computed using the unfolded factor
+     * 
+     * @param component the component
+     * @return the minimum size
+     */
+    private Dimension getMinimumSize(Component component) {
+        if (!component.isVisible()) {
+            return new Dimension(0, 0);
+        }
+
+        Dimension maximumSize = component.getMaximumSize();
+        Dimension minimumSize = component.getMinimumSize();
+        int width = Math.min(minimumSize.width, maximumSize.height);
+        int height = Math.min(minimumSize.height, maximumSize.height);
+
+        if (component instanceof AccordionContentPanel) {
+            int foldingHeight = component.getPreferredSize().height - minimumSize.height;
+
+            height += (int) (foldingHeight * ((AccordionContentPanel) component).getUnfoldedFactor());
         }
 
         return new Dimension(width, height);
@@ -153,11 +241,15 @@ public class AccordionPanelLayout implements LayoutManager2, Serializable {
 
         for (Component component : parent.getComponents()) {
             if (component.isVisible()) {
-                Dimension size = component.getMaximumSize();
+                Dimension maximumSize = component.getMaximumSize();
 
-                width = Math.max(width, size.width);
+                width = Math.max(width, maximumSize.width);
             }
         }
+
+        Insets insets = parent.getInsets();
+
+        width += insets.left + insets.right;
 
         return new Dimension(width, Integer.MAX_VALUE);
     }
@@ -169,6 +261,7 @@ public class AccordionPanelLayout implements LayoutManager2, Serializable {
      */
     @Override
     public void layoutContainer(Container parent) {
+        AccordionPanel accordionPanel = getAccordionPanel(parent);
         double totalWeight = 0;
         int minimumHeight = 0;
 
@@ -176,56 +269,45 @@ public class AccordionPanelLayout implements LayoutManager2, Serializable {
             if (component.isVisible()) {
                 double weight = getWeight(component);
 
-                totalWeight += weight;
+                if (component instanceof AccordionContentPanel) {
+                    weight *= ((AccordionContentPanel) component).getUnfoldedFactor();
+                }
 
-                if (weight > 0) {
-                    minimumHeight += Math.min(component.getMinimumSize().height, component.getMaximumSize().height);
-                }
-                else {
-                    minimumHeight += Math.min(component.getPreferredSize().height, component.getMaximumSize().height);
-                }
+                totalWeight += weight;
+                minimumHeight += getPreferredSize(component).height;
             }
         }
 
         int totalSpare = parent.getHeight() - minimumHeight;
-        int restSpare = totalSpare;
-        Rectangle bounds = new Rectangle();
-
-        bounds.width = parent.getWidth();
+        Insets insets = parent.getInsets();
+        Rectangle bounds = new Rectangle(insets.left, insets.top, parent.getWidth() - insets.left - insets.right, 0);
 
         for (Component component : parent.getComponents()) {
             if (component.isVisible()) {
                 double weight = getWeight(component);
+                Dimension preferredSize = getPreferredSize(component);
+                int height = preferredSize.height;
+
+                if (component instanceof AccordionContentPanel) {
+                    weight *= ((AccordionContentPanel) component).getUnfoldedFactor();
+                }
 
                 if (weight > 0) {
-                    Dimension size = component.getMinimumSize();
-                    Dimension maximumSize = component.getMaximumSize();
-                    int height = Math.min(size.height, maximumSize.height);
-
-                    if (restSpare > 0) {
-                        int spare = (int) ((totalSpare / totalWeight) * weight);
-
-                        if (spare > restSpare) {
-                            spare = restSpare;
-                        }
-
-                        bounds.height = height + spare;
-                        restSpare -= spare;
+                    if (component instanceof AccordionContentPanel) {
+                        weight *= ((AccordionContentPanel) component).getUnfoldedFactor();
                     }
-                    else {
-                        bounds.height = height;
+
+                    if (totalSpare > 0) {
+                        height += (totalSpare / totalWeight) * weight;
                     }
                 }
-                else {
-                    Dimension size = component.getPreferredSize();
-                    Dimension maximumSize = component.getMaximumSize();
 
-                    bounds.height = Math.min(size.height, maximumSize.height);
-                }
-                
+                bounds.height = height;
+
                 component.setBounds(bounds);
 
                 bounds.y += bounds.height;
+                bounds.y += accordionPanel.getGap();
             }
         }
     }
