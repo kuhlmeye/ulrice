@@ -615,6 +615,12 @@ public class UTableVAFilter extends RowFilter<UTableViewAdapter, String> impleme
         if (regex.startsWith("-")) {
             regex = regex.replace("-", "\\-");
         }
+        if (regex.contains("(")) {
+            regex = regex.replace("(", "\\(");
+        }
+        if (regex.contains(")")) {
+            regex = regex.replace(")", "\\)");
+        }
         regex = regex.replace(".", "\\.");
         regex = regex.replace("?", ".");
         regex = regex.replace("*", ".*");
