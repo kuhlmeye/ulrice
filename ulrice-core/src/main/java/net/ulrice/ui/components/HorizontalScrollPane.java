@@ -2,8 +2,10 @@ package net.ulrice.ui.components;
 
 import java.awt.Component;
 import java.awt.Dimension;
+import java.awt.event.MouseWheelEvent;
 
 import javax.swing.JScrollPane;
+import javax.swing.SwingUtilities;
 
 /**
  * A {@link JScrollPane} that only scrolls horizontally. In contrast to a default {@link JScrollPane}, it sets the
@@ -23,7 +25,7 @@ public class HorizontalScrollPane extends AbstractLimitedScrollPane {
 
     public HorizontalScrollPane(Component view, int hsbPolicy) {
         super(view, VERTICAL_SCROLLBAR_NEVER, hsbPolicy);
-        
+
         setWheelScrollingEnabled(false);
     }
 
@@ -33,7 +35,7 @@ public class HorizontalScrollPane extends AbstractLimitedScrollPane {
 
     public HorizontalScrollPane(int hsbPolicy) {
         super(VERTICAL_SCROLLBAR_NEVER, hsbPolicy);
-        
+
         setWheelScrollingEnabled(false);
     }
 
@@ -45,9 +47,31 @@ public class HorizontalScrollPane extends AbstractLimitedScrollPane {
         return currentPreferredSize.height != expectedPreferredSize.height;
     }
 
+    /**
+     * {@inheritDoc}
+     * 
+     * @see net.ulrice.ui.components.AbstractLimitedScrollPane#fixViewSize(java.awt.Dimension)
+     */
     @Override
     protected void fixViewSize(Dimension newSize) {
         newSize.height = getViewportBorderBounds().height;
     }
 
+    /**
+     * {@inheritDoc}
+     * 
+     * @see java.awt.Component#processMouseWheelEvent(java.awt.event.MouseWheelEvent)
+     */
+    @Override
+    protected void processMouseWheelEvent(MouseWheelEvent e) {
+        // this is a fix for the mouse wheel event to listen to the wheelScrollingEnabled property
+        if (!isWheelScrollingEnabled()) {
+            if (getParent() != null) {
+                getParent().dispatchEvent(SwingUtilities.convertMouseEvent(this, e, getParent()));
+            }
+            return;
+        }
+
+        super.processMouseWheelEvent(e);
+    }
 }

@@ -3,7 +3,6 @@ package net.ulrice.ui.accordionpanel;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
-import java.awt.Dimension;
 import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -11,27 +10,24 @@ import java.lang.reflect.InvocationTargetException;
 
 import javax.swing.BorderFactory;
 import javax.swing.JPanel;
-import javax.swing.JSeparator;
 import javax.swing.SwingUtilities;
 
 import net.ulrice.ui.components.HorizontalScrollPane;
 
 public class AccordionContentPanel extends JPanel implements ActionListener {
 
-    private static final long ANIMATION_DURATION = 150;
+    private static final long ANIMATION_DURATION = 200;
 
     private static class Animation extends Thread {
 
-        private static final int FPS = 30;
+        private static final int FPS = 60;
 
         private final long startMillis;
         private final AccordionContentPanel panel;
         private final long duration;
-        private final int startHeight;
-        private final int endHeight;
         private final boolean folding;
 
-        public Animation(AccordionContentPanel panel, long duration, int startHeight, int endHeight) {
+        public Animation(AccordionContentPanel panel, long duration, boolean folding) {
             super("Animation");
 
             setDaemon(true);
@@ -39,20 +35,14 @@ public class AccordionContentPanel extends JPanel implements ActionListener {
 
             this.panel = panel;
             this.duration = duration;
-            this.startHeight = startHeight;
-            this.endHeight = endHeight;
-
-            folding = (endHeight < startHeight);
+            this.folding = folding;
         }
 
         @Override
         public void run() {
             while (true) {
                 final long millis = System.currentTimeMillis() - startMillis;
-                final double time = Math.sin(Math.min((double) millis / duration, 1) * (Math.PI / 2));
-                final Dimension size = panel.getMaximumSize();
-
-                size.height = startHeight + (int) ((endHeight - startHeight) * time);
+                final double factor = Math.sin(Math.min((double) millis / duration, 1) * (Math.PI / 2));
 
                 try {
                     SwingUtilities.invokeAndWait(new Runnable() {
@@ -61,21 +51,17 @@ public class AccordionContentPanel extends JPanel implements ActionListener {
                             if (millis > duration) {
                                 // complete
                                 if (folding) {
-                                    panel.content.setVisible(false);
+                                    panel.setUnfoldedFactor(0);
                                 }
                                 else {
-                                    size.height = Integer.MAX_VALUE;
+                                    panel.setUnfoldedFactor(1);
                                 }
                             }
-                            else if (!panel.content.isVisible()) {
-                                panel.content.setVisible(true);
-                            }
 
-                            panel.setMaximumSize(size);
+                            panel.setUnfoldedFactor((folding) ? 1 - factor : factor);
                             panel.revalidate();
 
-                            if ((millis > duration) && (!folding)) {
-                                // complete
+                            if (!folding) {
                                 panel.scrollRectToVisible(new Rectangle(panel.getSize()));
                             }
                         }
@@ -108,26 +94,31 @@ public class AccordionContentPanel extends JPanel implements ActionListener {
     private final AccordionSeparatorPanel separatorPanel;
     private final HorizontalScrollPane scrollPane;
     private final Component content;
+    private final Component footer;
 
     private String actionCommand;
     private boolean folded = false;
+    private double unfoldedFactor = 1;
+    private boolean standalone = true;
 
     public AccordionContentPanel(String title, Component content, Color seperatorBackgroundColor) {
-        super(new BorderLayout());
+        super(new AccordionContentPanelLayout());
 
         separatorPanel = new AccordionSeparatorPanel(title, seperatorBackgroundColor);
         separatorPanel.addActionListener(this);
 
         this.content = content;
 
+        setBorder(BorderFactory.createMatteBorder(0, 0, 1, 0, new Color(0xa8a8a8)));
+
         scrollPane = new HorizontalScrollPane(content);
         scrollPane.setBorder(BorderFactory.createEmptyBorder());
 
-        add(separatorPanel, BorderLayout.NORTH);
-        // add(new AccordionHolderPanel(seperatorBackgroundColor), BorderLayout.WEST);
-        add(scrollPane, BorderLayout.CENTER);
-        add(new JSeparator(), BorderLayout.SOUTH);
+        footer = new AccordionContentFooter();
 
+        add(separatorPanel);
+        add(scrollPane, BorderLayout.CENTER);
+        add(footer, BorderLayout.SOUTH);
     }
 
     public String getActionCommand() {
@@ -164,17 +155,9 @@ public class AccordionContentPanel extends JPanel implements ActionListener {
 
     public void setInitialFolded(boolean folded) {
         separatorPanel.setOpened(!folded);
-        content.setVisible(!folded);
-
-        if (folded) {
-            Dimension maximumSize = getMaximumSize();
-
-            maximumSize.height = getPreferredSize().height - content.getPreferredSize().height;
-
-            setMaximumSize(maximumSize);
-        }
 
         this.folded = folded;
+        setUnfoldedFactor((folded) ? 0 : 1);
     }
 
     public void setFolded(boolean folded) {
@@ -185,13 +168,37 @@ public class AccordionContentPanel extends JPanel implements ActionListener {
         separatorPanel.setOpened(!folded);
 
         if (folded) {
-            new Animation(this, ANIMATION_DURATION, getPreferredSize().height, getPreferredSize().height - content.getPreferredSize().height).start();
+            new Animation(this, ANIMATION_DURATION, true).start();
         }
         else {
-            new Animation(this, ANIMATION_DURATION, getPreferredSize().height - content.getPreferredSize().height, getPreferredSize().height).start();
+            new Animation(this, ANIMATION_DURATION, false).start();
         }
 
         this.folded = folded;
+    }
+
+    public double getUnfoldedFactor() {
+        return unfoldedFactor;
+    }
+
+    public void setUnfoldedFactor(double unfoldedFactor) {
+        this.unfoldedFactor = unfoldedFactor;
+
+        if (content != null) {
+            content.setVisible(unfoldedFactor > 0);
+        }
+    }
+
+    public boolean isStandalone() {
+        return standalone;
+    }
+
+    public void setStandalone(boolean standalone) {
+        this.standalone = standalone;
+    }
+
+    public boolean isContent(Component component) {
+        return (component == scrollPane) || (component == content);
     }
 
     public void setTitle(String title) {

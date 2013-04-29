@@ -33,18 +33,20 @@ public class ColoredPanel extends JPanel {
         public Paint getPaint(Color foreground, Color background, int height) {
             Color shadowColor = Colors.darker(background, 0.1);
             Color contentColor = background;
-            Color darkerColor = Colors.darker(background, 0.08);
+            // Color darkerColor = Colors.darker(background, 0.08);
 
             if (height > 15) { // better looking effect
                 return new LinearGradientPaint(new Point2D.Double(0, 0), new Point2D.Double(0, height), //
                     new float[] { 0.0f, 0.01f, 1.0f - (12.0f / height), 1.0f }, //
-                    new Color[] { shadowColor, contentColor, contentColor, darkerColor });
+                    // new Color[] { shadowColor, contentColor, contentColor, darkerColor });
+                    new Color[] { shadowColor, contentColor, contentColor, contentColor });
             }
 
             // alternative effect, only uses relative values
             return new LinearGradientPaint(new Point2D.Double(0, 0), new Point2D.Double(0, height), //
                 new float[] { 0.0f, 0.01f, 0.93f, 1.0f }, //
-                new Color[] { shadowColor, contentColor, contentColor, darkerColor });
+                // new Color[] { shadowColor, contentColor, contentColor, darkerColor });
+                new Color[] { shadowColor, contentColor, contentColor, contentColor });
         }
 
     };
