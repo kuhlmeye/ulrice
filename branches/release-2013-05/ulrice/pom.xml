@@ -1,0 +1,205 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>net.ulrice</groupId>
+	<artifactId>ulrice</artifactId>
+	<packaging>pom</packaging>
+	<name>Ulrice</name>
+	<version>0.2.5.14-SNAPSHOT</version>
+	<description>Ulrice is a framework for rich clients supporting the mvc-based (or module based) development of applications</description>
+	<url>http://ulrice.googlecode.com</url>
+	<licenses>
+		<license>
+			<name>GNU LESSER GENERAL PUBLIC LICENSE</name>
+			<url>http://www.gnu.org/licenses/lgpl.html</url>
+			<distribution>repo</distribution>
+		</license>
+	</licenses>
+	<scm>
+		<connection>scm:svn:https://ulrice.googlecode.com/svn/trunk/ulrice</connection>
+		<developerConnection>scm:svn:https://ulrice.googlecode.com/svn/trunk/ulrice</developerConnection>
+		<url>http://ulrice.googlecode.com/svn/</url>
+	</scm>
+	<developers>
+		<developer>
+			<id>ckuhlmeyer</id>
+			<name>Christof Kuhlmeyer</name>
+			<email />
+		</developer>
+		<developer>
+			<id>apunahassaphemapetilon@hotmail.com</id>
+			<name>Tobias Kavemann</name>
+			<email>apunahassaphemapetilon@hotmail.com</email>
+		</developer>
+	</developers>
+
+	<dependencyManagement>
+		<dependencies>
+			<dependency>
+				<groupId>ognl</groupId>
+				<artifactId>ognl</artifactId>
+				<version>3.0.1</version>
+			</dependency>
+			<dependency>
+				<groupId>net.ulrice</groupId>
+				<artifactId>ulrice-core</artifactId>
+				<version>${project.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>net.ulrice</groupId>
+				<artifactId>ulrice-databinding</artifactId>
+				<version>${project.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>net.ulrice</groupId>
+				<artifactId>ulrice-dashboard</artifactId>
+				<version>${project.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>net.ulrice</groupId>
+				<artifactId>ulrice-remote-control</artifactId>
+				<version>${project.version}</version>
+			</dependency>
+ 			<dependency>
+				<groupId>net.ulrice</groupId>
+				<artifactId>ulrice-sample</artifactId>
+				<version>${project.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>net.ulrice</groupId>
+				<artifactId>ulrice-translator</artifactId>
+				<version>${project.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>net.ulrice</groupId>
+				<artifactId>ulrice-webstarter</artifactId>
+				<version>${project.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>net.ulrice</groupId>
+				<artifactId>ulrice-webstarter-maven-plugin</artifactId>
+				<version>${project.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>junit</groupId>
+				<artifactId>junit</artifactId>
+				<version>4.8.2</version>
+				<scope>test</scope>
+			</dependency>
+		</dependencies>
+	</dependencyManagement>
+
+	<dependencies>
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<scope>test</scope>
+		</dependency>
+	</dependencies>
+
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-source-plugin</artifactId>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-release-plugin</artifactId>
+			</plugin>
+		</plugins>
+
+		<pluginManagement>
+			<plugins>
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-compiler-plugin</artifactId>
+					<version>2.3.2</version>
+					<configuration>
+						<compilerVersion>1.6</compilerVersion>
+						<source>1.6</source>
+						<target>1.6</target>
+					</configuration>
+				</plugin>
+
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-source-plugin</artifactId>
+					<version>2.1.2</version>
+					<executions>
+						<execution>
+							<goals>
+								<goal>jar</goal>
+							</goals>
+						</execution>
+					</executions>
+				</plugin>
+
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-javadoc-plugin</artifactId>
+					<version>2.5</version>
+					<executions>
+						<execution>
+							<goals>
+								<goal>jar</goal>
+							</goals>
+						</execution>
+					</executions>
+				</plugin>
+
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-release-plugin</artifactId>
+					<version>2.1</version>
+				</plugin>
+
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-failsafe-plugin</artifactId>
+					<version>2.9</version>
+				</plugin>
+			</plugins>
+		</pluginManagement>
+	</build>
+
+	<profiles>
+		<profile>
+			<id>documented</id>
+			<activation>
+				<property>
+					<name>documented</name>
+				</property>
+			</activation>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-source-plugin</artifactId>
+					</plugin>
+
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-javadoc-plugin</artifactId>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+	</profiles>
+
+	<modules>
+		<module>../ulrice-core</module>
+		<module>../ulrice-databinding</module>
+		<module>../ulrice-remote-control</module>
+		<module>../ulrice-sample</module>
+		<module>../ulrice-dashboard</module>
+		<module>../ulrice-translator</module>
+		<module>../ulrice-webstarter</module>
+		<module>../ulrice-webstarter-maven-plugin</module>
+		<module>../ulrice-recorder</module>
+	</modules>
+
+</project>
