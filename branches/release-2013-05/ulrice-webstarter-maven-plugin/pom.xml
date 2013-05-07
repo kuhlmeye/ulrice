@@ -4,7 +4,7 @@
 	<artifactId>ulrice-webstarter-maven-plugin</artifactId>
 	<packaging>maven-plugin</packaging>
 	<name>ulrice-webstarter-maven-plugin Maven Mojo</name>
-	<version>0.2.5.14-SNAPSHOT</version>
+	<version>0.2.5.14</version>
 	<description>Ulrice-Webstarter-Maven-Plugin is a Mojo which is generating a ws.xml needed by the Ulrice-Webstarter to download all neccessary artifacts of your application</description>
 	<url>http://maven.apache.org</url>
 	<licenses>
