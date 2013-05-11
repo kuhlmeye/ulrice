@@ -2,8 +2,6 @@ package net.ulrice.recorder.domain;
 
 import java.util.List;
 
-import com.sun.org.apache.regexp.internal.recompile;
-
 public class Recording implements Comparable<Recording> {
 
 	private String title;
