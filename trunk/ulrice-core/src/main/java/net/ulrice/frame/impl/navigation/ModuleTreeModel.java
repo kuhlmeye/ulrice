@@ -10,14 +10,14 @@ import javax.swing.tree.TreePath;
 
 import net.ulrice.Ulrice;
 import net.ulrice.module.IFModuleStructureManager;
-import net.ulrice.module.event.IFModuleStructureEventListener;
+import net.ulrice.module.event.AbstractModuleStructureEventListener;
 
 /**
  * Model for the Tree for displaying all the models available in the application
  * 
  * @author christof
  */
-public class ModuleTreeModel implements TreeModel, IFModuleStructureEventListener {
+public class ModuleTreeModel extends AbstractModuleStructureEventListener implements TreeModel {
 
 	/** The list of listeners listening to this tree model. */
 	private EventListenerList listenerList = new EventListenerList();

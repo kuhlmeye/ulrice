@@ -119,11 +119,21 @@ public class Ulrice {
         catch (Exception e) {
             System.err.println("Failed to initialize remote control: " + e.getMessage());
         }
+        
+        Runtime.getRuntime().addShutdownHook(new Thread(new Runnable() {
+			
+			@Override
+			public void run() {
+				Ulrice.shutdown();
+			}
+		}));
     }
 
     public static void shutdown() {
         ApplicationOptions.clearOptionsModules();
         Ulrice.actionManager.dispose();
+        
+        Ulrice.getModuleStructureManager().shutdown();
     }
 
     /**
