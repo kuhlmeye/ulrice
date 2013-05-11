@@ -1,5 +1,7 @@
 package net.ulrice.module;
 
+import java.util.List;
+
 import net.ulrice.module.event.IFModuleStructureEventListener;
 
 public interface IFModuleStructureManager {
@@ -23,7 +25,7 @@ public interface IFModuleStructureManager {
      * 
      * @param module The module that should be added to this group.
      */
-    void addModule(IFModule module);
+    void addModule(IFModule<?> module);
 	
 	/**
 	 * Adds a class listening to the module structure events.
@@ -40,4 +42,12 @@ public interface IFModuleStructureManager {
 	void removeModuleStructureEventListener(IFModuleStructureEventListener listener);
 
     void fireModuleStructureChanged();
+    
+    void moveFavoriteUp(IFModule<?> module);
+    void moveFavoriteDown(IFModule<?> module);
+    void addModuleFavorite(IFModule<?> module);
+    void removeModuleFavorite(IFModule<?> module);
+    List<IFModule<?>> getFavoriteModules();    
+	void shutdown();
+    
 }

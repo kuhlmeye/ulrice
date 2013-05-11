@@ -60,6 +60,8 @@ public class ModuleManager implements IFModuleManager, IFModuleStructureManager,
     
     private final IdentityHashMap<IFController, IdentityHashMap<Object, Object>> blockers =
             new IdentityHashMap<IFController, IdentityHashMap<Object, Object>>();
+
+	private List<IFModule<?>> favorites = new ArrayList<IFModule<?>>();
     
     public ModuleManager() {
     	Ulrice.addConfigurationListener(new ConfigurationListener() {
@@ -563,6 +565,58 @@ public class ModuleManager implements IFModuleManager, IFModuleStructureManager,
         }
     }
 
+    protected void fireModuleFavoriteAdded(final IFModule<?> module) {
+        // Inform event listeners.
+        if (!SwingUtilities.isEventDispatchThread()) {
+            SwingUtilities.invokeLater(new Runnable() {
+
+                @Override
+                public void run() {
+                    IFModuleStructureEventListener[] listeners = listenerList.getListeners(IFModuleStructureEventListener.class);
+                    if (listeners != null) {
+                        for (IFModuleStructureEventListener listener : listeners) {
+                            listener.moduleFavoriteAdded(module);
+                        }
+                    }
+                }
+            });
+        }
+        else {
+            IFModuleStructureEventListener[] listeners = listenerList.getListeners(IFModuleStructureEventListener.class);
+            if (listeners != null) {
+                for (IFModuleStructureEventListener listener : listeners) {
+                    listener.moduleFavoriteAdded(module);
+                }
+            }
+        }
+    }
+    
+    protected void fireModuleFavoriteRemoved(final IFModule<?> module) {
+        // Inform event listeners.
+        if (!SwingUtilities.isEventDispatchThread()) {
+            SwingUtilities.invokeLater(new Runnable() {
+
+                @Override
+                public void run() {
+                    IFModuleStructureEventListener[] listeners = listenerList.getListeners(IFModuleStructureEventListener.class);
+                    if (listeners != null) {
+                        for (IFModuleStructureEventListener listener : listeners) {
+                            listener.moduleFavoriteRemoved(module);
+                        }
+                    }
+                }
+            });
+        }
+        else {
+            IFModuleStructureEventListener[] listeners = listenerList.getListeners(IFModuleStructureEventListener.class);
+            if (listeners != null) {
+                for (IFModuleStructureEventListener listener : listeners) {
+                    listener.moduleFavoriteRemoved(module);
+                }
+            }
+        }
+    }
+
     @Override
     public void fireModuleNameChanged(final IFController controller) {
         // Inform event listeners.
@@ -745,4 +799,49 @@ public class ModuleManager implements IFModuleManager, IFModuleStructureManager,
 			registerHotkey(KeyStroke.getKeyStroke("ctrl " + key), moduleId);			
 		}
 	}	
+	
+	@Override
+	public void moveFavoriteDown(IFModule<?> module) {
+		int idx = favorites.indexOf(module);
+		if(idx >= 0 && idx <= favorites.size() - 2) {
+			favorites.remove(module);
+			favorites.add(idx + 1, module);
+		}
+	}
+	
+	@Override
+	public void moveFavoriteUp(IFModule<?> module) {
+		int idx = favorites.indexOf(module);
+		if(idx > 0) {
+			favorites.remove(module);
+			favorites.add(idx - 1, module);
+		}
+	}
+	
+	@Override
+	public void addModuleFavorite(IFModule<?> module) {
+		favorites.add(module);
+		fireModuleFavoriteAdded(module);
+	}
+	
+	@Override
+	public void removeModuleFavorite(IFModule<?> module) {
+		favorites.remove(module);
+		fireModuleFavoriteRemoved(module);
+	}
+	
+	@Override
+	public List<IFModule<?>> getFavoriteModules() {
+		return favorites;
+	}
+	
+	@Override
+	public void shutdown() {
+		StringBuilder value = new StringBuilder();
+		for(IFModule<?> module : favorites) {
+			value.append(module.getUniqueId()).append(';');
+		}
+		
+		Ulrice.getAppPrefs().putConfiguration(this, "ModuleFavorites", value.toString());
+	}
 }
