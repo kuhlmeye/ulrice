@@ -9,7 +9,7 @@ import net.ulrice.Ulrice;
 import net.ulrice.module.IFModule;
 import net.ulrice.module.event.IFModuleStructureEventListener;
 
-public class FavoriteModuleListModel extends AbstractListModel<IFModule<?>> implements IFModuleStructureEventListener {
+public class FavoriteModuleListModel extends AbstractListModel implements IFModuleStructureEventListener {
 
 	private static final long serialVersionUID = -1937493714377974393L;
 	private ArrayList<IFModule<?>> data;

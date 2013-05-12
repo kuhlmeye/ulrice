@@ -6,7 +6,7 @@ import javax.swing.JList;
 import net.ulrice.frame.IFMainFrameComponent;
 import net.ulrice.module.IFModule;
 
-public class FavoriteModuleList extends JList<IFModule<?>> implements IFMainFrameComponent {
+public class FavoriteModuleList extends JList implements IFMainFrameComponent {
 
 	private static final long serialVersionUID = 1L;
 
