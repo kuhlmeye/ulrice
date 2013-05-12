@@ -69,7 +69,9 @@ public class ModuleManager implements IFModuleManager, IFModuleStructureManager,
 			@Override
 			public void initializationFinished() {
 				loadHotkeys();
+				loadFavorites();
 			}
+
 		});
         KeyboardFocusManager.getCurrentKeyboardFocusManager().addKeyEventDispatcher(this);
     }
@@ -799,6 +801,8 @@ public class ModuleManager implements IFModuleManager, IFModuleStructureManager,
 			registerHotkey(KeyStroke.getKeyStroke("ctrl " + key), moduleId);			
 		}
 	}	
+
+
 	
 	@Override
 	public void moveFavoriteDown(IFModule<?> module) {
@@ -833,6 +837,23 @@ public class ModuleManager implements IFModuleManager, IFModuleStructureManager,
 	@Override
 	public List<IFModule<?>> getFavoriteModules() {
 		return favorites;
+	}
+	
+	@Override
+	public boolean isModuleAFavorite(IFModule<?> module) {
+		return favorites.contains(module);
+	}
+	
+
+	private void loadFavorites() {
+		String favoritesString = Ulrice.getAppPrefs().getConfiguration(this, "ModuleFavorites", "");		
+		String[] moduleIds = favoritesString.split(";");
+		for(String moduleId : moduleIds) {
+			IFModule<?> module = moduleMap.get(moduleId);
+			if(module != null) {
+				favorites.add(module);				
+			}
+		}		
 	}
 	
 	@Override
