@@ -566,7 +566,7 @@ public class ModuleManager implements IFModuleManager, IFModuleStructureManager,
             }
         }
     }
-
+    
     protected void fireModuleFavoriteAdded(final IFModule<?> module) {
         // Inform event listeners.
         if (!SwingUtilities.isEventDispatchThread()) {
@@ -592,6 +592,32 @@ public class ModuleManager implements IFModuleManager, IFModuleStructureManager,
             }
         }
     }
+    
+    protected void fireModuleFavoriteOrderChanged() {
+        // Inform event listeners.
+        if (!SwingUtilities.isEventDispatchThread()) {
+            SwingUtilities.invokeLater(new Runnable() {
+
+                @Override
+                public void run() {
+                    IFModuleStructureEventListener[] listeners = listenerList.getListeners(IFModuleStructureEventListener.class);
+                    if (listeners != null) {
+                        for (IFModuleStructureEventListener listener : listeners) {
+                            listener.moduleFavoriteOrderChanged();
+                        }
+                    }
+                }
+            });
+        }
+        else {
+            IFModuleStructureEventListener[] listeners = listenerList.getListeners(IFModuleStructureEventListener.class);
+            if (listeners != null) {
+                for (IFModuleStructureEventListener listener : listeners) {
+                    listener.moduleFavoriteOrderChanged();
+                }
+            }
+        }
+    }    
     
     protected void fireModuleFavoriteRemoved(final IFModule<?> module) {
         // Inform event listeners.
@@ -810,6 +836,7 @@ public class ModuleManager implements IFModuleManager, IFModuleStructureManager,
 		if(idx >= 0 && idx <= favorites.size() - 2) {
 			favorites.remove(module.getUniqueId());
 			favorites.add(idx + 1, module.getUniqueId());
+			fireModuleFavoriteOrderChanged();
 		}
 	}
 	
@@ -819,6 +846,7 @@ public class ModuleManager implements IFModuleManager, IFModuleStructureManager,
 		if(idx > 0) {
 			favorites.remove(module.getUniqueId());
 			favorites.add(idx - 1, module.getUniqueId());
+			fireModuleFavoriteOrderChanged();
 		}
 	}
 	
