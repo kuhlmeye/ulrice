@@ -61,7 +61,7 @@ public class ModuleManager implements IFModuleManager, IFModuleStructureManager,
     private final IdentityHashMap<IFController, IdentityHashMap<Object, Object>> blockers =
             new IdentityHashMap<IFController, IdentityHashMap<Object, Object>>();
 
-	private List<IFModule<?>> favorites = new ArrayList<IFModule<?>>();
+	private List<String> favorites = new ArrayList<String>();
     
     public ModuleManager() {
     	Ulrice.addConfigurationListener(new ConfigurationListener() {
@@ -806,42 +806,48 @@ public class ModuleManager implements IFModuleManager, IFModuleStructureManager,
 	
 	@Override
 	public void moveFavoriteDown(IFModule<?> module) {
-		int idx = favorites.indexOf(module);
+		int idx = favorites.indexOf(module.getUniqueId());
 		if(idx >= 0 && idx <= favorites.size() - 2) {
-			favorites.remove(module);
-			favorites.add(idx + 1, module);
+			favorites.remove(module.getUniqueId());
+			favorites.add(idx + 1, module.getUniqueId());
 		}
 	}
 	
 	@Override
 	public void moveFavoriteUp(IFModule<?> module) {
-		int idx = favorites.indexOf(module);
+		int idx = favorites.indexOf(module.getUniqueId());
 		if(idx > 0) {
-			favorites.remove(module);
-			favorites.add(idx - 1, module);
+			favorites.remove(module.getUniqueId());
+			favorites.add(idx - 1, module.getUniqueId());
 		}
 	}
 	
 	@Override
 	public void addModuleFavorite(IFModule<?> module) {
-		favorites.add(module);
+		favorites.add(module.getUniqueId());
 		fireModuleFavoriteAdded(module);
 	}
 	
 	@Override
 	public void removeModuleFavorite(IFModule<?> module) {
-		favorites.remove(module);
+		favorites.remove(module.getUniqueId());
 		fireModuleFavoriteRemoved(module);
 	}
 	
 	@Override
 	public List<IFModule<?>> getFavoriteModules() {
-		return favorites;
+		List<IFModule<?>> result = new ArrayList<IFModule<?>>();
+		for(String moduleId : favorites) {
+			if(moduleMap.containsKey(moduleId)) {
+				result.add(moduleMap.get(moduleId));
+			}
+		}
+		return result;
 	}
 	
 	@Override
 	public boolean isModuleAFavorite(IFModule<?> module) {
-		return favorites.contains(module);
+		return favorites.contains(module.getUniqueId());
 	}
 	
 
@@ -849,18 +855,15 @@ public class ModuleManager implements IFModuleManager, IFModuleStructureManager,
 		String favoritesString = Ulrice.getAppPrefs().getConfiguration(this, "ModuleFavorites", "");		
 		String[] moduleIds = favoritesString.split(";");
 		for(String moduleId : moduleIds) {
-			IFModule<?> module = moduleMap.get(moduleId);
-			if(module != null) {
-				favorites.add(module);				
-			}
+			favorites.add(moduleId);				
 		}		
 	}
 	
 	@Override
 	public void shutdown() {
 		StringBuilder value = new StringBuilder();
-		for(IFModule<?> module : favorites) {
-			value.append(module.getUniqueId()).append(';');
+		for(String module : favorites) {
+			value.append(module).append(';');
 		}
 		
 		Ulrice.getAppPrefs().putConfiguration(this, "ModuleFavorites", value.toString());

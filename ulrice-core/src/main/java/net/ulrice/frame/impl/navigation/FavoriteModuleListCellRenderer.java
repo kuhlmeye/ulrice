@@ -34,6 +34,6 @@ public class FavoriteModuleListCellRenderer extends DefaultListCellRenderer {
 			renderValue = Ulrice.getModuleManager().getTitleProvider(controller).getModuleTitle(Usage.ModuleTree);
 		}
 		
-		return super.getListCellRendererComponent(list, value, idx, sel, hasFocus);
+		return super.getListCellRendererComponent(list, renderValue, idx, sel, hasFocus);
 	}
 }
