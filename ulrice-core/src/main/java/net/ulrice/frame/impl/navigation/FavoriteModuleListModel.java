@@ -49,6 +49,7 @@ public class FavoriteModuleListModel extends AbstractListModel implements IFModu
 
 	@Override
 	public void moduleStructureChanged() {
+		rebuildModel();
 	}
 
 	@Override
