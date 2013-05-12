@@ -885,6 +885,7 @@ public class ModuleManager implements IFModuleManager, IFModuleStructureManager,
 		for(String moduleId : moduleIds) {
 			favorites.add(moduleId);				
 		}		
+		fireModuleFavoriteOrderChanged();
 	}
 	
 	@Override
