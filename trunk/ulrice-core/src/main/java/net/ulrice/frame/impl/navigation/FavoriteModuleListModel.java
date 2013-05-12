@@ -3,6 +3,7 @@ package net.ulrice.frame.impl.navigation;
 import java.util.ArrayList;
 
 import javax.swing.AbstractListModel;
+import javax.swing.SwingUtilities;
 
 import net.ulrice.ConfigurationListener;
 import net.ulrice.Ulrice;
@@ -20,7 +21,13 @@ public class FavoriteModuleListModel extends AbstractListModel implements IFModu
 			@Override
 			public void initializationFinished() {
 				Ulrice.getModuleStructureManager().addModuleStructureEventListener(FavoriteModuleListModel.this);
-				rebuildModel();
+				SwingUtilities.invokeLater(new Runnable() {
+					
+					@Override
+					public void run() {
+						rebuildModel();	
+					}
+				});				
 			}
 		});
 	}
