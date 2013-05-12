@@ -49,5 +49,7 @@ public interface IFModuleStructureManager {
     void removeModuleFavorite(IFModule<?> module);
     List<IFModule<?>> getFavoriteModules();    
 	void shutdown();
+
+	boolean isModuleAFavorite(IFModule<?> module);
     
 }
