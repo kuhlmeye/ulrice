@@ -4,7 +4,6 @@ import javax.swing.JComponent;
 import javax.swing.JList;
 
 import net.ulrice.frame.IFMainFrameComponent;
-import net.ulrice.module.IFModule;
 
 public class FavoriteModuleList extends JList implements IFMainFrameComponent {
 
@@ -12,6 +11,7 @@ public class FavoriteModuleList extends JList implements IFMainFrameComponent {
 
 	public FavoriteModuleList() {
 		super(new FavoriteModuleListModel());
+		setCellRenderer(new FavoriteModuleListCellRenderer());
 	}
 	
 	@Override
