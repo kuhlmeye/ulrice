@@ -11,6 +11,7 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
+import javax.swing.event.TreeWillExpandListener;
 import javax.swing.tree.TreePath;
 
 import net.ulrice.Ulrice;
@@ -358,4 +359,9 @@ public class UTreeTableComponent extends UTableComponent implements ExpandColaps
             }
         }
     }
+    
+    public void addTreeWillExpandListener(TreeWillExpandListener tel) {
+        tree.addTreeWillExpandListener(tel);
+    }
+    
 }
