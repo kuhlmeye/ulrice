@@ -216,7 +216,7 @@ public class MaskTextField extends JTextField implements FocusListener {
                 }
 
                 if ((getLength() + str.length()) > maxLen) {
-                	text = str.subString(0, maxLen - 1);
+                	text = str.substring(0, maxLen - 1);
                 }
 
                 super.insertString(offs, text, a);
