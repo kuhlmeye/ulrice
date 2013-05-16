@@ -86,7 +86,10 @@ public class TreeTableCellRenderer extends JTree implements TableCellRenderer {
         if (isSelected) {
             background = Colors.blend(background, SELECTED_BG_COLOR, 0.5);
         }
-
+        else {
+            table.setBackground(background);
+        }
+        
         setBackground(background);
 
         visibleRow = row;

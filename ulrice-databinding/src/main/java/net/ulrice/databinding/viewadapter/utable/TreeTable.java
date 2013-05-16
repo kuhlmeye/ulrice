@@ -3,15 +3,16 @@ package net.ulrice.databinding.viewadapter.utable;
 import java.awt.Dimension;
 
 import javax.swing.JTable;
+import javax.swing.event.TreeWillExpandListener;
  /**
   * TreeTable Component according to
   * http://www.hameister.org/JavaSwingTreeTable.html
   *
   */
 public class TreeTable extends JTable {
- 
+    private static final long serialVersionUID = 1L;
+    
     private TreeTableCellRenderer tree;
-     
      
     public TreeTable(AbstractTreeTableModel treeTableModel) {
         super();
@@ -36,4 +37,13 @@ public class TreeTable extends JTable {
         setIntercellSpacing(new Dimension(2, 2));
  
     }
+    
+    public void setJTreeRowHeight(int rowHeight) {
+        tree.setRowHeight(rowHeight);
+    }
+    
+    public void addTreeWillExpandListener(TreeWillExpandListener tel) {
+        tree.addTreeWillExpandListener(tel);
+    }
+    
 }
