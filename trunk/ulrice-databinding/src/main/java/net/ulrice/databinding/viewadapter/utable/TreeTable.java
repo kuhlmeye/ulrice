@@ -38,6 +38,10 @@ public class TreeTable extends JTable {
  
     }
     
+    public void setRootVisible(boolean visible) {
+        tree.setRootVisible(visible);
+    }
+    
     public void setJTreeRowHeight(int rowHeight) {
         tree.setRowHeight(rowHeight);
     }
