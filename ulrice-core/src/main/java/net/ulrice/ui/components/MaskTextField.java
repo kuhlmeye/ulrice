@@ -68,6 +68,9 @@ public class MaskTextField extends JTextField implements FocusListener {
     private int numMaskChars;
 
     private boolean textWasMarked = false;
+    
+    private String regex;
+    private boolean useRegex;
 
     public MaskTextField() {
         super();
@@ -110,6 +113,11 @@ public class MaskTextField extends JTextField implements FocusListener {
             displayedMask = builderDisplay.toString();
             updateUI();
         }
+    }
+    
+    public void setRegex(String regex) {
+        this.regex = regex;
+        this.useRegex = true;
     }
 
     private boolean isMaskChar(int idx) {
@@ -167,7 +175,6 @@ public class MaskTextField extends JTextField implements FocusListener {
             if (str == null) {
                 return;
             }
-            // Check input..
             if ((cleanedMask != null) && !"".equals(cleanedMask)) {
                 StringBuilder resultStr = new StringBuilder();
                 char[] maskArr = cleanedMask.toCharArray();
@@ -178,9 +185,14 @@ public class MaskTextField extends JTextField implements FocusListener {
                     if (isMaskChar(i)) {
                         if ((idxMask >= offs) && (idxMask < (offs + str.length()))) {
                             char inputChar = str.charAt(idxStr);
-
-                            if (!validInputChar(inputChar, maskChar)) {
+                            
+                            if (useRegex && !String.valueOf(inputChar).matches(regex)) {
                                 return;
+                            }
+                            else {
+                                if (!validInputChar(inputChar, maskChar)) {
+                                    return;
+                                }
                             }
                             switch (maskChar) {
                                 case ALL_MASK_LOWERCASE_CHAR:
@@ -199,7 +211,6 @@ public class MaskTextField extends JTextField implements FocusListener {
                                     resultStr.append(inputChar);
                                     break;
                             }
-
                             idxStr++;
                         }
                         idxMask++;
