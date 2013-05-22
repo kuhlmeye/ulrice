@@ -1670,18 +1670,21 @@ public class TableAM implements IFAttributeModel {
             fireStateChanged();
         }
 
-        ElementLifecycleListener[] listeners = listenerList.getListeners(ElementLifecycleListener.class);
-        if (listeners != null) {
-            for (final ElementLifecycleListener constraint : listeners) {
-                if (!SwingUtilities.isEventDispatchThread()) {
-                    SwingUtilities.invokeLater(new Runnable() {
-                        @Override
-                        public void run() {
-                            constraint.elementAdded(TableAM.this, element);
-                        }
-                    });
-                } else {
-                    constraint.elementAdded(this, element);
+        if (!massEditMode) {
+            ElementLifecycleListener[] listeners = listenerList.getListeners(ElementLifecycleListener.class);
+            if (listeners != null) {
+                for (final ElementLifecycleListener constraint : listeners) {
+                    if (!SwingUtilities.isEventDispatchThread()) {
+                        SwingUtilities.invokeLater(new Runnable() {
+                            @Override
+                            public void run() {
+                                constraint.elementAdded(TableAM.this, element);
+                            }
+                        });
+                    }
+                    else {
+                        constraint.elementAdded(this, element);
+                    }
                 }
             }
         }

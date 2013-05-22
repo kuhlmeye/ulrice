@@ -74,6 +74,8 @@ public class UTableVAFilter extends RowFilter<UTableViewAdapter, String> impleme
     private UTableVAHeader staticTableHeader;
 
     private UTableVAHeader scrollTableHeader;
+    
+    private boolean filterActive = false; 
 
 	private boolean showDirtyAndInvalidElements = true;
 	private boolean rebuildOnColumnChanges = true;
@@ -278,6 +280,11 @@ public class UTableVAFilter extends RowFilter<UTableViewAdapter, String> impleme
      */
     @Override
     public boolean include(javax.swing.RowFilter.Entry< ? extends UTableViewAdapter, ? extends String> entry) {
+        
+        if (!filterActive) {
+            return true;
+        }
+        
         boolean include = true;
         String id = entry.getIdentifier();
         Element element = entry.getModel().getComponent().getElementById(id);
@@ -604,8 +611,13 @@ public class UTableVAFilter extends RowFilter<UTableViewAdapter, String> impleme
                 }
             }
         }
+        
+        determineFilterActive();
         rowSorter.getModel().fireTableDataChanged();
-       // rowSorter.getModel().fireTableDataChanged(); //TODO: fixme notwendig da immer um einen tastendruck hinten
+    }
+
+    private void determineFilterActive() {
+        filterActive = !numericPatternExpressionMap.isEmpty() || !regexExpressionMap.isEmpty() || !comboBoxExpressionMap.isEmpty() || !collapsedRowFilterMap.isEmpty();
     }
 
     private String correctRegEx(String regex) {
@@ -739,6 +751,7 @@ public class UTableVAFilter extends RowFilter<UTableViewAdapter, String> impleme
             comboBoxExpressionMap.put(columndId, value);
         }
         rowSorter.getModel().fireTableDataChanged();
+        determineFilterActive();
     }
 
     private static class NumericPattern {
@@ -846,7 +859,7 @@ public class UTableVAFilter extends RowFilter<UTableViewAdapter, String> impleme
             rowSorter.setComparator(i, comparators[i]);
         }
         rowSorter.setSortKeys(sortKeys);
-
+        determineFilterActive();
     }
 
     public void collapseRow(String columnId, String value, boolean collapse) {
@@ -875,6 +888,7 @@ public class UTableVAFilter extends RowFilter<UTableViewAdapter, String> impleme
             rowSorter.setComparator(i, comparators[i]);
         }
         rowSorter.setSortKeys(sortKeys);
+        determineFilterActive();
     }
 
     public void useFormatLocale(Locale locale) {

@@ -76,7 +76,7 @@ public class Element {
 		this.originalValueValid = valid;
 		this.tableAM = tableAM;
 		this.uniqueId = uniqueId;
-		this.modelList = Collections.synchronizedList(new ArrayList<GenericAM<? extends Object>>());
+		this.modelList = new ArrayList<GenericAM<? extends Object>>();
 		this.idModelMap = new HashMap<String, GenericAM<? extends Object>>();
 		this.originalValue = tableAM.cloneObject(valueObject);
 		this.columns = columns;
@@ -408,7 +408,9 @@ public class Element {
 	 * Read the object from the value object
 	 */
 	public void readObject() {
-		modelList.clear();
+	    synchronized (modelList) {
+	        modelList.clear();
+        }
 		originalValueDirty = false;
 		originalValueValid = true;
 		readAdditionalColumns(columns, true);
@@ -423,40 +425,41 @@ public class Element {
 			return;
 		}
 
-		for (ColumnDefinition<? extends Object> column : columns) {
-			final GenericAM attributeModel = column.createAM();
-			attributeModel.addValidator(new IFValidator() {
+        synchronized (modelList) {
+            for (ColumnDefinition< ? extends Object> column : columns) {
+                final GenericAM attributeModel = column.createAM();
+                attributeModel.addValidator(new IFValidator() {
 
-				@Override
-				public ValidationResult isValid(IFBinding bindingId, Object attribute, Object rawAttribute) {
-					return validationResult;
-				}
+                    @Override
+                    public ValidationResult isValid(IFBinding bindingId, Object attribute, Object rawAttribute) {
+                        return validationResult;
+                    }
 
-				@Override
-				public ValidationResult getLastValidationErrors() {
-					return validationResult;
-				}
+                    @Override
+                    public ValidationResult getLastValidationErrors() {
+                        return validationResult;
+                    }
 
-				@Override
-				public void clearValidationErrors() {
-					validationResult = new ValidationResult();
-				}
-			});
-			attributeModel.setReadOnly(column.getColumnType().equals(ColumnType.ReadOnly));
-			modelList.add(attributeModel);
-			idModelMap.put(attributeModel.getId(), attributeModel);
+                    @Override
+                    public void clearValidationErrors() {
+                        validationResult = new ValidationResult();
+                    }
+                });
+                attributeModel.setReadOnly(column.getColumnType().equals(ColumnType.ReadOnly));
+                modelList.add(attributeModel);
+                idModelMap.put(attributeModel.getId(), attributeModel);
 
-			if (getOriginalValue() != null) {
-				final Object value = column.getDataAccessor().getValue(getOriginalValue());
-				final Object converted = (column.getValueConverter() != null ? column.getValueConverter().modelToView(value, attributeModel.getAttributeInfo())
-						: value);
-				attributeModel.directRead(converted);
-			}
-		}
+                if (getOriginalValue() != null) {
+                    final Object value = column.getDataAccessor().getValue(getOriginalValue());
+                    final Object converted = (column.getValueConverter() != null ? column.getValueConverter().modelToView(value, attributeModel.getAttributeInfo()) : value);
+                    attributeModel.directRead(converted);
+                }
+            }
 
-		if (updateState) {
-			updateState();
-		}
+            if (updateState) {
+                updateState();
+            }
+        }
 	}
 
 	public int getModelListSize(){
