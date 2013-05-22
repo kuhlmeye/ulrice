@@ -670,12 +670,13 @@ public class UTableComponent extends JPanel {
             
         }
 
+        final int resizeIndex = table.getRowCount() / 100;
         for (int r = 0; r < table.getRowCount(); r++) {
-            TableCellRenderer renderer = table.getCellRenderer(r, vColIndex);
-            Component comp =
-                    renderer.getTableCellRendererComponent(table, table.getValueAt(r, vColIndex), false, false, r,
-                        vColIndex);
-            maxWidth = Math.max(maxWidth, comp.getPreferredSize().width);
+            if (resizeIndex == 0 || r % resizeIndex == 0) { // for big tables we don't check every row for resizing
+                TableCellRenderer renderer = table.getCellRenderer(r, vColIndex);
+                Component comp = renderer.getTableCellRendererComponent(table, table.getValueAt(r, vColIndex), false, false, r, vColIndex);
+                maxWidth = Math.max(maxWidth, comp.getPreferredSize().width);
+            }
         }
         return maxWidth + 3;
     }
