@@ -10,7 +10,6 @@ import javax.swing.table.TableCellRenderer;
 import javax.swing.tree.TreeModel;
 
 import net.ulrice.databinding.ui.BindingUI;
-import net.ulrice.util.Colors;
 
 /**
  * TreeTableCellRenderer renders the tree in the first column of the tree table
@@ -77,19 +76,12 @@ public class TreeTableCellRenderer extends JTree implements TableCellRenderer {
      */
     @Override
     public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
-        Color background = NORMAL_BG_COLOR;
-
-        if ((row % 2) == 1) {
-            background = Colors.blend(background, Color.BLACK, 0.95);
-        }
+        Color background = table.getBackground();
 
         if (isSelected) {
-            background = Colors.blend(background, SELECTED_BG_COLOR, 0.5);
+            background = table.getSelectionBackground();
         }
-        else {
-            table.setBackground(background);
-        }
-        
+
         setBackground(background);
 
         visibleRow = row;

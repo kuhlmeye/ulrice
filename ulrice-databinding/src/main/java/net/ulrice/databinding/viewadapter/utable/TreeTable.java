@@ -4,6 +4,7 @@ import java.awt.Dimension;
 
 import javax.swing.JTable;
 import javax.swing.event.TreeWillExpandListener;
+import javax.swing.tree.TreePath;
  /**
   * TreeTable Component according to
   * http://www.hameister.org/JavaSwingTreeTable.html
@@ -48,6 +49,22 @@ public class TreeTable extends JTable {
     
     public void addTreeWillExpandListener(TreeWillExpandListener tel) {
         tree.addTreeWillExpandListener(tel);
+    }
+    
+    public boolean isExpanded(TreePath path) {
+        return tree.isExpanded(path);
+    }
+    
+    public void expandPath(TreePath path) {
+        tree.expandPath(path);
+    }
+    
+    public void collapsePath(TreePath path) {
+        tree.collapsePath(path);
+    }
+    
+    public TreePath getPathForRow(int row) {
+        return tree.getPathForRow(row);
     }
     
 }
