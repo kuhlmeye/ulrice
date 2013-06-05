@@ -12,7 +12,7 @@ import java.util.Map;
  */
 public abstract class ClassLoadingHelper {
 
-	/** Map holding the loaded objects by full class name. */
+	/** Map holding the loaded objects by full class name.  */
 	private Map<String, Object> instanceMap = new HashMap<String, Object>();
 	
 	/**
