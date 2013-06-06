@@ -1,0 +1,23 @@
+todo
+----
+
+
+* Formatierung - Tausendertrenner etc.?!
+* Snapshotable --> Dirty Handling
+* WidgetStatusVisualizationStrategy
+
+* Label  
+* Combobox
+
+done
+----
+
+* enabling / disabling per Binding ans Model
+* abgeleitete Attribute
+  * read/only-Mappings
+* Tabelle
+
+
+
+  
+  
