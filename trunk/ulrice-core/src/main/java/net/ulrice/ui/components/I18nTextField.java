@@ -36,7 +36,7 @@ public class I18nTextField extends I18nTextComponent {
 				if (sfWidth > 0) {
 					setPreferredSize(new Dimension(sfWidth, getHeight()));
 				}
-			};
+			}
 		});
 	
 		getTextComponent().setBorder(BorderFactory.createEmptyBorder());
