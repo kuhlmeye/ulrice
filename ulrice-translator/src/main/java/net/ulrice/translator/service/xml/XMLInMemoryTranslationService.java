@@ -228,7 +228,7 @@ public class XMLInMemoryTranslationService implements IFTranslationService {
 
 
 	private String fix(String value) {
-		String result = value;;
+		String result = value;
 
 	    result = result.replace("&", "&amp;");
 	    result = result.replace("#", "&#035;");

@@ -37,7 +37,7 @@ public class I18nTextArea extends I18nTextComponent {
 				if (sfWidth > 0) {
 					setPreferredSize(new Dimension(sfWidth, getHeight()));
 				}
-			};
+			}
 		});
 		
 		getLocaleSelector().setShowTextAndIcon(true);

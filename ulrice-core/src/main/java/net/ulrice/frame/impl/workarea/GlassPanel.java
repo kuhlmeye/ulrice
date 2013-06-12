@@ -108,5 +108,5 @@ public class GlassPanel extends JLayeredPane implements AWTEventListener, MouseW
 			g.setColor(getBackground());
 			g.fillRect(0, 0, getWidth(), getHeight());
 		}
-	};
+	}
 }
