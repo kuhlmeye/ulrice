@@ -22,10 +22,10 @@ import net.ulrice.databinding.viewadapter.IFStateMarker;
 public class BorderStateMarker extends UBorder implements ImageObserver, IFStateMarker {
 
     /** The attention image drawn, if the data is changed. */
-    private final Icon changedIcon;
+    private Icon changedIcon;
 
     /** The cross image draw, if the data is not valid. */
-    private final Icon invalidIcon;
+    private Icon invalidIcon;
 
     private boolean valid = true;
 
@@ -64,8 +64,10 @@ public class BorderStateMarker extends UBorder implements ImageObserver, IFState
     public BorderStateMarker(BorderStateMarkerStrategy strategy, boolean borderVisible, Insets baseInsets, boolean clipLeft, boolean clipRight) {
         super(borderVisible, baseInsets, clipLeft, clipRight);
 
-        changedIcon = UIManager.getIcon(BindingUIConstants.BORDER_STATE_MARKER_CHANGED_IMAGE);
-        invalidIcon = UIManager.getIcon(BindingUIConstants.BORDER_STATE_MARKER_INVALID_IMAGE);
+        if(strategy.equals(BorderStateMarkerStrategy.ALL) || strategy.equals(BorderStateMarkerStrategy.ICON_ONLY)) {
+            changedIcon = UIManager.getIcon(BindingUIConstants.BORDER_STATE_MARKER_CHANGED_IMAGE);
+            invalidIcon = UIManager.getIcon(BindingUIConstants.BORDER_STATE_MARKER_INVALID_IMAGE);
+        }
 
         this.strategy = strategy;
     }
