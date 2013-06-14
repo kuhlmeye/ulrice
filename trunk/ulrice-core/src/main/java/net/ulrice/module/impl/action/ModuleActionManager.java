@@ -9,8 +9,10 @@ import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.logging.Logger;
 
 import javax.swing.KeyStroke;
@@ -394,17 +396,23 @@ public class ModuleActionManager implements IFModuleEventListener, PropertyChang
         }
         
         final Collection<ModuleActionState> values = map.values();
+        final Set<String> actionSet = new HashSet<String>();
         
         for (ModuleActionState state : values) {
             for (UActionState actionState : actionStates) {
                 if (state.getAction().getUniqueId().equals(actionState.getActionId())) {
-                    state.setEnabled(actionState.isEnabled());
+                	if(state.isEnabled() != actionState.isEnabled()) {
+                		state.setEnabled(actionState.isEnabled());
+                    	actionSet.add(state.getAction().getUniqueId());
+                	}
                 }
             }
         }
         
-        adaptActionStates();
-        fireApplicationActionsChanged();
+        if(!actionSet.isEmpty()) {
+        	adaptActionStates();
+        	fireApplicationActionsChanged();
+        }
 	}
 	
 	@Override
