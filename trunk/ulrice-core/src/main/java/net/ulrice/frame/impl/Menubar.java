@@ -36,6 +36,15 @@ public class Menubar extends JMenuBar implements IFModuleActionManagerEventListe
 	 */
 	@Override
 	public void applicationActionsChanged() {
+		actionsChanged();
+	}
+	
+	@Override
+	public void moduleActionsChanged() {
+		actionsChanged();
+	}
+
+	private void actionsChanged() {
 		removeAll();
 		ModuleActionManager actionManager = Ulrice.getActionManager();
 		

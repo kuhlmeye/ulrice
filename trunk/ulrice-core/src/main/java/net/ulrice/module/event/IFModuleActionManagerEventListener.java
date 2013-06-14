@@ -16,4 +16,6 @@ public interface IFModuleActionManagerEventListener extends EventListener {
 	 * The set of application actions changed.
 	 */
 	void applicationActionsChanged();
+
+	void moduleActionsChanged();
 }
