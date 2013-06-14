@@ -125,6 +125,11 @@ public class Toolbar extends JToolBar implements IFModuleActionManagerEventListe
     public void applicationActionsChanged() {
         rebuildActions();
     }
+    
+    @Override
+    public void moduleActionsChanged() {
+    	rebuildActions();
+    }
 
     public void setHideUnusedModuleActions(boolean hideUnusedModuleActions) {
         this.hideUnusedModuleActions = hideUnusedModuleActions;

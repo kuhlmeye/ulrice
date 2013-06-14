@@ -142,6 +142,17 @@ public class ModuleActionManager implements IFModuleEventListener, PropertyChang
 			}
 		}
 	}
+	/**
+	 * Informs all listners that the list of application actions has changed.
+	 */
+	public void fireModuleActionsChanged() {
+		IFModuleActionManagerEventListener[] listeners = listenerList.getListeners(IFModuleActionManagerEventListener.class);
+		if (listeners != null) {
+			for (IFModuleActionManagerEventListener listener : listeners) {
+				listener.moduleActionsChanged();
+			}
+		}
+	}
 
 	/**
 	 * Performs an action. In this method the action will be checked against the
@@ -326,7 +337,9 @@ public class ModuleActionManager implements IFModuleEventListener, PropertyChang
 		controllerActionOrderMap.remove(activeController);
 
 		adaptActionStates();
+		
 		fireApplicationActionsChanged();
+		fireModuleActionsChanged();
 	}
 
 	/**
@@ -338,6 +351,7 @@ public class ModuleActionManager implements IFModuleEventListener, PropertyChang
 
 		adaptActionStates();
 		fireApplicationActionsChanged();
+		fireModuleActionsChanged();
 	}
 
 	/**
@@ -349,6 +363,7 @@ public class ModuleActionManager implements IFModuleEventListener, PropertyChang
 
 		adaptActionStates();
 		fireApplicationActionsChanged();
+		fireModuleActionsChanged();
 	}
 
 	@Override
@@ -484,5 +499,9 @@ public class ModuleActionManager implements IFModuleEventListener, PropertyChang
     
     @Override
     public void nameChanged(IFController controller) {
+    }
+    
+    public void initializationFinished() {
+    	
     }
 }
