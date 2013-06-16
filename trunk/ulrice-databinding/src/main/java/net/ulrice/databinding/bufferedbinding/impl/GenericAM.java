@@ -194,7 +194,11 @@ public class GenericAM<T> implements IFAttributeModel<T>, IFViewChangeListener {
                 stateChanged |= (dirty != false);
                 dirty = false;
             }
-            else if (getCurrentValue() != null && getOriginalValue() != null) {
+            else if (readOnly) {
+                stateChanged |= (dirty != false);
+                dirty = false; 
+            }
+            else if ( getCurrentValue() != null && getOriginalValue() != null) {
                 boolean newDirty;
                 // XHU: Needed, because it is not allowed to compare BigDecimal values with equals()!
                 if (getCurrentValue() instanceof BigDecimal) {
