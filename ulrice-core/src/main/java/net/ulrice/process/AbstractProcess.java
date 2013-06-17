@@ -137,6 +137,10 @@ public abstract class AbstractProcess<T, V> extends SwingWorker<T, V> implements
     }
 
     public void fireProgressChanged() {
+    	if(listenerList.getListenerCount(IFProcessListener.class) == 0) {
+    		return;
+    	}
+    	
         if (SwingUtilities.isEventDispatchThread()) {
             IFProcessListener[] listeners = listenerList.getListeners(IFProcessListener.class);
             if (listeners != null) {
