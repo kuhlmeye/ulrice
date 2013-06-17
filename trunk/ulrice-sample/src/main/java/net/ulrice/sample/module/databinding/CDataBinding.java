@@ -4,22 +4,27 @@
 package net.ulrice.sample.module.databinding;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
 
 import javax.swing.JComponent;
 import javax.swing.SwingWorker;
 
+import net.ulrice.Ulrice;
+import net.ulrice.databinding.bufferedbinding.impl.ListDataProvider;
 import net.ulrice.databinding.viewadapter.utable.UTableViewAdapter;
 import net.ulrice.module.impl.AbstractController;
 import net.ulrice.module.impl.IFClosing;
+import net.ulrice.process.AbstractProcess;
 
 /**
  * @author christof
  * 
  */
 public class CDataBinding extends AbstractController {
-    private final MDataBinding model = new MDataBinding();
+    protected static final int SIZE = 10000;
+	private final MDataBinding model = new MDataBinding();
     private final VDataBinding view = new VDataBinding();
 
     @Override
@@ -39,6 +44,7 @@ public class CDataBinding extends AbstractController {
         
         UTableViewAdapter tableVA = new UTableViewAdapter(view.getTable(), null);
         model.getTableAM().addViewAdapter(tableVA);
+        model.getTableAM().setReadOnly(true);
 
         view.getTable().init(tableVA);
         view.getTable().updateColumnModel();
@@ -52,37 +58,22 @@ public class CDataBinding extends AbstractController {
         model.getNameAM().read();        
         model.getTableAM().read();
         
-        SwingWorker<List<Person>, List<Person>> worker = new SwingWorker<List<Person>, List<Person>>() {
+        
+        
+        AbstractProcess<Void,Void> loader = model.getTableAM().createLoader(this, true, new ListDataProvider<Person>() {
 
 			@Override
-			protected List<Person> doInBackground() throws Exception {
-
-		        List<List<Person>> list = new ArrayList<List<Person>>();
-		        for (int i = 0; i < 2; i++) {
-		        	list.add(new ArrayList<Person>(1000));
-		            for (int j = 0; j < 100; j++) {
-		            	list.get(i).add(PersonGenerator.createRandomPerson());
-		            }
-					System.out.println("Publish #" + i);
-		        	publish(list.get(i));
-		        }   
-
-				return null;
+			public List<Person> getData() {
+		        List<Person> list = new ArrayList<Person>(SIZE);
+	            for (int j = 0; j < SIZE; j++) {
+	            	list.add(PersonGenerator.createRandomPerson());
+	            }
+				return list;
 			}
-			
-			@Override
-			protected void process(List<List<Person>> chunks) {
-		        for (int i = 0; i < chunks.size(); i++) {
-		        	model.getTableAM().read(chunks.get(i), true);
-				}			
-		        view.getTable().sizeColumns(true);
-			}        	
-        };
+		});
 
-        worker.execute();
-
-
-        view.getTable().sizeColumns(false);
+        //Ulrice.getProcessManager().registerProcess(loader);
+        loader.execute();
     }
     
     @Override
