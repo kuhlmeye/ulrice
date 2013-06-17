@@ -14,6 +14,7 @@ import net.ulrice.databinding.bufferedbinding.IFAttributeInfo;
 import net.ulrice.databinding.bufferedbinding.impl.ColumnDefinition;
 import net.ulrice.databinding.bufferedbinding.impl.GenericAM;
 import net.ulrice.databinding.bufferedbinding.impl.TableAM;
+import net.ulrice.databinding.modelaccess.IFDynamicModelValueAccessor;
 import net.ulrice.databinding.modelaccess.impl.DynamicReflectionMVA;
 import net.ulrice.databinding.modelaccess.impl.IndexedReflectionMVA;
 import net.ulrice.databinding.modelaccess.impl.ReflectionMVA;
@@ -40,26 +41,111 @@ public class MDataBinding {
 		name = "hallo";
 
 		tableAM = new TableAM(new IndexedReflectionMVA(this, "personList"), attributeInfo);
-		tableAM.addColumn(new ColumnDefinition<String>(new DynamicReflectionMVA(Person.class, "lastName"), String.class));
-		tableAM.addColumn(new ColumnDefinition<String>(new DynamicReflectionMVA(Person.class, "firstName"), String.class));
-		tableAM.addColumn(new ColumnDefinition<String>(new DynamicReflectionMVA(Person.class, "address"), String.class));
-		tableAM.addColumn(new ColumnDefinition<Integer>(new DynamicReflectionMVA(Person.class, "age"), Integer.class));
-		
-		tableAM.getColumnByIndex(2).setCellRenderer(new AbstractUTableRenderer() {
-			
-			JLabel label = new JLabel();
-			
-			@Override
-			public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
+		tableAM.addColumn(new ColumnDefinition<String>(new IFDynamicModelValueAccessor() {
 
-				label.setText("<html>" + value.toString().replace("\n", "<br>") + "<html>");
-				int rowHeight = label.getPreferredSize().height;
-				table.setRowHeight(row, rowHeight);
-				return label; 
+			@Override
+			public Object getValue(Object root) {
+				return ((Person)root).getLastName();
+			}
+
+			@Override
+			public void setValue(Object root, Object value) {				
+			}
+
+			@Override
+			public String getAttributeId() {
+				return "LastName";
+			}
+
+			@Override
+			public Class<?> getModelType(Class<?> rootType) {
+				return String.class;
 			}
 			
+		}, String.class));
+		
+		tableAM.addColumn(new ColumnDefinition<String>(new IFDynamicModelValueAccessor() {
+
+			@Override
+			public Object getValue(Object root) {
+				return ((Person)root).getFirstName();
+			}
+
+			@Override
+			public void setValue(Object root, Object value) {				
+			}
+
+			@Override
+			public String getAttributeId() {
+				return "FirstName";
+			}
+
+			@Override
+			public Class<?> getModelType(Class<?> rootType) {
+				return String.class;
+			}
 			
-		});
+		}, String.class));
+		tableAM.addColumn(new ColumnDefinition<String>(new IFDynamicModelValueAccessor() {
+
+			@Override
+			public Object getValue(Object root) {
+				return ((Person)root).getAddress();
+			}
+
+			@Override
+			public void setValue(Object root, Object value) {				
+			}
+
+			@Override
+			public String getAttributeId() {
+				return "Address";
+			}
+
+			@Override
+			public Class<?> getModelType(Class<?> rootType) {
+				return String.class;
+			}
+			
+		}, String.class));
+		tableAM.addColumn(new ColumnDefinition<String>(new IFDynamicModelValueAccessor() {
+
+			@Override
+			public Object getValue(Object root) {
+				return ((Person)root).getAge();
+			}
+
+			@Override
+			public void setValue(Object root, Object value) {				
+			}
+
+			@Override
+			public String getAttributeId() {
+				return "Age";
+			}
+
+			@Override
+			public Class<?> getModelType(Class<?> rootType) {
+				return String.class;
+			}
+			
+		}, String.class));
+		
+//		tableAM.getColumnByIndex(2).setCellRenderer(new AbstractUTableRenderer() {
+//			
+//			JLabel label = new JLabel();
+//			
+//			@Override
+//			public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
+//
+//				label.setText("<html>" + value.toString().replace("\n", "<br>") + "<html>");
+//				int rowHeight = label.getPreferredSize().height;
+//				table.setRowHeight(row, rowHeight);
+//				return label; 
+//			}
+//			
+//			
+//		});
 	}
 
 	public GenericAM<String> getNameAM() {
