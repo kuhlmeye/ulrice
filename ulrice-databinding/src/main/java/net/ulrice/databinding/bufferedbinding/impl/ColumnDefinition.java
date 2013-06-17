@@ -117,16 +117,22 @@ public class ColumnDefinition<T extends Object> implements PropertyChangeListene
     /**
      * Create the generic attribute model for this column
      */
-    public GenericAM<T> createAM() {
+    public LightGenericAM<T> createLightAM() {
+    	LightGenericAM<T> genericAM = new LightGenericAM<T>(id, getColumnType().equals(ColumnType.ReadOnly));
+        if(getValidators() != null && !getValidators().isEmpty()) {
+            for (IFValidator validator : getValidators()) {
+                genericAM.addValidator(validator);
+            }
+        }
+		return genericAM;
+    }
+    
+    /**
+     * Create the generic attribute model for this column
+     */
+    public IFElementInternalAM<List<T>> createListAM() {
 
-        GenericAM<T> genericAM;
-        if (useListAM) {
-            genericAM =
-                    new ListAM(id, attributeInfo, getColumnType().equals(ColumnType.ReadOnly), isListOrderRelevant);
-        }
-        else {
-            genericAM = new GenericAM<T>(id, attributeInfo, getColumnType().equals(ColumnType.ReadOnly));
-        }
+    	ListAM<T> genericAM = new ListAM(id, attributeInfo, getColumnType().equals(ColumnType.ReadOnly), isListOrderRelevant);
 
         genericAM.setValueConverter(getValueConverter());
 
