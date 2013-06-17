@@ -35,7 +35,7 @@ import net.ulrice.module.exception.ModuleInstantiationException;
 
 /**
  * The default module manager.
- * 
+ *
  * @author ckuhlmeyer
  */
 public class ModuleManager implements IFModuleManager, IFModuleStructureManager, KeyEventDispatcher {
@@ -57,15 +57,15 @@ public class ModuleManager implements IFModuleManager, IFModuleStructureManager,
 
     private HashMap<KeyStroke, String> hotkeyModuleIdMap = new HashMap<KeyStroke, String>();
     private HashMap<KeyStroke, IFController> openHotkeyControllerMap = new HashMap<KeyStroke, IFController>();
-    
+
     private final IdentityHashMap<IFController, IdentityHashMap<Object, Object>> blockers =
             new IdentityHashMap<IFController, IdentityHashMap<Object, Object>>();
 
 	private List<String> favorites = new ArrayList<String>();
-    
+
     public ModuleManager() {
     	Ulrice.addConfigurationListener(new ConfigurationListener() {
-			
+
 			@Override
 			public void initializationFinished() {
 				loadHotkeys();
@@ -75,12 +75,12 @@ public class ModuleManager implements IFModuleManager, IFModuleStructureManager,
 		});
         KeyboardFocusManager.getCurrentKeyboardFocusManager().addKeyEventDispatcher(this);
     }
-    
+
     @Override
     public void openModule(final String moduleId, final ControllerProviderCallback callback) {
         openModule(moduleId, null, callback);
     }
-    
+
     @Override
     public void openModule(final String moduleId, final ControllerProviderCallback callback, final IFCloseCallback closeCallback) {
         openModule(moduleId, null, callback, closeCallback);
@@ -90,15 +90,16 @@ public class ModuleManager implements IFModuleManager, IFModuleStructureManager,
     public void openModule(final String moduleId, final IFController parent, final ControllerProviderCallback callback) {
         openModule(moduleId, parent, callback, null);
     }
-    
+
     @Override
     public void openModule(final String moduleId, final IFController parent, final ControllerProviderCallback callback, final IFCloseCallback closeCallback) {
         final IFModule module = moduleMap.get(moduleId);
 
         if (module == null) {
+            LOG.warning("Module with id (" + moduleId + ") could not be found.");
             callback.onFailure(new ModuleInstantiationException("Module with id (" + moduleId + ") could not be found.", null));
             return;
-        } 
+        }
 
         try {
             Ulrice.getMainFrame().getFrame().setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
@@ -196,8 +197,8 @@ public class ModuleManager implements IFModuleManager, IFModuleStructureManager,
 
     @Override
     public String getModuleTitle(String moduleId, Usage usage) {
-    	final IFModule module = moduleMap.get(moduleId);    	
-        return module.getModuleTitle(usage);        
+    	final IFModule module = moduleMap.get(moduleId);
+        return module.getModuleTitle(usage);
     }
 
     @Override
@@ -358,7 +359,7 @@ public class ModuleManager implements IFModuleManager, IFModuleStructureManager,
     private void internalCloseController(final IFController controller) {
 
         IFCloseCallback closeCallback = openControllers.getCloseCallback(controller);
-        
+
         for (IFModuleEventListener listener : listenerList.getListeners(IFModuleEventListener.class)) {
             listener.closeController(controller);
         }
@@ -368,7 +369,7 @@ public class ModuleManager implements IFModuleManager, IFModuleStructureManager,
         if (openControllers.getActive() != null) {
             activateModule(openControllers.getActive());
         }
-        
+
         if(closeCallback != null) {
             closeCallback.wasClosed(controller);
         }
@@ -433,7 +434,7 @@ public class ModuleManager implements IFModuleManager, IFModuleStructureManager,
 
     /**
      * Add a group of modules to this module group.
-     * 
+     *
      * @param group The group of modules that should be added to this module.
      */
     @Override
@@ -443,7 +444,7 @@ public class ModuleManager implements IFModuleManager, IFModuleStructureManager,
 
     /**
      * Add a module to this module group
-     * 
+     *
      * @param module The module that should be added to this group.
      */
     @Override
@@ -477,7 +478,7 @@ public class ModuleManager implements IFModuleManager, IFModuleStructureManager,
 
     /**
      * The class representing the root module.
-     * 
+     *
      * @author ckuhlmeyer
      */
     private class UlriceRootModule implements IFModuleGroup {
@@ -506,7 +507,7 @@ public class ModuleManager implements IFModuleManager, IFModuleStructureManager,
 
         /**
          * Add a group of modules to this module group.
-         * 
+         *
          * @param group The group of modules that should be added to this module.
          */
         @Override
@@ -516,7 +517,7 @@ public class ModuleManager implements IFModuleManager, IFModuleStructureManager,
 
         /**
          * Add a module to this module group
-         * 
+         *
          * @param module The module that should be added to this group.
          */
         @Override
@@ -566,7 +567,7 @@ public class ModuleManager implements IFModuleManager, IFModuleStructureManager,
             }
         }
     }
-    
+
     protected void fireModuleFavoriteAdded(final IFModule<?> module) {
         // Inform event listeners.
         if (!SwingUtilities.isEventDispatchThread()) {
@@ -592,7 +593,7 @@ public class ModuleManager implements IFModuleManager, IFModuleStructureManager,
             }
         }
     }
-    
+
     protected void fireModuleFavoriteOrderChanged() {
         // Inform event listeners.
         if (!SwingUtilities.isEventDispatchThread()) {
@@ -617,8 +618,8 @@ public class ModuleManager implements IFModuleManager, IFModuleStructureManager,
                 }
             }
         }
-    }    
-    
+    }
+
     protected void fireModuleFavoriteRemoved(final IFModule<?> module) {
         // Inform event listeners.
         if (!SwingUtilities.isEventDispatchThread()) {
@@ -698,7 +699,7 @@ public class ModuleManager implements IFModuleManager, IFModuleStructureManager,
             listener.moduleUnblocked(controller, blocker);
         }
     }
-    
+
     private void fireBlockerRemoved(IFController controller, Object blocker) {
         for (final IFModuleEventListener listener : listenerList.getListeners(IFModuleEventListener.class)) {
             listener.moduleBlockerRemoved(controller, blocker);
@@ -744,14 +745,14 @@ public class ModuleManager implements IFModuleManager, IFModuleStructureManager,
                 else if (wasBlocked && !isBlockedByBlocker(controller, blocker)) {
                     fireBlockerRemoved(controller, blocker);
                 }
-                
+
                 if(m.size() == 0){
                     blockers.remove(controller);
                 }
             }
         });
     }
-    
+
     @Override
     public boolean isBlockedByBlocker(IFController controller, Object blocker) {
         final IdentityHashMap<Object, Object> m = blockers.get(controller);
@@ -774,23 +775,23 @@ public class ModuleManager implements IFModuleManager, IFModuleStructureManager,
 		if(e.getID() == KeyEvent.KEY_LAST) {
 			final KeyStroke keyStroke = KeyStroke.getKeyStroke(e.getKeyCode(), e.getModifiers());
 			if(openHotkeyControllerMap.containsKey(keyStroke)) {
-				activateModule(openHotkeyControllerMap.get(keyStroke));				
+				activateModule(openHotkeyControllerMap.get(keyStroke));
 				e.consume();
 				return true;
 			} else if(hotkeyModuleIdMap.containsKey(keyStroke)) {
 				String moduleId = hotkeyModuleIdMap.get(keyStroke);
 				openModule(moduleId, null, new ControllerProviderCallback() {
-					
+
 					@Override
 					public void onControllerReady(IFController controller) {
 						super.onControllerReady(controller);
 						openHotkeyControllerMap.put(keyStroke, controller);
 					}
-					
+
 				}, null);
 				e.consume();
 				return true;
-			}		
+			}
 		}
 		return false;
 	}
@@ -800,12 +801,12 @@ public class ModuleManager implements IFModuleManager, IFModuleStructureManager,
 		hotkeyModuleIdMap.clear();
 		openHotkeyControllerMap.clear();
 	}
-	
+
 	@Override
 	public void registerHotkey(KeyStroke keyStroke, String moduleId) {
 		hotkeyModuleIdMap.put(keyStroke, moduleId);
 	}
-	
+
 	private void loadHotkeys() {
 		loadKeyAndAddToList("F1");
 		loadKeyAndAddToList("F2");
@@ -824,12 +825,12 @@ public class ModuleManager implements IFModuleManager, IFModuleStructureManager,
 	private void loadKeyAndAddToList(String key) {
 		String moduleId = Ulrice.getAppPrefs().getConfiguration(this, key, null);
 		if(moduleId != null) {
-			registerHotkey(KeyStroke.getKeyStroke("ctrl " + key), moduleId);			
+			registerHotkey(KeyStroke.getKeyStroke("ctrl " + key), moduleId);
 		}
-	}	
+	}
 
 
-	
+
 	@Override
 	public void moveFavoriteDown(IFModule<?> module) {
 		int idx = favorites.indexOf(module.getUniqueId());
@@ -839,7 +840,7 @@ public class ModuleManager implements IFModuleManager, IFModuleStructureManager,
 			fireModuleFavoriteOrderChanged();
 		}
 	}
-	
+
 	@Override
 	public void moveFavoriteUp(IFModule<?> module) {
 		int idx = favorites.indexOf(module.getUniqueId());
@@ -849,19 +850,19 @@ public class ModuleManager implements IFModuleManager, IFModuleStructureManager,
 			fireModuleFavoriteOrderChanged();
 		}
 	}
-	
+
 	@Override
 	public void addModuleFavorite(IFModule<?> module) {
 		favorites.add(module.getUniqueId());
 		fireModuleFavoriteAdded(module);
 	}
-	
+
 	@Override
 	public void removeModuleFavorite(IFModule<?> module) {
 		favorites.remove(module.getUniqueId());
 		fireModuleFavoriteRemoved(module);
 	}
-	
+
 	@Override
 	public List<IFModule<?>> getFavoriteModules() {
 		List<IFModule<?>> result = new ArrayList<IFModule<?>>();
@@ -872,29 +873,29 @@ public class ModuleManager implements IFModuleManager, IFModuleStructureManager,
 		}
 		return result;
 	}
-	
+
 	@Override
 	public boolean isModuleAFavorite(IFModule<?> module) {
 		return favorites.contains(module.getUniqueId());
 	}
-	
+
 
 	private void loadFavorites() {
-		String favoritesString = Ulrice.getAppPrefs().getConfiguration(this, "ModuleFavorites", "");		
+		String favoritesString = Ulrice.getAppPrefs().getConfiguration(this, "ModuleFavorites", "");
 		String[] moduleIds = favoritesString.split(";");
 		for(String moduleId : moduleIds) {
-			favorites.add(moduleId);				
-		}		
+			favorites.add(moduleId);
+		}
 		fireModuleFavoriteOrderChanged();
 	}
-	
+
 	@Override
 	public void shutdown() {
 		StringBuilder value = new StringBuilder();
 		for(String module : favorites) {
 			value.append(module).append(';');
 		}
-		
+
 		Ulrice.getAppPrefs().putConfiguration(this, "ModuleFavorites", value.toString());
 	}
 }
