@@ -10,7 +10,7 @@ import javax.swing.event.ListDataListener;
 import net.ulrice.databinding.bufferedbinding.IFAttributeInfo;
 import net.ulrice.databinding.modelaccess.IFModelValueAccessor;
 
-public class ListAM<T> extends GenericAM<List<T>> implements ListModel {
+public class ListAM<T> extends GenericAM<List<T>> implements ListModel, IFElementInternalAM<List<T>> {
 
     public ListAM(IFModelValueAccessor modelAccessor, IFAttributeInfo attributeInfo, boolean isListOrderRelevant) {
         super(modelAccessor, attributeInfo);
