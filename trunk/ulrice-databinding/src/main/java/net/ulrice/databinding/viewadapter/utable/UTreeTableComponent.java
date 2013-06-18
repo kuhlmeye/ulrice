@@ -129,7 +129,7 @@ public class UTreeTableComponent extends UTableComponent implements ExpandColaps
                     nested = false;
                 }
 
-                Set<String> selUniqueIds = new HashSet<String>();
+                Set<Long> selUniqueIds = new HashSet<Long>();
                 List<Element> selElements =
                         UTreeTableComponent.this.getSelectedElementsTreeIntern(getSelectedRowsModelIndex());
 
@@ -149,7 +149,7 @@ public class UTreeTableComponent extends UTableComponent implements ExpandColaps
                 }
             }
 
-            private boolean testForUniqueSelection(Set<String> selUniqueIds, Element element, ListSelectionEvent e) {
+            private boolean testForUniqueSelection(Set<Long> selUniqueIds, Element element, ListSelectionEvent e) {
                 if (element.getChildCount() == 0) {
                     return processSelection(selUniqueIds, element, e);
                 }
@@ -160,7 +160,7 @@ public class UTreeTableComponent extends UTableComponent implements ExpandColaps
                 return ambiguousSelection;
             }
 
-            private boolean processSelection(Set<String> selUniqueIds, Element element, final ListSelectionEvent e) {
+            private boolean processSelection(Set<Long> selUniqueIds, Element element, final ListSelectionEvent e) {
                 if (selUniqueIds.contains(element.getUniqueId())) {
                     nested = true;
                     try {
@@ -257,14 +257,14 @@ public class UTreeTableComponent extends UTableComponent implements ExpandColaps
     }
 
     private List<Element> reduceDoubleElements(List<Element> elements) {
-        HashMap<String, Element> elementsByUniquId = new LinkedHashMap<String, Element>();
+        HashMap<Long, Element> elementsByUniquId = new LinkedHashMap<Long, Element>();
         for (Element element : elements) {
             mapDoubleElement(elementsByUniquId, element);
         }
         return new ArrayList<Element>(elementsByUniquId.values());
     }
 
-    private void mapDoubleElement(HashMap<String, Element> elementsByUniquId, Element element) {
+    private void mapDoubleElement(HashMap<Long, Element> elementsByUniquId, Element element) {
         if (viewAdapter.getAttributeModel().isVirtualTreeNodes()) {
             
             if (element.getChildCount() == 0) {
@@ -332,7 +332,7 @@ public class UTreeTableComponent extends UTableComponent implements ExpandColaps
         if (viewAdapter.getAttributeModel().isVirtualTreeNodes()) {
             checkAttributeModelSet();
             List<Element> elements = new ArrayList<Element>();
-            List<String> uniqueIds = new ArrayList<String>();
+            List<Long> uniqueIds = new ArrayList<Long>();
             for (Element elem : getSelectedElements()) {
                 getElementsAndChilds(elem, elements, uniqueIds);
                 if (elem.getParent() != null) {
@@ -347,7 +347,7 @@ public class UTreeTableComponent extends UTableComponent implements ExpandColaps
 
     }
 
-    private void getElementsAndChilds(Element elem, List<Element> elements, List<String> uniqueIds) {
+    private void getElementsAndChilds(Element elem, List<Element> elements, List<Long> uniqueIds) {
         if (!uniqueIds.contains(elem.getUniqueId())) {
             elements.add(elem);
             uniqueIds.add(elem.getUniqueId());

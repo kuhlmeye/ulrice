@@ -25,7 +25,7 @@ import net.ulrice.databinding.validation.ValidationResult;
 public class Element {
 
 	/** The unique identifier of this element. */
-	private String uniqueId;
+	private long uniqueId;
 
 	/** The definition of the columns. */
 	private List<ColumnDefinition<? extends Object>> columns;
@@ -88,7 +88,7 @@ public class Element {
 	 * @param editable
 	 *            True, if this element should be readonly.
 	 */
-	public Element(TableAM tableAM, String uniqueId, List<ColumnDefinition<? extends Object>> columns, Object valueObject, boolean readOnly, boolean dirty,
+	public Element(TableAM tableAM, long uniqueId, List<ColumnDefinition<? extends Object>> columns, Object valueObject, boolean readOnly, boolean dirty,
 			boolean valid, boolean inserted) {
 		this.originalValueDirty = dirty;
 		this.originalValueValid = valid;
@@ -376,7 +376,6 @@ public class Element {
 	public void setCurrentValue(Object currentValue, boolean dirty, boolean valid, boolean omitReadOnly) {
 		this.originalValueDirty = dirty;
 		this.originalValueValid = valid;
-		this.originalValue = currentValue;
 		if(readOnly) {
 			this.originalValue = currentValue;
 		} else {
@@ -501,7 +500,7 @@ public class Element {
 	 *
 	 * @return the uniqueId
 	 */
-	public String getUniqueId() {
+	public long getUniqueId() {
 		return uniqueId;
 	}
 

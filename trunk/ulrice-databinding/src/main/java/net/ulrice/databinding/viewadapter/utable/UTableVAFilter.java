@@ -43,7 +43,7 @@ import net.ulrice.ui.components.ContextMenuMouseListener;
 /**
  * @author christof
  */
-public class UTableVAFilter extends RowFilter<UTableViewAdapter, String> implements DocumentListener,
+public class UTableVAFilter extends RowFilter<UTableViewAdapter, Long> implements DocumentListener,
     TableColumnModelListener, ListDataListener {
 
     /** The logger used by this class. */
@@ -279,14 +279,14 @@ public class UTableVAFilter extends RowFilter<UTableViewAdapter, String> impleme
      * @see javax.swing.RowFilter#include(javax.swing.RowFilter.Entry)
      */
     @Override
-    public boolean include(javax.swing.RowFilter.Entry< ? extends UTableViewAdapter, ? extends String> entry) {
+    public boolean include(javax.swing.RowFilter.Entry< ? extends UTableViewAdapter, ? extends Long> entry) {
         
         if (!filterActive) {
             return true;
         }
         
         boolean include = true;
-        String id = entry.getIdentifier();
+        Long id = entry.getIdentifier();
         Element element = entry.getModel().getComponent().getElementById(id);
         if (showDirtyAndInvalidElements && element != null && (element.isDirty() || !element.isValid())) {
             return true;
@@ -344,7 +344,7 @@ public class UTableVAFilter extends RowFilter<UTableViewAdapter, String> impleme
      * @param value
      * @return
      */
-    private boolean includeValue(String columnId, String identifier, Object value) {
+    private boolean includeValue(String columnId, Long identifier, Object value) {
         String strValue = value == null ? "" : value.toString();
         boolean isPercentMode = false;
         if (columnFilterModes != null && columnFilterModes.containsKey(columnId)) {

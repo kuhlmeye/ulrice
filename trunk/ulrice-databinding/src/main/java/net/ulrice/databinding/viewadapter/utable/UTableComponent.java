@@ -921,7 +921,7 @@ public class UTableComponent extends JPanel {
     /**
      * Return the element by the element id.
      */
-    public Element getElementById(String id) {
+    public Element getElementById(Long id) {
         if (attributeModel == null) {
             return null;
         }
