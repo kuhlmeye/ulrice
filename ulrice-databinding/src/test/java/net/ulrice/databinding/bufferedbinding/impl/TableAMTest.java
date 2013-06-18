@@ -227,7 +227,7 @@ public class TableAMTest {
 	@Test
 	public void getElementById() {
 		tableAM.read();
-		String uniqueId = tableAM.getElementAt(0).getUniqueId();
+		Long uniqueId = tableAM.getElementAt(0).getUniqueId();
 		Assert.assertEquals(tableAM.getElementAt(0), tableAM.getElementById(uniqueId));
 	}
 

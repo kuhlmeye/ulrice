@@ -42,7 +42,7 @@ public class TableAM implements IFAttributeModel {
     private Map<String, ColumnDefinition> columnIdMap = new HashMap<String, ColumnDefinition>();
 
     protected List<Element> elements = new ArrayList<Element>();
-    protected Map<String, Element> elementIdMap = new HashMap<String, Element>();
+    protected Map<Long, Element> elementIdMap = new HashMap<Long, Element>();
 
     private List<IFValidator> validators = new ArrayList<IFValidator>();
     private EventListenerList listenerList = new EventListenerList();
@@ -73,9 +73,9 @@ public class TableAM implements IFAttributeModel {
 
     // unique constraint handling
     private String[] uniqueKeyColumnIds = null;
-    private Map<List< ?>, Set<String>> uniqueMap = new HashMap<List< ?>, Set<String>>();
+    private Map<List< ?>, Set<Long>> uniqueMap = new HashMap<List< ?>, Set<Long>>();
 //    private Map<List< ?>, Set<String>> uniqueDeleteMap = new HashMap<List< ?>, Set<String>>(); wozu?
-    private Map<String, List< ?>> keyMap = new HashMap<String, List< ?>>();
+    private Map<Long, List< ?>> keyMap = new HashMap<Long, List< ?>>();
 //    private Map<String, List< ?>> keyDeleteMap = new HashMap<String, List< ?>>(); wozu?
     private Map<List< ?>, ValidationError> currentErrorMap = new HashMap<List< ?>, ValidationError>();
 
@@ -147,20 +147,20 @@ public class TableAM implements IFAttributeModel {
         checkKeyChangeAndUpdateDatastructure(element.getUniqueId(), key);
                
             if (uniqueMap.containsKey(key)) {
-                Set<String> uniqueIdSet = uniqueMap.get(key);
+                Set<Long> uniqueIdSet = uniqueMap.get(key);
                 uniqueIdSet.add(element.getUniqueId());
                 if (uniqueIdSet.size() > 1) {
                     UniqueKeyConstraintError uniqueConstraintError =
                             new UniqueKeyConstraintError(this, "Unique key constraint error", null);
                     currentErrorMap.put(key, uniqueConstraintError);
-                    for (String uniqueId : uniqueIdSet) {
+                    for (Long uniqueId : uniqueIdSet) {
                         Element elementById = getElementById(uniqueId);
                         elementById.putUniqueKeyConstraintError(uniqueConstraintError);
                     }
                 }
             }
             else {
-                Set<String> uniqueIdSet = new HashSet<String>();
+                Set<Long> uniqueIdSet = new HashSet<Long>();
                 uniqueIdSet.add(element.getUniqueId());
                 uniqueMap.put(key, uniqueIdSet);
             }
@@ -174,7 +174,7 @@ public class TableAM implements IFAttributeModel {
      * @param key The unique key of the element as list of values, if key is null the element will be deleted
      * @return true, if key was changed, false otherwise
      */
-    private boolean checkKeyChangeAndUpdateDatastructure(String uniqueId, List< ?> key) {
+    private boolean checkKeyChangeAndUpdateDatastructure(long uniqueId, List< ?> key) {
         List< ?> oldKey = keyMap.get(uniqueId);
         if (oldKey == null && key != null) {
             // String oldUniqueId = checkForOldUniqueId(key, uniqueId);
@@ -184,7 +184,7 @@ public class TableAM implements IFAttributeModel {
 
         if (key == null || !oldKey.equals(key)) {
             if (oldKey != null) {
-                Set<String> uniqueKeySet = uniqueMap.get(oldKey);
+                Set<Long> uniqueKeySet = uniqueMap.get(oldKey);
                 uniqueKeySet.remove(uniqueId);
 
                 if (uniqueKeySet.isEmpty()) {
@@ -206,7 +206,7 @@ public class TableAM implements IFAttributeModel {
                     getElementById(uniqueId).removeElementValidationError(validationError);
                     getElementById(uniqueId).removeUniqueKeyConstraintErrors();
                     
-                    for (String uniqueElementId : uniqueKeySet) {
+                    for (Long uniqueElementId : uniqueKeySet) {
                         getElementById(uniqueElementId).removeElementValidationError(validationError);
                         getElementById(uniqueElementId).removeUniqueKeyConstraintErrors();
                     }
@@ -325,8 +325,7 @@ public class TableAM implements IFAttributeModel {
      * Internal method for creating a new element with a new unique identifier
      */
     protected Element createElement(Object value, boolean dirty, boolean valid, boolean inserted) {
-        String uniqueId = Long.toHexString(nextUniqueId++);
-        Element elem = new Element(this, uniqueId, columns, value, isReadOnly(), dirty, valid, inserted);
+        Element elem = new Element(this, nextUniqueId++, columns, value, isReadOnly(), dirty, valid, inserted);
 
         if (isForTreeTable()) {
             addChildsToElement(value, dirty, valid, inserted, elem);
@@ -1519,7 +1518,7 @@ public class TableAM implements IFAttributeModel {
     /**
      * Returns the element by the unique id.
      */
-    public Element getElementById(String uniqueId) {
+    public Element getElementById(Long uniqueId) {
         return elementIdMap.get(uniqueId);
     }
 
@@ -1813,12 +1812,12 @@ public class TableAM implements IFAttributeModel {
                 key.add(colDef.getDataAccessor().getValue(object));
             }
 
-            Set<String> idSet = uniqueMap.get(key);
+            Set<Long> idSet = uniqueMap.get(key);
             if (idSet != null) {
                 if (idSet.size() == 1) {
                     return getElementById(idSet.iterator().next());
                 }
-                for (String id : idSet) {
+                for (Long id : idSet) {
                     Element element = getElementById(id);
                     if (element.getCurrentValue().equals(object)) {
                         return element;
@@ -1850,12 +1849,12 @@ public class TableAM implements IFAttributeModel {
         if (uniqueKeyColumnIds != null) {
             Element tempElement = createElement(object, false, false, true);
             List< ?> key = buildKey(tempElement);
-            Set<String> idSet = uniqueMap.get(key);
+            Set<Long> idSet = uniqueMap.get(key);
             if (idSet != null) {
                 if (idSet.size() == 1) {
                     return getElementById(idSet.iterator().next());
                 }
-                for (String id : idSet) {
+                for (Long id : idSet) {
                     Element element = getElementById(id);
                     if (element.getCurrentValue().equals(object)) {
                         return element;

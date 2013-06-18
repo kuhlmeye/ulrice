@@ -14,13 +14,13 @@ public class UniqueConstraint implements ElementLifecycleListener {
 
 	private String[] columnIds;
 
-	private Map<List<?>, Set<String>> uniqueMap = new HashMap<List<?>, Set<String>>();
+	private Map<List<?>, Set<Long>> uniqueMap = new HashMap<List<?>, Set<Long>>();
 	
-	private Map<List<?>, Set<String>> uniqueDeleteMap = new HashMap<List<?>, Set<String>>();
+	private Map<List<?>, Set<Long>> uniqueDeleteMap = new HashMap<List<?>, Set<Long>>();
 
-	private Map<String, List<?>> keyMap = new HashMap<String, List<?>>();
+	private Map<Long, List<?>> keyMap = new HashMap<Long, List<?>>();
 	
-	private Map<String, List<?>> keyDeleteMap = new HashMap<String, List<?>>();
+	private Map<Long, List<?>> keyDeleteMap = new HashMap<Long, List<?>>();
 
 	private Map<List<?>, ValidationError> currentErrorMap = new HashMap<List<?>, ValidationError>();
 
@@ -57,44 +57,44 @@ public class UniqueConstraint implements ElementLifecycleListener {
 		List<?> key = buildKey(element);
 		if (handleKey(table, element.getUniqueId(), key)) {
 			if (uniqueMap.containsKey(key)) {
-				Set<String> uniqueIdSet = uniqueMap.get(key);
+				Set<Long> uniqueIdSet = uniqueMap.get(key);
 				uniqueIdSet.add(element.getUniqueId());
 				if (uniqueIdSet.size() > 1) {
 					ValidationError uniqueConstraintError = new ValidationError(
 							table, "Unique key constraint error", null);
 					currentErrorMap.put(key, uniqueConstraintError);
-					for (String uniqueId : uniqueIdSet) {
+					for (Long uniqueId : uniqueIdSet) {
 						table.getElementById(uniqueId)
 								.addElementValidationError(uniqueConstraintError);
 					}
 				}
 			} else {
-				Set<String> uniqueIdSet = new HashSet<String>();
+				Set<Long> uniqueIdSet = new HashSet<Long>();
 				uniqueIdSet.add(element.getUniqueId());
 				uniqueMap.put(key, uniqueIdSet);
 			}
 		}
 	}
 
-	private boolean handleKey(TableAM table, String uniqueId, List<?> key) {
+	private boolean handleKey(TableAM table, Long uniqueId, List<?> key) {
 		List<?> oldKey = keyMap.get(uniqueId);
 		if (oldKey == null && key != null) {
-			String oldUniqueId = checkForOldUniqueId(key, table, uniqueId);
+		    Long oldUniqueId = checkForOldUniqueId(key, table, uniqueId);
 			keyMap.put(uniqueId, key);
 			return true;
 		}
 
 		if (key == null || !oldKey.equals(key)) {
 			if (oldKey != null) {
-				Set<String> uniqueKeySet = uniqueMap.get(oldKey);
+				Set<Long> uniqueKeySet = uniqueMap.get(oldKey);
 				uniqueKeySet.remove(uniqueId);
 				// should not happen
 				if (uniqueDeleteMap.containsKey(oldKey)) {
-					Set<String> uniqueDeleteKeySet = uniqueDeleteMap.get(oldKey);
+					Set<Long> uniqueDeleteKeySet = uniqueDeleteMap.get(oldKey);
 					uniqueDeleteKeySet.add(uniqueId);
 				}
 				else {
-					Set<String> uniqueIdSet = new HashSet<String>();
+					Set<Long> uniqueIdSet = new HashSet<Long>();
 					uniqueIdSet.add(uniqueId);
 					uniqueDeleteMap.put(oldKey, uniqueIdSet);
 				}
@@ -104,7 +104,7 @@ public class UniqueConstraint implements ElementLifecycleListener {
 							.remove(oldKey);
 					table.getElementById(uniqueId)
 							.removeElementValidationError(validationError);
-					for (String uniqueElementId : uniqueKeySet) {
+					for (Long uniqueElementId : uniqueKeySet) {
 						table.getElementById(uniqueElementId)
 								.removeElementValidationError(validationError);
 					}
@@ -126,10 +126,10 @@ public class UniqueConstraint implements ElementLifecycleListener {
 	    return key;
 	}
 	
-	private String checkForOldUniqueId(List<?> key, TableAM table, String newUniqueId) {
-		String oldUniqueId = null;
+	private Long checkForOldUniqueId(List<?> key, TableAM table, Long newUniqueId) {
+	    Long oldUniqueId = null;
 		if (keyDeleteMap.containsValue(key)) {
-			for (Entry<String, List<?>> entry : keyDeleteMap.entrySet()) {
+			for (Entry<Long, List<?>> entry : keyDeleteMap.entrySet()) {
 				if (key.equals(entry.getValue())) {
 					oldUniqueId = entry.getKey();
 				}

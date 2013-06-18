@@ -10,7 +10,7 @@ import javax.swing.SortOrder;
 
 import net.ulrice.databinding.bufferedbinding.impl.Element;
 
-public class UTableRowSorter extends DefaultRowSorter<UTableViewAdapter, String> {
+public class UTableRowSorter extends DefaultRowSorter<UTableViewAdapter, Long> {
 
     private UTableModelRowSorter scrollTableRS;
     private UTableModelRowSorter staticTableRS;
@@ -32,7 +32,7 @@ public class UTableRowSorter extends DefaultRowSorter<UTableViewAdapter, String>
         this.fixedColumns = fixedColumns;
         this.model = model;
 
-        setModelWrapper(new ModelWrapper<UTableViewAdapter, String>() {
+        setModelWrapper(new ModelWrapper<UTableViewAdapter, Long>() {
 
             @Override
             public UTableViewAdapter getModel() {
@@ -55,7 +55,7 @@ public class UTableRowSorter extends DefaultRowSorter<UTableViewAdapter, String>
             }
 
             @Override
-            public String getIdentifier(int row) {
+            public Long getIdentifier(int row) {
                 return model.getElementAtUsingModelIndex(row).getUniqueId();
             }
         });
