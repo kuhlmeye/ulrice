@@ -56,7 +56,7 @@ public class Element {
 
 	private List<Element> childElements = new ArrayList<Element>(0);
 	private Element parent;
-	
+
 	private IFValidator modelValidator = new IFValidator() {
 
         @Override
@@ -119,7 +119,7 @@ public class Element {
 		}
 		idModelMap.get(columnId).setReadOnly(readOnly);
 	}
-	
+
 	/**
 	 * Changes the readonly state of a column by column index
 	 */
@@ -382,9 +382,9 @@ public class Element {
 		} else {
 			this.originalValue = tableAM.cloneObject(currentValue);
 		}
-		
+
 		clearElementValidationErrors();
-		
+
 		if (modelList != null) {
 			for (int i = 0; i < modelList.length; i++) {
 				if (isReadOnly(i) && omitReadOnly) {
@@ -393,7 +393,7 @@ public class Element {
 
 				IFElementInternalAM model = modelList[i];
 				IFDynamicModelValueAccessor dataAccessor = columns.get(i).getDataAccessor();
-				
+
 				IFValueConverter valueConverter = columns.get(i).getValueConverter();
 				Object value = dataAccessor.getValue(currentValue);
 				Object converted = (valueConverter != null ?valueConverter.modelToView(value, model.getAttributeInfo()) : value);
@@ -457,14 +457,14 @@ public class Element {
         synchronized (modelList) {
             for (int i = 0; i < columns.size(); i++) {
             	ColumnDefinition< ? extends Object> column = columns.get(i);
-            	
+
             	IFElementInternalAM attributeModel = null;
             	if(column.isUseListAM()) {
-                    attributeModel = column.createListAM();            		
+                    attributeModel = column.createListAM();
             	} else {
-                    attributeModel = column.createLightAM();            		
+                    attributeModel = column.createLightAM();
             	}
-                
+
 				attributeModel.addValidator(modelValidator);
                 attributeModel.setReadOnly(column.getColumnType().equals(ColumnType.ReadOnly));
                 modelList[i] = attributeModel;
@@ -486,7 +486,7 @@ public class Element {
 	public int getModelListSize(){
         return modelList.length;
     }
-	
+
 	/**
 	 * Return the current value object.
 	 *
@@ -504,7 +504,7 @@ public class Element {
 	public String getUniqueId() {
 		return uniqueId;
 	}
-	
+
 	/**
 	 * Returns the attribute model of a cell.
 	 */
@@ -536,7 +536,7 @@ public class Element {
 		} else {
 			errors = new ArrayList<ValidationError>(validationResult.getValidationErrors());
 		}
-		
+
 		if (modelList != null) {
 			for (IFElementInternalAM<?> model : modelList) {
 				if (model.getValidationResult() != null) {
@@ -558,11 +558,11 @@ public class Element {
 				result.addAll(attributeModel.getValidationFailures());
 			}
 		}
-
-		for (ValidationError elementError : validationResult.getValidationErrors()) {
-			result.add(elementError.getMessage());
+        if (validationResult != null) {
+            for (ValidationError elementError : validationResult.getValidationErrors()) {
+                result.add(elementError.getMessage());
+            }
 		}
-
 		return result;
 	}
 
@@ -578,9 +578,10 @@ public class Element {
 				errors.addAll(model.getValidationFailures());
 			}
 		}
-
-		for (ValidationError elementError : validationResult.getValidationErrors()) {
-			errors.add(elementError.getMessage());
+        if (validationResult != null) {
+            for (ValidationError elementError : validationResult.getValidationErrors()) {
+                errors.add(elementError.getMessage());
+            }
 		}
 		return errors;
 	}
@@ -675,7 +676,7 @@ public class Element {
 	                model.recalculateState();
 	            }
             //}
-			
+
 		}
 		updateState();
 		if (parent != null) {
