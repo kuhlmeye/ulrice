@@ -14,6 +14,7 @@ import net.ulrice.Ulrice;
 import net.ulrice.configuration.ConfigurationException;
 import net.ulrice.configuration.UlriceFileConfiguration;
 import net.ulrice.module.ControllerProviderCallback;
+import net.ulrice.module.IFController;
 import net.ulrice.module.IFModule;
 import net.ulrice.module.ModuleIconSize;
 import net.ulrice.module.ModuleType;
@@ -115,7 +116,7 @@ public class UlriceSampleApplication {
             }
 
             @Override
-            public void instantiateModule(ControllerProviderCallback callback) {
+            public void instantiateModule(ControllerProviderCallback callback, IFController parent) {
                 callback.onControllerReady (new CTranslator (translatorService));
             }
 		    

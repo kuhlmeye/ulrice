@@ -131,7 +131,7 @@ public class ReflectionModule implements IFModule {
 
 	
 	@Override
-	public void instantiateModule(ControllerProviderCallback callback) {
+	public void instantiateModule(ControllerProviderCallback callback, IFController parent) {
 	    try {
 	        callback.onControllerReady (instantiateModuleInternal());
 	    }

@@ -170,7 +170,7 @@ public class ModuleManager implements IFModuleManager, IFModuleStructureManager,
                             callback.onFailure(exc);
                         }
                     }
-                });
+                }, parent);
             }
         }
         finally {
