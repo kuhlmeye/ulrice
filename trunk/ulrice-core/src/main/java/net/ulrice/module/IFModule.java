@@ -18,6 +18,7 @@ public interface IFModule<T extends IFController> extends IFModuleTitleProvider 
 	
 	/**
 	 * Creates a new instance of the module.
+	 * @param parent parent controller or null if opened from menu
 	 */
-	void instantiateModule (ControllerProviderCallback<T> callback);
+	void instantiateModule (ControllerProviderCallback<T> callback, IFController parent);
 }
