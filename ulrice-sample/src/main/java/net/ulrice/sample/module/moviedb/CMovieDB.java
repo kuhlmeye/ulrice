@@ -130,13 +130,13 @@ public class CMovieDB extends AbstractController implements ListSelectionListene
 
 	private void detailToOverview() {
         detailGroup.write();
-        overviewModel.getAttributeModel().getElementById(detailMovieId).setCurrentValue(detailModel.getData());
+        overviewModel.getAttributeModel().getElementById(Long.parseLong(detailMovieId)).setCurrentValue(detailModel.getData());
 	}
 	
 	private void overviewToDetail() {
 	    final int selectedRow = view.getMovieTableAdapter().getSelectedRowModelIndex();
         final Element selElement = overviewModel.getAttributeModel().getElementAt(selectedRow);
-        detailMovieId = selElement.getUniqueId();
+        detailMovieId = String.valueOf(selElement.getUniqueId());
         detailModel.setData((Movie) selElement.getCurrentValue());
         detailGroup.read();
         view.getActorTableVA().getComponent().sizeColumns(true);
