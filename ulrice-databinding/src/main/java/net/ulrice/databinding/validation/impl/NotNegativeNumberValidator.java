@@ -15,6 +15,7 @@ import net.ulrice.databinding.validation.ValidationResult;
 public class NotNegativeNumberValidator extends AbstractValidator {
 
     @Override
+    @SuppressWarnings("boxing")
     protected ValidationResult validate(IFBinding bindingId, Object attribute, Object rawAttribute) {
         ValidationResult result = new ValidationResult();
 
