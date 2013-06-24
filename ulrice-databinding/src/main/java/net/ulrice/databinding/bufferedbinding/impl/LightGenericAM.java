@@ -177,47 +177,33 @@ public class LightGenericAM<T> implements IFAttributeModel<T>, IFViewChangeListe
         
     }
 
-    /**
-     * @see net.ulrice.databinding.bufferedbinding.IFAttributeModel#getOriginalValue()
-     */
     @Override
     public T getOriginalValue() {
         return originalValue;
     }
 
 
-    @SuppressWarnings("unchecked")
     @Override
     public void read() {
     	throw new UnsupportedOperationException("Operation not supported");
     }
 
-    /**
-     * @see net.ulrice.databinding.bufferedbinding.IFAttributeModel#directRead(java.lang.Object)
-     */
+    @Override
     public void directRead(T value) {
         this.originalValue = value;
         setCurrentValue(value);
     }
 
-    /**
-     * @see net.ulrice.databinding.bufferedbinding.IFAttributeModel#write()
-     */
     @Override
     public void write() {
     	throw new UnsupportedOperationException("Operation not supported");
     }
 
-    /**
-     * @see net.ulrice.databinding.bufferedbinding.IFAttributeModel#directWrite()
-     */
+    @Override
     public T directWrite() {
         return currentValue;
     }
 
-    /**
-     * @see net.ulrice.databinding.bufferedbinding.IFAttributeModel#getValidator()
-     */
     @Override
     public List<IFValidator<T>> getValidators() {    	
         return validators;
@@ -322,6 +308,9 @@ public class LightGenericAM<T> implements IFAttributeModel<T>, IFViewChangeListe
     @Override
     public void addExternalValidationError(ValidationError validationError) {
         boolean wasEmpty = externalValidationErrors == null || externalValidationErrors.isEmpty();
+        if (externalValidationErrors == null) {
+            externalValidationErrors = new ArrayList<ValidationError>();
+        }
         externalValidationErrors.add(validationError);
         if(wasEmpty) {
             calculateState(null);
