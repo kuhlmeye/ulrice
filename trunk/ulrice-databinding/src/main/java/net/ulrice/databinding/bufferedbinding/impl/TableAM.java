@@ -40,6 +40,7 @@ public class TableAM implements IFAttributeModel {
 
     private List<ColumnDefinition< ? extends Object>> columns = new ArrayList<ColumnDefinition< ? extends Object>>();
     private Map<String, ColumnDefinition> columnIdMap = new HashMap<String, ColumnDefinition>();
+    private Map<String, Integer> idModelIndexMap;
 
     protected List<Element> elements = new ArrayList<Element>();
     protected Map<Long, Element> elementIdMap = new HashMap<Long, Element>();
@@ -325,7 +326,7 @@ public class TableAM implements IFAttributeModel {
      * Internal method for creating a new element with a new unique identifier
      */
     protected Element createElement(Object value, boolean dirty, boolean valid, boolean inserted) {
-        Element elem = new Element(this, nextUniqueId++, columns, value, isReadOnly(), dirty, valid, inserted);
+        Element elem = new Element(this, nextUniqueId++, value, isReadOnly(), dirty, valid, inserted);
 
         if (isForTreeTable()) {
             addChildsToElement(value, dirty, valid, inserted, elem);
@@ -1995,5 +1996,11 @@ public class TableAM implements IFAttributeModel {
         return result;
     }
     
+    public Map<String, Integer> getIdModelIndexMap() {
+        return idModelIndexMap;
+    }
     
+    public void setIdModelIndexMap(Map<String, Integer> idModelIndexMap) {
+        this.idModelIndexMap = idModelIndexMap;
+    }
 }
