@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import net.ulrice.databinding.IFBinding;
 import net.ulrice.databinding.bufferedbinding.IFAttributeInfo;
@@ -24,37 +23,22 @@ import net.ulrice.databinding.validation.ValidationResult;
  */
 public class Element {
 
-	/** The unique identifier of this element. */
 	private long uniqueId;
-
-	/** The definition of the columns. */
-	private List<ColumnDefinition<? extends Object>> columns;
-
-	/** The list of models. */
 	private IFElementInternalAM<? extends Object>[] modelList;
 
-	/** The map of the models. Key is the column identifier. */
-	private Map<String, IFElementInternalAM<? extends Object>> idModelMap;
-
-	/** The value read from the list data. */
 	private Object originalValue;
+	private ValidationResult validationResult = null;
 
 	private boolean originalValueDirty = false;
 	private boolean originalValueValid = true;
-
-	/** Flag, if this element is editable. */
 	private boolean readOnly;
-
 	private boolean dirty;
 	private boolean valid;
 	private boolean inserted;
 	private boolean removed;
 
 	private TableAM tableAM;
-
-	private ValidationResult validationResult = null;
-
-	private List<Element> childElements = new ArrayList<Element>(0);
+	private List<Element> childElements;
 	private Element parent;
 
 	private IFValidator modelValidator = new IFValidator() {
@@ -88,20 +72,18 @@ public class Element {
 	 * @param editable
 	 *            True, if this element should be readonly.
 	 */
-	public Element(TableAM tableAM, long uniqueId, List<ColumnDefinition<? extends Object>> columns, Object valueObject, boolean readOnly, boolean dirty,
+	public Element(TableAM tableAM, long uniqueId, Object valueObject, boolean readOnly, boolean dirty,
 			boolean valid, boolean inserted) {
 		this.originalValueDirty = dirty;
 		this.originalValueValid = valid;
 		this.tableAM = tableAM;
 		this.uniqueId = uniqueId;
-		this.modelList = new IFElementInternalAM[columns != null ? columns.size() : 0];
-		this.idModelMap = new HashMap<String, IFElementInternalAM<? extends Object>>();
+		this.modelList = new IFElementInternalAM[tableAM.getColumns() != null ? tableAM.getColumns().size() : 0];
 		if(readOnly) {
 			this.originalValue = valueObject;
 		} else {
 			this.originalValue = tableAM.cloneObject(valueObject);
 		}
-		this.columns = columns;
 		this.readOnly = readOnly;
 
 		this.dirty = false;
@@ -114,10 +96,10 @@ public class Element {
 	 * Changes the readonly state of a column by column id
 	 */
 	public void setReadOnly(String columnId, boolean readOnly) {
-		if (!idModelMap.containsKey(columnId)) {
+		if (!tableAM.getIdModelIndexMap().containsKey(columnId)) {
 			throw new IllegalStateException("Unknown column id: " + columnId);
 		}
-		idModelMap.get(columnId).setReadOnly(readOnly);
+		modelList[tableAM.getIdModelIndexMap().get(columnId)].setReadOnly(readOnly);
 	}
 
 	/**
@@ -139,11 +121,11 @@ public class Element {
 	 */
 	public boolean isReadOnly(int columnIndex) {
 
-		if (readOnly) {
+		if (readOnly || columnIndex >= tableAM.getColumns().size()) {
 			return true;
 		}
 
-		ColumnDefinition<?> columnDefinition = columns.get(columnIndex);
+		ColumnDefinition<?> columnDefinition = tableAM.getColumns().get(columnIndex);
 
 		ColumnType type = columnDefinition.getColumnType();
 		switch (type) {
@@ -188,10 +170,10 @@ public class Element {
 	 *             If the column identifer is not valid
 	 */
 	public Object getValueAt(String columnId) {
-		if (!idModelMap.containsKey(columnId)) {
+		if (!tableAM.getIdModelIndexMap().containsKey(columnId)) {
 			throw new IllegalStateException("Unknown column id: " + columnId);
 		}
-		return idModelMap.get(columnId).getCurrentValue();
+		return modelList[tableAM.getIdModelIndexMap().get(columnId)].getCurrentValue();
 	}
 
 	/**
@@ -208,10 +190,10 @@ public class Element {
 	 * Returns the original value of a cell by column identifier.
 	 */
 	public Object getOriginalValueAt(String columnId) {
-		if (!idModelMap.containsKey(columnId)) {
+		if (!tableAM.getIdModelIndexMap().containsKey(columnId)) {
 			throw new IllegalStateException("Unknown column id: " + columnId);
 		}
-		return idModelMap.get(columnId).getOriginalValue();
+		return modelList[tableAM.getIdModelIndexMap().get(columnId)].getOriginalValue();
 	}
 
 	/**
@@ -224,9 +206,9 @@ public class Element {
 	 */
 	public void setValueAt(int columnIndex, Object aValue) {
 		IFElementInternalAM<?> model = modelList[columnIndex];
-		setValue(model, columns.get(columnIndex).getId(), aValue);
+		setValue(model, tableAM.getColumns().get(columnIndex).getId(), aValue);
 
-		if (tableAM.isVirtualTreeNodes()) {
+		if (tableAM.isVirtualTreeNodes() && childElements != null) {
 			for (Element elem : childElements) {
 			    if(!elem.isReadOnly(columnIndex)){
 			        elem.setValueAt(columnIndex, aValue);
@@ -234,7 +216,7 @@ public class Element {
 			}
 		}
 	}
-
+	
 	/**
 	 * Set the value of a cell
 	 *
@@ -244,7 +226,7 @@ public class Element {
 	 *            The value
 	 */
 	public void setValueAt(String columnId, Object aValue) {
-		IFElementInternalAM<?> model = idModelMap.get(columnId);
+		IFElementInternalAM<?> model = modelList[tableAM.getIdModelIndexMap().get(columnId)];
 		setValue(model, columnId, aValue);
 	}
 
@@ -340,13 +322,13 @@ public class Element {
 	@SuppressWarnings("unchecked")
 	public Object writeObject() {
 		if (modelList != null) {
-			for (int i = 0; i < modelList.length; i++) {
+			for (int i = 0; i < tableAM.getColumns().size(); i++) {
 				IFElementInternalAM attributeModel = modelList[i];
 				if (!attributeModel.isReadOnly()) {
 
-					IFDynamicModelValueAccessor dataAccessor = columns.get(i).getDataAccessor();
+					IFDynamicModelValueAccessor dataAccessor = tableAM.getColumns().get(i).getDataAccessor();
 
-					IFValueConverter valueConverter = columns.get(i).getValueConverter();
+					IFValueConverter valueConverter = tableAM.getColumns().get(i).getValueConverter();
 					Object value = attributeModel.directWrite();
 					Object converted = (valueConverter != null ? valueConverter.viewToModel(value,
 							attributeModel.getAttributeInfo()) : value);
@@ -385,15 +367,15 @@ public class Element {
 		clearElementValidationErrors();
 
 		if (modelList != null) {
-			for (int i = 0; i < modelList.length; i++) {
+			for (int i = 0; i < tableAM.getColumns().size(); i++) {
 				if (isReadOnly(i) && omitReadOnly) {
 					continue;
 				}
 
 				IFElementInternalAM model = modelList[i];
-				IFDynamicModelValueAccessor dataAccessor = columns.get(i).getDataAccessor();
+				IFDynamicModelValueAccessor dataAccessor = tableAM.getColumns().get(i).getDataAccessor();
 
-				IFValueConverter valueConverter = columns.get(i).getValueConverter();
+				IFValueConverter valueConverter = tableAM.getColumns().get(i).getValueConverter();
 				Object value = dataAccessor.getValue(currentValue);
 				Object converted = (valueConverter != null ?valueConverter.modelToView(value, model.getAttributeInfo()) : value);
 				model.setValue(converted);
@@ -417,12 +399,12 @@ public class Element {
 	public Object getCurrentValue() {
 		Object result = tableAM.cloneObject(getOriginalValue());
 		if (modelList != null) {
-			for (int i = 0; i < modelList.length; i++) {
+			for (int i = 0; i < tableAM.getColumns().size(); i++) {
 				IFElementInternalAM attributeModel = modelList[i];
 				if (!attributeModel.isReadOnly()) {
-					IFDynamicModelValueAccessor dataAccessor = columns.get(i).getDataAccessor();
-					IFAttributeInfo attributeInfo = columns.get(i).getAttributeInfo();
-					IFValueConverter valueConverter = columns.get(i).getValueConverter();
+					IFDynamicModelValueAccessor dataAccessor = tableAM.getColumns().get(i).getDataAccessor();
+					IFAttributeInfo attributeInfo = tableAM.getColumns().get(i).getAttributeInfo();
+					IFValueConverter valueConverter = tableAM.getColumns().get(i).getValueConverter();
 					Object value = attributeModel.getCurrentValue();
 					Object converted = (valueConverter != null ? valueConverter.viewToModel(value, attributeInfo) : value);
 					dataAccessor.setValue(result, converted);
@@ -437,11 +419,11 @@ public class Element {
 	 */
 	public void readObject() {
 	    synchronized (modelList) {
-	        modelList = new IFElementInternalAM[columns != null ? columns.size() : 0];
+	        modelList = new IFElementInternalAM[tableAM.getColumns() != null ? tableAM.getColumns().size() : 0];
         }
 		originalValueDirty = false;
 		originalValueValid = true;
-		readAdditionalColumns(columns, true);
+		readAdditionalColumns(tableAM.getColumns(), true);
 	}
 
 	/**
@@ -467,7 +449,12 @@ public class Element {
 				attributeModel.addValidator(modelValidator);
                 attributeModel.setReadOnly(column.getColumnType().equals(ColumnType.ReadOnly));
                 modelList[i] = attributeModel;
-                idModelMap.put(attributeModel.getId(), attributeModel);
+                if (tableAM.getIdModelIndexMap() == null) {
+                    tableAM.setIdModelIndexMap(new HashMap<String, Integer>(columns.size()));
+                }
+                if (tableAM.getIdModelIndexMap().size() < columns.size()) {
+                    tableAM.getIdModelIndexMap().put(column.getId(), i);
+                }
 
                 if (getOriginalValue() != null) {
                     final Object value = column.getDataAccessor().getValue(getOriginalValue());
@@ -571,8 +558,8 @@ public class Element {
 	public List<String> getValidationFailures(String columnId) {
 		List<String> errors = new ArrayList<String>();
 
-		if (idModelMap.containsKey(columnId)) {
-			IFElementInternalAM<?> model = idModelMap.get(columnId);
+		if (tableAM.getIdModelIndexMap().containsKey(columnId)) {
+			IFElementInternalAM<?> model = modelList[tableAM.getIdModelIndexMap().get(columnId)];
 			if (model.getValidationResult() != null) {
 				errors.addAll(model.getValidationFailures());
 			}
@@ -589,7 +576,7 @@ public class Element {
 	 * Add a column validation error for a cell from outside.
 	 */
 	public void addColumnValidationError(String columnId, String message) {
-		IFElementInternalAM<? extends Object> genericAM = idModelMap.get(columnId);
+		IFElementInternalAM<? extends Object> genericAM = modelList[tableAM.getIdModelIndexMap().get(columnId)];
 		if (genericAM != null) {
 			genericAM.addExternalValidationError(new ValidationError(genericAM, message, null));
 		}
@@ -755,7 +742,7 @@ public class Element {
 			}
 			return false;
 		}
-		return idModelMap.containsKey(columnId) ? idModelMap.get(columnId).isDirty() : false;
+		return tableAM.getIdModelIndexMap().containsKey(columnId) ? modelList[tableAM.getIdModelIndexMap().get(columnId)].isDirty() : false;
 	}
 
 	/**
@@ -770,7 +757,7 @@ public class Element {
 			}
 			return true;
 		}
-		return idModelMap.containsKey(columnId) ? idModelMap.get(columnId).isValid() : true;
+		return tableAM.getIdModelIndexMap().containsKey(columnId) ? modelList[tableAM.getIdModelIndexMap().get(columnId)].isValid() : true;
 	}
 
 	/**
@@ -813,8 +800,8 @@ public class Element {
 	}
 
 	public void removeChild(String path) {
-		if (getParent() != null && getParent().idModelMap.containsKey(path)) {
-			IFElementInternalAM genericAM = getParent().idModelMap.get(path);
+		if (getParent() != null && getParent().tableAM.getIdModelIndexMap().containsKey(path)) {
+			IFElementInternalAM genericAM = getParent().modelList[tableAM.getIdModelIndexMap().get(path)];
 			if (genericAM instanceof ListAM) {
 				((ListAM) genericAM).remove(getCurrentValue());
 			}
@@ -829,7 +816,6 @@ public class Element {
 				element.addLeafNodes(leafNodes);
 			}
 		}
-
 	}
 
 	/**
@@ -874,6 +860,9 @@ public class Element {
 	 * Adds a child to this element.
 	 */
 	public void addChildElement(Element element) {
+	    if (childElements == null) {
+	        childElements = new ArrayList<Element>();
+	    }
 		childElements.add(element);
 		element.setParent(this);
 	}
@@ -897,7 +886,7 @@ public class Element {
 	}
 
 	public Element getChildByCurrentValue(Object object) {
-		if (getChildCount() > 0) {
+		if (getChildCount() > 0 && childElements != null) {
 			for (Element child : childElements) {
 				if (child.getCurrentValue().equals(object)) {
 					return child;
