@@ -26,6 +26,7 @@ public class DataGroupTest {
     public Integer intB = 2;
     
     private String stringZ = null;
+    private String stringX = null;
 
     private GenericAM<Integer> intBAM;
 
@@ -130,10 +131,8 @@ public class DataGroupTest {
     }
     
     /**
-     * Test if two read of the Binding Group deliver the same result
-     * 
-     * RAD: already fixed this, i commit tomorrow (26.6.2013)
-     * 
+     * Test if two read of the Binding Group deliver the same result 
+     *
      */
     @SuppressWarnings("unchecked")
     @Test
@@ -152,7 +151,45 @@ public class DataGroupTest {
         bg.read();
         Assert.assertFalse("False because, stringZ is still null", bg.isValid());
         
+    }
+    
+    
+    /**
+     * consequential error from setting valid true in GenericAM.read
+     *  
+     * 
+     */
+    @SuppressWarnings("unchecked")
+    @Test
+    public void testDoubleReadGetValid() {
+        IFAttributeInfo attributeInfo = new IFAttributeInfo() {
+        };
         
-
+        BindingGroup bg = new BindingGroup();
+        
+        GenericAM<String> stringZAM = new GenericAM<String>(new ReflectionMVA(this, "stringZ"), attributeInfo);
+        GenericAM<String> stringXAM = new GenericAM<String>(new ReflectionMVA(this, "stringX"), attributeInfo);
+        
+        
+        stringZAM.addValidator(new NotNullValidator());
+        bg.addAttributeModel(stringZAM);
+        
+        bg.addAttributeModel(stringXAM);
+        
+        bg.read();
+        Assert.assertFalse("False because, stringZ is null", bg.isValid());
+        
+        
+        stringZ = "iAmStringZ";
+        stringX = "iAmStringX"; //
+        bg.read();
+        
+        Assert.assertTrue("True, because stringZ is not null any more", bg.isValid());
+        
+        stringXAM.setCurrentValue("IAmANewStringX");
+        
+        //falls dieser fehler passiert, liegts evtl daran das das dirty set in der bg nicht leer ist und das ändern von X die bg aktualisiert
+        Assert.assertTrue("True, because stringZ is not null any more, and StringX has no validator", bg.isValid());
+        
     }
 }

@@ -270,6 +270,8 @@ public class GenericAM<T> implements IFAttributeModel<T>, IFViewChangeListener {
     @Override
     public void read() {
         this.initialized = true;
+        this.valid = true;
+        this.dirty = false;
         if (modelAccessor == null) {
             throw new IllegalStateException("No data accessor is available.");
         }
