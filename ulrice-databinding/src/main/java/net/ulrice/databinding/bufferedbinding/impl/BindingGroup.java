@@ -180,7 +180,10 @@ public class BindingGroup extends AbstractBindingGroup {
     public void read() {
         initialized = true;
         valid = true;
+        invalidSet.clear();
         dirty = false;
+        changedSet.clear();
+        
         for (IFAttributeModel<?> am : amMap.values()) {
             am.read();
         }
