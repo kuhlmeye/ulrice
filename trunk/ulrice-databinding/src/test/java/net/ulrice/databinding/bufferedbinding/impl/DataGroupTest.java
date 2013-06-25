@@ -3,6 +3,7 @@ package net.ulrice.databinding.bufferedbinding.impl;
 import static org.junit.Assert.assertEquals;
 import net.ulrice.databinding.bufferedbinding.IFAttributeInfo;
 import net.ulrice.databinding.modelaccess.impl.ReflectionMVA;
+import net.ulrice.databinding.validation.impl.NotNullValidator;
 import net.ulrice.databinding.validation.impl.RegExValidator;
 
 import org.junit.After;
@@ -23,6 +24,8 @@ public class DataGroupTest {
     public String stringB = "StringB";
     public Integer intA = 1;
     public Integer intB = 2;
+    
+    private String stringZ = null;
 
     private GenericAM<Integer> intBAM;
 
@@ -123,6 +126,33 @@ public class DataGroupTest {
     	Assert.assertEquals(true, dataGroup.isInitialized());
     	Assert.assertEquals(false, dataGroup.isDirty());
     	Assert.assertEquals(true, dataGroup.isValid());
+
+    }
+    
+    /**
+     * Test if two read of the Binding Group deliver the same result
+     * 
+     * RAD: already fixed this, i commit tomorrow (26.6.2013)
+     * 
+     */
+    @SuppressWarnings("unchecked")
+    @Test
+    public void testDoubleRead() {
+        IFAttributeInfo attributeInfo = new IFAttributeInfo() {
+        };
+        
+        BindingGroup bg = new BindingGroup();
+        GenericAM<String> stringZAM = new GenericAM<String>(new ReflectionMVA(this, "stringZ"), attributeInfo);
+        stringZAM.addValidator(new NotNullValidator());
+        bg.addAttributeModel(stringZAM);
+        
+        bg.read();
+        Assert.assertFalse("False because, stringZ is null", bg.isValid());
+        
+        bg.read();
+        Assert.assertFalse("False because, stringZ is still null", bg.isValid());
+        
+        
 
     }
 }
