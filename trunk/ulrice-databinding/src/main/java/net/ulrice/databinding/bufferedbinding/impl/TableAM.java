@@ -1417,6 +1417,9 @@ public class TableAM implements IFAttributeModel {
      * Move the element one position up.
      */
     public void moveElementUp(Element element) {
+        if (element == null) {
+            return;
+        }
         int idx = getIndexOfElement(element);
         if (idx > 0) {
             elements.remove(idx);
@@ -1431,6 +1434,9 @@ public class TableAM implements IFAttributeModel {
      * @param element
      */
     public void moveElementDown(Element element) {
+        if (element == null) {
+            return;
+        }
         int idx = getIndexOfElement(element);
         if (idx < elements.size() - 1) {
             elements.remove(idx);
