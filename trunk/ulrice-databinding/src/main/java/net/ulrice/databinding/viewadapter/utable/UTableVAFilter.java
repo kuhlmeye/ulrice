@@ -750,8 +750,8 @@ public class UTableVAFilter extends RowFilter<UTableViewAdapter, Long> implement
         }else{
             comboBoxExpressionMap.put(columndId, value);
         }
-        rowSorter.getModel().fireTableDataChanged();
         determineFilterActive();
+        rowSorter.getModel().fireTableDataChanged();
     }
 
     private static class NumericPattern {
