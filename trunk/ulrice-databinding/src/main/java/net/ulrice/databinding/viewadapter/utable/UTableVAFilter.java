@@ -1,5 +1,6 @@
 package net.ulrice.databinding.viewadapter.utable;
 
+import java.awt.Cursor;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -240,6 +241,7 @@ public class UTableVAFilter extends RowFilter<UTableViewAdapter, Long> implement
                         cbm.addListDataListener(this);
 
                         JComboBox comboBox = new JComboBox(cbm);
+                        comboBox.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
                         component = comboBox;
                         break;
 
@@ -259,8 +261,8 @@ public class UTableVAFilter extends RowFilter<UTableViewAdapter, Long> implement
 
                         enumCbm.addListDataListener(this);
                         JComboBox enumComboBox = new JComboBox(enumCbm);
+                        enumComboBox.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
                         component = enumComboBox;
-
                         break;
 
                     default:
