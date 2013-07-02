@@ -4,7 +4,7 @@
 	<artifactId>ulrice</artifactId>
 	<packaging>pom</packaging>
 	<name>Ulrice</name>
-	<version>0.2.5.16-SNAPSHOT</version>
+	<version>0.2.5.17-SNAPSHOT</version>
 	<description>Ulrice is a framework for rich clients supporting the mvc-based (or module based) development of applications</description>
 	<url>http://ulrice.googlecode.com</url>
 	<licenses>
