@@ -91,7 +91,12 @@ public class I18nTextComponent extends JPanel {
 	private void updateTextMap() {
 		Locale locale = getSelectedLocale();
 		if(locale != null) {
-			valueMap.put(locale, textComponent.getText());
+			String text = textComponent.getText();
+			if(text == null || "".equals(text)) {
+				valueMap.put(locale, null);
+			} else {
+				valueMap.put(locale, text);
+			}
 		}
 	}
 
