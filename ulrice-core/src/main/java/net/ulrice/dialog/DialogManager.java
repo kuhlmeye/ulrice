@@ -93,6 +93,7 @@ public class DialogManager {
 
         if (Ulrice.getModuleManager().getCurrentController() == controller) {
             dialog.setLocationRelativeTo(Ulrice.getMainFrame().getWorkarea().getView());
+            dialog.toFront();
             dialog.setVisible(true);
         }
     }
@@ -147,6 +148,7 @@ public class DialogManager {
 
         @Override
         public void deactivateModule(IFController controller) {
+        	
             hideAllDialogs(controller);
         }
     }
