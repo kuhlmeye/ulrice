@@ -40,6 +40,11 @@
 				<version>3.0.1</version>
 			</dependency>
 			<dependency>
+				<groupId>net.sf.trove4j</groupId>
+				<artifactId>trove4j</artifactId>
+				<version>3.0.3</version>
+			</dependency>			
+			<dependency>
 				<groupId>net.ulrice</groupId>
 				<artifactId>ulrice-core</artifactId>
 				<version>${project.version}</version>
