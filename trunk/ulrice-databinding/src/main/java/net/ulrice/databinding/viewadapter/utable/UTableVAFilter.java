@@ -777,13 +777,43 @@ public class UTableVAFilter extends RowFilter<UTableViewAdapter, Long> implement
         filterComboChanged(columndId, object, false);
     }
 
-    private void filterComboChanged(String columndId, Object value, boolean isEmptySelected) {
+    private void filterComboChanged(String columnId, Object value, boolean isEmptySelected) {
         if(isEmptySelected){
-            comboBoxExpressionMap.put(columndId, null);
+            comboBoxExpressionMap.put(columnId, null);
         }else if (value == null){
-            comboBoxExpressionMap.remove(columndId);
+            comboBoxExpressionMap.remove(columnId);
         }else{
-            comboBoxExpressionMap.put(columndId, value);
+        	Object filterValue = value;
+        	UTableComponent uTableComponent = null;
+        	if(rowSorter != null && rowSorter.getModel() != null  && rowSorter.getModel().getComponent() != null) {
+        		uTableComponent = rowSorter.getModel().getComponent();
+        	}
+        	
+        	// Try to convert to string using cell renderer, if available
+        	if(uTableComponent != null) {
+    	        @SuppressWarnings("rawtypes")
+    	        ColumnDefinition colDef = uTableComponent.getColumnById(columnId);
+    	        UTable table = null;
+    	        if (colDef.isFixedColumn()) {
+    	            table = (UTable) uTableComponent.getStaticTable();
+    	        }
+    	        else {
+    	            table = (UTable) uTableComponent.getScrollTable();
+    	        }
+    	
+    	        TableCellRenderer tableCellRenderer = uTableComponent.getColumnById(columnId).getCellRenderer();
+    	        if (tableCellRenderer == null) {
+    	            tableCellRenderer = table.getDefaultRenderer(colDef.getColumnClass());
+    	        }
+    	        if (tableCellRenderer != null
+    	            && StringBasedTableCellRenderer.class.isAssignableFrom(tableCellRenderer.getClass())) {
+    	            StringBasedTableCellRenderer c = (StringBasedTableCellRenderer) tableCellRenderer;
+    	            
+    	            filterValue = c.getString(value, table, colDef);
+    	        }
+        	}
+        	
+            comboBoxExpressionMap.put(columnId, filterValue);
         }
         determineFilterActive();
         rowSorter.getModel().fireTableDataChanged();
