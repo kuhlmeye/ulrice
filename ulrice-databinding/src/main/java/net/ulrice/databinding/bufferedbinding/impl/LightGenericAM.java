@@ -120,23 +120,37 @@ public class LightGenericAM<T> implements IFAttributeModel<T>, IFViewChangeListe
         }
         valid = newValid;
 
-
-        if (getCurrentValue() == null && getOriginalValue() == null) {
+        T currentValueToCheck = getCurrentValue();        
+		T originalValueToCheck = getOriginalValue();
+		
+		if(currentValueToCheck instanceof String) {
+			if("".equals(currentValueToCheck)) {
+				currentValueToCheck = null;
+			}
+		}	
+		
+		if(originalValueToCheck instanceof String) {
+			if("".equals(originalValueToCheck)) {
+				originalValueToCheck = null;
+			}
+		}
+		
+		if (currentValueToCheck == null && originalValueToCheck == null) {
             dirty = false;
         }
         else if (readOnly) {
             dirty = false; 
         }
-        else if ( getCurrentValue() != null && getOriginalValue() != null) {
+        else if ( currentValueToCheck != null && originalValueToCheck != null) {
             boolean newDirty;
             // XHU: Needed, because it is not allowed to compare BigDecimal values with equals()!
-            if (getCurrentValue() instanceof BigDecimal) {
-                newDirty = !(((BigDecimal) getCurrentValue()).compareTo((BigDecimal) getOriginalValue()) == 0);
+            if (currentValueToCheck instanceof BigDecimal) {
+                newDirty = !(((BigDecimal) currentValueToCheck).compareTo((BigDecimal) originalValueToCheck) == 0);
             }
-            else if (getCurrentValue() instanceof List) {
+            else if (currentValueToCheck instanceof List) {
                 // compare lists
-                List current = (List) getCurrentValue();
-                List original = (List) getOriginalValue();
+                List current = (List) currentValueToCheck;
+                List original = (List) originalValueToCheck;
 
                 if (current == null && original == null) {
                     newDirty = false;
@@ -166,7 +180,7 @@ public class LightGenericAM<T> implements IFAttributeModel<T>, IFViewChangeListe
                 }
             }
             else {
-                newDirty = !getCurrentValue().equals(getOriginalValue());
+                newDirty = !currentValueToCheck.equals(originalValueToCheck);
             }
             dirty = newDirty;
 
