@@ -39,6 +39,9 @@ public class FavoriteModuleListModel extends AbstractListModel implements IFModu
 
 	@Override
 	public IFModule<?> getElementAt(int index) {
+	    if (index < 0 || index >= getSize()) {
+	        return null;
+	    }
 		return data.get(index);
 	}
 
