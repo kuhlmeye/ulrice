@@ -42,16 +42,12 @@
 	        <groupId>ognl</groupId>
 	        <artifactId>ognl</artifactId>
 	    </dependency>
-	    <dependency>
-	        <groupId>net.sf.trove4j</groupId>
-	        <artifactId>trove4j</artifactId>
-	    </dependency>	    
 	</dependencies>
 
 	<parent>
 		<groupId>net.ulrice</groupId>
 		<artifactId>ulrice</artifactId>
-		<version>0.2.5.17-SNAPSHOT</version>
+		<version>0.2.5.16</version>
 		<relativePath>../ulrice</relativePath>
 	</parent>
 	

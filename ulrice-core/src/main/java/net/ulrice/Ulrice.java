@@ -132,7 +132,7 @@ public class Ulrice {
     public static void shutdown() {
         ApplicationOptions.clearOptionsModules();
         Ulrice.actionManager.dispose();
-        Ulrice.getAppPrefs().shutdown();
+        
         Ulrice.getModuleStructureManager().shutdown();
     }
 

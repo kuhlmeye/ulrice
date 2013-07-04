@@ -450,7 +450,7 @@ public class Element {
                 attributeModel.setReadOnly(column.getColumnType().equals(ColumnType.ReadOnly));
                 modelList[i] = attributeModel;
                 if (tableAM.getIdModelIndexMap() == null) {
-                    tableAM.setIdModelIndexMap(new HashMap<String, Integer>());
+                    tableAM.setIdModelIndexMap(new HashMap<String, Integer>(columns.size()));
                 }
                 if (tableAM.getIdModelIndexMap().size() < columns.size()) {
                     tableAM.getIdModelIndexMap().put(column.getId(), i);

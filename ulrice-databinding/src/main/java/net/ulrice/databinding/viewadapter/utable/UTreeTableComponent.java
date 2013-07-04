@@ -1,14 +1,11 @@
 package net.ulrice.databinding.viewadapter.utable;
 
-import gnu.trove.list.TLongList;
-import gnu.trove.list.array.TLongArrayList;
-import gnu.trove.map.TLongObjectMap;
-import gnu.trove.map.hash.TLongObjectHashMap;
-import gnu.trove.set.TLongSet;
-import gnu.trove.set.hash.TLongHashSet;
-
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Set;
 
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
@@ -21,6 +18,7 @@ import net.ulrice.databinding.bufferedbinding.impl.Element;
 import net.ulrice.databinding.bufferedbinding.impl.TableAM;
 import net.ulrice.message.Message;
 import net.ulrice.message.MessageSeverity;
+import net.ulrice.message.TranslationUsage;
 
 public class UTreeTableComponent extends UTableComponent implements ExpandColapseListener{
 
@@ -131,7 +129,7 @@ public class UTreeTableComponent extends UTableComponent implements ExpandColaps
                     nested = false;
                 }
 
-                TLongSet selUniqueIds = new TLongHashSet();
+                Set<Long> selUniqueIds = new HashSet<Long>();
                 List<Element> selElements =
                         UTreeTableComponent.this.getSelectedElementsTreeIntern(getSelectedRowsModelIndex());
 
@@ -151,7 +149,7 @@ public class UTreeTableComponent extends UTableComponent implements ExpandColaps
                 }
             }
 
-            private boolean testForUniqueSelection(TLongSet selUniqueIds, Element element, ListSelectionEvent e) {
+            private boolean testForUniqueSelection(Set<Long> selUniqueIds, Element element, ListSelectionEvent e) {
                 if (element.getChildCount() == 0) {
                     return processSelection(selUniqueIds, element, e);
                 }
@@ -162,7 +160,7 @@ public class UTreeTableComponent extends UTableComponent implements ExpandColaps
                 return ambiguousSelection;
             }
 
-            private boolean processSelection(TLongSet selUniqueIds, Element element, final ListSelectionEvent e) {
+            private boolean processSelection(Set<Long> selUniqueIds, Element element, final ListSelectionEvent e) {
                 if (selUniqueIds.contains(element.getUniqueId())) {
                     nested = true;
                     try {
@@ -259,14 +257,14 @@ public class UTreeTableComponent extends UTableComponent implements ExpandColaps
     }
 
     private List<Element> reduceDoubleElements(List<Element> elements) {
-        TLongObjectMap<Element> elementsByUniquId = new TLongObjectHashMap<Element>();
+        HashMap<Long, Element> elementsByUniquId = new LinkedHashMap<Long, Element>();
         for (Element element : elements) {
             mapDoubleElement(elementsByUniquId, element);
         }
-        return new ArrayList<Element>(elementsByUniquId.valueCollection());
+        return new ArrayList<Element>(elementsByUniquId.values());
     }
 
-    private void mapDoubleElement(TLongObjectMap<Element> elementsByUniquId, Element element) {
+    private void mapDoubleElement(HashMap<Long, Element> elementsByUniquId, Element element) {
         if (viewAdapter.getAttributeModel().isVirtualTreeNodes()) {
             
             if (element.getChildCount() == 0) {
@@ -334,7 +332,7 @@ public class UTreeTableComponent extends UTableComponent implements ExpandColaps
         if (viewAdapter.getAttributeModel().isVirtualTreeNodes()) {
             checkAttributeModelSet();
             List<Element> elements = new ArrayList<Element>();
-            TLongList uniqueIds = new TLongArrayList();
+            List<Long> uniqueIds = new ArrayList<Long>();
             for (Element elem : getSelectedElements()) {
                 getElementsAndChilds(elem, elements, uniqueIds);
                 if (elem.getParent() != null) {
@@ -349,7 +347,7 @@ public class UTreeTableComponent extends UTableComponent implements ExpandColaps
 
     }
 
-    private void getElementsAndChilds(Element elem, List<Element> elements, TLongList uniqueIds) {
+    private void getElementsAndChilds(Element elem, List<Element> elements, List<Long> uniqueIds) {
         if (!uniqueIds.contains(elem.getUniqueId())) {
             elements.add(elem);
             uniqueIds.add(elem.getUniqueId());

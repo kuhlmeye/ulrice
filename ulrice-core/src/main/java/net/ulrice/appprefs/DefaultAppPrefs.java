@@ -49,7 +49,4 @@ public class DefaultAppPrefs implements IFAppPrefs {
 		return builder.toString();
 	}
 
-	@Override
-	public void shutdown() {
-	}
 }

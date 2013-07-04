@@ -35,13 +35,10 @@ import javax.swing.table.TableColumn;
 import javax.swing.table.TableColumnModel;
 import javax.swing.text.BadLocationException;
 
-import net.ulrice.Ulrice;
 import net.ulrice.databinding.ObjectWithPresentation;
 import net.ulrice.databinding.bufferedbinding.impl.ColumnDefinition;
 import net.ulrice.databinding.bufferedbinding.impl.Element;
 import net.ulrice.databinding.bufferedbinding.impl.FilterMode;
-import net.ulrice.message.TranslationConstants;
-import net.ulrice.message.TranslationUsage;
 import net.ulrice.ui.components.ContextMenuMouseListener;
 
 /**
@@ -84,31 +81,9 @@ public class UTableVAFilter extends RowFilter<UTableViewAdapter, Long> implement
 	private boolean showDirtyAndInvalidElements = true;
 	private boolean rebuildOnColumnChanges = true;
 
-    
-    private class BooleanFilterElement {
-    	private String text;
-		private String id;
-    	
-    	public BooleanFilterElement(String id, String text) {
-    		this.id = id;
-    		this.text = text;
-    	}
-    	
-    	public String getId() {
-			return id;
-		}
-    	
-		@Override
-    	public String toString() {
-    		return text;
-    	}
+    private enum BooleanFilter {
+        All, Yes, No;
     }
-     
-    private static final String ALL = "All";
-    private static final String YES = "Yes";
-    private static final String NO = "No";
-    
-    
 
     /**
      * @param rowSorter
@@ -168,7 +143,7 @@ public class UTableVAFilter extends RowFilter<UTableViewAdapter, Long> implement
             switch (filterMode) {
                 case RegEx:
                 case Numeric:
-                case Percent: {
+                case Percent:
                     JTextField field = new JTextField();
                     field.setName(columnDefinition.getId());
                     field.getDocument().putProperty(DOCUMENT_PROPERTY_FIELD_ID, columnDefinition.getId());
@@ -176,25 +151,22 @@ public class UTableVAFilter extends RowFilter<UTableViewAdapter, Long> implement
                     field.addMouseListener(new ContextMenuMouseListener());
                     component = field;
                     break;
-                }
-                case Boolean: {
+
+                case Boolean:
                     FilterComboBoxModel cbm = new FilterComboBoxModel(columnDefinition.getId());
-                    
-                    BooleanFilterElement allElement = new BooleanFilterElement(ALL, Ulrice.getTranslationProvider().getUlriceTranslation(TranslationUsage.Label, TranslationConstants.ALL).toString());
-					cbm.addElement(allElement);
-                    cbm.addElement(new BooleanFilterElement(YES, Ulrice.getTranslationProvider().getUlriceTranslation(TranslationUsage.Label, TranslationConstants.YES).toString()));
-                    cbm.addElement(new BooleanFilterElement(NO, Ulrice.getTranslationProvider().getUlriceTranslation(TranslationUsage.Label, TranslationConstants.NO).toString()));
-                    cbm.setSelectedItem(allElement);
+                    cbm.addElement(BooleanFilter.All);
+                    cbm.addElement(BooleanFilter.Yes);
+                    cbm.addElement(BooleanFilter.No);
+                    cbm.setSelectedItem(BooleanFilter.All);
                     cbm.addListDataListener(this);
 
                     JComboBox comboBox = new JComboBox(cbm);
                     component = comboBox;
                     break;
-            	}
-                case ComboBox: {
+
+                case ComboBox:
                     FilterComboBoxModel enumCbm = new FilterComboBoxModel(columnDefinition.getId());
-                    BooleanFilterElement allElement = new BooleanFilterElement(ALL, Ulrice.getTranslationProvider().getUlriceTranslation(TranslationUsage.Label, TranslationConstants.ALL).toString());
-					enumCbm.addElement(allElement);
+                    enumCbm.addElement(BooleanFilter.All);
                     if (columnDefinition.isUseValueRange() && columnDefinition.getValueRange() != null) {
                         for (Object value : columnDefinition.getValueRange()) {
                             enumCbm.addElement(value);
@@ -211,7 +183,7 @@ public class UTableVAFilter extends RowFilter<UTableViewAdapter, Long> implement
                     component = enumComboBox;
 
                     break;
-                }
+
                 default:
                     component = null;
                     break;
@@ -252,32 +224,30 @@ public class UTableVAFilter extends RowFilter<UTableViewAdapter, Long> implement
                 switch (filterMode) {
                     case RegEx:
                     case Numeric:
-                    case Percent: {
+                    case Percent:
                         JTextField field = new JTextField();
                         field.setName(columnDefinition.getId());
                         field.getDocument().putProperty(DOCUMENT_PROPERTY_FIELD_ID, columnDefinition.getId());
                         field.getDocument().addDocumentListener(this);
                         component = field;
                         break;
-                    }
-                    case Boolean: {
+
+                    case Boolean:
                         FilterComboBoxModel cbm = new FilterComboBoxModel(columnDefinition.getId());
-                        BooleanFilterElement allElement = new BooleanFilterElement(ALL, Ulrice.getTranslationProvider().getUlriceTranslation(TranslationUsage.Label, TranslationConstants.ALL).toString());
-    					cbm.addElement(allElement);
-                        cbm.addElement(new BooleanFilterElement(YES, Ulrice.getTranslationProvider().getUlriceTranslation(TranslationUsage.Label, TranslationConstants.YES).toString()));
-                        cbm.addElement(new BooleanFilterElement(NO, Ulrice.getTranslationProvider().getUlriceTranslation(TranslationUsage.Label, TranslationConstants.NO).toString()));
-                        cbm.setSelectedItem(allElement);
+                        cbm.addElement(BooleanFilter.All);
+                        cbm.addElement(BooleanFilter.Yes);
+                        cbm.addElement(BooleanFilter.No);
+                        cbm.setSelectedItem(BooleanFilter.All);
                         cbm.addListDataListener(this);
-                        
+
                         JComboBox comboBox = new JComboBox(cbm);
                         comboBox.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
                         component = comboBox;
                         break;
-                    }
-                    case ComboBox: {
+
+                    case ComboBox:
                         FilterComboBoxModel enumCbm = new FilterComboBoxModel(columnDefinition.getId());
-                        BooleanFilterElement allElement = new BooleanFilterElement(ALL, Ulrice.getTranslationProvider().getUlriceTranslation(TranslationUsage.Label, TranslationConstants.ALL).toString());
-    					enumCbm.addElement(allElement);
+                        enumCbm.addElement(BooleanFilter.All);
                         if (columnDefinition.isUseValueRange() && columnDefinition.getValueRange() != null) {
                             for (Object value : columnDefinition.getValueRange()) {
                                 enumCbm.addElement(value);
@@ -294,7 +264,7 @@ public class UTableVAFilter extends RowFilter<UTableViewAdapter, Long> implement
                         enumComboBox.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
                         component = enumComboBox;
                         break;
-                    }
+
                     default:
                         component = null;
                         break;
@@ -750,17 +720,14 @@ public class UTableVAFilter extends RowFilter<UTableViewAdapter, Long> implement
             //EXSTHUB: With this we can also filter all cells with value "null"
             filterComboChanged(cbModel.columndId, null, true);
         }
-        else if(value instanceof BooleanFilterElement) {
-        	BooleanFilterElement filterElement = (BooleanFilterElement) value;
-        	if (ALL.equals(filterElement.id)) {
-	            filterComboChanged(cbModel.columndId, null);
-	        }
-	        else if (YES.equals(filterElement.id)) {
-	            filterComboChanged(cbModel.columndId, Boolean.TRUE);
-	        }
-	        else if (NO.equals(filterElement.id)) {
-	            filterComboChanged(cbModel.columndId, Boolean.FALSE);
-	        }
+        else if (value == BooleanFilter.All) {
+            filterComboChanged(cbModel.columndId, null);
+        }
+        else if (value == BooleanFilter.Yes) {
+            filterComboChanged(cbModel.columndId, Boolean.TRUE);
+        }
+        else if (value == BooleanFilter.No) {
+            filterComboChanged(cbModel.columndId, Boolean.FALSE);
         }
         else if (value instanceof ObjectWithPresentation< ?>) {
             filterComboChanged(cbModel.columndId, ((ObjectWithPresentation< ?>) value).getValue());
@@ -777,43 +744,13 @@ public class UTableVAFilter extends RowFilter<UTableViewAdapter, Long> implement
         filterComboChanged(columndId, object, false);
     }
 
-    private void filterComboChanged(String columnId, Object value, boolean isEmptySelected) {
+    private void filterComboChanged(String columndId, Object value, boolean isEmptySelected) {
         if(isEmptySelected){
-            comboBoxExpressionMap.put(columnId, null);
+            comboBoxExpressionMap.put(columndId, null);
         }else if (value == null){
-            comboBoxExpressionMap.remove(columnId);
+            comboBoxExpressionMap.remove(columndId);
         }else{
-        	Object filterValue = value;
-        	UTableComponent uTableComponent = null;
-        	if(rowSorter != null && rowSorter.getModel() != null  && rowSorter.getModel().getComponent() != null) {
-        		uTableComponent = rowSorter.getModel().getComponent();
-        	}
-        	
-        	// Try to convert to string using cell renderer, if available
-        	if(uTableComponent != null) {
-    	        @SuppressWarnings("rawtypes")
-    	        ColumnDefinition colDef = uTableComponent.getColumnById(columnId);
-    	        UTable table = null;
-    	        if (colDef.isFixedColumn()) {
-    	            table = (UTable) uTableComponent.getStaticTable();
-    	        }
-    	        else {
-    	            table = (UTable) uTableComponent.getScrollTable();
-    	        }
-    	
-    	        TableCellRenderer tableCellRenderer = uTableComponent.getColumnById(columnId).getCellRenderer();
-    	        if (tableCellRenderer == null) {
-    	            tableCellRenderer = table.getDefaultRenderer(colDef.getColumnClass());
-    	        }
-    	        if (tableCellRenderer != null
-    	            && StringBasedTableCellRenderer.class.isAssignableFrom(tableCellRenderer.getClass())) {
-    	            StringBasedTableCellRenderer c = (StringBasedTableCellRenderer) tableCellRenderer;
-    	            
-    	            filterValue = c.getString(value, table, colDef);
-    	        }
-        	}
-        	
-            comboBoxExpressionMap.put(columnId, filterValue);
+            comboBoxExpressionMap.put(columndId, value);
         }
         determineFilterActive();
         rowSorter.getModel().fireTableDataChanged();

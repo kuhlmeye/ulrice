@@ -1,14 +1,8 @@
 package net.ulrice.databinding.bufferedbinding.impl;
 
-import gnu.trove.map.TLongObjectMap;
-import gnu.trove.map.hash.TLongObjectHashMap;
-import gnu.trove.set.TLongSet;
-import gnu.trove.set.hash.TCustomHashSet;
-import gnu.trove.set.hash.TLongHashSet;
-import gnu.trove.strategy.IdentityHashingStrategy;
-
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -49,8 +43,7 @@ public class TableAM implements IFAttributeModel {
     private Map<String, Integer> idModelIndexMap;
 
     protected List<Element> elements = new ArrayList<Element>();
-    protected TLongObjectMap<Element> elementIdMap = new TLongObjectHashMap<Element>();
-    
+    protected Map<Long, Element> elementIdMap = new HashMap<Long, Element>();
 
     private List<IFValidator> validators = new ArrayList<IFValidator>();
     private EventListenerList listenerList = new EventListenerList();
@@ -58,10 +51,10 @@ public class TableAM implements IFAttributeModel {
     private boolean readOnly;
     private long nextUniqueId;
 
-    private Set<Element> newElements = new TCustomHashSet<Element>(new IdentityHashingStrategy<Element>());
-    private Set<Element> modElements = new TCustomHashSet<Element>(new IdentityHashingStrategy<Element>());
-    private Set<Element> delElements = new TCustomHashSet<Element>(new IdentityHashingStrategy<Element>());
-    private Set<Element> invElements = new TCustomHashSet<Element>(new IdentityHashingStrategy<Element>());
+    private Set<Element> newElements = new HashSet<Element>();
+    private Set<Element> modElements = new HashSet<Element>();
+    private Set<Element> delElements = new HashSet<Element>();
+    private Set<Element> invElements = new HashSet<Element>();
 
     private List<IFViewAdapter> viewAdapterList = new ArrayList<IFViewAdapter>();
     
@@ -81,8 +74,10 @@ public class TableAM implements IFAttributeModel {
 
     // unique constraint handling
     private String[] uniqueKeyColumnIds = null;
-    private Map<List< ?>, TLongSet> uniqueMap = new HashMap<List< ?>, TLongSet>();
-    private TLongObjectMap<List< ?>> keyMap = new TLongObjectHashMap<List< ?>>();
+    private Map<List< ?>, Set<Long>> uniqueMap = new HashMap<List< ?>, Set<Long>>();
+//    private Map<List< ?>, Set<String>> uniqueDeleteMap = new HashMap<List< ?>, Set<String>>(); wozu?
+    private Map<Long, List< ?>> keyMap = new HashMap<Long, List< ?>>();
+//    private Map<String, List< ?>> keyDeleteMap = new HashMap<String, List< ?>>(); wozu?
     private Map<List< ?>, ValidationError> currentErrorMap = new HashMap<List< ?>, ValidationError>();
 
     private String pathToChildren;
@@ -153,20 +148,20 @@ public class TableAM implements IFAttributeModel {
         checkKeyChangeAndUpdateDatastructure(element.getUniqueId(), key);
                
             if (uniqueMap.containsKey(key)) {
-                TLongSet uniqueIdSet = uniqueMap.get(key);
+                Set<Long> uniqueIdSet = uniqueMap.get(key);
                 uniqueIdSet.add(element.getUniqueId());
                 if (uniqueIdSet.size() > 1) {
                     UniqueKeyConstraintError uniqueConstraintError =
                             new UniqueKeyConstraintError(this, "Unique key constraint error", null);
                     currentErrorMap.put(key, uniqueConstraintError);
-                    for (long uniqueId : uniqueIdSet.toArray()) {
+                    for (Long uniqueId : uniqueIdSet) {
                         Element elementById = getElementById(uniqueId);
                         elementById.putUniqueKeyConstraintError(uniqueConstraintError);
                     }
                 }
             }
             else {
-                TLongSet uniqueIdSet = new TLongHashSet();
+                Set<Long> uniqueIdSet = new HashSet<Long>();
                 uniqueIdSet.add(element.getUniqueId());
                 uniqueMap.put(key, uniqueIdSet);
             }
@@ -183,24 +178,36 @@ public class TableAM implements IFAttributeModel {
     private boolean checkKeyChangeAndUpdateDatastructure(long uniqueId, List< ?> key) {
         List< ?> oldKey = keyMap.get(uniqueId);
         if (oldKey == null && key != null) {
+            // String oldUniqueId = checkForOldUniqueId(key, uniqueId);
             keyMap.put(uniqueId, key);
             return true;
         }
 
-        if (key == null || !key.equals(oldKey)) {
+        if (key == null || !oldKey.equals(key)) {
             if (oldKey != null) {
-                TLongSet uniqueKeySet = uniqueMap.get(oldKey);
+                Set<Long> uniqueKeySet = uniqueMap.get(oldKey);
                 uniqueKeySet.remove(uniqueId);
 
                 if (uniqueKeySet.isEmpty()) {
                     uniqueMap.remove(oldKey);
                 }
+
+                // should not happen
+//                if (uniqueDeleteMap.containsKey(oldKey)) { wozu?
+//                    Set<String> uniqueDeleteKeySet = uniqueDeleteMap.get(oldKey);
+//                    uniqueDeleteKeySet.add(uniqueId);
+//                }
+//                else {
+//                    Set<String> uniqueIdSet = new HashSet<String>();
+//                    uniqueIdSet.add(uniqueId);
+//                    uniqueDeleteMap.put(oldKey, uniqueIdSet);
+//                }
                 if (uniqueKeySet.size() <= 1 && currentErrorMap.containsKey(oldKey)) {
                     ValidationError validationError = currentErrorMap.remove(oldKey);
                     getElementById(uniqueId).removeElementValidationError(validationError);
                     getElementById(uniqueId).removeUniqueKeyConstraintErrors();
                     
-                    for (long uniqueElementId : uniqueKeySet.toArray()) {
+                    for (Long uniqueElementId : uniqueKeySet) {
                         getElementById(uniqueElementId).removeElementValidationError(validationError);
                         getElementById(uniqueElementId).removeUniqueKeyConstraintErrors();
                     }
@@ -1812,12 +1819,12 @@ public class TableAM implements IFAttributeModel {
                 key.add(colDef.getDataAccessor().getValue(object));
             }
 
-            TLongSet idSet = uniqueMap.get(key);
+            Set<Long> idSet = uniqueMap.get(key);
             if (idSet != null) {
                 if (idSet.size() == 1) {
                     return getElementById(idSet.iterator().next());
                 }
-                for (long id : idSet.toArray()) {
+                for (Long id : idSet) {
                     Element element = getElementById(id);
                     if (element.getCurrentValue().equals(object)) {
                         return element;
@@ -1849,12 +1856,12 @@ public class TableAM implements IFAttributeModel {
         if (uniqueKeyColumnIds != null) {
             Element tempElement = createElement(object, false, false, true);
             List< ?> key = buildKey(tempElement);
-            TLongSet idSet = uniqueMap.get(key);
+            Set<Long> idSet = uniqueMap.get(key);
             if (idSet != null) {
                 if (idSet.size() == 1) {
                     return getElementById(idSet.iterator().next());
                 }
-                for (long id : idSet.toArray()) {
+                for (Long id : idSet) {
                     Element element = getElementById(id);
                     if (element.getCurrentValue().equals(object)) {
                         return element;

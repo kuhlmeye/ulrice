@@ -410,16 +410,17 @@ public class ModuleActionManager implements IFModuleEventListener, PropertyChang
             return;
         }
         
-        final Set<UlriceAction> keys = map.keySet();
+        final Collection<ModuleActionState> values = map.values();
         final Set<String> actionSet = new HashSet<String>();
         
-        for (UlriceAction moduleAction : keys) {
+        for (ModuleActionState state : values) {
             for (UActionState actionState : actionStates) {
-            	if(moduleAction.getUniqueId().equals(actionState.getActionId())) {
-            		ModuleActionState state = map.get(moduleAction);
-            		state.setEnabled(actionState.isEnabled());
-                	actionSet.add(state.getAction().getUniqueId());
-            	}
+                if (state.getAction().getUniqueId().equals(actionState.getActionId())) {
+                	if(state.isEnabled() != actionState.isEnabled()) {
+                		state.setEnabled(actionState.isEnabled());
+                    	actionSet.add(state.getAction().getUniqueId());
+                	}
+                }
             }
         }
         
