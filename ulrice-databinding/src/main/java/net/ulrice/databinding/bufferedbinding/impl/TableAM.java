@@ -1,6 +1,7 @@
 package net.ulrice.databinding.bufferedbinding.impl;
 
 import gnu.trove.map.TLongObjectMap;
+import gnu.trove.map.TObjectIntMap;
 import gnu.trove.map.hash.TLongObjectHashMap;
 import gnu.trove.set.TLongSet;
 import gnu.trove.set.hash.TCustomHashSet;
@@ -46,7 +47,7 @@ public class TableAM implements IFAttributeModel {
 
     private List<ColumnDefinition< ? extends Object>> columns = new ArrayList<ColumnDefinition< ? extends Object>>();
     private Map<String, ColumnDefinition> columnIdMap = new HashMap<String, ColumnDefinition>();
-    private Map<String, Integer> idModelIndexMap;
+    private TObjectIntMap<String> idModelIndexMap;
 
     protected List<Element> elements = new ArrayList<Element>();
     protected TLongObjectMap<Element> elementIdMap = new TLongObjectHashMap<Element>();
@@ -1995,11 +1996,11 @@ public class TableAM implements IFAttributeModel {
         return result;
     }
     
-    public Map<String, Integer> getIdModelIndexMap() {
+    public TObjectIntMap<String> getIdModelIndexMap() {
         return idModelIndexMap;
     }
     
-    public void setIdModelIndexMap(Map<String, Integer> idModelIndexMap) {
+    public void setIdModelIndexMap(TObjectIntMap<String> idModelIndexMap) {
         this.idModelIndexMap = idModelIndexMap;
     }
 }
