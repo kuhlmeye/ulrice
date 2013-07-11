@@ -43,14 +43,8 @@ public class ModuleTree extends JTree implements IFMainFrameComponent, MouseList
             
             @Override
             public void keyTyped(KeyEvent e) {
-                if(!isSelectionEmpty() && e.getKeyChar() == '\n' && e.isControlDown()) {
-                    TreePath path = getSelectionPath();
-                    Object pathComponent = path.getLastPathComponent();
-                
-                    if (pathComponent instanceof ModuleTreeNode) {
-                        ModuleTreeNode node = (ModuleTreeNode) pathComponent;
-                        handleNodeActivated(node);
-                    }
+                if((e.getKeyChar() == '\n') /* TODO why control!? && (e.isControlDown())*/) {
+                    activateSelection();
                 }
             }
         });
@@ -170,6 +164,18 @@ public class ModuleTree extends JTree implements IFMainFrameComponent, MouseList
     @Override
     public void mouseReleased(MouseEvent e) {
         // Not needed. Empty.
+    }
+
+    public void activateSelection() {
+        if (!isSelectionEmpty()) {
+            TreePath path = getSelectionPath();
+            Object pathComponent = path.getLastPathComponent();
+        
+            if (pathComponent instanceof ModuleTreeNode) {
+                ModuleTreeNode node = (ModuleTreeNode) pathComponent;
+                handleNodeActivated(node);
+            }
+        }
     }
 
 }
