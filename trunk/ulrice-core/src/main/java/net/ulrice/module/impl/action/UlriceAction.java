@@ -7,6 +7,8 @@ import javax.swing.Action;
 import javax.swing.Icon;
 import javax.swing.KeyStroke;
 
+import net.ulrice.util.Keys;
+
 /**
  * Action that is handled by the ulrice action manager and delegated to the ulrice modules.
  * 
@@ -47,9 +49,7 @@ public abstract class UlriceAction extends AbstractAction {
 		
 		setEnabled(enabled);
 		
-		putValue(SMALL_ICON, icon);
-		putValue(NAME, name);
-		putValue(SHORT_DESCRIPTION, name);
+		update();
 	}
 	
 	/**
@@ -99,6 +99,21 @@ public abstract class UlriceAction extends AbstractAction {
     
     public void setHotkey(KeyStroke keyStroke) {
         putValue(Action.ACCELERATOR_KEY, keyStroke);
+        update();
     }
 
+    protected void update() {
+        putValue(SMALL_ICON, icon);
+        putValue(NAME, name);
+
+        KeyStroke hotKey = getHotkey();
+
+        if (hotKey != null) {
+            putValue(SHORT_DESCRIPTION, String.format("<html>%s <small>(%s)</small></html>", name, Keys.describe(hotKey)));
+        }
+        else {
+            putValue(SHORT_DESCRIPTION, String.format("<html>%s</html>", name));
+        }
+    }
+    
 }
