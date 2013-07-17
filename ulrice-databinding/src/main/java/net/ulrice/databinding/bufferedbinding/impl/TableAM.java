@@ -1634,6 +1634,14 @@ public class TableAM implements IFAttributeModel {
     }
 
     /**
+     * Returns the original value from the element located at a given row.
+     */
+    public Object getOriginalValueAt(int row) {
+        Element element = getElementAt(row);
+        return element != null ? element.getOriginalValue() : null;
+    }
+
+    /**
      * Set the names of the columns which are the unique key.
      */
     public void setUniqueConstraint(String... uniqueKeyColumnIds) {
