@@ -2,6 +2,7 @@ package net.ulrice.ui.accordionpanel;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Cursor;
 import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
@@ -31,6 +32,7 @@ public class AccordionSeparatorPanel extends JPanel {
 
         setOpaque(false);
         setBackground(backgroundColor);
+        setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
 
         foldLabel = new JLabel();
 
