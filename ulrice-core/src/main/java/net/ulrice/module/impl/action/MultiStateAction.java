@@ -26,7 +26,7 @@ public class MultiStateAction extends ModuleDelegationAction  {
     public MultiStateAction(String uniqueId, String name, boolean enabled, Icon icon, UlriceAction ... actions) {
         super(uniqueId, actions[0].getName(), enabled, icon);
         this.actions = Arrays.asList(actions);
-
+        
         actionState = 0;
     }
 
@@ -35,19 +35,26 @@ public class MultiStateAction extends ModuleDelegationAction  {
         int newActionState = (actionState + 1) % actions.size();
         
         updateAction(newActionState);
+        actionState = newActionState;
         
         Ulrice.getActionManager().performAction(this, e);
-        
-        actionState = newActionState;
     }
     
-    private void updateAction(int actionStateNumber) {
+    protected void updateAction(int actionStateNumber) {
         putValue(SMALL_ICON, actions.get(actionStateNumber).getIcon());
         putValue(SHORT_DESCRIPTION, actions.get(actionStateNumber).getName());
     }
 
     public String getCurrentActionId() {
         return actions.get(actionState).getUniqueId();
+    }
+    
+    public int getActionState() { 
+        return actionState;
+    }
+    
+    public void setActionState(int actionState) {
+        this.actionState = actionState;
     }
     
     public void setCurrentActionId(String id) {

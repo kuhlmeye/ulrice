@@ -244,17 +244,22 @@ public class ModuleActionManager implements IFModuleEventListener, PropertyChang
 				}
 			}
 		}
-
 		if (activeController != null) {
 			Map<UlriceAction, ModuleActionState> actionStateMap = controllerActionStateMap.get(activeController);
 			if (actionStateMap != null) {
 				List<UlriceAction> moduleActionList = new ArrayList<UlriceAction>(actionStateMap.size());
 				controllerActionHotkeyMap.clear();
 				for (ModuleActionState moduleActionState : actionStateMap.values()) {
-					UlriceAction action = moduleActionState.getAction();					
+					UlriceAction action = moduleActionState.getAction();
+					
                     addHotkey(controllerActionHotkeyMap, action);
 					if (!ActionType.SystemAction.equals(action.getType())) {
+					    
 						action.setEnabled(moduleActionState.isEnabled());
+						if (action instanceof MultiStateAction) {
+						    ((MultiStateAction) action).setActionState(moduleActionState.getActionState());
+						    ((MultiStateAction) action).updateAction(moduleActionState.getActionState());
+						}
 					}
 				}
 				return moduleActionList;
@@ -306,12 +311,14 @@ public class ModuleActionManager implements IFModuleEventListener, PropertyChang
 	@Override
 	public void openModule(IFController activeController) {
 		this.activeController = activeController;
+		
 		List<ModuleActionState> moduleActionStates = activeController.getHandledActions();
-
 		List<UlriceAction> actionOrder = new ArrayList<UlriceAction>(moduleActionStates.size());
 		Map<UlriceAction, ModuleActionState> actionStateMap = new HashMap<UlriceAction, ModuleActionState>();
+		
 		for (ModuleActionState moduleActionState : moduleActionStates) {
 			UlriceAction moduleAction = moduleActionState.getAction();
+			
 			if (Ulrice.getSecurityManager().allowRegisterAction(activeController, moduleAction)) {
                 actionOrder.add(moduleAction);
                 actionStateMap.put(moduleActionState.getAction(), moduleActionState);
@@ -409,7 +416,7 @@ public class ModuleActionManager implements IFModuleEventListener, PropertyChang
         if (map == null) {
             return;
         }
-        
+
         final Set<UlriceAction> keys = map.keySet();
         final Set<String> actionSet = new HashSet<String>();
         
@@ -418,6 +425,7 @@ public class ModuleActionManager implements IFModuleEventListener, PropertyChang
             	if(moduleAction.getUniqueId().equals(actionState.getActionId())) {
             		ModuleActionState state = map.get(moduleAction);
             		state.setEnabled(actionState.isEnabled());
+            		state.setActionState(actionState.getActionState());
                 	actionSet.add(state.getAction().getUniqueId());
             	}
             }

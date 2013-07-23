@@ -14,6 +14,8 @@ public class ModuleActionState {
 	/** If this action is enabled for a module. */
 	private boolean enabled;
 	
+	private int actionState;
+	
 	/** The reference to a module action. */
 	private UlriceAction action;
 	
@@ -26,9 +28,14 @@ public class ModuleActionState {
 	 * @param controller Reference to the controller
 	 * @param action Reference to the action.
 	 */
-	public ModuleActionState(boolean enabled, UlriceAction action) {
+	public ModuleActionState(boolean enabled, UlriceAction action, int actionState) {
 		this.enabled = enabled;
 		this.action = action;
+		this.actionState = actionState;
+	}
+	
+	public ModuleActionState(boolean enabled, UlriceAction action) {
+	    this(enabled, action, 0);
 	}
 		
 	
@@ -66,6 +73,14 @@ public class ModuleActionState {
 	
 	public void removeBlocker(Object blocker) {
 	    blockers.remove(blocker);	    
+	}
+	
+	public void setActionState(int actionState) {
+	    this.actionState = actionState;
+	}
+	
+	public int getActionState() {
+	    return actionState;
 	}
 	
 		
