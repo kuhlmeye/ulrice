@@ -5,11 +5,10 @@ import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.LinearGradientPaint;
-import java.awt.geom.Point2D;
 
 import javax.swing.JComponent;
 
-import net.ulrice.util.Colors;
+import net.ulrice.util.Gradients;
 
 public class AccordionContentFooter extends JComponent {
 
@@ -31,10 +30,7 @@ public class AccordionContentFooter extends JComponent {
         Color color = accordionContentPanel.getContent().getBackground();
         int height = getHeight();
         Graphics2D g2 = (Graphics2D) g;
-        LinearGradientPaint paint =
-                new LinearGradientPaint(new Point2D.Double(0, 0), new Point2D.Double(0, height), new float[] { 0.0f, 1.0f }, new Color[] {
-                    Colors.darker(color, (1 - accordionContentPanel.getUnfoldedFactor()) * 0.2), Colors.brighter(color, 0.2) });
-
+        LinearGradientPaint paint = Gradients.pressed(color, 0, height, 1, 1);
         g2.setPaint(paint);
         g2.fillRect(0, 0, getWidth(), height);
 

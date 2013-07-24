@@ -2,12 +2,14 @@ package net.ulrice.ui.components;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Component;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.LinearGradientPaint;
 import java.awt.Paint;
 import java.awt.geom.Point2D;
 
+import javax.swing.JComponent;
 import javax.swing.JPanel;
 
 import net.ulrice.util.Colors;
@@ -67,11 +69,11 @@ public class ColoredPanel extends JPanel {
 
     };
 
-    public static ColoredPanel createRaised(JPanel content) {
+    public static ColoredPanel createRaised(Component content) {
         return createRaised(null, content);
     }
 
-    public static ColoredPanel createRaised(Color color, JPanel content) {
+    public static ColoredPanel createRaised(Color color, Component content) {
         ColoredPanel result = new ColoredPanel(RAISED_PAINT, content);
 
         if (color != null) {
@@ -81,11 +83,11 @@ public class ColoredPanel extends JPanel {
         return result;
     }
 
-    public static ColoredPanel createLowered(JPanel content) {
+    public static ColoredPanel createLowered(Component content) {
         return createLowered(new Color(0xe3e3e3), content);
     }
 
-    public static ColoredPanel createLowered(Color color, JPanel content) {
+    public static ColoredPanel createLowered(Color color, Component content) {
         ColoredPanel result = new ColoredPanel(LOWERED_PAINT, content);
 
         if (color != null) {
@@ -97,16 +99,18 @@ public class ColoredPanel extends JPanel {
 
     private final PaintStrategy paintStrategy;
 
-    public ColoredPanel(JPanel content) {
+    public ColoredPanel(Component content) {
         this(RAISED_PAINT, content);
     }
 
-    public ColoredPanel(PaintStrategy paintStrategy, JPanel content) {
+    public ColoredPanel(PaintStrategy paintStrategy, Component content) {
         super(new BorderLayout());
 
         this.paintStrategy = paintStrategy;
 
-        content.setOpaque(false);
+        if (content instanceof JComponent) {
+            ((JComponent)content).setOpaque(false);
+        }
 
         add(content);
         setBackground(new Color(0xecf4fb));
