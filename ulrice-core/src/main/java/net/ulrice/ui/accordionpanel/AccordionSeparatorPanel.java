@@ -6,18 +6,17 @@ import java.awt.Cursor;
 import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
-import java.awt.LinearGradientPaint;
+import java.awt.Paint;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.awt.geom.Point2D;
 
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
-import net.ulrice.util.Colors;
+import net.ulrice.util.Gradients;
 
 public class AccordionSeparatorPanel extends JPanel {
 
@@ -86,10 +85,7 @@ public class AccordionSeparatorPanel extends JPanel {
         int height = getHeight();
 
         Graphics2D g2 = (Graphics2D) g;
-        LinearGradientPaint paint =
-                new LinearGradientPaint(new Point2D.Double(0, 0), new Point2D.Double(0, height), new float[] { 0.0f, 1.0f / height, 0.5f, 1.0f - (2.0f / height), 1.0f },
-                    new Color[] {
-                        Colors.brighter(getBackground(), 0.01), getBackground(), getBackground(), Colors.darker(getBackground(), 0.1), Colors.darker(getBackground(), 0.5) });
+        Paint paint = Gradients.curved(getBackground(), 0, height, 1, 1);
 
         g2.setPaint(paint);
         g2.fillRect(0, 0, getWidth(), height);
