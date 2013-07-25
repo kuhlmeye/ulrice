@@ -95,6 +95,7 @@ public abstract class AbstractViewAdapter<M, V> implements IFViewAdapter<M, V> {
         fireAttributeModelDetached(binding);
     }
     
+    @SuppressWarnings("unchecked")
     @Override
     public void updateFromBinding(IFBinding binding) {
         if (!isInNotification()) {
