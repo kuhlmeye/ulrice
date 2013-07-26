@@ -231,7 +231,6 @@ public class ModuleActionManager implements IFModuleEventListener, PropertyChang
 	public UlriceAction getApplicationAction(String uniqueId) {
 		return applicationActions.get(uniqueId);
 	}
-	
 
 	/**
 	 * 
@@ -425,7 +424,6 @@ public class ModuleActionManager implements IFModuleEventListener, PropertyChang
             	if(moduleAction.getUniqueId().equals(actionState.getActionId())) {
             		ModuleActionState state = map.get(moduleAction);
             		state.setEnabled(actionState.isEnabled());
-            		state.setActionState(actionState.getActionState());
                 	actionSet.add(state.getAction().getUniqueId());
             	}
             }
@@ -434,6 +432,29 @@ public class ModuleActionManager implements IFModuleEventListener, PropertyChang
         if(!actionSet.isEmpty()) {
         	adaptActionStates();
         	fireApplicationActionsChanged();
+        }
+	}
+	
+	protected void setActionStateForMultiState(final IFController controller, final UActionState actionState) {
+	    final Map<UlriceAction, ModuleActionState> map = controllerActionStateMap.get(controller);
+        if (map == null) {
+            return;
+        }
+
+        final Set<UlriceAction> keys = map.keySet();
+        final Set<String> actionSet = new HashSet<String>();
+        
+        for (UlriceAction moduleAction : keys) {
+            if(moduleAction.getUniqueId().equals(actionState.getActionId())) {
+                ModuleActionState state = map.get(moduleAction);
+                state.setActionState(actionState.getActionState());
+                actionSet.add(state.getAction().getUniqueId());
+            }
+        }
+        
+        if(!actionSet.isEmpty()) {
+            adaptActionStates();
+            fireApplicationActionsChanged();
         }
 	}
 	
