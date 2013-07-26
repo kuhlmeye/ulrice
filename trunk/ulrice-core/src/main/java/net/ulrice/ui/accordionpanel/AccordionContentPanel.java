@@ -175,6 +175,7 @@ public class AccordionContentPanel extends JPanel implements ActionListener {
         }
 
         this.folded = folded;
+        firePropertyChange("folded", !folded, folded);
     }
 
     public double getUnfoldedFactor() {
