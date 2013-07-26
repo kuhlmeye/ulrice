@@ -866,7 +866,7 @@ public class ModuleManager implements IFModuleManager, IFModuleStructureManager,
 	@Override
 	public List<IFModule<?>> getFavoriteModules() {
 		List<IFModule<?>> result = new ArrayList<IFModule<?>>();
-		for(String moduleId : favorites) {
+		for(String moduleId : Collections.unmodifiableCollection(favorites)) {
 			if(moduleMap.containsKey(moduleId)) {
 				result.add(moduleMap.get(moduleId));
 			}
