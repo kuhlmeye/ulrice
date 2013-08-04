@@ -46,7 +46,7 @@ public class ControllerState extends ModuleState {
      * @return a collection of controller states
      * @throws RemoteControlException TODO
      */
-    public static Collection<ControllerState> inspect(Collection<IFController> controllers) throws RemoteControlException {
+    public static Collection<ControllerState> inspectControllers(Collection<IFController> controllers) throws RemoteControlException {
         Collection<ControllerState> results = new ArrayList<ControllerState>();
 
         for (IFController controller : controllers) {
