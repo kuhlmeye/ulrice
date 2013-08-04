@@ -39,7 +39,7 @@ public class ModuleRemoteControlImpl implements ModuleRemoteControl {
      */
     @Override
     public Collection<ModuleState> statesOf(ModuleMatcher... matchers) throws RemoteControlException {
-        return ModuleState.inspect(and(matchers).match(Ulrice.getModuleManager().getAllModules()));
+        return ModuleState.inspectModules(and(matchers).match(Ulrice.getModuleManager().getAllModules()));
     }
 
     /**
