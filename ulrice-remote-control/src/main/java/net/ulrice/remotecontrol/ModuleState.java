@@ -38,7 +38,7 @@ public class ModuleState implements Serializable {
      * @param modules the modules
      * @return a collection of module states
      */
-    public static Collection<ModuleState> inspect(Collection<IFModule> modules) {
+    public static Collection<ModuleState> inspectModules(Collection<IFModule> modules) {
         Collection<ModuleState> results = new ArrayList<ModuleState>();
 
         for (IFModule module : modules) {
