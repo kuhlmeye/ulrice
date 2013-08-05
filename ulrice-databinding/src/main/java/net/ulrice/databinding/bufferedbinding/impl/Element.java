@@ -459,7 +459,7 @@ public class Element {
 
                 if (getOriginalValue() != null) {
                     final Object value = column.getDataAccessor().getValue(getOriginalValue());
-                    final Object converted = (column.getValueConverter() != null ? column.getValueConverter().modelToView(value, attributeModel.getAttributeInfo()) : value);
+                    final Object converted = (column.getValueConverter() != null ? column.getValueConverter().modelToView(value, column.getAttributeInfo()) : value);
                     attributeModel.directRead(converted);
                 }
             }
