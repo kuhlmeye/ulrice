@@ -1,0 +1,67 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<artifactId>ulrice-remote-control</artifactId>
+	<packaging>jar</packaging>
+	<name>Ulrice-Remote-Control</name>
+	<description>
+		Ulrice-Remote-Control provides an interface to an active client in order to execute behavior driven tests.
+	</description>
+	<url>http://ulrice.googlecode.com</url>
+	<licenses>
+		<license>
+			<name>GNU LESSER GENERAL PUBLIC LICENSE</name>
+			<url>http://www.gnu.org/licenses/lgpl.html</url>
+			<distribution>repo</distribution>
+		</license>
+	</licenses>
+	<scm>
+		<connection>scm:svn:https://ulrice.googlecode.com/svn/trunk/ulrice-remote-control</connection>
+		<developerConnection>scm:svn:https://ulrice.googlecode.com/svn/trunk/ulrice-remote-control</developerConnection>
+		<url>http://ulrice.googlecode.com/svn/</url>
+	</scm>
+	<developers>
+		<developer>
+			<id>ckuhlmeyer</id>
+			<name>Christof Kuhlmeyer</name>
+			<email />
+		</developer>
+		<developer>
+			<id>apunahassaphemapetilon@hotmail.com</id>
+			<name>Tobias Kavemann</name>
+			<email>apunahassaphemapetilon@hotmail.com</email>
+		</developer>
+		<developer>
+			<id>ham</id>
+			<name>Manfred Hantschel</name>
+			<email />
+		</developer>
+	</developers>
+
+	<parent>
+		<groupId>net.ulrice</groupId>
+		<artifactId>ulrice</artifactId>
+		<version>0.2.5.17-SNAPSHOT</version>
+		<relativePath>../ulrice</relativePath>
+	</parent>
+
+	<dependencies>
+		<dependency>
+			<groupId>net.ulrice</groupId>
+			<artifactId>ulrice-core</artifactId>
+		</dependency>
+		
+		<dependency>
+			<groupId>net.ulrice</groupId>
+			<artifactId>ulrice-databinding</artifactId>
+		</dependency>
+	</dependencies>
+
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-release-plugin</artifactId>
+			</plugin>
+		</plugins>
+	</build>
+</project>
