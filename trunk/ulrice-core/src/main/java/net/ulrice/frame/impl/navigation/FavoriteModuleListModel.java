@@ -47,7 +47,7 @@ public class FavoriteModuleListModel extends AbstractListModel implements IFModu
 
 	@Override
 	public int getSize() {
-		return data.size();
+		return data == null ? 0 : data.size();
 	}
 
 	@Override
