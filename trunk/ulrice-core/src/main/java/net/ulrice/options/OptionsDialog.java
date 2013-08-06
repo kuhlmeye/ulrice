@@ -70,6 +70,7 @@ public class OptionsDialog extends JDialog {
                 for (int i = 0; i < moduleListModel.getSize(); i++) {
                     moduleListModel.getElementAt(i).onSave();
                 }
+                Ulrice.getAppPrefs().saveConfiguration();
                 dispose();
             }
         });
