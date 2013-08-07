@@ -8,6 +8,7 @@ import java.util.EventObject;
 import java.util.List;
 
 import javax.swing.AbstractCellEditor;
+import javax.swing.BorderFactory;
 import javax.swing.JComboBox;
 import javax.swing.JComponent;
 import javax.swing.JPopupMenu;
@@ -90,11 +91,19 @@ public class UTableComboBoxCellEditor extends AbstractCellEditor implements Tabl
                 Dimension size = new Dimension();
                 size.width =
                         comboBoxPopup.getPreferredSize().width < scrollPane.getPreferredSize().width ? scrollPane
-                            .getPreferredSize().width : comboBoxPopup.getPreferredSize().width + 15;
+                            .getPreferredSize().width : comboBoxPopup.getPreferredSize().width;
                 size.height = scrollPane.getPreferredSize().height;
                 scrollPane.setPreferredSize(size);
                 scrollPane.setMinimumSize(size);
                 scrollPane.setMaximumSize(size);
+
+                comboBoxPopup.setPreferredSize(size);
+                comboBoxPopup.setMinimumSize(size);
+                comboBoxPopup.setMaximumSize(size);
+                
+                popupMenu.setPreferredSize(size);
+                popupMenu.setMinimumSize(size);
+                popupMenu.setMaximumSize(size);
             }
         });
     }
