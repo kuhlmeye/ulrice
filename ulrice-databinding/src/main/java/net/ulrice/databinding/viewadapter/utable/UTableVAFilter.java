@@ -679,7 +679,6 @@ public class UTableVAFilter extends RowFilter<UTableViewAdapter, Long> implement
         regex = regex.replace("*", ".*");
 
         regex += ".*";
-        System.out.println(regex);
         return regex;
     }
 
