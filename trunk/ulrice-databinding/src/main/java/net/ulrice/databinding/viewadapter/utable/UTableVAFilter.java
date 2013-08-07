@@ -69,6 +69,7 @@ public class UTableVAFilter extends RowFilter<UTableViewAdapter, Long> implement
 
     /** The map holding the current filter expressions for all columns by id. */
     private Map<String, Pattern> regexExpressionMap = new HashMap<String, Pattern>();
+    private Map<String, Boolean> emptyOrFilledMap = new HashMap<String, Boolean>();
     private Map<String, NumericPattern> numericPatternExpressionMap = new HashMap<String, NumericPattern>();
     private Map<String, Object> comboBoxExpressionMap = new HashMap<String, Object>();
     private Map<String, List<String>> collapsedRowFilterMap = new HashMap<String, List<String>>();
@@ -408,32 +409,31 @@ public class UTableVAFilter extends RowFilter<UTableViewAdapter, Long> implement
                     break;
                 case RegEx:
                     Pattern pattern = regexExpressionMap.get(columnId);
-                    if (pattern != null) {
-                        if (pattern.pattern().startsWith("\\+")) {
+                    if(pattern == null) {
+                        Boolean shouldBeEmpty = emptyOrFilledMap.get(columnId);
+                        if(shouldBeEmpty != null && shouldBeEmpty) {
+                            return value == null;
+                        } else if(shouldBeEmpty != null && !shouldBeEmpty) {
                             return value != null;
                         }
-                        else if (pattern.pattern().startsWith("\\-")) {
-                            return value == null;
+                    } else {                                                
+                        LOG.finest("ColumnId: " + columnId + ", Value: " + strValue + ", Pattern: "
+                            + pattern.pattern());
+                        // If the value is a map from I18nTextField or I18nTextArea, it should be search in all
+                        // languages for the text
+                        if (value instanceof Map) {
+                            for (String mapValue : ((Map<String, String>) value).values()) {
+                                if (pattern.matcher(mapValue).matches()) {
+                                    return true;
+                                }
+                            }
+                            return false;
                         }
                         else {
-                            LOG.finest("ColumnId: " + columnId + ", Value: " + strValue + ", Pattern: "
-                                + pattern.pattern());
-                            // If the value is a map from I18nTextField or I18nTextArea, it should be search in all
-                            // languages for the text
-                            if (value instanceof Map) {
-                                for (String mapValue : ((Map<String, String>) value).values()) {
-                                    if (pattern.matcher(mapValue).matches()) {
-                                        return true;
-                                    }
-                                }
-                                return false;
-                            }
-                            else {
-                                return pattern.matcher(strValue).matches();
-                            }
-
+                            return pattern.matcher(strValue).matches();
                         }
                     }
+                    break;
                 case Percent:
                     isPercentMode = true;
                 case Numeric:
@@ -526,23 +526,32 @@ public class UTableVAFilter extends RowFilter<UTableViewAdapter, Long> implement
 
         if(text == null || text.isEmpty()){
             regexExpressionMap.remove(columnId);
+            emptyOrFilledMap.remove(columnId);
             numericPatternExpressionMap.remove(columnId);
         }
         else if (columnFilterModes.containsKey(columnId)) {
 
             switch (columnFilterModes.get(columnId)) {
                 case NoFilter:
-                    break;
+                    break;                    
                 case RegEx: {
-                    String regex = text;
-                        regex = correctRegEx(regex);
-
-                    try {
-                        final Pattern pattern = Pattern.compile(regex, Pattern.CASE_INSENSITIVE | Pattern.DOTALL);
-                        regexExpressionMap.put(columnId, pattern);
-                    }
-                    catch (PatternSyntaxException e) {
-                        LOG.log(Level.FINER, "Could not compile regex: " + regex, e);
+                    if (text.equals("+")) {
+                        regexExpressionMap.remove(columnId);
+                        emptyOrFilledMap.put(columnId, Boolean.FALSE);
+                    } else if (text.equals("-")) {
+                        regexExpressionMap.remove(columnId);
+                        emptyOrFilledMap.put(columnId, Boolean.TRUE);
+                    } else {
+                        emptyOrFilledMap.remove(columnId);
+                        String regex = correctRegEx(text);                    
+    
+                        try {
+                            final Pattern pattern = Pattern.compile(regex, Pattern.CASE_INSENSITIVE | Pattern.DOTALL);
+                            regexExpressionMap.put(columnId, pattern);
+                        }
+                        catch (PatternSyntaxException e) {
+                            LOG.log(Level.FINER, "Could not compile regex: " + regex, e);
+                        }
                     }
                     break;
                 }
@@ -649,27 +658,28 @@ public class UTableVAFilter extends RowFilter<UTableViewAdapter, Long> implement
     }
 
     private void determineFilterActive() {
-        filterActive = !numericPatternExpressionMap.isEmpty() || !regexExpressionMap.isEmpty() || !comboBoxExpressionMap.isEmpty() || !collapsedRowFilterMap.isEmpty();
+        filterActive = !numericPatternExpressionMap.isEmpty() || !regexExpressionMap.isEmpty() || !emptyOrFilledMap.isEmpty() || !comboBoxExpressionMap.isEmpty() || !collapsedRowFilterMap.isEmpty();
     }
 
     private String correctRegEx(String regex) {
-        if (regex.startsWith("+")) {
-            regex = regex.replace("+", "\\+");
-        }
-        if (regex.startsWith("-")) {
-            regex = regex.replace("-", "\\-");
-        }
+        if(regex.startsWith("\\+") || regex.startsWith("\\-")) {
+            regex = regex.substring(1);
+        } 
+        
         if (regex.contains("(")) {
             regex = regex.replace("(", "\\(");
         }
         if (regex.contains(")")) {
             regex = regex.replace(")", "\\)");
         }
+        regex = regex.replace("\\", "\\\\");
+        regex = regex.replace("+", "\\+");
         regex = regex.replace(".", "\\.");
         regex = regex.replace("?", ".");
         regex = regex.replace("*", ".*");
 
         regex += ".*";
+        System.out.println(regex);
         return regex;
     }
 
