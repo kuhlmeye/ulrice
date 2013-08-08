@@ -8,7 +8,7 @@
 	<parent>
 		<groupId>net.ulrice</groupId>
 		<artifactId>ulrice</artifactId>
-		<version>0.2.5.18-SNAPSHOT</version>
+		<version>0.2.5.17</version>
 		<relativePath>../ulrice</relativePath>
 	</parent>
 	

@@ -7,5 +7,4 @@ public interface IFAppPrefs {
     void putConfiguration(Object requestingObject, String key, String value);
     void removeConfiguration(Object requestingObject, String key);
 	void shutdown();
-	void saveConfiguration();
 }

@@ -122,16 +122,6 @@ public class BindingGroup extends AbstractBindingGroup {
             	am.addViewAdapter(va);
             }
         }
-        
-        if(am.isDirty()) {
-            changedSet.add(am.getId());
-        }
-        
-        if(!am.isValid()) {
-            invalidSet.add(am.getId());
-        }
-        checkDirtyAndValidStateAndWriteIt();
-        
         am.addAttributeModelEventListener(this);
         amMap.put(id, am);
     }

@@ -52,13 +52,4 @@ public class DefaultAppPrefs implements IFAppPrefs {
 	@Override
 	public void shutdown() {
 	}
-
-    @Override
-    public void saveConfiguration() {
-        try {
-            preferences.sync();
-        }
-        catch (BackingStoreException e) {
-        }
-    }
 }
