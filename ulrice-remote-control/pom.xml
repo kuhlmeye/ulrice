@@ -36,6 +36,15 @@
 			<email />
 		</developer>
 	</developers>
+        
+        
+    <distributionManagement>
+      <site>
+        <id>ulrice-ftp-site</id>
+        <name>Ulrice Site</name>
+        <url>ftp://ulrice.net/httpdocs/ulrice-core</url>
+      </site>
+    </distributionManagement>
 
 	<parent>
 		<groupId>net.ulrice</groupId>

@@ -24,6 +24,16 @@
 		<developerConnection>scm:svn:https://ulrice.googlecode.com/svn/trunk/ulrice-translator</developerConnection>
 		<url>http://ulrice.googlecode.com/svn/</url>
 	</scm>
+        
+        
+    <distributionManagement>
+      <site>
+        <id>ulrice-ftp-site</id>
+        <name>Ulrice Site</name>
+        <url>ftp://ulrice.net/httpdocs/ulrice-core</url>
+      </site>
+    </distributionManagement>
+        
 	<developers>
 		<developer>
 			<id>ckuhlmeyer</id>
