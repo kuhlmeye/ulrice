@@ -1,12 +1,20 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
+ 
+	<parent>
+		<groupId>org.sonatype.oss</groupId>
+		<artifactId>oss-parent</artifactId>
+		<version>7</version>
+	</parent>
+	
 	<groupId>net.ulrice</groupId>
 	<artifactId>ulrice</artifactId>
 	<packaging>pom</packaging>
 	<name>Ulrice</name>
 	<version>0.2.5.18-SNAPSHOT</version>
 	<description>Ulrice is a framework for rich clients supporting the mvc-based (or module based) development of applications</description>
-	<url>http://ulrice.googlecode.com</url>
+	<url>http://www.ulrice.net</url>
 	<licenses>
 		<license>
 			<name>GNU LESSER GENERAL PUBLIC LICENSE</name>
@@ -35,15 +43,15 @@
 	<dependencyManagement>
 		<dependencies>
 			<dependency>
+				<groupId>net.sf.trove4j</groupId>
+				<artifactId>trove4j</artifactId>
+				<version>3.0.3</version>
+			</dependency>
+			<dependency>
 				<groupId>ognl</groupId>
 				<artifactId>ognl</artifactId>
 				<version>3.0.1</version>
 			</dependency>
-			<dependency>
-				<groupId>net.sf.trove4j</groupId>
-				<artifactId>trove4j</artifactId>
-				<version>3.0.3</version>
-			</dependency>			
 			<dependency>
 				<groupId>net.ulrice</groupId>
 				<artifactId>ulrice-core</artifactId>
@@ -64,7 +72,7 @@
 				<artifactId>ulrice-remote-control</artifactId>
 				<version>${project.version}</version>
 			</dependency>
- 			<dependency>
+			<dependency>
 				<groupId>net.ulrice</groupId>
 				<artifactId>ulrice-sample</artifactId>
 				<version>${project.version}</version>
@@ -93,6 +101,14 @@
 		</dependencies>
 	</dependencyManagement>
 
+    <distributionManagement>
+      <site>
+        <id>ulrice-ftp-site</id>
+        <name>Ulrice Site</name>
+        <url>ftp://ulrice.net/httpdocs</url>
+      </site>
+    </distributionManagement>
+	
 	<dependencies>
 		<dependency>
 			<groupId>junit</groupId>
@@ -102,7 +118,15 @@
 	</dependencies>
 
 	<build>
-		<plugins>
+      <extensions>
+        <!-- Enabling the use of FTP -->
+        <extension>
+          <groupId>org.apache.maven.wagon</groupId>
+           <artifactId>wagon-ftp</artifactId>
+           <version>1.0-beta-6</version>
+         </extension>
+      </extensions>		
+    <plugins>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-compiler-plugin</artifactId>

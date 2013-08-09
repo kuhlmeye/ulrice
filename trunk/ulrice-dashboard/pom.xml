@@ -36,6 +36,15 @@
 		<version>0.2.5.18-SNAPSHOT</version>
 		<relativePath>../ulrice</relativePath>
 	</parent>
+        
+        
+    <distributionManagement>
+      <site>
+        <id>ulrice-ftp-site</id>
+        <name>Ulrice Site</name>
+        <url>ftp://ulrice.net/httpdocs/ulrice-core</url>
+      </site>
+    </distributionManagement>
 
 	<dependencies>
 		<dependency>

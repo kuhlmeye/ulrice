@@ -38,6 +38,15 @@
 			<email>apunahassaphemapetilon@hotmail.com</email>
 		</developer>
 	</developers>
+        
+        
+    <distributionManagement>
+      <site>
+        <id>ulrice-ftp-site</id>
+        <name>Ulrice Site</name>
+        <url>ftp://ulrice.net/httpdocs/ulrice-translator</url>
+      </site>
+    </distributionManagement>
 	
 	<dependencies>
 	    <dependency>

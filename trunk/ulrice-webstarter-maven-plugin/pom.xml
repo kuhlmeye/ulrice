@@ -31,6 +31,22 @@
 			<email>apunahassaphemapetilon@hotmail.com</email>
 		</developer>
 	</developers>
+		
+	<parent>
+		<groupId>net.ulrice</groupId>
+		<artifactId>ulrice</artifactId>
+		<version>0.2.5.18-SNAPSHOT</version>
+		<relativePath>../ulrice</relativePath>
+	</parent>
+        
+        
+        <distributionManagement>
+          <site>
+            <id>ulrice-ftp-site</id>
+            <name>Ulrice Site</name>
+            <url>ftp://ulrice.net/httpdocs/ulrice-webstarter-maven-plugin</url>
+          </site>
+        </distributionManagement>
 
 	<dependencies>
 		<dependency>

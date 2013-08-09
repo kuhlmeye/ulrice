@@ -37,6 +37,14 @@
 		<relativePath>../ulrice</relativePath>
 	</parent>
 	
+   <distributionManagement>
+      <site>
+        <id>ulrice-ftp-site</id>
+        <name>Ulrice Site</name>
+        <url>ftp://ulrice.net/httpdocs/ulrice-webstarter</url>
+      </site>
+    </distributionManagement>
+	
 	<build>
 		<plugins>
 			<plugin>

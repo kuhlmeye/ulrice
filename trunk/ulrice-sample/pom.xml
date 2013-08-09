@@ -36,6 +36,15 @@
 		<version>0.2.5.18-SNAPSHOT</version>
 		<relativePath>../ulrice</relativePath>
 	</parent>
+        
+        
+    <distributionManagement>
+      <site>
+        <id>ulrice-ftp-site</id>
+        <name>Ulrice Site</name>
+        <url>ftp://ulrice.net/httpdocs/ulrice-sample</url>
+      </site>
+    </distributionManagement>
 
 	<properties>
 		<version.cucumber>1.0.0.RC13</version.cucumber>
