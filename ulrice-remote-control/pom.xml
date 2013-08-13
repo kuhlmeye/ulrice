@@ -15,9 +15,9 @@
 		</license>
 	</licenses>
 	<scm>
-		<connection>scm:svn:https://ulrice.googlecode.com/svn/trunk/ulrice-remote-control</connection>
-		<developerConnection>scm:svn:https://ulrice.googlecode.com/svn/trunk/ulrice-remote-control</developerConnection>
-		<url>http://ulrice.googlecode.com/svn/</url>
+		<connection>scm:svn:https://ulrice.googlecode.com/svn/tags/ulrice-0.2.5.18/ulrice-remote-control</connection>
+		<developerConnection>scm:svn:https://ulrice.googlecode.com/svn/tags/ulrice-0.2.5.18/ulrice-remote-control</developerConnection>
+		<url>http://ulrice.googlecode.com/svn/tags/ulrice-0.2.5.18/svn</url>
 	</scm>
 	<developers>
 		<developer>
@@ -49,7 +49,7 @@
 	<parent>
 		<groupId>net.ulrice</groupId>
 		<artifactId>ulrice</artifactId>
-		<version>0.2.5.18-SNAPSHOT</version>
+		<version>0.2.5.18</version>
 		<relativePath>../ulrice</relativePath>
 	</parent>
 
