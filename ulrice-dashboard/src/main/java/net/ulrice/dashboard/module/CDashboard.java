@@ -141,12 +141,6 @@ public class CDashboard extends AbstractController {
 		UlriceDashboard.getSettings().removeKey(moduleId);
 	}
 
-	/**
-	 * 
-	 * {@inheritDoc}
-	 * 
-	 * @see vwg.omd.dealerrc.base.BaseController#isTabClosable()
-	 */
 	public boolean isTabClosable() {
 		return false;
 	}
@@ -184,22 +178,10 @@ public class CDashboard extends AbstractController {
 		dashBoardEventListeners.remove(dev);
 	}
 
-	/**
-	 * 
-	 * {@inheritDoc}
-	 * 
-	 * @see vwg.omd.dealerrc.base.BaseController#getMenuInformationCommandBar()
-	 */
 	public String getMenuInformationCommandBar() {
 		return "> Available Modules";
 	}
 
-	/**
-	 * 
-	 * {@inheritDoc}
-	 * 
-	 * @see vwg.omd.dealerrc.base.BaseController#getMenuInformationWorkarea()
-	 */
 	public String getMenuInformationWorkarea() {
 		return "> Dashboard";
 	}
