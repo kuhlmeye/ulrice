@@ -43,7 +43,12 @@ public class DefaultAppPrefs implements IFAppPrefs {
     
 	private String buildConfigurationKey(Object requestingObject, String key) {
 		StringBuilder builder = new StringBuilder();
-        builder.append(requestingObject.getClass().getName());
+		if(requestingObject instanceof String) {
+	        builder.append(requestingObject);			
+		} else {
+	        builder.append(requestingObject.getClass().getName());
+		}
+		
         builder.append('.');
         builder.append(key);
 		return builder.toString();
