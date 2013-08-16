@@ -52,18 +52,30 @@ public class MainFrame extends JFrame implements IFMainFrame {
 		activeWorkarea = new TabbedWorkarea();
 		activeWorkarea.onActivateWorkarea();
 
-		ModuleTree moduleTree = new ModuleTree();
-		InstanceTree instanceTree = new InstanceTree();
-		Statusbar statusbar = new Statusbar();
-		Toolbar toolbar = new Toolbar(Ulrice.getAppPrefs().getConfiguration(this, "ActionOrder", Toolbar.MODULE_ACTIONS));
 		Menubar menubar = new Menubar();
-		
 		setJMenuBar(menubar);
-		add(toolbar, BorderLayout.NORTH);
-		add(new JScrollPane(moduleTree.getView()), BorderLayout.WEST);
-		add(new JScrollPane(instanceTree.getView()), BorderLayout.EAST);
+
+		Toolbar toolbar = new Toolbar(Ulrice.getAppPrefs().getConfiguration(this, "ActionOrder", Toolbar.MODULE_ACTIONS));
+		if(Boolean.getBoolean(Ulrice.getAppPrefs().getConfiguration(this, "ShowToolbar", "true"))) {
+			add(toolbar, BorderLayout.NORTH);
+		}
+
+		if(Boolean.getBoolean(Ulrice.getAppPrefs().getConfiguration(this, "ShowModuleTree", "true"))) {
+			ModuleTree moduleTree = new ModuleTree();
+			add(new JScrollPane(moduleTree.getView()), BorderLayout.WEST);
+		}
+
+		if(Boolean.getBoolean(Ulrice.getAppPrefs().getConfiguration(this, "ShowInstanceTree", "true"))) {
+			InstanceTree instanceTree = new InstanceTree();
+			add(new JScrollPane(instanceTree.getView()), BorderLayout.EAST);			
+		}
+		
 		add(activeWorkarea.getView(), BorderLayout.CENTER);
-		add(statusbar.getView(), BorderLayout.SOUTH);		
+
+		if(Boolean.getBoolean(Ulrice.getAppPrefs().getConfiguration(this, "ShowStatusbar", "true"))) {
+			Statusbar statusbar = new Statusbar();
+			add(statusbar.getView(), BorderLayout.SOUTH);						
+		}
 	}
 
 	/**
