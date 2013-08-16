@@ -37,7 +37,7 @@ public class MainFrame extends JFrame implements IFMainFrame {
 			
 			@Override
 			public void initializationFinished() {
-				setTitle(Ulrice.getAppPrefs().getConfiguration(this, "Title", ""));	
+				setTitle(Ulrice.getAppPrefs().getConfiguration(MainFrame.this, "Title", ""));	
 			}
 		});
 	}
