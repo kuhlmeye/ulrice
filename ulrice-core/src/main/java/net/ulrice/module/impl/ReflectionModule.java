@@ -19,7 +19,7 @@ import net.ulrice.module.exception.ModuleInstantiationException;
  * 
  * @author ckuhlmeyer
  */
-public class ReflectionModule implements IFModule {
+public class ReflectionModule<T extends IFController> implements IFModule<T> {
 
 	/** The unique id of the reflection module. */
 	private String uniqueId;
@@ -131,7 +131,7 @@ public class ReflectionModule implements IFModule {
 
 	
 	@Override
-	public void instantiateModule(ControllerProviderCallback callback, IFController parent) {
+	public void instantiateModule(ControllerProviderCallback<T> callback, IFController parent) {
 	    try {
 	        callback.onControllerReady (instantiateModuleInternal());
 	    }
@@ -140,23 +140,17 @@ public class ReflectionModule implements IFModule {
 	    }
 	}
 	
-	private IFController instantiateModuleInternal() throws ModuleInstantiationException {
+	private T instantiateModuleInternal() throws ModuleInstantiationException {
 		if (controllerClassName == null) {
 			throw new ModuleInstantiationException("Controller class name is null.", null);
 		}
 
 		try {
-			Class<?> controllerClass = Class.forName(controllerClassName);
-			Object controllerInstance = controllerClass.newInstance();
-
-			if (controllerInstance instanceof IFController) {
-				IFController controller = (IFController) controllerInstance;
-
-				return controller;
-			} else {
-				throw new ModuleInstantiationException("Controller class (" + controllerClassName + ") is not an instance of " + IFController.class.getName() + ".", null);
-			}
-
+			@SuppressWarnings("unchecked")
+			Class<? extends IFController> controllerClass = (Class<? extends IFController>) Class.forName(controllerClassName);
+			@SuppressWarnings("unchecked")
+			T controller = (T) controllerClass.newInstance();
+			return controller;
 		} catch (ClassNotFoundException e) {
 			throw new ModuleInstantiationException("Controller class (" + controllerClassName + ") could not be found.", e);
 		} catch (InstantiationException e) {
