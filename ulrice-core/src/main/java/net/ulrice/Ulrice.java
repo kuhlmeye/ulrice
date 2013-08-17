@@ -2,6 +2,7 @@ package net.ulrice;
 
 import java.lang.reflect.InvocationTargetException;
 
+import javax.swing.JFrame;
 import javax.swing.SwingUtilities;
 import javax.swing.event.EventListenerList;
 
@@ -127,6 +128,29 @@ public class Ulrice {
 				Ulrice.shutdown();
 			}
 		}));
+    }
+    
+    public static void initializeAndShow(IFUlriceConfiguration configuration, int width, int height) throws ConfigurationException {
+    	Ulrice.initialize(configuration);
+		JFrame frame = Ulrice.getMainFrame().getFrame();
+		frame.setSize(width, height);
+		frame.setLocationRelativeTo(null);
+		frame.setVisible(true);    	
+    }
+    
+    public static void initializeAndShowPacked(IFUlriceConfiguration configuration) throws ConfigurationException {
+    	Ulrice.initialize(configuration);
+		JFrame frame = Ulrice.getMainFrame().getFrame();
+		frame.pack();
+		frame.setLocationRelativeTo(null);
+		frame.setVisible(true);    	
+    }
+    
+    public static void initializeAndShow(IFUlriceConfiguration configuration) throws ConfigurationException {
+    	Ulrice.initialize(configuration);
+		JFrame frame = Ulrice.getMainFrame().getFrame();
+		frame.setLocationRelativeTo(null);
+		frame.setVisible(true);    	
     }
 
     public static void shutdown() {
