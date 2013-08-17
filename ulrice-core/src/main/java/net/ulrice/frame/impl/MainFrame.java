@@ -55,28 +55,28 @@ public class MainFrame extends JFrame implements IFMainFrame {
 		setJMenuBar(menubar);
 
 		Toolbar toolbar = new Toolbar(Ulrice.getAppPrefs().getConfiguration(this, "ActionOrder", Toolbar.MODULE_ACTIONS));
-		if(Boolean.getBoolean(Ulrice.getAppPrefs().getConfiguration(this, "ShowToolbar", "true"))) {
+		if(Boolean.parseBoolean(Ulrice.getAppPrefs().getConfiguration(this, "ShowToolbar", "true"))) {
 			add(toolbar, BorderLayout.NORTH);
 		}
 
-		if(Boolean.getBoolean(Ulrice.getAppPrefs().getConfiguration(this, "ShowModuleTree", "true"))) {
+		if(Boolean.parseBoolean(Ulrice.getAppPrefs().getConfiguration(this, "ShowModuleTree", "true"))) {
 			ModuleTree moduleTree = new ModuleTree();
 			add(new JScrollPane(moduleTree.getView()), BorderLayout.WEST);
 		}
 
-		if(Boolean.getBoolean(Ulrice.getAppPrefs().getConfiguration(this, "ShowInstanceTree", "true"))) {
+		if(Boolean.parseBoolean(Ulrice.getAppPrefs().getConfiguration(this, "ShowInstanceTree", "true"))) {
 			InstanceTree instanceTree = new InstanceTree();
 			add(new JScrollPane(instanceTree.getView()), BorderLayout.EAST);			
 		}
 		
 		add(activeWorkarea.getView(), BorderLayout.CENTER);
 
-		if(Boolean.getBoolean(Ulrice.getAppPrefs().getConfiguration(this, "ShowStatusbar", "true"))) {
+		if(Boolean.parseBoolean(Ulrice.getAppPrefs().getConfiguration(this, "ShowStatusbar", "true"))) {
 			Statusbar statusbar = new Statusbar();
 			add(statusbar.getView(), BorderLayout.SOUTH);						
 		}
 
-		if(Boolean.getBoolean(Ulrice.getAppPrefs().getConfiguration(this, "ExitOnClose", "true"))) {
+		if(Boolean.parseBoolean(Ulrice.getAppPrefs().getConfiguration(this, "ExitOnClose", "true"))) {
 			setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		} else {
 			setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
