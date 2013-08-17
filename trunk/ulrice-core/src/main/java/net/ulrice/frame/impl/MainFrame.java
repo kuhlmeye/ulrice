@@ -31,7 +31,6 @@ public class MainFrame extends JFrame implements IFMainFrame {
 	 * Creates a new main frame.
 	 */
 	public MainFrame() {
-		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		setLayout(new BorderLayout());
 		Ulrice.addConfigurationListener(new ConfigurationListener() {
 			
@@ -75,6 +74,12 @@ public class MainFrame extends JFrame implements IFMainFrame {
 		if(Boolean.getBoolean(Ulrice.getAppPrefs().getConfiguration(this, "ShowStatusbar", "true"))) {
 			Statusbar statusbar = new Statusbar();
 			add(statusbar.getView(), BorderLayout.SOUTH);						
+		}
+
+		if(Boolean.getBoolean(Ulrice.getAppPrefs().getConfiguration(this, "ExitOnClose", "true"))) {
+			setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		} else {
+			setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		}
 	}
 
