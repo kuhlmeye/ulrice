@@ -18,15 +18,7 @@ public class DefaultAppPrefs implements IFAppPrefs {
     @Override
     public String getConfiguration(Object requestingObject, String key, String defaultValue) {
         String cfgKey = buildConfigurationKey(requestingObject, key);
-
-        try {
-			if(preferences.nodeExists(cfgKey)) {
-				return preferences.get(cfgKey, defaultValue);
-			}
-		} catch (BackingStoreException e) {
-			// Nothing to do..
-		}
-        return defaultValue;
+		return preferences.get(cfgKey, defaultValue);
     }
     
     @Override
