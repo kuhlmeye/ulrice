@@ -149,7 +149,8 @@ public class UTableVAFilter extends RowFilter<UTableViewAdapter, Long> implement
                 }
             }
 
-        }
+       }
+        
         if (toIndex < columnModel.getColumnCount()) {
             createFilterComponentForColumn(tableHeader, columnModel, toIndex);
         }
@@ -160,7 +161,10 @@ public class UTableVAFilter extends RowFilter<UTableViewAdapter, Long> implement
 
     private void createFilterComponentForColumn(UTableVAHeader tableHeader, TableColumnModel columnModel, int i) {
         final TableColumn column = columnModel.getColumn(i);
+        
         final ColumnDefinition< ?> columnDefinition = (ColumnDefinition< ?>) column.getHeaderValue();
+        
+        
         final FilterMode filterMode = columnDefinition.getFilterMode();
         columnFilterModes.put(columnDefinition.getId(), filterMode);
         if (!FilterMode.NoFilter.equals(filterMode)) {
@@ -175,6 +179,9 @@ public class UTableVAFilter extends RowFilter<UTableViewAdapter, Long> implement
                     field.getDocument().putProperty(DOCUMENT_PROPERTY_FIELD_ID, columnDefinition.getId());
                     field.getDocument().addDocumentListener(this);
                     field.addMouseListener(new ContextMenuMouseListener());
+                    
+                    field.setText(columnDefinition.getPreFilledFilterValue());
+                    
                     component = field;
                     break;
                 }
@@ -258,6 +265,7 @@ public class UTableVAFilter extends RowFilter<UTableViewAdapter, Long> implement
                         field.setName(columnDefinition.getId());
                         field.getDocument().putProperty(DOCUMENT_PROPERTY_FIELD_ID, columnDefinition.getId());
                         field.getDocument().addDocumentListener(this);
+                        field.setText(columnDefinition.getPreFilledFilterValue());
                         component = field;
                         break;
                     }

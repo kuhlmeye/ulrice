@@ -58,6 +58,8 @@ public class ColumnDefinition<T extends Object> implements PropertyChangeListene
 
     private boolean isListOrderRelevant = false;
     private boolean useListAM = false;
+    
+    private String preFilledFilterValue;
 
 	public enum ColumnType {
 		Editable,
@@ -521,6 +523,16 @@ public class ColumnDefinition<T extends Object> implements PropertyChangeListene
 
     public List<UTableRenderer> getPreRendererList() {
         return preRendererList;
+    }
+   
+
+    public String getPreFilledFilterValue() {
+        return preFilledFilterValue;
+    }
+
+    public ColumnDefinition<T> setPreFilledFilterValue(String preFilledFilterValue) {
+        this.preFilledFilterValue = preFilledFilterValue;
+        return this;
     }
 
     /**
