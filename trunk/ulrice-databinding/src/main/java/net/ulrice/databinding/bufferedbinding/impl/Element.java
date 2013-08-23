@@ -140,6 +140,8 @@ public class Element {
 			} else {
 				return true;
 			}
+        default:
+            break;
 		}
 
 		return true;

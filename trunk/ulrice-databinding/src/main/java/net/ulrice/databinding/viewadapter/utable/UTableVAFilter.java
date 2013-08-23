@@ -467,6 +467,8 @@ public class UTableVAFilter extends RowFilter<UTableViewAdapter, Long> implement
                         return value == null ? false : numericPattern.matches(value);
                         // }
                     }
+                default:
+                    break;
             }
         }
 
@@ -658,6 +660,8 @@ public class UTableVAFilter extends RowFilter<UTableViewAdapter, Long> implement
                     break;
                     }
                 }
+                default:
+                    break;
             }
         }
         

@@ -9,7 +9,7 @@ import javax.swing.event.EventListenerList;
 import javax.swing.table.TableCellEditor;
 
 /**
- * UTableEditor, bases on the {@link AbstractUTableRenderer} and the {@link AbstractCellEditor} of swing.
+ * UTableEditor, based on the {@link AbstractUTableRenderer} and the {@link AbstractCellEditor} of Swing.
  * 
  * @author HAM
  */
