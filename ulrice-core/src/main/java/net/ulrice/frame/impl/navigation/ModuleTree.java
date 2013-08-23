@@ -131,6 +131,8 @@ public class ModuleTree extends JTree implements IFMainFrameComponent, MouseList
 					}
 				});
 				break;
+            default:
+                break;
 		}
 	}
 

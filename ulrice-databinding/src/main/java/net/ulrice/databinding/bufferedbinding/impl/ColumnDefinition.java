@@ -150,7 +150,7 @@ public class ColumnDefinition<T extends Object> implements PropertyChangeListene
         if (Number.class.isAssignableFrom(columnClass)) {
             setFilterMode(FilterMode.Numeric);
         }
-        else if (Boolean.class.isAssignableFrom(columnClass)) {
+        else if ((Boolean.class == columnClass) || (Boolean.TYPE == columnClass)) {
             setFilterMode(FilterMode.Boolean);
         }
         else if (Enum.class.isAssignableFrom(columnClass)) {
