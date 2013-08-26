@@ -2,7 +2,6 @@ package net.ulrice;
 
 import java.lang.reflect.InvocationTargetException;
 
-import javax.swing.JFrame;
 import javax.swing.SwingUtilities;
 import javax.swing.event.EventListenerList;
 
@@ -15,6 +14,7 @@ import net.ulrice.message.MessageHandler;
 import net.ulrice.message.TranslationProvider;
 import net.ulrice.module.IFModuleManager;
 import net.ulrice.module.IFModuleStructureManager;
+import net.ulrice.module.ModuleRegistrationHelper;
 import net.ulrice.module.impl.action.ModuleActionManager;
 import net.ulrice.options.ApplicationOptions;
 import net.ulrice.process.ProcessManager;
@@ -63,19 +63,25 @@ public class Ulrice {
 
     private static IFAppPrefs appPrefs;
 
+    public static void start(IFUlriceConfiguration configuration) throws ConfigurationException {
+    	initialize(configuration);
+    	show();
+    }
+    
     /**
      * Initializes ulrice.
      * 
      * @param configuration The configuration used to initialize ulrice.
      * @throws ConfigurationException If the configuration could not be loaded.
      */
-    public static void initialize(IFUlriceConfiguration configuration) throws ConfigurationException {
+    public static void initialize(final IFUlriceConfiguration configuration) throws ConfigurationException {
         UI.applyDefaultUI();
         Ulrice.appPrefs = configuration.getAppPrefs();
         Ulrice.moduleManager = configuration.getModuleManager();
         Ulrice.moduleStructureManager = configuration.getModuleStructureManager();
         Ulrice.messageHandler = new MessageHandler();
         Ulrice.actionManager = new ModuleActionManager();
+        
         Ulrice.processManager = new ProcessManager();
         Ulrice.dialogManager = new DialogManager();
         Ulrice.translationProvider = configuration.getTranslationProvider();
@@ -88,23 +94,12 @@ public class Ulrice {
             Ulrice.securityManager = new GrantAllAuthCallback();
         }
 
+        configuration.getConfigurationCallback().addApplicationActions(actionManager);
+
+        
         Ulrice.mainFrame = configuration.getMainFrame();
         if (Ulrice.mainFrame != null) {
-            try {
-                SwingUtilities.invokeAndWait(new Runnable() {
-
-                    @Override
-                    public void run() {
-                        Ulrice.mainFrame.inializeLayout();
-                    }
-                });
-            }
-            catch (InterruptedException e) {
-                Ulrice.getMessageHandler().handleException(e);
-            }
-            catch (InvocationTargetException e) {
-                Ulrice.getMessageHandler().handleException(e);
-            }
+            initMainFrame(configuration);
         }
 
         ConfigurationListener[] listeners = listenerList.getListeners(ConfigurationListener.class);
@@ -128,29 +123,35 @@ public class Ulrice {
 				Ulrice.shutdown();
 			}
 		}));
+        
+
+        configuration.getConfigurationCallback().registerModules(new ModuleRegistrationHelper(moduleStructureManager, moduleManager));
+        moduleStructureManager.fireModuleStructureChanged();
     }
+
+	private static void initMainFrame(final IFUlriceConfiguration configuration) {
+		if(SwingUtilities.isEventDispatchThread()) {
+            Ulrice.mainFrame.inializeLayout(Ulrice.getAppPrefs(), configuration.getConfigurationCallback());
+		} else {
+			try {
+			    SwingUtilities.invokeAndWait(new Runnable() {
+			        @Override
+			        public void run() {
+			            Ulrice.mainFrame.inializeLayout(Ulrice.getAppPrefs(), configuration.getConfigurationCallback());
+			        }
+			    });
+			}
+			catch (InterruptedException e) {
+			    Ulrice.getMessageHandler().handleException(e);
+			}
+			catch (InvocationTargetException e) {
+			    Ulrice.getMessageHandler().handleException(e);
+			}
+		}
+	}
     
-    public static void initializeAndShow(IFUlriceConfiguration configuration, int width, int height) throws ConfigurationException {
-    	Ulrice.initialize(configuration);
-		JFrame frame = Ulrice.getMainFrame().getFrame();
-		frame.setSize(width, height);
-		frame.setLocationRelativeTo(null);
-		frame.setVisible(true);    	
-    }
-    
-    public static void initializeAndShowPacked(IFUlriceConfiguration configuration) throws ConfigurationException {
-    	Ulrice.initialize(configuration);
-		JFrame frame = Ulrice.getMainFrame().getFrame();
-		frame.pack();
-		frame.setLocationRelativeTo(null);
-		frame.setVisible(true);    	
-    }
-    
-    public static void initializeAndShow(IFUlriceConfiguration configuration) throws ConfigurationException {
-    	Ulrice.initialize(configuration);
-		JFrame frame = Ulrice.getMainFrame().getFrame();
-		frame.setLocationRelativeTo(null);
-		frame.setVisible(true);    	
+    public static void show() {
+		Ulrice.getMainFrame().getFrame().setVisible(true);    	
     }
 
     public static void shutdown() {

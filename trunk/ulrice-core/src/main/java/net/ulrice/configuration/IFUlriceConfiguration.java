@@ -50,4 +50,6 @@ public interface IFUlriceConfiguration {
     ProfilePersister getProfilePersister();
 
 	IFAppPrefs getAppPrefs();
+	
+	UlriceConfigurationCallback getConfigurationCallback();
 }

@@ -38,6 +38,7 @@ public class Toolbar extends JToolBar implements IFModuleActionManagerEventListe
     public Toolbar(String actionOrder) {
         this();
         setActionOrder(actionOrder);
+        rebuildActions();
     }
 
     /**
@@ -45,6 +46,7 @@ public class Toolbar extends JToolBar implements IFModuleActionManagerEventListe
      */
     public Toolbar() {
         Ulrice.getActionManager().addModuleActionManagerEventListener(this);
+        setFloatable(false);
     }
 
     public void setActionOrder(String actionOrder) {

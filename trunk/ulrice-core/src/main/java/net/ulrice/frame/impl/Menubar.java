@@ -3,16 +3,11 @@
  */
 package net.ulrice.frame.impl;
 
-import javax.swing.JMenu;
 import javax.swing.JMenuBar;
-import javax.swing.JMenuItem;
 
 import net.ulrice.Ulrice;
+import net.ulrice.configuration.UlriceConfigurationCallback;
 import net.ulrice.module.event.IFModuleActionManagerEventListener;
-import net.ulrice.module.impl.action.CloseAllModulesAction;
-import net.ulrice.module.impl.action.CloseModuleAction;
-import net.ulrice.module.impl.action.ExitApplicationAction;
-import net.ulrice.module.impl.action.ModuleActionManager;
 
 /**
  * The menubar.
@@ -23,11 +18,15 @@ public class Menubar extends JMenuBar implements IFModuleActionManagerEventListe
 
 	/** Default generated serial version uid. */
 	private static final long serialVersionUID = 1380850325014925542L;
+	private UlriceConfigurationCallback configurationCallback;
 
 	/**
 	 * Creates a new toolbar.
+	 * @param configurationCallback 
 	 */
-	public Menubar() {
+	public Menubar(UlriceConfigurationCallback configurationCallback) {
+		this.configurationCallback = configurationCallback;
+		actionsChanged();
 		Ulrice.getActionManager().addModuleActionManagerEventListener(this);
 	}
 
@@ -46,14 +45,10 @@ public class Menubar extends JMenuBar implements IFModuleActionManagerEventListe
 
 	private void actionsChanged() {
 		removeAll();
-		ModuleActionManager actionManager = Ulrice.getActionManager();
-		
-		JMenu file = new JMenu("File");
-		file.add(new JMenuItem(actionManager.getApplicationAction(CloseModuleAction.ACTION_ID)));
-		file.add(new JMenuItem(actionManager.getApplicationAction(CloseAllModulesAction.ACTION_ID)));		
-		file.add(new JMenuItem(actionManager.getApplicationAction(ExitApplicationAction.ACTION_ID)));				
 
-		add(file);
+		if(configurationCallback != null) {
+			configurationCallback.configureMenu(this, Ulrice.getActionManager());
+		}
 		
 		doLayout();
 	}

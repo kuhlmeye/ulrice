@@ -4,6 +4,7 @@ import net.ulrice.appprefs.DefaultAppPrefs;
 import net.ulrice.appprefs.IFAppPrefs;
 import net.ulrice.frame.IFMainFrame;
 import net.ulrice.frame.impl.MainFrame;
+import net.ulrice.frame.impl.MainFrameConfig;
 import net.ulrice.message.EmptyTranslationProvider;
 import net.ulrice.message.TranslationProvider;
 import net.ulrice.module.IFModuleManager;
@@ -22,6 +23,15 @@ public class DefaultUlriceConfiguration implements IFUlriceConfiguration {
 	private EmptyTranslationProvider translationProvider = new EmptyTranslationProvider();
 	private DefaultProfilePersister profilePersister = new DefaultProfilePersister();
 	private DefaultAppPrefs appPrefs = new DefaultAppPrefs();
+	private UlriceConfigurationCallback callback;
+	
+	public DefaultUlriceConfiguration(UlriceConfigurationCallback callback) throws ConfigurationException {
+		this.callback = callback;
+		MainFrameConfig mainFrameConfig = new MainFrameConfig();
+		callback.configureUlrice(appPrefs, mainFrameConfig);
+		mainFrameConfig.activateConfiguration(appPrefs);
+	}
+	
 	
 	public IFModuleManager getModuleManager() {
 		return moduleManager;
@@ -49,5 +59,10 @@ public class DefaultUlriceConfiguration implements IFUlriceConfiguration {
 
 	public IFAppPrefs getAppPrefs() {
 		return appPrefs;
+	}
+	
+	@Override
+	public UlriceConfigurationCallback getConfigurationCallback() {
+		return callback;
 	}
 }

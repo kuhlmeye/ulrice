@@ -31,7 +31,6 @@ public abstract class ClassLoadingHelper {
 	 * @throws ConfigurationException
 	 *             If the instance could not be created.
 	 */
-	@SuppressWarnings("unchecked")
 	protected Object loadClass(String className) throws ConfigurationException {
 
 		// Check, if class name is null.
@@ -44,7 +43,7 @@ public abstract class ClassLoadingHelper {
 		}
 
 		try {
-			Class instanceClass = Class.forName(className);
+			Class<?> instanceClass = Class.forName(className);
 			Object instance = instanceClass.newInstance();
 			
 			instanceMap.put(className, instance);
