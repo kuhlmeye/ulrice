@@ -4,6 +4,7 @@ import net.ulrice.appprefs.DefaultAppPrefs;
 import net.ulrice.appprefs.IFAppPrefs;
 import net.ulrice.configuration.ConfigurationException;
 import net.ulrice.configuration.IFUlriceConfiguration;
+import net.ulrice.configuration.UlriceConfigurationCallback;
 import net.ulrice.frame.IFMainFrame;
 import net.ulrice.message.TranslationProvider;
 import net.ulrice.module.IFModuleManager;
@@ -91,6 +92,11 @@ public class AbstractUlriceTest implements IFUlriceConfiguration {
 	@Override
 	public IFAppPrefs getAppPrefs() {
 		return new DefaultAppPrefs();
+	}
+
+	@Override
+	public UlriceConfigurationCallback getConfigurationCallback() {
+		return null;
 	}
 
 }

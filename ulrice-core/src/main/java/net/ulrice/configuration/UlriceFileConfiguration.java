@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
 
-import net.ulrice.Ulrice;
 import net.ulrice.appprefs.DefaultAppPrefs;
 import net.ulrice.appprefs.IFAppPrefs;
 import net.ulrice.frame.IFMainFrame;
@@ -45,17 +44,7 @@ public class UlriceFileConfiguration extends ClassLoadingHelper implements IFUlr
 
 	private IFAppPrefs appPrefs;
 
-	/**
-	 * Initialize ulrice by a file configuration.
-	 * 
-	 * @param configurationStream
-	 *            The configuration file.
-	 * @throws ConfigurationException
-	 *             If the configuration could not be loaded.
-	 */
-	public static void initializeUlrice(InputStream configurationStream) throws ConfigurationException {
-		new UlriceFileConfiguration(configurationStream);
-	}
+	private UlriceConfigurationCallback configurationCallback;
 
 	/**
 	 * Initialize ulrice by a file configuration.
@@ -85,10 +74,7 @@ public class UlriceFileConfiguration extends ClassLoadingHelper implements IFUlr
 		authCallback = (IFAuthCallback) loadClass(properties.getProperty(IFAuthCallback.class.getName(), null));		
 		translationProvider = (TranslationProvider) loadClass(properties.getProperty(TranslationProvider.class.getName(), EmptyTranslationProvider.class.getName()));
 		profilePersister = (ProfilePersister) loadClass(properties.getProperty(ProfilePersister.class.getName(), DefaultProfilePersister.class.getName()));
-
-		
-		// Initialize ulrice.
-		Ulrice.initialize(this);
+		configurationCallback = (UlriceConfigurationCallback) loadClass(properties.getProperty(UlriceConfigurationCallback.class.getName(), UlriceConfigurationCallbackAdapter.class.getName()));
 	}
 
 	/**
@@ -134,5 +120,9 @@ public class UlriceFileConfiguration extends ClassLoadingHelper implements IFUlr
 	@Override
 	public IFAppPrefs getAppPrefs() {
 		return appPrefs;
+	}
+	@Override
+	public UlriceConfigurationCallback getConfigurationCallback() {
+		return configurationCallback;
 	}
 }

@@ -2,10 +2,13 @@ package net.ulrice.frame.impl.navigation;
 
 import java.awt.Component;
 
+import javax.swing.ImageIcon;
+import javax.swing.JLabel;
 import javax.swing.JTree;
 import javax.swing.tree.DefaultTreeCellRenderer;
 
 import net.ulrice.module.IFModuleTitleProvider.Usage;
+import net.ulrice.module.ModuleIconSize;
 
 public class ModuleTreeCellRenderer extends DefaultTreeCellRenderer {
 
@@ -20,6 +23,8 @@ public class ModuleTreeCellRenderer extends DefaultTreeCellRenderer {
         boolean leaf, int row, boolean hasFocus) {
 
         Object renderValue = value;
+        
+        ImageIcon icon = null;
 
         if (value instanceof ModuleTreeNode) {
             ModuleTreeNode node = (ModuleTreeNode) renderValue;
@@ -30,9 +35,11 @@ public class ModuleTreeCellRenderer extends DefaultTreeCellRenderer {
                     break;
                 case Module:
                     buffer.append(node.getModule().getModuleTitle(Usage.ModuleTree));
+                    icon = node.getModule().getIcon(ModuleIconSize.Size_16x16);
                     break;
                 case ProfiledModule:
                     buffer.append(node.getProfiledModule().getProfileId());
+                    icon = node.getProfiledModule().getProfileHandlerModule().getIcon(ModuleIconSize.Size_16x16);
                     break;
                 default:
                     break;
@@ -40,7 +47,14 @@ public class ModuleTreeCellRenderer extends DefaultTreeCellRenderer {
             renderValue = buffer.toString();
         }
 
-        return super.getTreeCellRendererComponent(tree, renderValue, sel, expanded, leaf, row, hasFocus);
+        Component rendererComponent = super.getTreeCellRendererComponent(tree, renderValue, sel, expanded, leaf, row, hasFocus);
+        if(icon != null) {
+	        if(rendererComponent instanceof JLabel) {
+	        	JLabel renderLabel = (JLabel) rendererComponent;
+	        	renderLabel.setIcon(icon);
+	        }
+        }
+		return rendererComponent;
     }
 
 }

@@ -41,6 +41,10 @@ public class ReflectionModule<T extends IFController> implements IFModule<T> {
 	
 	private Map<String, Object> parameterMap;
 
+	public ReflectionModule(Class<T> clazz, ModuleType moduleType, String name) {
+		this(clazz.getName(), moduleType, clazz.getName(), null, new SimpleModuleTitleRenderer(name));
+	}
+	
 	/**
 	 * Creates a new reflection module. It takes the unique id as the module title.
 	 * 

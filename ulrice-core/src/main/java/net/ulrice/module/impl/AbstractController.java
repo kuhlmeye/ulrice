@@ -1,12 +1,15 @@
 package net.ulrice.module.impl;
 
-import java.util.Collections;
+import java.util.Arrays;
 import java.util.List;
 
 import net.ulrice.Ulrice;
+import net.ulrice.message.EmptyTranslationProvider;
 import net.ulrice.message.MessageSeverity;
+import net.ulrice.message.ModuleTranslationProvider;
 import net.ulrice.module.IFController;
 import net.ulrice.module.IFModuleTitleProvider;
+import net.ulrice.module.impl.action.UActionState;
 
 /**
  * Creates an abstract controller.
@@ -15,8 +18,18 @@ import net.ulrice.module.IFModuleTitleProvider;
  */
 public abstract class AbstractController implements IFController {
 
+	private AnnotatedActionMethodHandler actionMethodHandler;
+	private ModuleTranslationProvider translationProvider;
+	
 	public IFModuleTitleProvider getTitleProvider() {
 	    return null;
+	}
+	
+	public ModuleTranslationProvider getTranslationProvider() {
+		if(translationProvider == null) {
+			translationProvider = new EmptyTranslationProvider();
+		}
+		return translationProvider;
 	}
 
 	/**
@@ -75,15 +88,32 @@ public abstract class AbstractController implements IFController {
 	public void postMessage(MessageSeverity severity, String message) {
 		Ulrice.getMessageHandler().handleMessage(this, severity, message);
 	}
+	
 
-	@SuppressWarnings("unchecked")
+	public void setActionStates(UActionState... actionStates) {
+		Ulrice.getActionManager().setActionStates(this, Arrays.asList(actionStates));
+	}
+
     @Override
-	public List<ModuleActionState> getHandledActions() {
-		return Collections.EMPTY_LIST;
+	public List<ModuleActionState> getHandledActions() {	
+		if(actionMethodHandler == null) {
+			actionMethodHandler = new AnnotatedActionMethodHandler(this, getTranslationProvider());
+		}
+	
+		
+		return actionMethodHandler.getHandledActions();
 	}
 
 	@Override
 	public boolean performModuleAction(String actionId) {
+		if(actionMethodHandler != null) {
+			return actionMethodHandler.performModuleAction(actionId);
+		}
 		return false;
+	}
+	
+	@Override
+	public void onClose(IFClosing closing) {
+		closing.doClose();
 	}
 }
