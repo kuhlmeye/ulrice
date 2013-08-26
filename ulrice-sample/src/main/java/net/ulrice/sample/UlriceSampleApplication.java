@@ -1,22 +1,25 @@
 package net.ulrice.sample;
 
-import java.awt.event.ActionEvent;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
-import java.io.InputStream;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import javax.swing.ImageIcon;
-import javax.swing.JFrame;
+import javax.swing.JMenu;
+import javax.swing.JMenuItem;
 
 import net.ulrice.Ulrice;
+import net.ulrice.appprefs.IFAppPrefs;
 import net.ulrice.configuration.ConfigurationException;
-import net.ulrice.configuration.UlriceFileConfiguration;
+import net.ulrice.configuration.DefaultUlriceConfiguration;
+import net.ulrice.configuration.UlriceConfigurationCallback;
+import net.ulrice.frame.impl.MainFrameConfig;
+import net.ulrice.frame.impl.Menubar;
+import net.ulrice.frame.impl.Toolbar;
 import net.ulrice.module.ControllerProviderCallback;
 import net.ulrice.module.IFController;
 import net.ulrice.module.IFModule;
 import net.ulrice.module.ModuleIconSize;
+import net.ulrice.module.ModuleRegistrationHelper;
 import net.ulrice.module.ModuleType;
 import net.ulrice.module.impl.AuthReflectionModule;
 import net.ulrice.module.impl.SimpleModuleTitleRenderer;
@@ -25,7 +28,12 @@ import net.ulrice.module.impl.action.CloseModuleAction;
 import net.ulrice.module.impl.action.ExitApplicationAction;
 import net.ulrice.module.impl.action.ModuleActionManager;
 import net.ulrice.module.impl.action.ModuleDelegationAction;
+import net.ulrice.sample.module.behavior.CBehavior;
+import net.ulrice.sample.module.databinding.CDataBinding;
+import net.ulrice.sample.module.databinding.radiobutton.CRadioButtonSample;
+import net.ulrice.sample.module.laflist.LafListController;
 import net.ulrice.sample.module.masktextfield.MaskTextFieldModule;
+import net.ulrice.sample.module.moviedb.CMovieDB;
 import net.ulrice.sample.module.processsample.ProcessSampleModule;
 import net.ulrice.sample.module.profiledmodulesample.ProfiledModuleSampleModule;
 import net.ulrice.security.Authorization;
@@ -51,49 +59,65 @@ public class UlriceSampleApplication {
 
 		// Initialize ulrice.
 		try {
-			InputStream configurationStream = UlriceSampleApplication.class.getResourceAsStream("ulrice.properties");
-			UlriceFileConfiguration.initializeUlrice(configurationStream);
+			Ulrice.start(new DefaultUlriceConfiguration(new UlriceConfigurationCallback() {
+				
+				@Override
+				public void configureUlrice(IFAppPrefs appPrefs, MainFrameConfig mainFrameConfig) {
+					mainFrameConfig.setToolbarActionOrder(ExitApplicationAction.ACTION_ID, Toolbar.MODULE_ACTIONS);
+					mainFrameConfig.setTitle("Ulrice Sample Application");
+				}
+
+				@Override
+				public void addApplicationActions(ModuleActionManager actionManager) {
+					actionManager.addApplicationAction(new ExitApplicationAction("Exit", loadImage("exit.png")));
+					actionManager.addApplicationAction(new CloseAllModulesAction("Close All", null));
+					actionManager.addApplicationAction(new CloseModuleAction("Close", loadImage("close.gif")));
+					actionManager.addApplicationAction(new ModuleDelegationAction("TEST1", "TEST1", false, null));
+					actionManager.addApplicationAction(new ModuleDelegationAction("TEST2", "TEST2", false, null));
+					actionManager.addApplicationAction(new ModuleDelegationAction("TEST3", "TEST3", false, null));		
+				}
+
+				@Override
+				public void configureMenu(Menubar menubar, ModuleActionManager actionManager) {
+					
+					JMenu file = new JMenu("File");
+					file.add(new JMenuItem(actionManager.getApplicationAction(CloseModuleAction.ACTION_ID)));
+					file.add(new JMenuItem(actionManager.getApplicationAction(CloseAllModulesAction.ACTION_ID)));		
+					file.add(new JMenuItem(actionManager.getApplicationAction(ExitApplicationAction.ACTION_ID)));				
+
+					menubar.add(file);
+				}
+				
+				@Override
+				public void registerModules(ModuleRegistrationHelper regHelper) {
+					regHelper.addTopModule(new ProfiledModuleSampleModule());
+					regHelper.addTopModule(new ProcessSampleModule());
+					regHelper.addTopModule(new MaskTextFieldModule());	
+					regHelper.addTopModule(createTranslatorModule());	
+
+					regHelper.addTopModule(createAuthModule(ModuleType.NormalModule, CMovieDB.class, "Movie DB", "MOVIEDB"));
+					regHelper.addTopModule(createAuthModule(ModuleType.NormalModule, LafListController.class, "Look And Feel Constants", "LAFLIST"));
+					regHelper.addTopModule(createAuthModule(ModuleType.NormalModule, CDataBinding.class, "Databinding", "DATABINDING"));
+					regHelper.addTopModule(createAuthModule(ModuleType.NormalModule, CRadioButtonSample.class, "Radio Button", "RADIOBUTTON"));
+					regHelper.addTopModule(createAuthModule(ModuleType.NormalModule, CBehavior.class, "BDD", "BDD"));
+				}
+			}));
 			UlriceSampleDatabindingConfiguration.initialize();
 		} catch (ConfigurationException e) {
 			LOG.log(Level.SEVERE, "Configuration exception occurred.", e);
 			System.exit(0);
 		}		
 
-		// Define the modules.
-		AuthReflectionModule movieDBModule = new AuthReflectionModule("movieDB", ModuleType.NormalModule,
-				"net.ulrice.sample.module.moviedb.CMovieDB", "net/ulrice/sample/module/sample1/moduleicon.png",
-				new SimpleModuleTitleRenderer("Movie DB"));
-		movieDBModule.setAuthorization(new Authorization(SampleSecurityCallback.TYPE_MODULE_REGISTER, "MOVIEDB"));
+	}
 
-		AuthReflectionModule sampleModule1 = new AuthReflectionModule("sampleModule1", ModuleType.NormalModule,
-				"net.ulrice.sample.module.sample1.CSample1", "net/ulrice/sample/module/sample1/moduleicon.png",
-				new SimpleModuleTitleRenderer("Sample 1"));
-		sampleModule1.setAuthorization(new Authorization(SampleSecurityCallback.TYPE_MODULE_REGISTER, "SAMPLE1"));
-		
-		AuthReflectionModule sampleModule2 = new AuthReflectionModule("sampleModule2", ModuleType.NormalModule,
-				"net.ulrice.sample.module.sample2.CSample2", "net/ulrice/sample/module/sample2/moduleicon.png",
-				new SimpleModuleTitleRenderer("Sample 2"));
-		sampleModule2.setAuthorization(new Authorization(SampleSecurityCallback.TYPE_MODULE_REGISTER, "SAMPLE2"));
-		
-		AuthReflectionModule lafListModule = new AuthReflectionModule("lafList", ModuleType.NormalModule,
-				"net.ulrice.sample.module.laflist.LafListController", "net/ulrice/sample/module/laflist/moduleicon.png",
-				new SimpleModuleTitleRenderer("Look And Feel Constants"));
-		lafListModule.setAuthorization(new Authorization(SampleSecurityCallback.TYPE_MODULE_REGISTER, "LAFLIST"));
-		
-		AuthReflectionModule dataBindingSample = new AuthReflectionModule("databinding", ModuleType.NormalModule,
-				"net.ulrice.sample.module.databinding.CDataBinding", "net/ulrice/sample/module/databinding/moduleicon.png",
-				new SimpleModuleTitleRenderer("Data Binding Sample"));
-		dataBindingSample.setAuthorization(new Authorization(SampleSecurityCallback.TYPE_MODULE_REGISTER, "DATABINDING"));
-		
-		AuthReflectionModule radioModule = new AuthReflectionModule("radio", ModuleType.NormalModule,
-				"net.ulrice.sample.module.databinding.radiobutton.CRadioButtonSample", "net/ulrice/sample/module/sample1/moduleicon.png",
-				new SimpleModuleTitleRenderer("Radio Button Sample"));
-		radioModule.setAuthorization(new Authorization(SampleSecurityCallback.TYPE_MODULE_REGISTER, "RADIOBUTTON"));
-		
-		AuthReflectionModule behaviorModule = new AuthReflectionModule("behavior", ModuleType.SingleModule, "net.ulrice.sample.module.behavior.CBehavior", "net/ulrice/sample/module/sample1/moduleicon.png",
-			new SimpleModuleTitleRenderer("Behavior Driven Development"));
-		
-		IFModule translator = new IFModule() {
+	private static AuthReflectionModule createAuthModule(ModuleType type, Class<? extends IFController> moduleClass, String title, String authString) {
+		AuthReflectionModule module = new AuthReflectionModule(moduleClass.getName(), type, moduleClass.getName(), moduleClass.getPackage().getName().replace('.', '/') + "/moduleicon.png", new SimpleModuleTitleRenderer(title));
+		module.setAuthorization(new Authorization(SampleSecurityCallback.TYPE_MODULE_REGISTER, "MOVIEDB"));
+		return module;
+	}
+
+	private static IFModule<CTranslator> createTranslatorModule() {
+		return new IFModule<CTranslator>() {
 		    final IFTranslationService translatorService = new XMLInMemoryTranslationService();
 		    
             public String getModuleTitle(Usage usage) {
@@ -116,65 +140,14 @@ public class UlriceSampleApplication {
             }
 
             @Override
-            public void instantiateModule(ControllerProviderCallback callback, IFController parent) {
+            public void instantiateModule(ControllerProviderCallback<CTranslator> callback, IFController parent) {
                 callback.onControllerReady (new CTranslator (translatorService));
             }
 		    
 		};
-		
-		registerModule(new ProfiledModuleSampleModule());
-		registerModule(new ProcessSampleModule());
-		registerModule(new MaskTextFieldModule());		
-		
-		// Add the modules.
-		registerModule(movieDBModule);
-		registerModule(lafListModule);
-		registerModule(dataBindingSample);
-		registerModule(translator);
-		registerModule(radioModule);
-		registerModule(behaviorModule);
-
-		Ulrice.getModuleStructureManager().fireModuleStructureChanged();
-		
-
-		// Add the application actions.
-		
-		
-		ModuleActionManager actionManager = Ulrice.getActionManager();
-		actionManager.addApplicationAction(new ExitApplicationAction("Exit", loadImage("exit.png")));
-		actionManager.addApplicationAction(new CloseAllModulesAction("Close All", null));
-		actionManager.addApplicationAction(new CloseModuleAction("Close", loadImage("close.gif")));
-		Ulrice.getActionManager().addApplicationAction(
-				new ModuleDelegationAction("TEST1", "TEST1", false, null));
-		Ulrice.getActionManager().addApplicationAction(
-				new ModuleDelegationAction("TEST2", "TEST2", false, null));
-		Ulrice.getActionManager().addApplicationAction(
-				new ModuleDelegationAction("TEST3", "TEST3", false, null));		
-
-		// Show main frame.
-		JFrame mainFrame = Ulrice.getMainFrame().getFrame();
-		mainFrame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
-		mainFrame.setSize(1024, 768);
-		mainFrame.setLocationRelativeTo(null);
-		mainFrame.setVisible(true);
-		
-        mainFrame.addWindowListener(new WindowAdapter() {
-
-            @Override
-            public void windowClosing(WindowEvent e) {
-                
-                new ExitApplicationAction(null, null).actionPerformed(new ActionEvent(this, e.getID(), null));
-            }
-        });
-	}
-
-	private static void registerModule(IFModule module) {
-		Ulrice.getModuleManager().registerModule(module);
-		Ulrice.getModuleStructureManager().addModule(module);
 	}
 
 	private static ImageIcon loadImage(String image) {
 		return new ImageIcon(UlriceSampleApplication.class.getResource(image));
 	}
-
 }
