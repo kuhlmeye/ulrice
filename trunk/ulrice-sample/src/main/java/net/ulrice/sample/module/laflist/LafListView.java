@@ -1,11 +1,7 @@
-/**
- * 
- */
 package net.ulrice.sample.module.laflist;
 
 import java.awt.BorderLayout;
 
-import javax.swing.JComponent;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
@@ -15,24 +11,15 @@ import javax.swing.JTable;
  * 
  * @author christof
  */
-public class LafListView {	
+public class LafListView extends JPanel {	
 	
-	/** The jtable displaying the look and feel constants. */
+	private static final long serialVersionUID = 1L;
+
 	private final JTable lafTable = new JTable ();
-	
-	/** The view component. */
-	private JPanel view = new JPanel ();
 
-	public LafListView() {
-	    view.setLayout(new BorderLayout());
-	    view.add(new JScrollPane(lafTable), BorderLayout.CENTER );
-	}
-	
-	public JComponent getView() {
-		return view;
-	}
-
-	public JTable getTable() {
-		return lafTable;
+	public LafListView(LafListModel model) {
+		super(new BorderLayout());		
+	    add(new JScrollPane(lafTable), BorderLayout.CENTER);
+	    lafTable.setModel(model);
 	}
 }
