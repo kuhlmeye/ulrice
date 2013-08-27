@@ -291,9 +291,10 @@ public class ModuleActionManager implements IFModuleEventListener, PropertyChang
 
 	
     public boolean isActionUsedByModule(String uniqueId) {
-    	if(applicationActions.containsKey(uniqueId)) {
-    		return true;
-    	} else if (activeController != null) {
+    	/* FIXME => Find concept how to handle application actions
+    	 if(applicationActions.containsKey(uniqueId)) {
+    	 	return true;
+    	} else */if (activeController != null) {
             List<UlriceAction> actionList = controllerActionOrderMap.get(activeController);
             if (actionList != null) {
                 for(UlriceAction action : actionList) {
