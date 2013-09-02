@@ -3,14 +3,13 @@ package net.ulrice.databinding.viewadapter.utable;
 import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.Dimension;
+import java.awt.FontMetrics;
 import java.awt.event.MouseEvent;
 import java.util.EventObject;
 import java.util.List;
 
 import javax.swing.AbstractCellEditor;
-import javax.swing.BorderFactory;
 import javax.swing.JComboBox;
-import javax.swing.JComponent;
 import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
@@ -31,79 +30,84 @@ public class UTableComboBoxCellEditor extends AbstractCellEditor implements Tabl
     private static final long serialVersionUID = 1073376082082392538L;
     private JComboBox comboBox;
 
-    public UTableComboBoxCellEditor(JComboBox comboBox) {
+    public UTableComboBoxCellEditor(final JComboBox comboBox) {
         this.comboBox = comboBox;
         this.comboBox.setBorder(null);        
         
         this.comboBox.addPopupMenuListener(new PopupMenuListener() {
+            
+            private final static int ADDITIONAL_WIDTH = 30;
 
-            /**
-             * {@inheritDoc}
-             */
+            @Override
             public void popupMenuCanceled(PopupMenuEvent e) {
-                // Synchronize the selected list item with the text field
                 JComboBox box = (JComboBox) e.getSource();
                 Object selectedItem = box.getSelectedItem();
                 box.getEditor().setItem(selectedItem);
             }
 
-            /**
-             * {@inheritDoc}
-             */
+            @Override
             public void popupMenuWillBecomeInvisible(PopupMenuEvent e) {
-                // Synchronize the selected list item with the text field
                 JComboBox box = (JComboBox) e.getSource();
                 Object selectedItem = box.getSelectedItem();
                 box.getEditor().setItem(selectedItem);
             }
 
-            /**
-             * {@inheritDoc}
-             */
+            @Override
             public void popupMenuWillBecomeVisible(PopupMenuEvent e) {
 
-                JComboBox box = (JComboBox) e.getSource();
-
-                // Get the popup menu.
-                Object comp = box.getUI().getAccessibleChild(box, 0);
-                if (!(comp instanceof JPopupMenu)) {
+                final JComboBox box = (JComboBox) e.getSource();
+                final JPopupMenu popupMenu = getPopupMenuFromComboBox(box);
+                if (popupMenu == null) {
                     return;
                 }
-                JPopupMenu popupMenu = (JPopupMenu) comp;
 
-                // Get the scrollpane in the scroller.
-                if (!(popupMenu.getComponent(0) instanceof JScrollPane)) {
+                final JScrollPane scrollPane = getScrollPaneFromPopupMenu(popupMenu);
+                if (scrollPane == null) {
                     return;
                 }
-                JScrollPane scrollPane = (JScrollPane) ((JPopupMenu) comp).getComponent(0);
+                
                 popupMenu.remove(scrollPane);
                 popupMenu.setLayout(new BorderLayout());
                 popupMenu.add(scrollPane, BorderLayout.CENTER);
-                // Get the component from the scrollpane.
-                if (!(scrollPane.getViewport().getView() instanceof JComponent)) {
-                    return;
-                }
-                JComponent comboBoxPopup = (JComponent) scrollPane.getViewport().getView();
-
-                // Check the size of the popup and set it to preferred size, if
-                // the size
-                // is greater than the size of the combo box.
-                Dimension size = new Dimension();
-                size.width =
-                        comboBoxPopup.getPreferredSize().width < scrollPane.getPreferredSize().width ? scrollPane
-                            .getPreferredSize().width : comboBoxPopup.getPreferredSize().width;
-                size.height = scrollPane.getPreferredSize().height;
-                scrollPane.setPreferredSize(size);
-                scrollPane.setMinimumSize(size);
-                scrollPane.setMaximumSize(size);
-
-                comboBoxPopup.setPreferredSize(size);
-                comboBoxPopup.setMinimumSize(size);
-                comboBoxPopup.setMaximumSize(size);
+                
+                final int widestElementWidth = detectWidthOfWidestElement(box) + ADDITIONAL_WIDTH;
+                final int comboBoxWidth = comboBox.getWidth();
+                
+                final int popupMenuWidth = Math.max(widestElementWidth, comboBoxWidth);
+                final int popupMenuHeight = scrollPane.getPreferredSize().height;
+                final Dimension size = new Dimension(popupMenuWidth, popupMenuHeight);
                 
                 popupMenu.setPreferredSize(size);
-                popupMenu.setMinimumSize(size);
-                popupMenu.setMaximumSize(size);
+            }
+            
+            private JPopupMenu getPopupMenuFromComboBox(final JComboBox box) {
+                Object comp = box.getUI().getAccessibleChild(box, 0);
+                if (!(comp instanceof JPopupMenu)) {
+                    return null;
+                }
+                return (JPopupMenu) comp;
+            }
+            
+            private JScrollPane getScrollPaneFromPopupMenu(final JPopupMenu popupMenu) {
+                if (!(popupMenu.getComponent(0) instanceof JScrollPane)) {
+                    return null;
+                }
+                return (JScrollPane) popupMenu.getComponent(0);
+            }
+            
+            private int detectWidthOfWidestElement(final JComboBox box) {
+                int maxWidth = 0;
+                final FontMetrics metrics = box.getGraphics().getFontMetrics();
+                
+                final int elementCount = box.getItemCount();
+                for (int i = 0; i < elementCount; i++) {
+                    final Object element = box.getItemAt(i);
+                    
+                    final String textToMeasure = element == null ? "" : element.toString();
+                    final int width = metrics.stringWidth(textToMeasure);
+                    maxWidth = (width > maxWidth ? width : maxWidth);
+                }
+                return maxWidth;
             }
         });
     }
@@ -112,6 +116,7 @@ public class UTableComboBoxCellEditor extends AbstractCellEditor implements Tabl
         this(new JComboBox(valueRange.toArray()));
     }
 
+    @Override
     public Component getTableCellEditorComponent(JTable table, Object value, boolean isSelected, int row, int column) {
     	
     	for(int i = 0; i < comboBox.getModel().getSize(); i++) {
@@ -134,6 +139,7 @@ public class UTableComboBoxCellEditor extends AbstractCellEditor implements Tabl
         return comboBox;
     }
 
+    @Override
     public Object getCellEditorValue() {
         
         
