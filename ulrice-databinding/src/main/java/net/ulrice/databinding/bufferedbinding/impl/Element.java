@@ -176,7 +176,10 @@ public class Element {
 		if (!tableAM.getIdModelIndexMap().containsKey(columnId)) {
 			throw new IllegalStateException("Unknown column id: " + columnId);
 		}
-		return modelList[tableAM.getIdModelIndexMap().get(columnId)].getCurrentValue();
+		if(modelList[tableAM.getIdModelIndexMap().get(columnId)] == null){
+		    throw new IllegalStateException("Unknown model for column with id: " + columnId);
+		}
+        return modelList[tableAM.getIdModelIndexMap().get(columnId)].getCurrentValue();
 	}
 
 	/**
