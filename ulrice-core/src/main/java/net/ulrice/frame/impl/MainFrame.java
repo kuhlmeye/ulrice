@@ -73,6 +73,7 @@ public class MainFrame extends JFrame implements IFMainFrame {
 
 		if(config.isShowToolbar()) {
 			Toolbar toolbar = new Toolbar(config.getToolbarActionOrder());
+			toolbar.setHideUnusedModuleActions(config.isToolbarHideUnusedModuleActions());
 			add(toolbar, BorderLayout.NORTH);
 		}
 
