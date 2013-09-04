@@ -98,7 +98,7 @@ public class Toolbar extends JToolBar implements IFModuleActionManagerEventListe
 
             }
         }
-        doLayout();
+        revalidate();
         repaint();
     }
 
