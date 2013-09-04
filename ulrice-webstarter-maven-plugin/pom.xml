@@ -14,9 +14,9 @@
 		</license>
 	</licenses>
 	<scm>
-		<connection>scm:svn:https://ulrice.googlecode.com/svn/trunk/ulrice-webstarter-maven-plugin</connection>
-		<developerConnection>scm:svn:https://ulrice.googlecode.com/svn/trunk/ulrice-webstarter-maven-plugin</developerConnection>
-		<url>http://ulrice.googlecode.com/svn/</url>
+		<connection>scm:svn:https://ulrice.googlecode.com/svn/tags/ulrice-0.2.6/ulrice-webstarter-maven-plugin</connection>
+		<developerConnection>scm:svn:https://ulrice.googlecode.com/svn/tags/ulrice-0.2.6/ulrice-webstarter-maven-plugin</developerConnection>
+		<url>http://ulrice.googlecode.com/svn/tags/ulrice-0.2.6/svn</url>
 	</scm>
 	<developers>
 		<developer>
