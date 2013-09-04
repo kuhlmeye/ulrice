@@ -1,8 +1,9 @@
 package net.ulrice.databinding.modelaccess.impl;
 
-import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
 
 import net.ulrice.databinding.modelaccess.IFDynamicModelValueAccessor;
+import net.ulrice.databinding.reflect.ReflectionUtils;
 
 public class DynamicReflectionMVA implements IFDynamicModelValueAccessor {
 
@@ -20,12 +21,34 @@ public class DynamicReflectionMVA implements IFDynamicModelValueAccessor {
 	
 	@Override
 	public Object getValue(Object root) {
-		return UlriceReflectionUtils.getValueByReflection(root, path);
+		try {
+            return ReflectionUtils.getInstance().getPropertyValue(root, path);
+        }
+        catch (IllegalArgumentException e) {
+            throw new ReflectionMVAException("Error getting property value at path " + path, e);
+        }
+        catch (IllegalAccessException e) {
+            throw new ReflectionMVAException("Error getting property value at path " + path, e);
+        }
+        catch (InvocationTargetException e) {
+            throw new ReflectionMVAException("Error getting property value at path " + path, e);
+        }
 	}
 
 	@Override
 	public void setValue(Object root, Object value) {
-		UlriceReflectionUtils.setValueByReflection(root, value, path);
+	    try {
+            ReflectionUtils.getInstance().setPropertyValue(root, path, value);
+        }
+        catch (IllegalArgumentException e) {
+            throw new ReflectionMVAException("Error setting property value at path " + path, e);
+        }
+        catch (IllegalAccessException e) {
+            throw new ReflectionMVAException("Error setting property value at path " + path, e);
+        }
+        catch (InvocationTargetException e) {
+            throw new ReflectionMVAException("Error setting property value at path " + path, e);
+        }
 	}
 
 	@Override
@@ -35,7 +58,6 @@ public class DynamicReflectionMVA implements IFDynamicModelValueAccessor {
 
 	@Override
 	public Class<?> getModelType(Class<?> rootType) {
-		Field field = UlriceReflectionUtils.getFieldByReflection(rootType, path);
-		return field.getType();
+		return ReflectionUtils.getInstance().getParentClassForDotSeparatedFieldType(rootType, path);
 	}
 }

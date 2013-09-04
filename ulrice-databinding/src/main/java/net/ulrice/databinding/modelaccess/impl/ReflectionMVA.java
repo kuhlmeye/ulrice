@@ -1,6 +1,10 @@
 package net.ulrice.databinding.modelaccess.impl;
 
+import java.lang.reflect.InvocationTargetException;
+
 import net.ulrice.databinding.modelaccess.IFModelValueAccessor;
+import net.ulrice.databinding.reflect.ReflectionUtils;
+import net.ulrice.databinding.reflect.UlriceReflectionUtils;
 
 public class ReflectionMVA implements IFModelValueAccessor {
 
@@ -43,12 +47,37 @@ public class ReflectionMVA implements IFModelValueAccessor {
 
 	@Override
 	public Object getValue() {
-		return UlriceReflectionUtils.getValueByReflection(rootObject, path);
+		try {
+            return ReflectionUtils.getInstance().getPropertyValue(rootObject, path, true);
+        }
+        catch (IllegalArgumentException e) {
+            throw new ReflectionMVAException("Error getting value at path " + path, e);
+        }
+        catch (IllegalAccessException e) {
+            throw new ReflectionMVAException("Error getting value at path " + path, e);
+        }
+        catch (InvocationTargetException e) {
+            throw new ReflectionMVAException("Error getting value at path " + path, e);
+        }
 	}
 
 	@Override
 	public void setValue(Object value) {
-		UlriceReflectionUtils.setValueByReflection(rootObject, value, path);
+	    try {
+            ReflectionUtils.getInstance().setPropertyValue(rootObject, path, value, true);
+        }
+        catch (IllegalArgumentException e) {
+            throw new ReflectionMVAException("Error setting value at path " + path, e);
+        }
+        catch (IllegalAccessException e) {
+            throw new ReflectionMVAException("Error setting value at path " + path, e);
+        }
+        catch (InvocationTargetException e) {
+            throw new ReflectionMVAException("Error setting value at path " + path, e);
+        }
+        catch (InstantiationException e) {
+            throw new ReflectionMVAException("Error setting value at path " + path, e);
+        }
 	}
 	
 	@Override

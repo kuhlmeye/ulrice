@@ -5,6 +5,7 @@ import java.util.List;
 import net.ulrice.databinding.ErrorHandler;
 import net.ulrice.databinding.modelaccess.IFIndexedModelValueAccessor;
 import net.ulrice.databinding.modelaccess.IFModelValueAccessor;
+import net.ulrice.databinding.reflect.ReflectionUtils;
 import ognl.Ognl;
 import ognl.OgnlException;
 
@@ -116,7 +117,18 @@ public class OgnlSingleListIndexedMVA implements IFIndexedModelValueAccessor {
 
 	@Override
 	public Object cloneObject(Object obj) {
-		return UlriceReflectionUtils.cloneObject(obj);
+		try {
+            return ReflectionUtils.getInstance().createCopy(obj);
+        }
+        catch (IllegalArgumentException e) {
+            throw new ReflectionMVAException("Error copying object", e);
+        }
+        catch (IllegalAccessException e) {
+            throw new ReflectionMVAException("Error copying object", e);
+        }
+        catch (InstantiationException e) {
+            throw new ReflectionMVAException("Error copying object", e);
+        }
 	}
 
 	@Override

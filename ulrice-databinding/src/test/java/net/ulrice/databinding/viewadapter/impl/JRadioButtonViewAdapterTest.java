@@ -10,7 +10,7 @@ import net.ulrice.databinding.bufferedbinding.IFAttributeInfo;
 import net.ulrice.databinding.bufferedbinding.impl.BindingGroup;
 import net.ulrice.databinding.bufferedbinding.impl.GenericAM;
 import net.ulrice.databinding.modelaccess.impl.ReflectionMVA;
-import net.ulrice.databinding.modelaccess.impl.UlriceReflectionUtils;
+import net.ulrice.databinding.reflect.UlriceReflectionUtils;
 
 public class JRadioButtonViewAdapterTest extends TestCase {
 	
@@ -72,22 +72,23 @@ public class JRadioButtonViewAdapterTest extends TestCase {
 		assertEquals(redAdapter.getValue(), colorSet.getC());
 	}
 
+	public static class ColorSet {
+	    
+	    private Color c;
+	    
+	    public ColorSet() {
+	        super();
+	    }
+	    
+	    public Color getC() {
+	        return c;
+	    }
+
+	    public void setC(Color c) {
+	        this.c = c;
+	    }
+
+	}
 }
 
-class ColorSet {
-	
-	private Color c;
-	
-	public ColorSet() {
-		super();
-	}
-	
-	public Color getC() {
-		return c;
-	}
 
-	public void setC(Color c) {
-		this.c = c;
-	}
-
-}
