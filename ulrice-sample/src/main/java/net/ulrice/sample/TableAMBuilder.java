@@ -14,7 +14,7 @@ import net.ulrice.databinding.converter.IFValueConverter;
 import net.ulrice.databinding.modelaccess.IFDynamicModelValueAccessor;
 import net.ulrice.databinding.modelaccess.impl.DynamicReflectionMVA;
 import net.ulrice.databinding.modelaccess.impl.IndexedReflectionMVA;
-import net.ulrice.databinding.reflect.UlriceReflectionUtils;
+import net.ulrice.databinding.modelaccess.impl.UlriceReflectionUtils;
 
 
 /**

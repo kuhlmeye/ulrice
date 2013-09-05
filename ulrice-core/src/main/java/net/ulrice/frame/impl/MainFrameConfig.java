@@ -15,9 +15,7 @@ public class MainFrameConfig {
 	private static final String KEY_FRAME_DEFAULT_WIDTH = "FrameDefaultWidth";
 	private static final String KEY_FRAME_DEFAULT_HEIGHT = "FrameDefaultHeight";
 	private static final String KEY_DIVIDER_LOCATION = "DividerLocation";
-	private static final String KEY_TOOLBAR_HIDE_UNUSED_MODULE_ACTIONS = "ToolbarHideUnusedModuleActions";
 
-	private boolean toolbarHideUnusedModuleActions = true;
 	private boolean showToolbar = true;
 	private boolean showModuleTree = true;
 	private boolean showInstanceTree = true;
@@ -29,14 +27,6 @@ public class MainFrameConfig {
 	private int defaultHeight = 700;
 	private String actionOrder = Toolbar.MODULE_ACTIONS;
 	private String title = "";
-	
-	public boolean isToolbarHideUnusedModuleActions() {
-        return toolbarHideUnusedModuleActions;
-    }
-	
-	public void setToolbarHideUnusedModuleActions(boolean toolbarHideUnusedModuleActions) {
-        this.toolbarHideUnusedModuleActions = toolbarHideUnusedModuleActions;
-    }
 	
 	public int getDividerLocation() {
 		return dividerLocation;
@@ -150,8 +140,7 @@ public class MainFrameConfig {
 		appPrefs.putConfiguration(MainFrame.class.getName(), KEY_CENTER_FRAME, Boolean.toString(centerFrame));
 		appPrefs.putConfiguration(MainFrame.class.getName(), KEY_FRAME_DEFAULT_HEIGHT, Integer.toString(defaultHeight));
 		appPrefs.putConfiguration(MainFrame.class.getName(), KEY_FRAME_DEFAULT_WIDTH, Integer.toString(defaultWidth));
-        appPrefs.putConfiguration(MainFrame.class.getName(), KEY_DIVIDER_LOCATION, Integer.toString(dividerLocation));
-        appPrefs.putConfiguration(MainFrame.class.getName(), KEY_TOOLBAR_HIDE_UNUSED_MODULE_ACTIONS, Boolean.toString(toolbarHideUnusedModuleActions));
+		appPrefs.putConfiguration(MainFrame.class.getName(), KEY_DIVIDER_LOCATION, Integer.toString(dividerLocation));
 	}
 
 	public void loadConfiguration(IFAppPrefs appPrefs) {
@@ -165,7 +154,6 @@ public class MainFrameConfig {
 		showModuleTree = Boolean.parseBoolean(appPrefs.getConfiguration(MainFrame.class.getName(), KEY_SHOW_MODULE_TREE, Boolean.toString(showModuleTree)));
 		showInstanceTree = Boolean.parseBoolean(appPrefs.getConfiguration(MainFrame.class.getName(), KEY_SHOW_INSTANCE_TREE, Boolean.toString(showInstanceTree)));
 		showStatusbar = Boolean.parseBoolean(appPrefs.getConfiguration(MainFrame.class.getName(), KEY_SHOW_STATUSBAR, Boolean.toString(showStatusbar)));
-        exitOnClose = Boolean.parseBoolean(appPrefs.getConfiguration(MainFrame.class.getName(), KEY_EXIT_ON_CLOSE, Boolean.toString(exitOnClose)));
-        toolbarHideUnusedModuleActions = Boolean.parseBoolean(appPrefs.getConfiguration(MainFrame.class.getName(), KEY_TOOLBAR_HIDE_UNUSED_MODULE_ACTIONS, Boolean.toString(toolbarHideUnusedModuleActions)));
+		exitOnClose = Boolean.parseBoolean(appPrefs.getConfiguration(MainFrame.class.getName(), KEY_EXIT_ON_CLOSE, Boolean.toString(exitOnClose)));
 	}
 }

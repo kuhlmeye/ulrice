@@ -14,9 +14,9 @@
 		</license>
 	</licenses>
 	<scm>
-		<connection>scm:svn:https://ulrice.googlecode.com/svn/tags/ulrice-0.2.6/ulrice-webstarter-maven-plugin</connection>
-		<developerConnection>scm:svn:https://ulrice.googlecode.com/svn/tags/ulrice-0.2.6/ulrice-webstarter-maven-plugin</developerConnection>
-		<url>http://ulrice.googlecode.com/svn/tags/ulrice-0.2.6/svn</url>
+		<connection>scm:svn:https://ulrice.googlecode.com/svn/trunk/ulrice-webstarter-maven-plugin</connection>
+		<developerConnection>scm:svn:https://ulrice.googlecode.com/svn/trunk/ulrice-webstarter-maven-plugin</developerConnection>
+		<url>http://ulrice.googlecode.com/svn/</url>
 	</scm>
 	<developers>
 		<developer>
@@ -34,7 +34,7 @@
 	<parent>
 		<groupId>net.ulrice</groupId>
 		<artifactId>ulrice</artifactId>
-		<version>0.2.5.20-SNAPSHOT</version>
+		<version>0.2.5.19</version>
 		<relativePath>../ulrice</relativePath>
 	</parent>
         
@@ -69,7 +69,7 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-release-plugin</artifactId>
-				<version>2.1</version>
+				<version>2.4.1</version>
 			</plugin>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>

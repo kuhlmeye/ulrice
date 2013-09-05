@@ -1,4 +1,4 @@
-package net.ulrice.databinding.reflect;
+package net.ulrice.databinding.modelaccess.impl;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -14,7 +14,6 @@ import java.security.PrivilegedAction;
 import java.util.Arrays;
 
 import net.ulrice.databinding.ErrorHandler;
-import net.ulrice.databinding.modelaccess.impl.ReflectionMVAException;
 
 
 /**

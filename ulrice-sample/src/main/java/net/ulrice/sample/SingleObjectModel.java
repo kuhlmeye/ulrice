@@ -8,7 +8,7 @@ import net.ulrice.databinding.bufferedbinding.IFAttributeModel;
 import net.ulrice.databinding.bufferedbinding.impl.AbstractBindingGroup;
 import net.ulrice.databinding.bufferedbinding.impl.GenericAM;
 import net.ulrice.databinding.modelaccess.impl.ReflectionMVA;
-import net.ulrice.databinding.reflect.UlriceReflectionUtils;
+import net.ulrice.databinding.modelaccess.impl.UlriceReflectionUtils;
 import net.ulrice.databinding.viewadapter.IFViewAdapter;
 
 /**

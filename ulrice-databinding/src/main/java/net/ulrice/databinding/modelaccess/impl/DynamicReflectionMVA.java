@@ -1,9 +1,8 @@
 package net.ulrice.databinding.modelaccess.impl;
 
-import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Field;
 
 import net.ulrice.databinding.modelaccess.IFDynamicModelValueAccessor;
-import net.ulrice.databinding.reflect.ReflectionUtils;
 
 public class DynamicReflectionMVA implements IFDynamicModelValueAccessor {
 
@@ -21,34 +20,12 @@ public class DynamicReflectionMVA implements IFDynamicModelValueAccessor {
 	
 	@Override
 	public Object getValue(Object root) {
-		try {
-            return ReflectionUtils.getInstance().getPropertyValue(root, path);
-        }
-        catch (IllegalArgumentException e) {
-            throw new ReflectionMVAException("Error getting property value at path " + path, e);
-        }
-        catch (IllegalAccessException e) {
-            throw new ReflectionMVAException("Error getting property value at path " + path, e);
-        }
-        catch (InvocationTargetException e) {
-            throw new ReflectionMVAException("Error getting property value at path " + path, e);
-        }
+		return UlriceReflectionUtils.getValueByReflection(root, path);
 	}
 
 	@Override
 	public void setValue(Object root, Object value) {
-	    try {
-            ReflectionUtils.getInstance().setPropertyValue(root, path, value);
-        }
-        catch (IllegalArgumentException e) {
-            throw new ReflectionMVAException("Error setting property value at path " + path, e);
-        }
-        catch (IllegalAccessException e) {
-            throw new ReflectionMVAException("Error setting property value at path " + path, e);
-        }
-        catch (InvocationTargetException e) {
-            throw new ReflectionMVAException("Error setting property value at path " + path, e);
-        }
+		UlriceReflectionUtils.setValueByReflection(root, value, path);
 	}
 
 	@Override
@@ -58,6 +35,7 @@ public class DynamicReflectionMVA implements IFDynamicModelValueAccessor {
 
 	@Override
 	public Class<?> getModelType(Class<?> rootType) {
-		return ReflectionUtils.getInstance().getParentClassForDotSeparatedFieldType(rootType, path);
+		Field field = UlriceReflectionUtils.getFieldByReflection(rootType, path);
+		return field.getType();
 	}
 }
