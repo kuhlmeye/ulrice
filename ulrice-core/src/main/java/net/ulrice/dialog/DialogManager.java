@@ -67,6 +67,12 @@ public class DialogManager {
      * @param mode The mode in which the dialog should be shown.
      */
     public void showDialog(IFController controller, JDialog dialog, DialogMode mode) {
+        List<DialogInformation> list = ctrlDialogMap.get(controller);
+        if(list == null) {
+            // Ignore calls, if controller does not exist in maintenance-list
+            return;
+        }
+        
         DialogInformation dlgInfo = new DialogInformation();
         dlgInfo.dialog = dialog;
         dlgInfo.mode = mode;
@@ -87,7 +93,7 @@ public class DialogManager {
             case NonModal:
                 break;
         }
-        List<DialogInformation> list = ctrlDialogMap.get(controller);
+        
         list.add(dlgInfo);
         dlgInfoDialogMap.put(dialog, dlgInfo);
 
