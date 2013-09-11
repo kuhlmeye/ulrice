@@ -14,6 +14,7 @@ import java.util.logging.Logger;
 
 import net.ulrice.webstarter.EncryptionUtils;
 import net.ulrice.webstarter.ProcessThread;
+import net.ulrice.webstarter.util.WebstarterUtils;
 
 /**
  * Starts a java application
@@ -40,7 +41,7 @@ public class StartApplication extends AbstractTask {
 		List<String> classPath = thread.getContext().getClassPath();
 
 		StringBuffer commandBuffer = new StringBuffer();
-		String localDir = thread.getAppDescription().getLocalDir();
+		String localDir = WebstarterUtils.resolvePlaceholders(thread.getAppDescription().getLocalDir());
 		String localJre = getParameterAsString(PARAM_LOCAL_JRE);
 		if (localJre != null) {
 			commandBuffer.append(localDir).append(localJre).append(File.separator).append("bin").append(File.separator);

@@ -8,6 +8,7 @@ import java.util.logging.Logger;
 
 import net.ulrice.webstarter.ProcessThread;
 import net.ulrice.webstarter.XMLDescriptionReader;
+import net.ulrice.webstarter.util.WebstarterUtils;
 
 public class AddToClasspath extends AbstractTask {
 
@@ -21,7 +22,7 @@ public class AddToClasspath extends AbstractTask {
 
 		String filter = getParameterAsString(FILTER_PARAM);
 		String urlStr = getParameterAsString(URL_PARAM);
-		String localDirString = thread.getAppDescription().getLocalDir();
+		String localDirString = WebstarterUtils.resolvePlaceholders(thread.getAppDescription().getLocalDir());
 		
 		URL fileUrl = null;
 		if(urlStr != null) {

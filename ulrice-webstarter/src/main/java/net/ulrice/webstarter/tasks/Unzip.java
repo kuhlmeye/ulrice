@@ -14,6 +14,7 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
 import net.ulrice.webstarter.ProcessThread;
+import net.ulrice.webstarter.util.WebstarterUtils;
 
 /**
  * Task for unzipping downloaded files.
@@ -37,10 +38,7 @@ public class Unzip extends AbstractTask {
 	public boolean doTask(ProcessThread thread) {
 		String filter = getParameterAsString(FILTER_PARAM);
 		String urlStr = getParameterAsString(URL_PARAM);
-		String localDirStr = thread.getAppDescription().getLocalDir();
-		
-		
-
+		String localDirStr = WebstarterUtils.resolvePlaceholders(thread.getAppDescription().getLocalDir());
 		String baseUrlString = getParameterAsString(BASE_URL_PARAM_NAME);		
 		if(baseUrlString != null) {
 			urlStr = baseUrlString + urlStr;
