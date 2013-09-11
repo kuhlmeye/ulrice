@@ -14,6 +14,7 @@ import java.util.logging.Logger;
 import javax.swing.event.EventListenerList;
 
 import net.ulrice.webstarter.tasks.IFTask;
+import net.ulrice.webstarter.util.WebstarterUtils;
 
 /**
  * The thread downloading and starting the application.
@@ -163,7 +164,7 @@ public class ProcessThread {
 		@Override
 		public void run() {
 
-			File propertyFile = new File(getAppDescription().getLocalDir(), "ulrice-webstarter.properties");
+			File propertyFile = new File(WebstarterUtils.resolvePlaceholders(getAppDescription().getLocalDir()), "ulrice-webstarter.properties");
 			try {
 				getContext().getPersistentProperties().load(new FileInputStream(propertyFile));
 			} catch (FileNotFoundException e) {

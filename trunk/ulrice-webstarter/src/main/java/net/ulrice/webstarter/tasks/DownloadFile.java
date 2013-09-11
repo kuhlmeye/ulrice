@@ -24,6 +24,7 @@ import java.util.logging.Logger;
 
 import net.ulrice.webstarter.ProcessThread;
 import net.ulrice.webstarter.TaskDescription;
+import net.ulrice.webstarter.util.WebstarterUtils;
 
 public class DownloadFile extends AbstractTask {
 
@@ -66,7 +67,7 @@ public class DownloadFile extends AbstractTask {
 			localFileName = localFileName.substring(0, localFileName.length() - ".pack200".length());
 		}
 
-		String localDirString = thread.getAppDescription().getLocalDir();
+		String localDirString = WebstarterUtils.resolvePlaceholders(thread.getAppDescription().getLocalDir());
 		try {
 
 			URLConnection con = fileUrl.openConnection();
