@@ -23,149 +23,155 @@ import net.ulrice.webstarter.util.WebstarterUtils;
  */
 public class StartApplication extends AbstractTask {
 
-	/** The logger used by this class. */
-	private static final Logger LOG = Logger.getLogger(StartApplication.class.getName());
+    /** The logger used by this class. */
+    private static final Logger LOG = Logger.getLogger(StartApplication.class.getName());
 
-	/** Parameter containing the main class value. */
-	private static final String PARAM_MAIN_CLASS = "mainClass";
+    /** Parameter containing the main class value. */
+    private static final String PARAM_MAIN_CLASS = "mainClass";
 
-	/** Optional parameter containing a location jre path. */
-	private static final String PARAM_LOCAL_JRE = "localJre";
-	
-	/** Optional parameter containing options for the virtual machine, e.g. Xmx512m */
-	private static final String VM_OPTIONS = "vmOptions";
+    /** Optional parameter containing a location jre path. */
+    private static final String PARAM_LOCAL_JRE = "localJre";
 
-	@Override
-	public boolean doTask(ProcessThread thread) {
+    /** Optional parameter containing options for the virtual machine, e.g. Xmx512m */
+    private static final String VM_OPTIONS = "vmOptions";
 
-		List<String> classPath = thread.getContext().getClassPath();
+    @Override
+    public boolean doTask(ProcessThread thread) {
 
-		StringBuffer commandBuffer = new StringBuffer();
-		String localDir = WebstarterUtils.resolvePlaceholders(thread.getAppDescription().getLocalDir());
-		String localJre = getParameterAsString(PARAM_LOCAL_JRE);
-		if (localJre != null) {
-			commandBuffer.append(localDir).append(localJre).append(File.separator).append("bin").append(File.separator);
-		}
-		commandBuffer.append("java ");
-		
-		String vmOptions = getParameterAsString(VM_OPTIONS);
-		if (vmOptions != null) {
-		    StringTokenizer st = new StringTokenizer(vmOptions, ",");
-		    while (st.hasMoreTokens()) {
-		        String vmOption = st.nextToken();
-		        commandBuffer.append("-");
-		        commandBuffer.append(vmOption);
-		        commandBuffer.append(" ");
-		    }
-		}
+        List<String> classPath = thread.getContext().getClassPath();
 
-		commandBuffer.append("-cp ");
-		for (String element : classPath) {
-			commandBuffer.append(element).append(File.pathSeparator);
-		}
-		commandBuffer.append(" ");
+        StringBuffer commandBuffer = new StringBuffer();
+        String localDir = WebstarterUtils.resolvePlaceholders(thread.getAppDescription().getLocalDir());
+        String localJre = getParameterAsString(PARAM_LOCAL_JRE);
+        if (localJre != null) {
+            commandBuffer.append(localDir).append(localJre).append(File.separator).append("bin").append(File.separator);
+        }
+        commandBuffer.append("java ");
 
-		String mainClass = getParameterAsString(PARAM_MAIN_CLASS);
-		if (mainClass != null) {
-			commandBuffer.append(mainClass);
-		}
+        String vmOptions = getParameterAsString(VM_OPTIONS);
+        if (vmOptions != null) {
+            StringTokenizer st = new StringTokenizer(vmOptions, ",");
+            while (st.hasMoreTokens()) {
+                String vmOption = st.nextToken();
+                commandBuffer.append("-");
+                commandBuffer.append(vmOption);
+                commandBuffer.append(" ");
+            }
+        }
 
-		List<String> appParameters = thread.getAppDescription().getAppParameters();
-		if (appParameters != null) {
-			for (String appParameter : appParameters) {
+        commandBuffer.append("-cp ");
+        for (String element : classPath) {
+            commandBuffer.append(element).append(File.pathSeparator);
+        }
+        commandBuffer.append(" ");
 
-				String param = replacePlaceholders(thread, appParameter);
-				if (param != null) {
-					commandBuffer.append(" ").append(param);
-				}
-			}
-		}
+        String mainClass = getParameterAsString(PARAM_MAIN_CLASS);
+        if (mainClass != null) {
+            commandBuffer.append(mainClass);
+        }
 
-		try {
-		    LOG.log(Level.INFO, commandBuffer.toString());
-			// Start application
-			Process process = Runtime.getRuntime().exec(commandBuffer.toString(), null, new File(localDir));
-			StreamGobbler isGobbler = new StreamGobbler("OUT", process.getInputStream(), System.out);
-			StreamGobbler esGobbler = new StreamGobbler("ERR", process.getErrorStream(), System.out);
-			isGobbler.start();
-			esGobbler.start();
-		} catch (IOException e) {
-			thread.handleError(this, "Error starting application.", "Error starting application: " + e.getMessage());
-			LOG.log(Level.SEVERE, "IOException during application startup", e);
-		}
+        List<String> appParameters = thread.getAppDescription().getAppParameters();
+        if (appParameters != null) {
+            for (String appParameter : appParameters) {
 
-		return true;
-	}
+                String param = replacePlaceholders(thread, appParameter);
+                if (param != null) {
+                    commandBuffer.append(" ").append(param);
+                }
+            }
+        }
 
-	protected String replacePlaceholders(ProcessThread thread, String appParameter) {
+        try {
+            LOG.log(Level.INFO, commandBuffer.toString());
+            // Start application
+            Process process = Runtime.getRuntime().exec(commandBuffer.toString(), null, new File(localDir));
+            StreamGobbler isGobbler = new StreamGobbler("OUT", process.getInputStream(), System.out);
+            StreamGobbler esGobbler = new StreamGobbler("ERR", process.getErrorStream(), System.out);
+            isGobbler.start();
+            esGobbler.start();
+        }
+        catch (IOException e) {
+            thread.handleError(this, "Error starting application.", "Error starting application: " + e.getMessage());
+            LOG.log(Level.SEVERE, "IOException during application startup", e);
+        }
 
-	    String userId = thread.getContext().getUserId();
-		String proxyHost = thread.getContext().getAppSettings().getProperty("http.proxyHost");
-		String proxyPort = thread.getContext().getAppSettings().getProperty("http.proxyPort");
-		String proxyUser = thread.getContext().getAppSettings().getProperty("http.proxyUser");
-		String proxyPass = thread.getContext().getAppSettings().getProperty("http.proxyPassword");
+        return true;
+    }
 
-		if (userId != null && !"".equals(userId)) {
-		    appParameter = appParameter.replace("${USERID}", userId);
-		}
-		else {
+    protected String replacePlaceholders(ProcessThread thread, String appParameter) {
+
+        String userId = thread.getContext().getUserId();
+        String proxyHost = thread.getContext().getAppSettings().getProperty("http.proxyHost");
+        String proxyPort = thread.getContext().getAppSettings().getProperty("http.proxyPort");
+        String proxyUser = thread.getContext().getAppSettings().getProperty("http.proxyUser");
+        String proxyPass = thread.getContext().getAppSettings().getProperty("http.proxyPassword");
+
+        if ((userId != null) && !"".equals(userId)) {
+            appParameter = appParameter.replace("${USERID}", userId);
+        }
+        else {
             appParameter = appParameter.replace("${USERID}", "");
-		}
-		if (proxyHost != null && !"".equals(proxyHost)) {
-			appParameter = appParameter.replace("${PROXY_HOST}", proxyHost);
-		}
-		if (proxyPort != null && !"".equals(proxyPort)) {
-			appParameter = appParameter.replace("${PROXY_PORT}", proxyPort);
-		}
-		if (proxyUser != null && !"".equals(proxyUser)) {
-			appParameter = appParameter.replace("${PROXY_USER}", proxyUser);
-		}
-		if (proxyPass != null && !"".equals(proxyPass)) {
-			appParameter = appParameter.replace("${PROXY_PASS}", EncryptionUtils.decrypt(proxyPass));
-		}
+        }
+        if ((proxyHost != null) && !"".equals(proxyHost)) {
+            appParameter = appParameter.replace("${PROXY_HOST}", proxyHost);
+        }
+        if ((proxyPort != null) && !"".equals(proxyPort)) {
+            appParameter = appParameter.replace("${PROXY_PORT}", proxyPort);
+        }
+        if ((proxyUser != null) && !"".equals(proxyUser)) {
+            appParameter = appParameter.replace("${PROXY_USER}", proxyUser);
+        }
+        if ((proxyPass != null) && !"".equals(proxyPass)) {
+            appParameter = appParameter.replace("${PROXY_PASS}", EncryptionUtils.decrypt(proxyPass));
+        }
 
-		int cookieIdxStart = appParameter.indexOf("${COOKIE=");
-		int cookieIdxEnd = appParameter.indexOf("}", cookieIdxStart);
-		if (cookieIdxStart >= 0 && cookieIdxEnd >= 0) {
-			String key = appParameter.substring(cookieIdxStart, cookieIdxEnd + 1);
-			String cookiePlaceholder = appParameter.substring(cookieIdxStart + "${COOKIE=".length(), cookieIdxEnd);
-			String replacement = thread.getContext().getCookieMap().get(cookiePlaceholder);
-			if (replacement == null) {
-				return null;
-			}
-			appParameter = appParameter.replace(key, replacement);
-		}
-		return appParameter;
-	}
+        int cookieIdxStart = appParameter.indexOf("${COOKIE=");
+        int cookieIdxEnd = appParameter.indexOf("}", cookieIdxStart);
+        if ((cookieIdxStart >= 0) && (cookieIdxEnd >= 0)) {
+            String key = appParameter.substring(cookieIdxStart, cookieIdxEnd + 1);
+            String cookiePlaceholder = appParameter.substring(cookieIdxStart + "${COOKIE=".length(), cookieIdxEnd);
+            String replacement = thread.getContext().getCookieMap().get(cookiePlaceholder);
+            if (replacement == null) {
+                return null;
+            }
+            appParameter = appParameter.replace(key, replacement);
+        }
+        return appParameter;
+    }
 
-	class StreamGobbler extends Thread {
+    class StreamGobbler extends Thread {
 
-		InputStream is;
-		OutputStream os;
-		String name;
+        InputStream is;
+        OutputStream os;
+        String name;
 
-		public StreamGobbler(String name, InputStream is, OutputStream os) {
-			this.is = is;
-			this.os = os;
-			this.name = name;
-		}
+        public StreamGobbler(String name, InputStream is, OutputStream os) {
+            this.is = is;
+            this.os = os;
+            this.name = name;
+        }
 
-		@Override
-		public void run() {
+        @Override
+        public void run() {
 
-			PrintWriter pw = new PrintWriter(os);
-			InputStreamReader reader = new InputStreamReader(is);
-			BufferedReader br = new BufferedReader(reader);
+            PrintWriter pw = new PrintWriter(os);
+            try {
+                BufferedReader br = new BufferedReader(new InputStreamReader(is));
 
-			String line = null;
-			try {
-				while ((line = br.readLine()) != null) {
-					pw.println(name + " > " + line);
-					System.out.println(line);
-				}
-			} catch (IOException e) {
-				e.printStackTrace(pw);
-			}
-		}
-	}
+                try {
+                    String line = null;
+                    while ((line = br.readLine()) != null) {
+                        pw.println(name + " > " + line);
+                        System.out.println(line);
+                    }
+                }
+                finally {
+                    br.close();
+                }
+            }
+            catch (IOException e) {
+                e.printStackTrace(pw);
+            }
+        }
+    }
 }
