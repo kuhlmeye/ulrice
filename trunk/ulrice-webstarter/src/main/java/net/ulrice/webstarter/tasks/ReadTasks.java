@@ -1,6 +1,7 @@
 package net.ulrice.webstarter.tasks;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -19,93 +20,102 @@ import org.xml.sax.SAXException;
 
 public class ReadTasks extends AbstractTask {
 
-	/** The logger used by this class. */
-	private static final Logger LOG = Logger.getLogger(ReadTasks.class.getName());
+    /** The logger used by this class. */
+    private static final Logger LOG = Logger.getLogger(ReadTasks.class.getName());
 
-	private static final String DESCR_URL_PARAM_NAME = "descriptionUrl";
-	private static final String BASE_URL_PARAM_NAME = "baseUrl";
+    private static final String DESCR_URL_PARAM_NAME = "descriptionUrl";
+    private static final String BASE_URL_PARAM_NAME = "baseUrl";
 
-	@Override
-	public boolean doTask(ProcessThread thread) {
+    @Override
+    public boolean doTask(ProcessThread thread) {
 
-		
-		
-		List<TaskDescription> tasks = loadTasks(thread);
-		if (tasks != null) {
+        List<TaskDescription> tasks = loadTasks(thread);
+        if (tasks != null) {
 
-			try {
+            try {
 
-				List<IFTask> subTaskList = new ArrayList<IFTask>();
-				while (tasks.size() > 0) {
-					TaskDescription taskDescr = tasks.remove(0);
-					IFTask task = taskDescr.instanciateTask();
-					subTaskList.add(task);
-				}
-				thread.addSubTasks(this, subTaskList.toArray(new IFTask[subTaskList.size()]));
+                List<IFTask> subTaskList = new ArrayList<IFTask>();
+                while (tasks.size() > 0) {
+                    TaskDescription taskDescr = tasks.remove(0);
+                    IFTask task = taskDescr.instanciateTask();
+                    subTaskList.add(task);
+                }
+                thread.addSubTasks(this, subTaskList.toArray(new IFTask[subTaskList.size()]));
 
-			} catch (InstantiationException e) {
-				thread.handleError(this, "Could not instanciate task.", "Could not instanciate task." + e.getMessage());
-				LOG.log(Level.SEVERE, "Could not instanciate task.", e);
-			} catch (IllegalAccessException e) {
-				thread.handleError(this, "Could not access task.", "Could not access task." + e.getMessage());
-				LOG.log(Level.SEVERE, "Could not access task.", e);
-			}
-		}
+            }
+            catch (InstantiationException e) {
+                thread.handleError(this, "Could not instanciate task.", "Could not instanciate task." + e.getMessage());
+                LOG.log(Level.SEVERE, "Could not instanciate task.", e);
+            }
+            catch (IllegalAccessException e) {
+                thread.handleError(this, "Could not access task.", "Could not access task." + e.getMessage());
+                LOG.log(Level.SEVERE, "Could not access task.", e);
+            }
+        }
 
-		return true;
-	}
+        return true;
+    }
 
-	private List<TaskDescription> loadTasks(ProcessThread thread) {
-		String urlStr = getParameterAsString(DESCR_URL_PARAM_NAME);
-		String baseUrlStr = getParameterAsString(BASE_URL_PARAM_NAME);
-		
-		
-		if (urlStr == null) {
-			return null;
-		}
+    private List<TaskDescription> loadTasks(ProcessThread thread) {
+        String urlStr = getParameterAsString(DESCR_URL_PARAM_NAME);
+        String baseUrlStr = getParameterAsString(BASE_URL_PARAM_NAME);
 
-		try {
+        if (urlStr == null) {
+            return null;
+        }
 
-			thread.fireTaskProgressed(this, 40, "Connecting..", "Connecting to " + urlStr);
-			URL url = new URL(urlStr);		
-			
-			URLConnection connection = url.openConnection();
-			if (connection instanceof HttpURLConnection) {
-				HttpURLConnection httpConnection = (HttpURLConnection) connection;
-				httpConnection.setRequestMethod("GET");
-				String cookieString = thread.getContext().getCookieAsString();
-				if (cookieString != null) {
-					httpConnection.setRequestProperty("Cookie", cookieString);
-				}
-			}
-			connection.connect();
+        try {
 
+            thread.fireTaskProgressed(this, 40, "Connecting..", "Connecting to " + urlStr);
+            URL url = new URL(urlStr);
 
-			thread.fireTaskProgressed(this, 60, "Reading properties..", null);
+            URLConnection connection = url.openConnection();
+            if (connection instanceof HttpURLConnection) {
+                HttpURLConnection httpConnection = (HttpURLConnection) connection;
+                httpConnection.setRequestMethod("GET");
+                String cookieString = thread.getContext().getCookieAsString();
+                if (cookieString != null) {
+                    httpConnection.setRequestProperty("Cookie", cookieString);
+                }
+            }
+            connection.connect();
 
-			XMLDescriptionReader reader = new XMLDescriptionReader(connection.getInputStream(), null);
-			ApplicationDescription descr = thread.getAppDescription();
-			reader.parseXML(descr);
-			List<TaskDescription> tasks = descr.getTasks();
-			if(baseUrlStr != null && tasks != null) {
-				for(TaskDescription task : tasks) {
-					task.getParameters().put(BASE_URL_PARAM_NAME, baseUrlStr);
-				}
-			}
-			return tasks;
+            thread.fireTaskProgressed(this, 60, "Reading properties..", null);
 
-		} catch (MalformedURLException e) {
-			thread.handleError(this, "Malformed url.", "Malformed url:" + urlStr);
-			LOG.log(Level.SEVERE, "Malformed url.", e);
-		} catch (IOException e) {
-			thread.handleError(this, "IO error loading tasks.", "IO error loading tasks.");
-			LOG.log(Level.SEVERE, "IO error loading tasks.", e);
-		} catch (SAXException e) {
-			thread.handleError(this, "Could not parse task description.", "Could not parse task description. " + e.getMessage());
-			LOG.log(Level.SEVERE, "Could not parse task description.", e);
-		}
+            ApplicationDescription descr = thread.getAppDescription();
+            List<TaskDescription> tasks = descr.getTasks();
+            InputStream in = connection.getInputStream();
+            
+            try {
+                XMLDescriptionReader reader = new XMLDescriptionReader(in, null);
+                reader.parseXML(descr);
+                if ((baseUrlStr != null) && (tasks != null)) {
+                    for (TaskDescription task : tasks) {
+                        task.getParameters().put(BASE_URL_PARAM_NAME, baseUrlStr);
+                    }
+                }
+            }
+            finally {
+                in.close();
+            }
+            
+            return tasks;
 
-		return null;
-	}
+        }
+        catch (MalformedURLException e) {
+            thread.handleError(this, "Malformed url.", "Malformed url:" + urlStr);
+            LOG.log(Level.SEVERE, "Malformed url.", e);
+        }
+        catch (IOException e) {
+            thread.handleError(this, "IO error loading tasks.", "IO error loading tasks.");
+            LOG.log(Level.SEVERE, "IO error loading tasks.", e);
+        }
+        catch (SAXException e) {
+            thread.handleError(this, "Could not parse task description.", "Could not parse task description. " + e.getMessage());
+            LOG.log(Level.SEVERE, "Could not parse task description.", e);
+        }
+
+        return null;
+    }
 
 }

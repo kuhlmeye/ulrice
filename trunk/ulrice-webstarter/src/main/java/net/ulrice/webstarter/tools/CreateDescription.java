@@ -13,9 +13,8 @@ import java.util.logging.Logger;
 
 public class CreateDescription {
 
+    private static final Logger LOG = Logger.getLogger(CreateDescription.class.getName());
 
-	private static final Logger LOG = Logger.getLogger(CreateDescription.class.getName());
-	
     /**
      * @param args
      */
@@ -45,14 +44,23 @@ public class CreateDescription {
 
             try {
                 JarFile jarFile = new JarFile(file);
-                FileOutputStream fos = new FileOutputStream(new File(jarFile.getName() + ".pack"));
-                // Call the packer
-                packer.pack(jarFile, fos);
-                jarFile.close();
-                fos.close();
+                try {
+                    FileOutputStream fos = new FileOutputStream(new File(jarFile.getName() + ".pack"));
+
+                    try {
+                        // Call the packer
+                        packer.pack(jarFile, fos);
+                    }
+                    finally {
+                        fos.close();
+                    }
+                }
+                finally {
+                    jarFile.close();
+                }
             }
             catch (IOException ioe) {
-            	LOG.log(Level.SEVERE, "IO Exception.", ioe);
+                LOG.log(Level.SEVERE, "IO Exception.", ioe);
             }
         }
     }
