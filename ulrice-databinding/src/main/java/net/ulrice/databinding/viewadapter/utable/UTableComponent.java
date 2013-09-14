@@ -114,8 +114,10 @@ public class UTableComponent extends JPanel {
         scrollTable.setBackground(scrollViewport.getBackground());
         scrollViewport.setView(scrollTable);
 
-        staticViewport.addChangeListener(scrollViewport);
-        scrollViewport.addChangeListener(staticViewport);
+        if(fixedColumns > 0) {
+            staticViewport.addChangeListener(scrollViewport);
+            scrollViewport.addChangeListener(staticViewport);
+        }
 
         scrollPane = new JScrollPane();
         scrollPane.setCorner(JScrollPane.UPPER_LEFT_CORNER, staticTable.getTableHeader());
