@@ -79,15 +79,15 @@ public abstract class AbstractTreeTableModel implements TreeTableModel {
         }
     }
  
-    protected void fireTreeNodesChanged(Object source, Object[] path, int[] childIndices, Object[] children) {
+    public void fireTreeNodesChanged(Object source, Object[] path, int[] childIndices, Object[] children) {
         fireTreeNode(CHANGED, source, path, childIndices, children);
     }
  
-    protected void fireTreeNodesInserted(Object source, Object[] path, int[] childIndices, Object[] children) {
+    public void fireTreeNodesInserted(Object source, Object[] path, int[] childIndices, Object[] children) {
         fireTreeNode(INSERTED, source, path, childIndices, children);
     }
  
-    protected void fireTreeNodesRemoved(Object source, Object[] path, int[] childIndices, Object[] children) {
+    public void fireTreeNodesRemoved(Object source, Object[] path, int[] childIndices, Object[] children) {
         fireTreeNode(REMOVED, source, path, childIndices, children);
     }
  
