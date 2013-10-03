@@ -95,24 +95,6 @@ public class UBorder implements Border {
 
         g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 
-        // draw original background
-        Container parent = c.getParent();
-        Color background = Color.ORANGE;
-
-        while (parent != null) {
-            background = parent.getBackground();
-
-            if (parent.isOpaque()) {
-                break;
-            }
-
-            parent = parent.getParent();
-        }
-
-        g2d.setColor(background);
-        g2d.drawRect(x, y, width - 1, height - 1);
-        g2d.drawRect(x + 1, y + 1, width - 3, height - 3);
-
         boolean focus = isFocusOwner(c);
         Stroke stroke = g2d.getStroke();
 
@@ -120,7 +102,7 @@ public class UBorder implements Border {
 
         // draw the highlight
         if (highlight != null) {
-            g2d.setColor(Colors.translucent(highlight, (focus) ? 0.66 : 0.33));
+            g2d.setColor(Colors.transparent(highlight, (focus) ? 0.33 : 0.66));
             g2d.drawRoundRect(x + 1, y + 1, width - 3, height - 3, 4, 4);
         }
         // draw focus
@@ -132,25 +114,22 @@ public class UBorder implements Border {
         g2d.setStroke(stroke);
 
         // draw the inner stuff
+        g2d.setColor(c.getBackground());
 
-        if (c.isOpaque()) {
-            g2d.setColor(c.getBackground());
+        if (insets.top > 3) {
+            g2d.drawRect(x + 3, y + 3, width - 7, insets.top - 4);
+        }
 
-            if (insets.top > 3) {
-                g2d.drawRect(x + 3, y + 3, width - 7, insets.top - 4);
-            }
+        if (insets.bottom > 3) {
+            g2d.drawRect(x + 3, (y + height) - insets.bottom, width - 7, insets.bottom - 4);
+        }
 
-            if (insets.bottom > 3) {
-                g2d.drawRect(x + 3, (y + height) - insets.bottom, width - 7, insets.bottom - 4);
-            }
+        if ((insets.left + clipLeft) > 3) {
+            g2d.fillRect((x + 3) - clipLeft, y + insets.top, (insets.left + clipLeft) - 3, height - insets.top - insets.bottom);
+        }
 
-            if (insets.left > 3) {
-                g2d.fillRect(x + 3, y + insets.top, insets.left - 3, height - insets.top - insets.bottom);
-            }
-
-            if (insets.right > 3) {
-                g2d.fillRect((x + width) - insets.right, y + insets.top, insets.right - 3, height - insets.top - insets.bottom);
-            }
+        if ((insets.right + clipRight) > 3) {
+            g2d.fillRect((x + width) - insets.right - clipRight, y + insets.top, (insets.right + clipRight) - 3, height - insets.top - insets.bottom);
         }
 
         // draw the original border

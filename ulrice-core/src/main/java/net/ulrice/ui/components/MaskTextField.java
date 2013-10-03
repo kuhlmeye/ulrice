@@ -2,6 +2,7 @@ package net.ulrice.ui.components;
 
 import java.awt.Color;
 import java.awt.Graphics;
+import java.awt.Insets;
 import java.awt.Rectangle;
 import java.awt.Shape;
 import java.awt.event.FocusEvent;
@@ -68,14 +69,15 @@ public class MaskTextField extends JTextField implements FocusListener {
     private int numMaskChars;
 
     private boolean textWasMarked = false;
-    
+
     private String regex;
     private boolean useRegex;
 
     public MaskTextField() {
         super();
-        
+
         addFocusListener(this);
+        setOpaque(false);
     }
 
     public void setMask(String mask) {
@@ -114,7 +116,7 @@ public class MaskTextField extends JTextField implements FocusListener {
             updateUI();
         }
     }
-    
+
     public void setRegex(String regex) {
         this.regex = regex;
         this.useRegex = true;
@@ -185,7 +187,7 @@ public class MaskTextField extends JTextField implements FocusListener {
                     if (isMaskChar(i)) {
                         if ((idxMask >= offs) && (idxMask < (offs + str.length()))) {
                             char inputChar = str.charAt(idxStr);
-                            
+
                             if (useRegex && !String.valueOf(inputChar).matches(regex)) {
                                 return;
                             }
@@ -226,15 +228,16 @@ public class MaskTextField extends JTextField implements FocusListener {
                     // super.remove(offs, text.length()); no override
                 }
 
-                if (getLength() >= maxLen & (getLength() + str.length()) <= maxLen) {
-                	text = str.substring(0, maxLen);
-                }else if (str.length() >= maxLen) {					
-                	text = str.substring(0, maxLen);
-				}
-                
-                if (getLength() < maxLen & !(getLength() + text.length() > maxLen)) {
-                   super.insertString(offs, text, a);
-				}               
+                if ((getLength() >= maxLen) & ((getLength() + str.length()) <= maxLen)) {
+                    text = str.substring(0, maxLen);
+                }
+                else if (str.length() >= maxLen) {
+                    text = str.substring(0, maxLen);
+                }
+
+                if ((getLength() < maxLen) & !((getLength() + text.length()) > maxLen)) {
+                    super.insertString(offs, text, a);
+                }
             }
             else {
                 super.insertString(offs, str, a);
@@ -268,7 +271,7 @@ public class MaskTextField extends JTextField implements FocusListener {
             }
         }
     }
-    
+
     @Override
     public void focusGained(FocusEvent e) {
         repaint();
@@ -290,6 +293,26 @@ public class MaskTextField extends JTextField implements FocusListener {
                 return super.create(elem);
             }
         }
+
+        @Override
+        protected void paintSafely(Graphics g) {
+            paintInsets(g);
+
+            super.paintSafely(g);
+        }
+
+        protected void paintInsets(Graphics g) {
+            JTextComponent component = MaskTextFieldUI.this.getComponent();
+            Insets insets = component.getInsets();
+            int left = insets.left;
+            int top = insets.top;
+            int right = insets.right;
+            int bottom = insets.bottom;
+
+            g.setColor(component.getBackground());
+            g.fillRect(left, top, component.getWidth() - left - right, component.getHeight() - top - bottom);
+        }
+
     }
 
     private class MaskFieldView extends FieldView {

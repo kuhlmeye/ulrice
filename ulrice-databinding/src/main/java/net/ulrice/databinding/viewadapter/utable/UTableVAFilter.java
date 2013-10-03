@@ -40,6 +40,7 @@ import net.ulrice.databinding.ObjectWithPresentation;
 import net.ulrice.databinding.bufferedbinding.impl.ColumnDefinition;
 import net.ulrice.databinding.bufferedbinding.impl.Element;
 import net.ulrice.databinding.bufferedbinding.impl.FilterMode;
+import net.ulrice.databinding.viewadapter.impl.UBorder;
 import net.ulrice.message.TranslationConstants;
 import net.ulrice.message.TranslationUsage;
 import net.ulrice.ui.components.ContextMenuMouseListener;
@@ -179,7 +180,7 @@ public class UTableVAFilter extends RowFilter<UTableViewAdapter, Long> implement
                     field.getDocument().putProperty(DOCUMENT_PROPERTY_FIELD_ID, columnDefinition.getId());
                     field.getDocument().addDocumentListener(this);
                     field.addMouseListener(new ContextMenuMouseListener());
-                    
+                    field.setBorder(new UBorder(true, false, false));
                     field.setText(columnDefinition.getPreFilledFilterValue());
                     
                     component = field;
@@ -265,7 +266,9 @@ public class UTableVAFilter extends RowFilter<UTableViewAdapter, Long> implement
                         field.setName(columnDefinition.getId());
                         field.getDocument().putProperty(DOCUMENT_PROPERTY_FIELD_ID, columnDefinition.getId());
                         field.getDocument().addDocumentListener(this);
+                        field.setBorder(new UBorder(true, false, false));
                         field.setText(columnDefinition.getPreFilledFilterValue());
+                        
                         component = field;
                         break;
                     }
