@@ -27,7 +27,7 @@ public class UTable extends JTable {
 		putClientProperty("JTable.autoStartsEdit", Boolean.TRUE);
 		putClientProperty("terminateEditOnFocusLost", Boolean.TRUE);
 		
-		uTableHeader = new UTableVAHeader(getColumnModel(), new Insets(1, 1, 3, 1));
+		uTableHeader = new UTableVAHeader(getColumnModel(), new Insets(-2, 0, 1, 1));
 		setTableHeader(uTableHeader);
 		
         setDefaultRenderer(Integer.class, new UTableVANumericCellRenderer());
