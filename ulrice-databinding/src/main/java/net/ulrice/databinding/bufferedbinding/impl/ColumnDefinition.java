@@ -172,6 +172,15 @@ public class ColumnDefinition<T extends Object> implements PropertyChangeListene
     }
 
     /**
+     * Disables the filter for this column
+     *
+     * @return the column definition itself
+     */
+    public ColumnDefinition<T> noFilter() {
+        return setFilterMode(FilterMode.NoFilter);
+    }
+    
+    /**
      * Returns the class of the data in this column
      */
     public Class<?> getColumnClass() {
