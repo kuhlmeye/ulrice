@@ -16,6 +16,7 @@ import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
+import net.ulrice.util.Colors;
 import net.ulrice.util.Gradients;
 
 public class AccordionSeparatorPanel extends JPanel {
@@ -89,6 +90,9 @@ public class AccordionSeparatorPanel extends JPanel {
 
         g2.setPaint(paint);
         g2.fillRect(0, 0, getWidth(), height);
+        
+        g2.setColor(Colors.darker(getBackground(), 0.25));
+        g2.drawLine(0, height-1, getWidth(), height-1);
 
         super.paintComponent(g);
     }
