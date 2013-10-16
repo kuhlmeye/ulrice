@@ -40,10 +40,9 @@ public class I18nTextField extends I18nTextComponent {
 		});
 	
 		getTextComponent().setBorder(BorderFactory.createEmptyBorder());
-		getTextComponent().setOpaque(false);
 		
 		setBackground(getTextComponent().getBackground());
-		
+
 		add(getLocaleSelector(), BorderLayout.WEST);
 		add(getTextComponent(), BorderLayout.CENTER);
 	}

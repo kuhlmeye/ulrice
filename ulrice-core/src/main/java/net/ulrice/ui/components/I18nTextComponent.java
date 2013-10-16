@@ -23,203 +23,219 @@ import net.ulrice.ui.components.JPopupMenuTriggerListener.TriggerType;
 
 public class I18nTextComponent extends JPanel {
 
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	private DocumentListener documentListener = new DocumentListener() {
-		
-		@Override
-		public void removeUpdate(DocumentEvent e) {
-			updateTextMap();
-		}
-		
-		@Override
-		public void insertUpdate(DocumentEvent e) {
-			updateTextMap();
-		}
-		
-		@Override
-		public void changedUpdate(DocumentEvent e) {
-			updateTextMap();
-		}
-	};
-	
-	private LocaleSelector localeSelector = new LocaleSelector();
-	
-	private JTextComponent textComponent;
-	
-	private Map<Locale, String> valueMap = new HashMap<Locale, String>();
+    private final DocumentListener documentListener = new DocumentListener() {
 
-	public I18nTextComponent(JTextComponent textComponent) {
-		super(new BorderLayout(2, 2));
-		this.textComponent = textComponent;
-	
-		localeSelector.setActionListener(new ActionListener() {
-			
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				updateTextField();
-			}
-		});
-		textComponent.getDocument().addDocumentListener(documentListener);
-	}
+        @Override
+        public void removeUpdate(DocumentEvent e) {
+            updateTextMap();
+        }
 
-	/* method is public now to be able to reach the text component for BDD tests*/
-	public JTextComponent getTextComponent() {
-		return textComponent;
-	}
-	
-	protected LocaleSelector getLocaleSelector() {
-		return localeSelector;
-	}
-	
-	private void updateTextField() {
-		try {
-			textComponent.getDocument().removeDocumentListener(documentListener);
-			Locale locale = getSelectedLocale();
-			if(valueMap != null && valueMap.containsKey(locale)) {
-				String text = valueMap.get(locale);
-				textComponent.setText(text);
-				textComponent.setCaretPosition(text == null ? 0 : text.length());
-			} else {
-				textComponent.setText(null);
-			}
-		} finally {
-			textComponent.getDocument().addDocumentListener(documentListener);
-		}
-	}
-	
-	private void updateTextMap() {
-		Locale locale = getSelectedLocale();
-		if(locale != null) {
-			String text = textComponent.getText();
-			if(text == null || "".equals(text)) {
-				valueMap.put(locale, null);
-			} else {
-				valueMap.put(locale, text);
-			}
-		}
-	}
+        @Override
+        public void insertUpdate(DocumentEvent e) {
+            updateTextMap();
+        }
 
-	@Override
-    public void updateUI() {
-		super.updateUI();
-		setOpaque(true);
+        @Override
+        public void changedUpdate(DocumentEvent e) {
+            updateTextMap();
+        }
+    };
 
-		Color sfBackground = UIManager.getColor("I18nTextField.background");
-		if (sfBackground != null) {
-			setBackground(sfBackground);
-		}
+    private final LocaleSelector localeSelector = new LocaleSelector();
 
-		Color sfForeground = UIManager.getColor("I18nTextField.foreground");
-		if (sfForeground != null) {
-			setForeground(sfForeground);
-		}
+    private final JTextComponent textComponent;
 
-		setBorder(BorderFactory.createCompoundBorder(BorderFactory.createLineBorder(getForeground()), new EmptyBorder(0, 0, 0, 0)));
-	}
+    private Map<Locale, String> valueMap = new HashMap<Locale, String>();
 
-	public void setAvailableLocales(LocaleSelectorItem... localeItems) {
-		if(localeItems != null) {
-			if(localeItems.length > 0) {
-				localeSelector.setSelectedLocale(localeItems[0]);
-				updateTextField();
-			}
-			for(LocaleSelectorItem localeItem : localeItems) {
-				localeSelector.addLocale(localeItem);
-			}
-		}
-	}
-	
-	public Locale getSelectedLocale() {
-		return localeSelector.getSelectedLocale();
-	}
-	
-	public void setData(Map<Locale, String> valueMap) {
-		this.valueMap = valueMap;
-		updateTextField();
-	}
-	
-	public Map<Locale, String> getData() {
-		updateTextMap();
-		return valueMap;
-	}
-	
-	protected class LocaleSelector extends JLabel {
+    public I18nTextComponent(JTextComponent textComponent) {
+        super(new BorderLayout(0, 2));
+        this.textComponent = textComponent;
 
-	    private static final long serialVersionUID = 1L;
+        localeSelector.setActionListener(new ActionListener() {
 
-	    private JPopupMenu dropDownMenu = new JPopupMenu();    
-	    private Locale selectedLocale = null;
-	    
-	    private ActionListener listener = null;
-
-		private boolean showTextAndIcon = false;  	    
-
-	    public LocaleSelector() {
-	        super();
-	        
-	        setBorder(new EmptyBorder(1, 1, 1, 1));
-	        setOpaque(false);
-
-	        addMouseListener(new JPopupMenuTriggerListener(dropDownMenu, TriggerType.ALL_MOUSE_BUTTONS));
-	    }
-
-		public void setSelectedLocale(LocaleSelectorItem localeItem) {
-            selectedLocale = localeItem.getLocale();
-            if(localeItem.getIcon() != null) {
-            	setIcon(localeItem.getIcon());
-            	if(showTextAndIcon) {
-                	setText(localeItem.getText());
-            	} else {
-                	setToolTipText(localeItem.getText());
-            	}
-            } else {
-            	setText(localeItem.getText());
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                updateTextField();
             }
-		}
+        });
+        textComponent.getDocument().addDocumentListener(documentListener);
+        textComponent.setOpaque(true);
+        setOpaque(false);
+    }
 
-		public void setActionListener(ActionListener listener) {
-	    	this.listener = listener;
-	    }
+    /* method is public now to be able to reach the text component for BDD tests */
+    public JTextComponent getTextComponent() {
+        return textComponent;
+    }
 
-	    public Locale getSelectedLocale() {
-	        return selectedLocale;
-	    }
-	    
-	    /**
-	     * Add a search provider to the list of selectable search providers
-	     */
-	    public void addLocale(final LocaleSelectorItem localeItem) {
-	        final JMenuItem menuItem = new JMenuItem(localeItem.getText(), localeItem.getIcon());
-	        menuItem.addActionListener(new ActionListener() {
+    protected LocaleSelector getLocaleSelector() {
+        return localeSelector;
+    }
 
-	            @Override
+    private void updateTextField() {
+        try {
+            textComponent.getDocument().removeDocumentListener(documentListener);
+            Locale locale = getSelectedLocale();
+            if ((valueMap != null) && valueMap.containsKey(locale)) {
+                String text = valueMap.get(locale);
+                textComponent.setText(text);
+                textComponent.setCaretPosition(text == null ? 0 : text.length());
+            }
+            else {
+                textComponent.setText(null);
+            }
+        }
+        finally {
+            textComponent.getDocument().addDocumentListener(documentListener);
+        }
+    }
+
+    private void updateTextMap() {
+        Locale locale = getSelectedLocale();
+        if (locale != null) {
+            String text = textComponent.getText();
+            if ((text == null) || "".equals(text)) {
+                valueMap.put(locale, null);
+            }
+            else {
+                valueMap.put(locale, text);
+            }
+        }
+    }
+
+    @Override
+    public void setBackground(Color bg) {
+        super.setBackground(bg);
+
+        if (localeSelector != null) {
+            localeSelector.setBackground(bg);
+        }
+    }
+
+    @Override
+    public void updateUI() {
+        super.updateUI();
+        setOpaque(true);
+
+        Color sfBackground = UIManager.getColor("I18nTextField.background");
+        if (sfBackground != null) {
+            setBackground(sfBackground);
+        }
+
+        Color sfForeground = UIManager.getColor("I18nTextField.foreground");
+        if (sfForeground != null) {
+            setForeground(sfForeground);
+        }
+
+        setBorder(BorderFactory.createCompoundBorder(BorderFactory.createLineBorder(getForeground()), new EmptyBorder(0, 0, 0, 0)));
+    }
+
+    public void setAvailableLocales(LocaleSelectorItem... localeItems) {
+        if (localeItems != null) {
+            if (localeItems.length > 0) {
+                localeSelector.setSelectedLocale(localeItems[0]);
+                updateTextField();
+            }
+            for (LocaleSelectorItem localeItem : localeItems) {
+                localeSelector.addLocale(localeItem);
+            }
+        }
+    }
+
+    public Locale getSelectedLocale() {
+        return localeSelector.getSelectedLocale();
+    }
+
+    public void setData(Map<Locale, String> valueMap) {
+        this.valueMap = valueMap;
+        updateTextField();
+    }
+
+    public Map<Locale, String> getData() {
+        updateTextMap();
+        return valueMap;
+    }
+
+    protected class LocaleSelector extends JLabel {
+
+        private static final long serialVersionUID = 1L;
+
+        private final JPopupMenu dropDownMenu = new JPopupMenu();
+        private Locale selectedLocale = null;
+
+        private ActionListener listener = null;
+
+        private boolean showTextAndIcon = false;
+
+        public LocaleSelector() {
+            super();
+
+            setBorder(new EmptyBorder(1, 1, 1, 4));
+            setOpaque(true);
+
+            addMouseListener(new JPopupMenuTriggerListener(dropDownMenu, TriggerType.ALL_MOUSE_BUTTONS));
+        }
+
+        public void setSelectedLocale(LocaleSelectorItem localeItem) {
+            selectedLocale = localeItem.getLocale();
+            if (localeItem.getIcon() != null) {
+                setIcon(localeItem.getIcon());
+                if (showTextAndIcon) {
+                    setText(localeItem.getText());
+                }
+                else {
+                    setToolTipText(localeItem.getText());
+                }
+            }
+            else {
+                setText(localeItem.getText());
+            }
+        }
+
+        public void setActionListener(ActionListener listener) {
+            this.listener = listener;
+        }
+
+        public Locale getSelectedLocale() {
+            return selectedLocale;
+        }
+
+        /**
+         * Add a search provider to the list of selectable search providers
+         */
+        public void addLocale(final LocaleSelectorItem localeItem) {
+            final JMenuItem menuItem = new JMenuItem(localeItem.getText(), localeItem.getIcon());
+            menuItem.addActionListener(new ActionListener() {
+
+                @Override
                 public void actionPerformed(ActionEvent e) {
-	                setSelectedLocale(localeItem);
-	                listener.actionPerformed(e);
-	            }
-	        });     
-	        dropDownMenu.add(menuItem);
-	    }
+                    setSelectedLocale(localeItem);
+                    listener.actionPerformed(e);
+                }
+            });
+            dropDownMenu.add(menuItem);
+        }
 
-		public void setShowTextAndIcon(boolean showTextAndIcon) {
-			this.showTextAndIcon = showTextAndIcon;
-		}
-	}
+        public void setShowTextAndIcon(boolean showTextAndIcon) {
+            this.showTextAndIcon = showTextAndIcon;
+        }
+    }
 
-	public void addDocumentListener(DocumentListener documentListener) {
-		getTextComponent().getDocument().addDocumentListener(documentListener);
-	}
+    public void addDocumentListener(DocumentListener documentListener) {
+        getTextComponent().getDocument().addDocumentListener(documentListener);
+    }
 
-	public void removeDocumentListener(DocumentListener documentListener) {
-		getTextComponent().getDocument().removeDocumentListener(documentListener);
-	}
+    public void removeDocumentListener(DocumentListener documentListener) {
+        getTextComponent().getDocument().removeDocumentListener(documentListener);
+    }
 
-	public void setEditable(boolean editable) {
-		getTextComponent().setEditable(editable);
-	}
+    public void setEditable(boolean editable) {
+        getTextComponent().setEditable(editable);
+    }
 
-	public boolean isEditable() {
-		return getTextComponent().isEditable();
-	}
+    public boolean isEditable() {
+        return getTextComponent().isEditable();
+    }
 }
