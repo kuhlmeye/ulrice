@@ -133,7 +133,8 @@ public class Application implements IFProcessEventListener, ActionListener {
             appSettings.clear();
 
             String userId = frame.getUserIdField().getText();
-            String application = frame.getSelectedApplication().getId();
+            String application = frame.getSelectedApplication() == null ? null : frame.getSelectedApplication().getId();
+            
             String proxyHost = System.getProperty("http.proxyHost");
             String proxyPort = System.getProperty("http.proxyPort");
             String proxyUser = System.getProperty("http.proxyUser");
