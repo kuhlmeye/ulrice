@@ -30,7 +30,7 @@ public class AccordionContentFooter extends JComponent {
         Color color = accordionContentPanel.getContent().getBackground();
         int height = getHeight();
         Graphics2D g2 = (Graphics2D) g;
-        LinearGradientPaint paint = Gradients.pressed(color, 0, height, 1, 1);
+        LinearGradientPaint paint = Gradients.pressed(color, 0, height, 0.5, 0);
         g2.setPaint(paint);
         g2.fillRect(0, 0, getWidth(), height);
 

@@ -2,13 +2,16 @@ package net.ulrice.ui.components;
 
 import java.awt.Color;
 import java.awt.Graphics;
+import java.awt.Graphics2D;
 import java.awt.Insets;
 import java.awt.Rectangle;
 import java.awt.Shape;
+import java.awt.Toolkit;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import javax.swing.JTextField;
 import javax.swing.UIManager;
@@ -284,6 +287,9 @@ public class MaskTextField extends JTextField implements FocusListener {
 
     private class MaskTextFieldUI extends MetalTextFieldUI {
 
+        @SuppressWarnings("rawtypes")
+        private Map desktopHints;
+
         @Override
         public View create(Element elem) {
             if (mask != null) {
@@ -294,8 +300,18 @@ public class MaskTextField extends JTextField implements FocusListener {
             }
         }
 
+        @SuppressWarnings("rawtypes")
         @Override
         protected void paintSafely(Graphics g) {
+            if (desktopHints == null) { 
+                Toolkit tk = Toolkit.getDefaultToolkit(); 
+                desktopHints = (Map) (tk.getDesktopProperty("awt.font.desktophints")); 
+            }
+            if (desktopHints != null) { 
+                ((Graphics2D)g).addRenderingHints(desktopHints); 
+            } 
+            
+            //((Graphics2D)g).setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
             paintInsets(g);
 
             super.paintSafely(g);

@@ -13,7 +13,7 @@ public class Colors {
     }
 
     public static Color rgbToColor(float[] rgb) {
-        return new Color(Math.min(1, Math.max(rgb[0], 0)), Math.min(1, Math.max(rgb[1], 0)), Math.min(1, Math.max(rgb[2], 0)));
+        return new Color(bound(rgb[0], 0, 1), bound(rgb[1], 0, 1), bound(rgb[2], 0, 1));
     }
 
     public static Color yuvToColor(float[] yuv, float alpha) {
@@ -21,7 +21,7 @@ public class Colors {
     }
 
     public static Color rgbToColor(float[] rgb, float alpha) {
-        return new Color(Math.min(1, Math.max(rgb[0], 0)), Math.min(1, Math.max(rgb[1], 0)), Math.min(1, Math.max(rgb[2], 0)), Math.min(1, Math.max(alpha, 0)));
+        return new Color(bound(rgb[0], 0, 1), bound(rgb[1], 0, 1), bound(rgb[2], 0, 1), bound(alpha, 0, 1));
     }
 
     public static float[] rgbToYuv(float[] rgb) {
@@ -67,7 +67,7 @@ public class Colors {
     }
 
     public static Color transparent(Color color, double factor) {
-        return new Color(color.getRed(), color.getGreen(), color.getBlue(), (int) (255 - (factor * 255)));
+        return new Color(color.getRed(), color.getGreen(), color.getBlue(), bound((int) (255 - (factor * 255)), 0, 255));
     }
 
     /**
@@ -79,13 +79,23 @@ public class Colors {
      */
     @Deprecated
     public static Color translucent(Color color, double factor) {
-        return new Color(color.getRed(), color.getGreen(), color.getBlue(), (int) (color.getAlpha() * factor));
+        return new Color(color.getRed(), color.getGreen(), color.getBlue(), bound((int) (color.getAlpha() * factor), 0, 255));
     }
 
     public static Color blend(Color color1, Color color2, double factor) {
-        return new Color((int) (color1.getRed() + ((color2.getRed() - color1.getRed()) * (1 - factor))),
-            (int) (color1.getGreen() + ((color2.getGreen() - color1.getGreen()) * (1 - factor))),
-            (int) (color1.getBlue() + ((color2.getBlue() - color1.getBlue()) * (1 - factor))), (int) (color1.getAlpha() + ((color2.getAlpha() - color1.getAlpha()) * (1 - factor))));
+        int red = (int) (color1.getRed() + ((color2.getRed() - color1.getRed()) * factor));
+        int green = (int) (color1.getGreen() + ((color2.getGreen() - color1.getGreen()) * factor));
+        int blue = (int) (color1.getBlue() + ((color2.getBlue() - color1.getBlue()) * factor));
+        int alpha = (int) (color1.getAlpha() + ((color2.getAlpha() - color1.getAlpha()) * factor));
+        
+        return new Color(bound(red, 0, 255), bound(green, 0, 255), bound(blue, 0, 255), bound(alpha, 0, 255));
+    }
+    
+    private static float bound(float value, float minimum, float maximum) {
+        return Math.min(maximum, Math.max(value, minimum));
     }
 
+    private static int bound(int value, int minimum, int maximum) {
+        return Math.min(maximum, Math.max(value, minimum));
+    }
 }

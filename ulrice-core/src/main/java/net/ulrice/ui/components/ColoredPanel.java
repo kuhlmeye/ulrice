@@ -5,14 +5,12 @@ import java.awt.Color;
 import java.awt.Component;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
-import java.awt.LinearGradientPaint;
-import java.awt.Paint;
-import java.awt.geom.Point2D;
 
 import javax.swing.JComponent;
 import javax.swing.JPanel;
 
 import net.ulrice.util.Colors;
+import net.ulrice.util.Gradients;
 
 /**
  * Panel with coloured background
@@ -25,52 +23,65 @@ public class ColoredPanel extends JPanel {
 
     public static interface PaintStrategy {
 
-        Paint getPaint(Color foreground, Color background, int height);
+        void paint(Graphics2D g, int width, int height, Color foreground, Color background);
 
     }
 
     public static PaintStrategy RAISED_PAINT = new PaintStrategy() {
 
+        /**
+         * {@inheritDoc}
+         * 
+         * @see net.ulrice.ui.components.ColoredPanel.PaintStrategy#paint(java.awt.Graphics2D, int, int,
+         *      java.awt.Color, java.awt.Color)
+         */
         @Override
-        public Paint getPaint(Color foreground, Color background, int height) {
-            Color shadowColor = Colors.darker(background, 0.1);
-            Color contentColor = background;
-            // Color darkerColor = Colors.darker(background, 0.08);
+        public void paint(Graphics2D g, int width, int height, Color foreground, Color background) {
+            g.setPaint(Gradients.shadow(background, 0, height, 0, -height, 0.33, 3));
+            g.fillRect(0, 0, width, height);
 
-            if (height > 15) { // better looking effect
-                return new LinearGradientPaint(new Point2D.Double(0, 0), new Point2D.Double(0, height), //
-                    new float[] { 0.0f, 0.01f, 1.0f - (12.0f / height), 1.0f }, //
-                    // new Color[] { shadowColor, contentColor, contentColor, darkerColor });
-                    new Color[] { shadowColor, contentColor, contentColor, contentColor });
-            }
-
-            // alternative effect, only uses relative values
-            return new LinearGradientPaint(new Point2D.Double(0, 0), new Point2D.Double(0, height), //
-                new float[] { 0.0f, 0.01f, 0.93f, 1.0f }, //
-                // new Color[] { shadowColor, contentColor, contentColor, darkerColor });
-                new Color[] { shadowColor, contentColor, contentColor, contentColor });
+            g.setColor(Color.WHITE);
+            g.drawLine(0, height - 1, width, height - 1);
         }
-
     };
 
     public static PaintStrategy LOWERED_PAINT = new PaintStrategy() {
 
+        /**
+         * {@inheritDoc}
+         * 
+         * @see net.ulrice.ui.components.ColoredPanel.PaintStrategy#paint(java.awt.Graphics2D, int, int,
+         *      java.awt.Color, java.awt.Color)
+         */
         @Override
-        public Paint getPaint(Color foreground, Color background, int height) {
-            Color lineColor = Colors.darker(background, 0.2);
-            Color shadowColor = Colors.darker(background, 0.1);
-            Color contentColor = background;
-            float fractionA = (float) Math.min(1.0 / height, 0.25);
-            float fractionB = (float) Math.min(8.0 / height, 0.5);
+        public void paint(Graphics2D g, int width, int height, Color foreground, Color background) {
+            g.setPaint(Gradients.shadow(background, 0, height, 0.33, 6));
+            g.fillRect(0, 0, width, height);
 
-            return new LinearGradientPaint(new Point2D.Double(0, 0), new Point2D.Double(0, height), new float[] { 0.0f, fractionA, fractionB, 1.0f }, new Color[] {
-                lineColor, shadowColor, contentColor, contentColor });
+            g.setColor(Colors.blend(background, Color.BLACK, 0.5));
+            g.drawLine(0, 0, width, 0);
         }
-
     };
 
+    public static ColoredPanel create(Color color, Component content) {
+        ColoredPanel result = new ColoredPanel(new PaintStrategy() {
+            
+            @Override
+            public void paint(Graphics2D g, int width, int height, Color foreground, Color background) {
+                g.setColor(background);
+                g.fillRect(0, 0, width, height);
+            }
+        }, content);
+        
+        if (color != null) {
+            result.setBackground(color);
+        }
+
+        return result;
+    }
+    
     public static ColoredPanel createRaised(Component content) {
-        return createRaised(null, content);
+        return createRaised(new Color(0xe3e3e3), content);
     }
 
     public static ColoredPanel createRaised(Color color, Component content) {
@@ -109,11 +120,10 @@ public class ColoredPanel extends JPanel {
         this.paintStrategy = paintStrategy;
 
         if (content instanceof JComponent) {
-            ((JComponent)content).setOpaque(false);
+            ((JComponent) content).setOpaque(false);
         }
 
         add(content);
-        setBackground(new Color(0xecf4fb));
         setOpaque(false);
     }
 
@@ -121,8 +131,7 @@ public class ColoredPanel extends JPanel {
     public void paintComponent(Graphics g) {
         Graphics2D g2 = (Graphics2D) g;
 
-        g2.setPaint(paintStrategy.getPaint(getForeground(), getBackground(), getHeight()));
-        g2.fillRect(0, 0, getWidth(), getHeight());
+        paintStrategy.paint(g2, getWidth(), getHeight(), getForeground(), getBackground());
 
         super.paintComponent(g);
     }
