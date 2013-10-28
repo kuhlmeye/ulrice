@@ -101,7 +101,7 @@ public class BorderStateMarker extends UBorder implements ImageObserver, IFState
      */
     private void drawNormal(Component c, Graphics g, int x, int y, int width, int height) {
         if (isBorderVisible()) {
-            drawBorder(c, g, null, x, y, width, height);
+            paintBorder(c, g, null, x, y, width, height);
         }
     }
 
@@ -116,7 +116,7 @@ public class BorderStateMarker extends UBorder implements ImageObserver, IFState
      */
     private void drawChanged(Component c, Graphics g, int x, int y, int width, int height) {
         if (strategy != BorderStateMarkerStrategy.ICON_ONLY) {
-            drawBorder(c, g, UIManager.getColor(BindingUIConstants.BORDER_STATE_MARKER_CHANGED_BORDER), x, y, width, height);
+            paintBorder(c, g, UIManager.getColor(BindingUIConstants.BORDER_STATE_MARKER_CHANGED_BORDER), x, y, width, height);
         }
         if ((strategy != BorderStateMarkerStrategy.BORDER_ONLY) && (changedIcon != null)) {
             changedIcon.paintIcon(c, g, (x + width) - 10, 0);
@@ -134,7 +134,7 @@ public class BorderStateMarker extends UBorder implements ImageObserver, IFState
      */
     private void drawInvalid(Component c, Graphics g, int x, int y, int width, int height) {
         if (strategy != BorderStateMarkerStrategy.ICON_ONLY) {
-            drawBorder(c, g, UIManager.getColor(BindingUIConstants.BORDER_STATE_MARKER_INVALID_BORDER), x, y, width, height);
+            paintBorder(c, g, UIManager.getColor(BindingUIConstants.BORDER_STATE_MARKER_INVALID_BORDER), x, y, width, height);
         }
         if ((strategy != BorderStateMarkerStrategy.BORDER_ONLY) && (invalidIcon != null)) {
             invalidIcon.paintIcon(c, g, (x + width) - 10, 0);

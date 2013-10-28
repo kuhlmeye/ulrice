@@ -42,27 +42,27 @@ public class BackgroundStateMarker implements IFStateMarker, IFCellStateMarker {
         Color background = columnColorOverride == null ? NORMAL_BG_COLOR : columnColorOverride.getColor();
         
         if (value.isRemoved()) {
-            foreground = Colors.blend(foreground, Color.WHITE, 0.25);
+            foreground = Colors.blend(foreground, Color.WHITE, 0.75);
 
             if (!valid) {
-                background = Colors.blend(background, INVALID_BG_COLOR, 0.66);
+                background = Colors.blend(background, INVALID_BG_COLOR, 0.33);
             }
         }
         else {
             if (!editable) {
-                background = Colors.blend(background, Color.BLACK, 0.85);
+                background = Colors.blend(background, Color.BLACK, 0.15);
             }
 
             if (!valid) {
-                background = Colors.blend(background, INVALID_BG_COLOR, 0.66);
+                background = Colors.blend(background, INVALID_BG_COLOR, 0.33);
             }
             else if (dirty) {
-                background = Colors.blend(background, CHANGED_BG_COLOR, 0.75);
+                background = Colors.blend(background, CHANGED_BG_COLOR, 0.25);
             }
         }
 
         if ((row % 2) == 1) {
-            background = Colors.blend(background, Color.BLACK, 0.95);
+            background = Colors.blend(background, Color.BLACK, 0.05);
         }
 
         if (selected) {
