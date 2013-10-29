@@ -110,7 +110,7 @@ public class UBorder implements Border {
             Graphics inlayG = g.create();
 
             inlayG.clipRect(x + 3, y + 3, width - 6, insets.top - 3);
-            inlayG.fillRoundRect(x + 2, y + 2, width - 4 + (clipRight > 0 ? MAX_BORDER_RADIUS : 0), height - 4, MAX_BORDER_RADIUS, MAX_BORDER_RADIUS);
+            inlayG.fillRoundRect(x + 2, y + 2, (width - 4) + (clipRight > 0 ? MAX_BORDER_RADIUS : 0), height - 4, MAX_BORDER_RADIUS, MAX_BORDER_RADIUS);
             // g.drawRect(x + 3, y + 3, width - 7, insets.top - 4);
         }
 
@@ -118,7 +118,7 @@ public class UBorder implements Border {
             Graphics inlayG = g.create();
 
             inlayG.clipRect(x + 3, (y + height) - insets.bottom, width - 6, insets.bottom - 3);
-            inlayG.fillRoundRect(x + 2, y + 2, width - 4 + (clipRight > 0 ? MAX_BORDER_RADIUS : 0), height - 4, MAX_BORDER_RADIUS, MAX_BORDER_RADIUS);
+            inlayG.fillRoundRect(x + 2, y + 2, (width - 4) + (clipRight > 0 ? MAX_BORDER_RADIUS : 0), height - 4, MAX_BORDER_RADIUS, MAX_BORDER_RADIUS);
             // g.drawRect(x + 3, (y + height) - insets.bottom, width - 7, insets.bottom - 4);
         }
 
@@ -126,7 +126,7 @@ public class UBorder implements Border {
             Graphics inlayG = g.create();
 
             inlayG.clipRect((x + 3) - clipLeft, y + insets.top, (insets.left + clipLeft) - 3, height - insets.top - insets.bottom);
-            inlayG.fillRoundRect(x + 2, y + 2, width - 4 + (clipRight > 0 ? MAX_BORDER_RADIUS : 0), height - 4, MAX_BORDER_RADIUS, MAX_BORDER_RADIUS);
+            inlayG.fillRoundRect(x + 2, y + 2, (width - 4) + (clipRight > 0 ? MAX_BORDER_RADIUS : 0), height - 4, MAX_BORDER_RADIUS, MAX_BORDER_RADIUS);
             // g.fillRect((x + 3) - clipLeft, y + insets.top, (insets.left + clipLeft) - 3, height - insets.top -
             // insets.bottom);
         }
@@ -135,7 +135,7 @@ public class UBorder implements Border {
             Graphics inlayG = g.create();
 
             inlayG.clipRect((x + width) - insets.right - clipRight, y + insets.top, (insets.right + clipRight) - 3, height - insets.top - insets.bottom);
-            inlayG.fillRoundRect(x + 2, y + 2, width - 4 + (clipRight > 0 ? MAX_BORDER_RADIUS : 0), height - 4, MAX_BORDER_RADIUS, MAX_BORDER_RADIUS);
+            inlayG.fillRoundRect(x + 2, y + 2, (width - 4) + (clipRight > 0 ? MAX_BORDER_RADIUS : 0), height - 4, MAX_BORDER_RADIUS, MAX_BORDER_RADIUS);
             // g.fillRect((x + width) - insets.right - clipRight, y + insets.top, (insets.right + clipRight) - 3,
             // height - insets.top - insets.bottom);
         }
@@ -158,14 +158,8 @@ public class UBorder implements Border {
             borderColor = Colors.blend(borderColor, FOCUS, 0.5);
         }
 
-        if (enabled) {
-            g.setPaint(Gradients.shadow(borderColor, 0, y + 2, 0, height - 4, 0.33, MAX_BORDER_RADIUS + 1));
-        }
-        else {
-            g.setColor(borderColor);
-        }
-
-        g.drawRoundRect(x + 2, y + 2, width - 5 + (clipRight > 0 ? MAX_BORDER_RADIUS : 0), height - 5, MAX_BORDER_RADIUS, MAX_BORDER_RADIUS);
+        g.setPaint(Gradients.shadow(borderColor, 0, y + 2, 0, height - 4, 0.33, MAX_BORDER_RADIUS + 1));
+        g.drawRoundRect(x + 2, y + 2, (width - 5) + (clipRight > 0 ? MAX_BORDER_RADIUS : 0), height - 5, MAX_BORDER_RADIUS, MAX_BORDER_RADIUS);
     }
 
     private void drawOverlay(Graphics2D g, Component c, Color highlight, int x, int y, int width, int height) {
@@ -178,11 +172,11 @@ public class UBorder implements Border {
 
         if (highlight != null) {
             g.setColor(Colors.transparent(highlight, (focus) ? 0.33 : 0.66));
-            g.drawRoundRect(x + 1, y + 1, width - 3 + (clipRight > 0 ? MAX_BORDER_RADIUS : 0), height - 3, MAX_BORDER_RADIUS + 2, MAX_BORDER_RADIUS + 2);
+            g.drawRoundRect(x + 1, y + 1, (width - 3) + (clipRight > 0 ? MAX_BORDER_RADIUS : 0), height - 3, MAX_BORDER_RADIUS + 2, MAX_BORDER_RADIUS + 2);
         }
         else if (focus) {
             g.setColor(FOCUS);
-            g.drawRoundRect(x + 1, y + 1, width - 3 + (clipRight > 0 ? MAX_BORDER_RADIUS : 0), height - 3, MAX_BORDER_RADIUS + 2, MAX_BORDER_RADIUS + 2);
+            g.drawRoundRect(x + 1, y + 1, (width - 3) + (clipRight > 0 ? MAX_BORDER_RADIUS : 0), height - 3, MAX_BORDER_RADIUS + 2, MAX_BORDER_RADIUS + 2);
         }
     }
 
