@@ -17,8 +17,14 @@ import net.ulrice.databinding.validation.ValidationResult;
 public class FieldXORCombinationValidator extends AbstractValidator {
     protected ArrayList<GenericAM< ?>> modelList = new ArrayList<GenericAM< ?>>();
     protected String idString = new String();
+    protected final String specifiedErrorMessage;
 
     public FieldXORCombinationValidator(GenericAM< ?>... models) {
+       this(null, models);
+    }
+    
+    public FieldXORCombinationValidator(String errorMessage, GenericAM< ?>... models) {
+        this.specifiedErrorMessage = errorMessage;
         for (GenericAM< ?> model : models) {
             modelList.add(model);
             idString = idString + " " + model.getId();
@@ -33,12 +39,13 @@ public class FieldXORCombinationValidator extends AbstractValidator {
     @Override
     protected ValidationResult validate(IFBinding bindingId, Object attribute, Object rawAttribute) {
         ValidationResult result = new ValidationResult();
+        final String errorMessage = (specifiedErrorMessage == null) ? "one of these fields must be filled "
+                + bindingId.getId() + idString: specifiedErrorMessage;
 
         if (attribute == null) { /* actual field is cleared right now */
             for (GenericAM< ?> model : modelList) {
                 if (model.getCurrentValue() == null) {
-                    result.addValidationError(new ValidationError(bindingId, "one of these fields must be filled "
-                            + bindingId.getId() + idString, null));
+                    result.addValidationError(new ValidationError(bindingId,errorMessage, null));
                     break;
                 }
             }
@@ -46,8 +53,7 @@ public class FieldXORCombinationValidator extends AbstractValidator {
         else {
             for (GenericAM< ?> model : modelList) {
                 if (model.getCurrentValue() != null) {
-                    result.addValidationError(new ValidationError(bindingId, "one of these fields must be filled "
-                            + bindingId.getId() + idString, null));
+                    result.addValidationError(new ValidationError(bindingId, errorMessage, null));
                     break;
                 }
             }
@@ -58,7 +64,6 @@ public class FieldXORCombinationValidator extends AbstractValidator {
                 model.recalculateStateForThisValidator(this, result.getValidationErrors().isEmpty(), model.getCurrentValue());
             }
         }
-
         return result;
     }
 }
