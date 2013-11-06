@@ -10,19 +10,9 @@ import net.ulrice.databinding.IFBinding;
  */
 public class UniqueKeyConstraintError extends ValidationError {
     
-    private String id;
     
-    public UniqueKeyConstraintError(IFBinding bindingId, String id, String message, Throwable th) {
+    public UniqueKeyConstraintError(IFBinding bindingId, String message, Throwable th) {
         super(bindingId, message, th);
-        this.id = id;
-    }
-
-    public String getId() {
-        return id;
-    }
-
-    public void setId(String id) {
-        this.id = id;
     }
    
 }
