@@ -32,8 +32,6 @@ import net.ulrice.databinding.validation.ValidationResult;
 import net.ulrice.databinding.viewadapter.IFViewAdapter;
 import net.ulrice.databinding.viewadapter.utable.TreeTableModel;
 import net.ulrice.databinding.viewadapter.utable.UTableViewAdapter;
-import net.ulrice.message.TranslationConstants;
-import net.ulrice.message.TranslationUsage;
 import net.ulrice.module.IFController;
 import net.ulrice.process.AbstractProcess;
 
@@ -154,15 +152,13 @@ public class TableAM implements IFAttributeModel {
         //RAD: setValue entfernt den Validation Error, und wenn sich der key nicht geaendert hat wird er nicht mehr gesetzt
         //if(checkKeyChangeAndUpdateDatastructure(element.getUniqueId(), key)) { 
         checkKeyChangeAndUpdateDatastructure(element.getUniqueId(), key);
-        
-        String errorMessage = "UniqueKeyConstraintError";
                
             if (uniqueMap.containsKey(key)) {
                 TLongSet uniqueIdSet = uniqueMap.get(key);
                 uniqueIdSet.add(element.getUniqueId());
                 if (uniqueIdSet.size() > 1) {
                     UniqueKeyConstraintError uniqueConstraintError =
-                            new UniqueKeyConstraintError(this, errorMessage, Ulrice.getTranslationProvider().getUlriceTranslation(TranslationUsage.Message, TranslationConstants.UNIQUE_KEY_CONSTRAINT_ERROR).toString(), null);
+                                new UniqueKeyConstraintError(this, "Unique key constraint error", null);                           
                     currentErrorMap.put(key, uniqueConstraintError);
                     for (long uniqueId : uniqueIdSet.toArray()) {
                         Element elementById = getElementById(uniqueId);
