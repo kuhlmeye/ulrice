@@ -13,6 +13,7 @@ import javax.swing.event.EventListenerList;
 
 import net.ulrice.Ulrice;
 import net.ulrice.message.MessageSeverity;
+import net.ulrice.message.TranslationUsage;
 import net.ulrice.module.IFController;
 import net.ulrice.process.IFBackgroundProcess.ProcessState;
 
@@ -25,18 +26,18 @@ public class ProcessManager implements IFProcessListener {
 
     private static final Logger LOG = Logger.getLogger(ProcessManager.class.getName());
 
-    private Map<IFController, List<IFBackgroundProcess>> processMap = new HashMap<IFController, List<IFBackgroundProcess>>();
-    private Map<String, IFBackgroundProcess> idProcessMap = new HashMap<String, IFBackgroundProcess>();
-    private Map<IFBackgroundProcess, String> processIdMap = new HashMap<IFBackgroundProcess, String>();
-    private List<IFBackgroundProcess> globalProcesses = new ArrayList<IFBackgroundProcess>();
-    private Map<String, List<Runnable>> executeAfterProcessMap = new Hashtable<String, List<Runnable>>();
+    private final Map<IFController, List<IFBackgroundProcess>> processMap = new HashMap<IFController, List<IFBackgroundProcess>>();
+    private final Map<String, IFBackgroundProcess> idProcessMap = new HashMap<String, IFBackgroundProcess>();
+    private final Map<IFBackgroundProcess, String> processIdMap = new HashMap<IFBackgroundProcess, String>();
+    private final List<IFBackgroundProcess> globalProcesses = new ArrayList<IFBackgroundProcess>();
+    private final Map<String, List<Runnable>> executeAfterProcessMap = new Hashtable<String, List<Runnable>>();
 
-    private EventListenerList listenerList = new EventListenerList();
+    private final EventListenerList listenerList = new EventListenerList();
 
     private static long currentId = System.currentTimeMillis();
-    
+
     /**
-     * Registers a background process at the process manager of ulrice. 
+     * Registers a background process at the process manager of ulrice.
      * 
      * @param process The process.
      * @return The unique id of the process.
@@ -60,13 +61,13 @@ public class ProcessManager implements IFProcessListener {
         processIdMap.put(process, uniqueId);
         fireStateChanged(process);
 
-        if (ProcessState.Started.equals(process.getProcessState()) && (process.getOwningController() != null && process.blocksWorkarea())) {
+        if (ProcessState.Started.equals(process.getProcessState()) && ((process.getOwningController() != null) && process.blocksWorkarea())) {
             Ulrice.getModuleManager().addBlocker(process.getOwningController(), process);
         }
         return uniqueId;
     }
 
-    public List<IFBackgroundProcess> getRunningProcesses(IFController controller) {        
+    public List<IFBackgroundProcess> getRunningProcesses(IFController controller) {
         return controller != null ? processMap.get(controller) : globalProcesses;
     }
 
@@ -77,21 +78,52 @@ public class ProcessManager implements IFProcessListener {
 
     @Override
     public void stateChanged(IFBackgroundProcess process) {
+        String processProgress = process.getProcessProgressMessage();
+        String processDuration = String.format("%,.3f s", process.getDurationNanos() / 1000000000d);
+        boolean processBlocking = (process.getOwningController() != null) && process.blocksWorkarea();
+        String processBlockingText = processBlocking ? "(blocking)" : "";
+        String processMessage = null;
 
-        Ulrice.getMessageHandler().handleMessage(process.getOwningController(), MessageSeverity.Status, process.getProcessProgressMessage() + " (" + process.getProcessState() + ")");
-        if (ProcessState.Started.equals(process.getProcessState()) && process.getOwningController() != null && process.blocksWorkarea()) {
-            Ulrice.getModuleManager().addBlocker(process.getOwningController(), process);                
+        switch (process.getProcessState()) {
+            case Cancelled:
+                processMessage =
+                        Ulrice.getTranslationProvider().getTranslationText("Ulrice", TranslationUsage.Message, "processCanceled", processProgress, processDuration,
+                            processBlockingText);
+                break;
+            case Done:
+                processMessage =
+                        Ulrice.getTranslationProvider()
+                            .getTranslationText("Ulrice", TranslationUsage.Message, "processDone", processProgress, processDuration, processBlockingText);
+                break;
+            case Initialized:
+                processMessage =
+                        Ulrice.getTranslationProvider().getTranslationText("Ulrice", TranslationUsage.Message, "processInitialized", processProgress, processDuration,
+                            processBlockingText);
+                break;
+            case Started:
+                processMessage =
+                        Ulrice.getTranslationProvider().getTranslationText("Ulrice", TranslationUsage.Message, "processStarted", processProgress, processDuration,
+                            processBlockingText);
+                break;
+            default:
+                break;
         }
-        
-    	String processId = getIdOfProcess(process);
-    	if((ProcessState.Cancelled.equals(process.getProcessState()) || ProcessState.Done.equals(process.getProcessState())) && executeAfterProcessMap.containsKey(processId)) {
-    		executeRunnables(executeAfterProcessMap.remove(processId));
-    	}
-        
+
+        Ulrice.getMessageHandler().handleMessage(process.getOwningController(), MessageSeverity.Status, processMessage);
+
+        if (ProcessState.Started.equals(process.getProcessState()) && processBlocking) {
+            Ulrice.getModuleManager().addBlocker(process.getOwningController(), process);
+        }
+
+        String processId = getIdOfProcess(process);
+        if ((ProcessState.Cancelled.equals(process.getProcessState()) || ProcessState.Done.equals(process.getProcessState())) && executeAfterProcessMap.containsKey(processId)) {
+            executeRunnables(executeAfterProcessMap.remove(processId));
+        }
+
         if (ProcessState.Done.equals(process.getProcessState())) {
-            if (process.getOwningController() != null && process.blocksWorkarea()) {
+            if (processBlocking) {
                 Ulrice.getModuleManager().removeBlocker(process.getOwningController(), process);
-            } 
+            }
 
             String uniqueId = processIdMap.get(process);
             idProcessMap.remove(uniqueId);
@@ -101,56 +133,56 @@ public class ProcessManager implements IFProcessListener {
             list = controller == null ? globalProcesses : processMap.get(process.getOwningController());
 
             if (!list.remove(process)) {
-                LOG.warning("Process "
-                    + process
-                    + " not found in list of controller.");
-            }else{
-                if(list.size() ==0 && controller != null){
+                LOG.warning("Process " + process + " not found in list of controller.");
+            }
+            else {
+                if ((list.size() == 0) && (controller != null)) {
                     processMap.remove(controller);
                 }
             }
         }
         fireStateChanged(process);
     }
-    
+
     public IFBackgroundProcess getProcessById(String uniqueId) {
         return idProcessMap.get(uniqueId);
     }
-    
+
     public String getIdOfProcess(IFBackgroundProcess process) {
-    	return processIdMap.get(process);
+        return processIdMap.get(process);
     }
-    
+
     /**
-     * Starts the runnable 
+     * Starts the runnable
      */
     public void doAfterProcess(final String processId, Runnable runnable) {
-    	if(executeAfterProcessMap.containsKey(processId)) {
-    		executeAfterProcessMap.get(processId).add(runnable);
-    	} else {
-        	executeAfterProcessMap.put(processId, Collections.singletonList(runnable));
-    	}
-    	
-    	IFBackgroundProcess process = getProcessById(processId);
-    	if(process == null || !executeAfterProcessMap.containsKey(processId)) {
-    		executeRunnables(executeAfterProcessMap.remove(processId));    		
-    	}
+        if (executeAfterProcessMap.containsKey(processId)) {
+            executeAfterProcessMap.get(processId).add(runnable);
+        }
+        else {
+            executeAfterProcessMap.put(processId, Collections.singletonList(runnable));
+        }
+
+        IFBackgroundProcess process = getProcessById(processId);
+        if ((process == null) || !executeAfterProcessMap.containsKey(processId)) {
+            executeRunnables(executeAfterProcessMap.remove(processId));
+        }
     }
 
     private void executeRunnables(List<Runnable> runnableList) {
-		if(runnableList != null) {
-			for(Runnable runnable : runnableList) {
-				runnable.run();
-			}
-		}
-	}
+        if (runnableList != null) {
+            for (Runnable runnable : runnableList) {
+                runnable.run();
+            }
+        }
+    }
 
-	public void fireStateChanged(final IFBackgroundProcess process) {
+    public void fireStateChanged(final IFBackgroundProcess process) {
         SwingUtilities.invokeLater(new Runnable() {
-            
+
             @Override
             public void run() {
-            	
+
                 IFProcessListener[] listeners = listenerList.getListeners(IFProcessListener.class);
                 if (listeners != null) {
                     for (IFProcessListener listener : listeners) {
@@ -163,9 +195,9 @@ public class ProcessManager implements IFProcessListener {
 
     public void fireProgressChanged(final IFBackgroundProcess process) {
         SwingUtilities.invokeLater(new Runnable() {
-            
+
             @Override
-            public void run() {    
+            public void run() {
                 IFProcessListener[] listeners = listenerList.getListeners(IFProcessListener.class);
                 if (listeners != null) {
                     for (IFProcessListener listener : listeners) {
@@ -173,7 +205,7 @@ public class ProcessManager implements IFProcessListener {
                     }
                 }
             }
-        });    
+        });
     }
 
     public void addProcessListener(IFProcessListener listener) {
@@ -184,8 +216,7 @@ public class ProcessManager implements IFProcessListener {
         listenerList.remove(IFProcessListener.class, listener);
     }
 
-
     private synchronized String getNextUniqueId() {
         return Long.toHexString(currentId++);
-    }     
+    }
 }

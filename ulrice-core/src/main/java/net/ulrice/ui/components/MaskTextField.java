@@ -150,6 +150,7 @@ public class MaskTextField extends JTextField implements FocusListener {
     public void updateUI() {
         setUI(new MaskTextFieldUI());
         setFont(UIManager.getFont("MaskTextField.font"));
+        setMargin(UIManager.getInsets("MaskTextField.contentMargins"));
     }
 
     @Override
@@ -303,15 +304,15 @@ public class MaskTextField extends JTextField implements FocusListener {
         @SuppressWarnings("rawtypes")
         @Override
         protected void paintSafely(Graphics g) {
-            if (desktopHints == null) { 
-                Toolkit tk = Toolkit.getDefaultToolkit(); 
-                desktopHints = (Map) (tk.getDesktopProperty("awt.font.desktophints")); 
+            if (desktopHints == null) {
+                Toolkit tk = Toolkit.getDefaultToolkit();
+                desktopHints = (Map) (tk.getDesktopProperty("awt.font.desktophints"));
             }
-            if (desktopHints != null) { 
-                ((Graphics2D)g).addRenderingHints(desktopHints); 
-            } 
-            
-            //((Graphics2D)g).setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
+
+            if (desktopHints != null) {
+                ((Graphics2D) g).addRenderingHints(desktopHints);
+            }
+
             paintInsets(g);
 
             super.paintSafely(g);
@@ -320,13 +321,16 @@ public class MaskTextField extends JTextField implements FocusListener {
         protected void paintInsets(Graphics g) {
             JTextComponent component = MaskTextFieldUI.this.getComponent();
             Insets insets = component.getInsets();
-            int left = insets.left;
-            int top = insets.top;
-            int right = insets.right;
-            int bottom = insets.bottom;
+            Insets margin = component.getMargin();
+
+            int left = insets.left - margin.left;
+            int top = insets.top - margin.top;
+            int right = insets.right - margin.right;
+            int bottom = insets.bottom - margin.bottom;
 
             g.setColor(component.getBackground());
             g.fillRect(left, top, component.getWidth() - left - right, component.getHeight() - top - bottom);
+            g.clipRect(left, top, component.getWidth() - left - right, component.getHeight() - top - bottom);
         }
 
     }

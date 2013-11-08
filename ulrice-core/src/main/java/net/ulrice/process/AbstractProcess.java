@@ -26,6 +26,8 @@ public abstract class AbstractProcess<T, V> extends SwingWorker<T, V> implements
     private EventListenerList listenerList;
     private boolean blocksWorkarea = false;
     private String progressMessage;
+    private Long startNanos;
+    private Long endNanos;
 
     public AbstractProcess(IFController owner) {
         this(owner, false);
@@ -68,14 +70,17 @@ public abstract class AbstractProcess<T, V> extends SwingWorker<T, V> implements
     }
 
     @Override
-    protected T doInBackground() throws Exception {
+    protected final T doInBackground() throws Exception {
         this.state = ProcessState.Started;
+        this.startNanos = System.nanoTime();
         fireStateChanged();
         return work();
     }
 
     @Override
-    protected void done() {
+    protected final void done() {
+        endNanos = System.nanoTime();
+        
         super.done();
 
         this.state = ProcessState.Done;
@@ -194,4 +199,19 @@ public abstract class AbstractProcess<T, V> extends SwingWorker<T, V> implements
     public boolean blocksWorkarea() {
         return blocksWorkarea;
     }
+
+    @Override
+    public long getDurationNanos() {
+        if (startNanos == null) {
+            return 0;
+        }
+        
+        if (endNanos == null) {
+            return System.nanoTime() - startNanos;
+        }
+        
+        return endNanos - startNanos;
+    }
+    
+    
 }

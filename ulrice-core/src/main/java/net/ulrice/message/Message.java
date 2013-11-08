@@ -3,6 +3,9 @@
  */
 package net.ulrice.message;
 
+import java.text.DateFormat;
+import java.util.Date;
+
 import net.ulrice.module.IFController;
 
 /**
@@ -12,115 +15,133 @@ import net.ulrice.module.IFController;
  */
 public class Message implements Comparable<Message> {
 
-	/** The timestamp of the creation of this message. */
-	private long creationTimestamp;
-	
-	/** The controller of this message or null, if this is a global message. */
-	private IFController controller;
+    /** The timestamp of the creation of this message. */
+    private final long creationTimestamp;
 
-	/** The severity of this message. */
-	private MessageSeverity severity;
-	
-	/** The message text. */
-	private String message;
-	
-	/** The throwable contained in this message. */
-	private Throwable throwable;
-	
-	/**
-	 * Constructs a new message.
-	 * 
-	 * @param severity The severity of this message.
-	 * @param message The message.
-	 */
-	public Message(MessageSeverity severity, String message) {
-		this(null, severity, message, null);
-	}
-	
-	/**
-	 * Constructs a new message.
-	 * 
-	 * @param controller The controller to which this message belongs.
-	 * @param severity The severity of this message.
-	 * @param message The message.
-	 * @param throwable The throwable of this message.
-	 */
-	public Message(IFController controller, MessageSeverity severity, String message, Throwable throwable) {
-		this.controller = controller;
-		this.severity = severity;
-		this.message = message;
-		this.throwable = throwable;
-		this.creationTimestamp = System.currentTimeMillis();
-	}
+    /** The controller of this message or null, if this is a global message. */
+    private IFController controller;
 
-	/**
-	 * @return the severity
-	 */
-	public MessageSeverity getSeverity() {
-		return severity;
-	}
+    /** The severity of this message. */
+    private MessageSeverity severity;
 
-	/**
-	 * @param severity the severity to set
-	 */
-	public void setSeverity(MessageSeverity severity) {
-		this.severity = severity;
-	}
+    /** The message text. */
+    private String message;
 
-	/**
-	 * @return the message
-	 */
-	public String getMessage() {
-		return message;
-	}
+    /** The throwable contained in this message. */
+    private Throwable throwable;
 
-	/**
-	 * @param message the message to set
-	 */
-	public void setMessage(String message) {
-		this.message = message;
-	}
+    /**
+     * Constructs a new message.
+     * 
+     * @param severity The severity of this message.
+     * @param message The message.
+     */
+    public Message(MessageSeverity severity, String message) {
+        this(null, severity, message, null);
+    }
 
-	/**
-	 * @return the throwable
-	 */
-	public Throwable getThrowable() {
-		return throwable;
-	}
+    /**
+     * Constructs a new message.
+     * 
+     * @param controller The controller to which this message belongs.
+     * @param severity The severity of this message.
+     * @param message The message.
+     * @param throwable The throwable of this message.
+     */
+    public Message(IFController controller, MessageSeverity severity, String message, Throwable throwable) {
+        this.controller = controller;
+        this.severity = severity;
+        this.message = message;
+        this.throwable = throwable;
+        this.creationTimestamp = System.currentTimeMillis();
+    }
 
-	/**
-	 * @param throwable the throwable to set
-	 */
-	public void setThrowable(Throwable throwable) {
-		this.throwable = throwable;
-	}
+    /**
+     * @return the severity
+     */
+    public MessageSeverity getSeverity() {
+        return severity;
+    }
 
-	/**
-	 * @return the controller
-	 */
-	public IFController getController() {
-		return controller;
-	}
+    /**
+     * @param severity the severity to set
+     */
+    public void setSeverity(MessageSeverity severity) {
+        this.severity = severity;
+    }
 
-	/**
-	 * @param controller the controller to set
-	 */
-	public void setController(IFController controller) {
-		this.controller = controller;
-	}
+    /**
+     * @return the message
+     */
+    public String getMessage() {
+        return message;
+    }
 
-	/**
-	 * @return the creationTimestamp
-	 */
-	public long getCreationTimestamp() {
-		return creationTimestamp;
-	}
+    /**
+     * @param message the message to set
+     */
+    public void setMessage(String message) {
+        this.message = message;
+    }
 
-	/**
-	 * @see java.lang.Comparable#compareTo(java.lang.Object)
-	 */
-	@Override
-	public int compareTo(Message o) {
-		return Long.valueOf(o.getCreationTimestamp()).compareTo(getCreationTimestamp());
+    /**
+     * @return the throwable
+     */
+    public Throwable getThrowable() {
+        return throwable;
+    }
+
+    /**
+     * @param throwable the throwable to set
+     */
+    public void setThrowable(Throwable throwable) {
+        this.throwable = throwable;
+    }
+
+    /**
+     * @return the controller
+     */
+    public IFController getController() {
+        return controller;
+    }
+
+    /**
+     * @param controller the controller to set
+     */
+    public void setController(IFController controller) {
+        this.controller = controller;
+    }
+
+    /**
+     * @return the creationTimestamp
+     */
+    public long getCreationTimestamp() {
+        return creationTimestamp;
+    }
+
+    /**
+     * @see java.lang.Comparable#compareTo(java.lang.Object)
+     */
+    @Override
+    public int compareTo(Message o) {
+        return Long.valueOf(o.getCreationTimestamp()).compareTo(getCreationTimestamp());
+    }
+
+    @Override
+    public String toString() {
+	    StringBuilder builder= new StringBuilder();
+	    
+	    builder.append(DateFormat.getDateTimeInstance(DateFormat.SHORT, DateFormat.LONG).format(new Date(creationTimestamp)));
+	    builder.append(": ");
+	    builder.append(message);
+	    
+	    if (throwable != null) {
+	        for (StackTraceElement element : throwable.getStackTrace()) {
+	            builder.append("\n\t");
+	            builder.append(element);
+	        }
+	    }
+	    
+	    return builder.toString();
 	}
 }
