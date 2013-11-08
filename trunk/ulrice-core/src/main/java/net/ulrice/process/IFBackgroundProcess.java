@@ -30,4 +30,7 @@ public interface IFBackgroundProcess extends Runnable {
 	boolean supportsCancel();
 	
 	void cancelProcess();
+	
+	long getDurationNanos();
+	
 }

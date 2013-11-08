@@ -37,12 +37,13 @@ public class BorderStateMarker extends UBorder implements ImageObserver, IFState
      * Creates a new border state marker.
      */
     public BorderStateMarker(boolean borderVisible, boolean clipLeft, boolean clipRight) {
-        this(borderVisible, null, clipLeft, clipRight);
+        this(BorderStateMarkerStrategy.BORDER_ONLY, borderVisible, clipLeft, clipRight);
     }
 
     /**
      * Creates a new border state marker.
      */
+    @Deprecated
     public BorderStateMarker(boolean borderVisible, Insets baseInsets, boolean clipLeft, boolean clipRight) {
         this(BorderStateMarkerStrategy.BORDER_ONLY, borderVisible, baseInsets, clipLeft, clipRight);
     }
@@ -53,7 +54,14 @@ public class BorderStateMarker extends UBorder implements ImageObserver, IFState
      * @param iconOnly true, if only the icon should be shown.
      */
     public BorderStateMarker(BorderStateMarkerStrategy strategy, boolean borderVisible, boolean clipLeft, boolean clipRight) {
-        this(strategy, borderVisible, null, clipLeft, clipRight);
+        super(borderVisible, clipLeft, clipRight);
+
+        if (strategy.equals(BorderStateMarkerStrategy.ALL) || strategy.equals(BorderStateMarkerStrategy.ICON_ONLY)) {
+            changedIcon = UIManager.getIcon(BindingUIConstants.BORDER_STATE_MARKER_CHANGED_IMAGE);
+            invalidIcon = UIManager.getIcon(BindingUIConstants.BORDER_STATE_MARKER_INVALID_IMAGE);
+        }
+
+        this.strategy = strategy;
     }
 
     /**
@@ -61,15 +69,9 @@ public class BorderStateMarker extends UBorder implements ImageObserver, IFState
      * 
      * @param iconOnly true, if only the icon should be shown.
      */
+    @Deprecated
     public BorderStateMarker(BorderStateMarkerStrategy strategy, boolean borderVisible, Insets baseInsets, boolean clipLeft, boolean clipRight) {
-        super(borderVisible, baseInsets, clipLeft, clipRight);
-
-        if(strategy.equals(BorderStateMarkerStrategy.ALL) || strategy.equals(BorderStateMarkerStrategy.ICON_ONLY)) {
-            changedIcon = UIManager.getIcon(BindingUIConstants.BORDER_STATE_MARKER_CHANGED_IMAGE);
-            invalidIcon = UIManager.getIcon(BindingUIConstants.BORDER_STATE_MARKER_INVALID_IMAGE);
-        }
-
-        this.strategy = strategy;
+        this(strategy, borderVisible, clipLeft, clipRight);
     }
 
     /**
