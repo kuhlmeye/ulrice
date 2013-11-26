@@ -30,7 +30,7 @@ public class StringLengthValidator extends AbstractValidator<String> {
         }
         if (maxLength != null && attribute.length () > maxLength) {
         	// TODO Christof Internationalize
-            result.addValidationError(new ValidationError(bindingId, "max. L\u00e4nge: " + minLength, null));
+            result.addValidationError(new ValidationError(bindingId, "max. L\u00e4nge: " + maxLength, null));
         }
         
         return result;
