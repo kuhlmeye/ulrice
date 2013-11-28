@@ -50,4 +50,10 @@ public class I18nTextArea extends I18nTextComponent {
 		add(getLocaleSelector(), BorderLayout.NORTH);
 		add(new JScrollPane(getTextComponent()), BorderLayout.CENTER);
 	}
+	
+	public void setMaxLength(int maxLength) {
+	    if (getTextComponent().getDocument().getClass() == I18nTextComponent.I18nPlainDocument.class) {
+	        ((I18nTextComponent.I18nPlainDocument) getTextComponent().getDocument()).setMaxLength(maxLength); 
+	    }
+	}
 }

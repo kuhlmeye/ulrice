@@ -17,7 +17,10 @@ import javax.swing.UIManager;
 import javax.swing.border.EmptyBorder;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
+import javax.swing.text.AttributeSet;
+import javax.swing.text.BadLocationException;
 import javax.swing.text.JTextComponent;
+import javax.swing.text.PlainDocument;
 
 import net.ulrice.ui.components.JPopupMenuTriggerListener.TriggerType;
 
@@ -45,10 +48,10 @@ public class I18nTextComponent extends JPanel {
 
     private final LocaleSelector localeSelector = new LocaleSelector();
 
-    private final JTextComponent textComponent;
+    private JTextComponent textComponent;
 
     private Map<Locale, String> valueMap = new HashMap<Locale, String>();
-
+    
     public I18nTextComponent(JTextComponent textComponent) {
         super(new BorderLayout(0, 2));
         this.textComponent = textComponent;
@@ -60,6 +63,7 @@ public class I18nTextComponent extends JPanel {
                 updateTextField();
             }
         });
+        textComponent.setDocument(new I18nPlainDocument());
         textComponent.getDocument().addDocumentListener(documentListener);
         textComponent.setOpaque(true);
         setOpaque(false);
@@ -237,5 +241,25 @@ public class I18nTextComponent extends JPanel {
 
     public boolean isEditable() {
         return getTextComponent().isEditable();
+    }
+    
+    protected class I18nPlainDocument extends PlainDocument {
+        
+        private static final long serialVersionUID = 1988349089916816464L;
+        
+        private int maxLength =  Integer.MAX_VALUE;
+        
+        public void setMaxLength(int maxLength) {
+            this.maxLength = maxLength;
+        }
+        
+        public void insertString(int offset, String str, AttributeSet a) throws BadLocationException {
+            if ((getLength() + str.length()) > maxLength) {
+                return;
+            }
+            else {
+                super.insertString(offset, str, a);
+            }
+        }
     }
 }
