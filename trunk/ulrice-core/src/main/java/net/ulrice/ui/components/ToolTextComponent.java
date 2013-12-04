@@ -61,7 +61,7 @@ public class ToolTextComponent<TEXT_COMPONENT_TYPE extends JTextComponent> exten
         return textComponent;
     }
 
-    public void addTool(String name, Icon icon, final String toolTipText, final ActionListener actionListener) {
+    public JButton addTool(String name, Icon icon, final String toolTipText, final ActionListener actionListener) {
         Action action = new AbstractAction(name, icon) {
             private static final long serialVersionUID = -7568921859833713045L;
 
@@ -77,14 +77,14 @@ public class ToolTextComponent<TEXT_COMPONENT_TYPE extends JTextComponent> exten
             }
         };
 
-        addTool(action);
+        return addTool(action);
     }
 
-    public void addTool(Action action) {
-        addTool(new JButton(action));
+    public JButton addTool(Action action) {
+        return addTool(new JButton(action));
     }
 
-    public void addTool(JComponent component) {
+    public <COMPONENT_TYPE extends JComponent> COMPONENT_TYPE addTool(COMPONENT_TYPE component) {
         component.setBorder(BorderFactory.createEmptyBorder());
 
         if (textComponent != null) {
@@ -98,12 +98,15 @@ public class ToolTextComponent<TEXT_COMPONENT_TYPE extends JTextComponent> exten
             button.setBorderPainted(false);
             button.setMargin(new Insets(0, 0, 0, 0));
             button.setIconTextGap(0);
+            button.setHideActionText(true);
         }
 
         component.setFocusable(false);
         component.setOpaque(false);
 
         toolBar.add(component);
+
+        return component;
     }
 
     @Override
