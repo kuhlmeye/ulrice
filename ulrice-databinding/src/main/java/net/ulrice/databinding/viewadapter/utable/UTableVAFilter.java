@@ -35,6 +35,8 @@ import javax.swing.table.TableColumn;
 import javax.swing.table.TableColumnModel;
 import javax.swing.text.BadLocationException;
 
+import net.ulrice.ui.components.ClearableTextComponent;
+
 import net.ulrice.Ulrice;
 import net.ulrice.databinding.ObjectWithPresentation;
 import net.ulrice.databinding.bufferedbinding.impl.ColumnDefinition;
@@ -180,10 +182,12 @@ public class UTableVAFilter extends RowFilter<UTableViewAdapter, Long> implement
                     field.getDocument().putProperty(DOCUMENT_PROPERTY_FIELD_ID, columnDefinition.getId());
                     field.getDocument().addDocumentListener(this);
                     field.addMouseListener(new ContextMenuMouseListener());
-                    field.setBorder(new UBorder(true, false, false));
                     field.setText(columnDefinition.getPreFilledFilterValue());
                     
-                    component = field;
+                    ClearableTextComponent<JTextField> clearableField = new ClearableTextComponent<JTextField>(field);
+                    clearableField.setBorder(new UBorder(true, false, false));
+                    
+                    component = clearableField;
                     break;
                 }
                 case Boolean: {
@@ -269,7 +273,10 @@ public class UTableVAFilter extends RowFilter<UTableViewAdapter, Long> implement
                         field.setBorder(new UBorder(true, false, false));
                         field.setText(columnDefinition.getPreFilledFilterValue());
                         
-                        component = field;
+                        ClearableTextComponent<JTextField> clearableField = new ClearableTextComponent<JTextField>(field);
+                        clearableField.setBorder(new UBorder(true, false, false));
+                        
+                        component = clearableField;
                         break;
                     }
                     case Boolean: {
