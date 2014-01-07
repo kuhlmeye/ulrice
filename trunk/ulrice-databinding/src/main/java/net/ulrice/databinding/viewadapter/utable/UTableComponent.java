@@ -441,6 +441,11 @@ public class UTableComponent extends JPanel {
         return sorter;
     }
     
+    public int getViewIndexOfElement(Element element){
+        final int indexOfElement = attributeModel.getIndexOfElement(element);
+        return convertRowIndexToView(indexOfElement);
+    }
+    
     public void setRowSorter(UTableRowSorter sorter){
         this.sorter = sorter;
         
