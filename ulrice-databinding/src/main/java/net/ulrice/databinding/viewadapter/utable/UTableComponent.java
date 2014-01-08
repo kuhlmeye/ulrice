@@ -53,7 +53,7 @@ import net.ulrice.ui.components.BorderPanel;
 
 /**
  * Ulrice table component with some extended features like sorting, filtering, ...
- * 
+ *
  * @author DL10KUH
  */
 public class UTableComponent extends JPanel {
@@ -70,11 +70,11 @@ public class UTableComponent extends JPanel {
 
     protected UTableModel staticTableModel;
     protected UTableModel scrollTableModel;
-    
+
     protected UTableVAFilter filter;
     protected UTableRowSorter sorter;
 
-    
+
     protected ListSelectionModel rowSelModel = new DefaultListSelectionModel();
 
     protected int fixedColumns;
@@ -90,7 +90,7 @@ public class UTableComponent extends JPanel {
     protected TableAM attributeModel;
 
     protected List<UTableAction> popupMenuActions = new ArrayList<UTableAction>();
-    
+
     // Copy paste
     private Map<String, UTableCopyPasteCellConverter> copyPasteConverterMap;
 
@@ -213,7 +213,7 @@ public class UTableComponent extends JPanel {
         staticTable.addMouseListener(mouseListener);
         scrollTable.addMouseListener(mouseListener);
         scrollPane.addMouseListener(mouseListener);
-        
+
         setOpaque(false);
         setPreferredSize(new Dimension(128, 128));
     }
@@ -334,6 +334,7 @@ public class UTableComponent extends JPanel {
     /**
      * Returns the array of registered mouse listeners
      */
+    @Override
     public MouseListener[] getMouseListeners() {
         return listenerList.getListeners(MouseListener.class);
     }
@@ -341,6 +342,7 @@ public class UTableComponent extends JPanel {
     /**
      * Adds a mouse listener
      */
+    @Override
     public void addMouseListener(MouseListener l) {
         listenerList.add(MouseListener.class, l);
     }
@@ -348,6 +350,7 @@ public class UTableComponent extends JPanel {
     /**
      * Removes a mouse listener
      */
+    @Override
     public void removeMouseListener(MouseListener l) {
         listenerList.remove(MouseListener.class, l);
     }
@@ -440,7 +443,7 @@ public class UTableComponent extends JPanel {
     public UTableRowSorter getRowSorter() {
         return sorter;
     }
-    
+
     public int getViewIndexOfElement(Element element){
         final int indexOfElement = attributeModel.getIndexOfElement(element);
         return convertRowIndexToView(indexOfElement);
@@ -448,7 +451,7 @@ public class UTableComponent extends JPanel {
     
     public void setRowSorter(UTableRowSorter sorter){
         this.sorter = sorter;
-        
+
         if(sorter == null){
             staticTable.setRowSorter(null);
             scrollTable.setRowSorter(null);
@@ -485,11 +488,11 @@ public class UTableComponent extends JPanel {
      * Update the column model of the table according to the column definitions
      */
     public void updateColumnModel() {
-        
+
         if(attributeModel == null){
             return;
         }
-        
+
         try{
             if(filter != null){
                 filter.setRebuildOnColumnChanges(false);
@@ -635,7 +638,7 @@ public class UTableComponent extends JPanel {
 
     /**
      * Resize the column widths
-     * 
+     *
      * @param includeHeader true, if the header should be included.
      */
     public void sizeColumns(boolean includeHeader) {
@@ -667,14 +670,14 @@ public class UTableComponent extends JPanel {
                 // TODO find a clever way and place to calculate the a real value instead of setting just +15
                 maxWidth = comp.getPreferredSize().width + 15;
             }
-            
+
             if(attributeModel != null) {
 				ColumnDefinition definition = attributeModel.getColumnByIndex(convertColumnIndexToModel(vColIndex));
 				if(FilterMode.ComboBox.equals(definition.getFilterMode())) {
 					//getFilter().
 				}
 			}
-            
+
         }
 
         final int resizeIndex = table.getRowCount() / 100;
@@ -729,7 +732,7 @@ public class UTableComponent extends JPanel {
     public void selectElement(int index) {
         getSelectionModel().addSelectionInterval(index, index);
     }
-    
+
     /**
      * Returns true, if exactly one table row is selected.
      */
@@ -792,7 +795,7 @@ public class UTableComponent extends JPanel {
     }
 
     /**
-     * Delete a row from the table 
+     * Delete a row from the table
      * @param modelIndex Model side row index of the row that should be deleted.
      */
     public void delRowWithModelIndex(int modelIndex) {
@@ -883,7 +886,7 @@ public class UTableComponent extends JPanel {
         }
         return result;
     }
-    
+
     /**
      * Return the list of selected rows as elements
      */
@@ -1002,7 +1005,7 @@ public class UTableComponent extends JPanel {
         if (getRowSorter() == null) {
             return (attributeModel != null) ? attributeModel.getRowCount() : 0;
         }
-        
+
         return getRowSorter().getModelRowCount();
     }
 
@@ -1013,7 +1016,7 @@ public class UTableComponent extends JPanel {
         if (getRowSorter() == null) {
             return (attributeModel != null) ? attributeModel.getRowCount() : 0;
         }
-        
+
         return getRowSorter().getViewRowCount();
     }
 
@@ -1027,6 +1030,13 @@ public class UTableComponent extends JPanel {
         return null;
     }
 
+    public int getIndexOfColumn(ColumnDefinition< ?> col) {
+        if (attributeModel != null) {
+            return attributeModel.getColumns().indexOf(col);
+        }
+        return -1;
+    }
+
     /**
      * Return the column definition by view index or null, if table is not bound
      */
@@ -1037,7 +1047,7 @@ public class UTableComponent extends JPanel {
         }
         return null;
     }
-    
+
     public TableColumn getColumn(int column) {
         if (column < fixedColumns) {
             return staticTable.getColumnModel().getColumn(column);
@@ -1115,17 +1125,17 @@ public class UTableComponent extends JPanel {
             attributeModel.rollbackElement(getSelectedElement());
         }
     }
-    
+
     public void disableUserSorting(){
         setUserSortingEnabled(scrollTable, false);
-        setUserSortingEnabled(staticTable, false);       
+        setUserSortingEnabled(staticTable, false);
     }
-    
+
     public void enableUserSorting(){
         setUserSortingEnabled(scrollTable, true);
-        setUserSortingEnabled(staticTable, true);       
+        setUserSortingEnabled(staticTable, true);
     }
-    
+
     private void setUserSortingEnabled(UTable table, boolean enabled){
         MouseListener[] listeners = table.getTableHeader().getMouseListeners();
         for (MouseListener listner : listeners) {
@@ -1142,21 +1152,21 @@ public class UTableComponent extends JPanel {
     public void setLowerInfoAreaDisabled(boolean lowerInfoAreaDisabled) {
         this.lowerInfoAreaDisabled = lowerInfoAreaDisabled;
     }
-    
+
     public boolean isRowSelectionAllowed() {
         return rowSelectionAllowed;
     }
-    
+
     public void setRowSelectionAllowed(boolean rowSelectionAllowed) {
         this.rowSelectionAllowed = rowSelectionAllowed;
         this.staticTable.setRowSelectionAllowed(rowSelectionAllowed);
         this.scrollTable.setRowSelectionAllowed(rowSelectionAllowed);
     }
-    
+
     public boolean isColumnSelectionAllowed() {
         return columnSelectionAllowed;
     }
-    
+
     public void setColumnSelectionAllowed(boolean columnSelectionAllowed) {
         this.columnSelectionAllowed = columnSelectionAllowed;
         this.staticTable.setColumnSelectionAllowed(columnSelectionAllowed);
@@ -1172,7 +1182,7 @@ public class UTableComponent extends JPanel {
         }
         copyPasteConverterMap.put(columnId, converter);
     }
-    
+
     /**
      * Unregisters a copy paste cell converter
      */
@@ -1181,7 +1191,7 @@ public class UTableComponent extends JPanel {
             copyPasteConverterMap.remove(columnId);
         }
     }
-    
+
     /**
      * Returns the copy paste cell converter that is currently registered for a column, or null, if no converter is registered
      */
@@ -1191,24 +1201,24 @@ public class UTableComponent extends JPanel {
         }
         return null;
     }
-    
+
     /**
-     * Enables/Disables copy & paste 
+     * Enables/Disables copy & paste
      */
     public void setEnableCopyPaste(boolean enableCopy, boolean enablePaste) {
-        
+
         if(enableCopy) {
             ActionListener copyActionListener = new ActionListener() {
 
                 @Override
                 public void actionPerformed(ActionEvent arg0) {
-                    StringBuilder sbf = new StringBuilder();                    
-                    int[] selRows = getSelectedRowsViewIndex();                 
+                    StringBuilder sbf = new StringBuilder();
+                    int[] selRows = getSelectedRowsViewIndex();
                     int[] selCols = null;
                     if(isColumnSelectionAllowed()) {
                         int[] selectedStaticColumns = staticTable.getSelectedColumns();
                         int[] selectedScrollColumns = scrollTable.getSelectedColumns();
-                        
+
                         selCols = new int[selectedStaticColumns.length + selectedScrollColumns.length];
                         System.arraycopy(selectedStaticColumns, 0, selCols, 0, selectedStaticColumns.length);
                         System.arraycopy(selectedScrollColumns, 0, selCols, selectedStaticColumns.length, selectedScrollColumns.length);
@@ -1218,7 +1228,7 @@ public class UTableComponent extends JPanel {
                             selCols[i] = i;
                         }
                     }
-                    
+
                     for(int i = 0; i < selRows.length; i++) {
                         for(int j = 0; j < selCols.length; j++) {
                             if(j > 0) {
@@ -1247,7 +1257,7 @@ public class UTableComponent extends JPanel {
                         table = scrollTable;
                     }
 
-                    
+
                     UTableCopyPasteCellConverter cellConverter = getCopyPasteCellConverter(columnId);
                     if(cellConverter != null) {
                         getElementAtViewIndex(row).setValueAt(columnId, cellConverter.cellToClipboard(value));
@@ -1262,61 +1272,61 @@ public class UTableComponent extends JPanel {
                         }
                         else {
                             strValue = value != null ? value.toString() : null;
-                        }   
+                        }
                         if(strValue != null) {
                             sbf.append(strValue);
                         }
-                    } 
-                }               
+                    }
+                }
             };
 
             staticTable.registerKeyboardAction(copyActionListener, KeyStroke.getKeyStroke(KeyEvent.VK_C, ActionEvent.CTRL_MASK, false), JComponent.WHEN_FOCUSED);
             scrollTable.registerKeyboardAction(copyActionListener, KeyStroke.getKeyStroke(KeyEvent.VK_C, ActionEvent.CTRL_MASK, false), JComponent.WHEN_FOCUSED);
-            
-        } else {            
+
+        } else {
             staticTable.unregisterKeyboardAction(KeyStroke.getKeyStroke(KeyEvent.VK_C, ActionEvent.CTRL_MASK, false));
             scrollTable.unregisterKeyboardAction(KeyStroke.getKeyStroke(KeyEvent.VK_C, ActionEvent.CTRL_MASK, false));
         }
-        
+
         if(enablePaste) {
             ActionListener pasteActionListener = new ActionListener() {
 
                 @Override
                 public void actionPerformed(ActionEvent arg0) {
-                    
-                    int startRow = getSelectionModel().getLeadSelectionIndex();                 
+
+                    int startRow = getSelectionModel().getLeadSelectionIndex();
 
                     int selStaticColumn = staticTable.getColumnModel().getSelectionModel().getLeadSelectionIndex();
                     int selScrollColumn = scrollTable.getColumnModel().getSelectionModel().getLeadSelectionIndex();
-                    
+
                     int startCol = -1;
                     if(selStaticColumn < 0) {
                         startCol = selScrollColumn;
                     } else {
                         startCol = selStaticColumn;
                     }
-                    
-                    
+
+
                     if(startRow < 0 || startCol < 0) {
                         return;
                     }
-                    
+
                     try {
                         String tableData = (String) (Toolkit.getDefaultToolkit().getSystemClipboard().getContents(this).getTransferData(DataFlavor.stringFlavor));
-                                                
+
                         StringTokenizer rowTokenizer = new StringTokenizer(tableData, "\n");
                         for (int i = 0; rowTokenizer.hasMoreTokens(); i++) {
                             String rowstring = rowTokenizer.nextToken();
                             StringTokenizer columnString = new StringTokenizer(rowstring, "\t");
                             for (int j = 0; columnString.hasMoreTokens(); j++) {
-                                String value = (String) columnString.nextToken();
+                                String value = columnString.nextToken();
 
                                 int row = startRow + i;
                                 int col = startCol + j;
-                                
+
                                 if (row < getViewRowCount() && col < getColumnCount() && isCellEditable(row, col)) {
                                     String columnId = getColumnByViewIndex(col).getId();
-                                    
+
                                     UTableCopyPasteCellConverter cellConverter = getCopyPasteCellConverter(columnId);
                                     if(cellConverter != null) {
                                         getElementAtViewIndex(row).setValueAt(columnId, cellConverter.clipboardToCell(value));
@@ -1330,14 +1340,14 @@ public class UTableComponent extends JPanel {
                     catch (Exception ex) {
                         ex.printStackTrace();
                     }
-                }               
+                }
             };
-            
+
             staticTable.registerKeyboardAction(pasteActionListener, KeyStroke.getKeyStroke(KeyEvent.VK_V, ActionEvent.CTRL_MASK, false), JComponent.WHEN_FOCUSED);
             scrollTable.registerKeyboardAction(pasteActionListener, KeyStroke.getKeyStroke(KeyEvent.VK_V, ActionEvent.CTRL_MASK, false), JComponent.WHEN_FOCUSED);
         } else {
-            staticTable.unregisterKeyboardAction(KeyStroke.getKeyStroke(KeyEvent.VK_V, ActionEvent.CTRL_MASK, false));         
-            scrollTable.unregisterKeyboardAction(KeyStroke.getKeyStroke(KeyEvent.VK_V, ActionEvent.CTRL_MASK, false));         
+            staticTable.unregisterKeyboardAction(KeyStroke.getKeyStroke(KeyEvent.VK_V, ActionEvent.CTRL_MASK, false));
+            scrollTable.unregisterKeyboardAction(KeyStroke.getKeyStroke(KeyEvent.VK_V, ActionEvent.CTRL_MASK, false));
         }
-    }    
+    }
 }
