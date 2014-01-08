@@ -19,7 +19,7 @@ import net.ulrice.util.Gradients;
 
 public class UBorder implements Border {
 
-    private static final int MAX_BORDER_RADIUS = 4;
+    private static final int MAX_BORDER_RADIUS = 6;
     private static final int MAX_BORDER_RADIUS_WITH_CORNER = 2;
 
     private static final Color FOCUS = new Color(0x73a4d1);
