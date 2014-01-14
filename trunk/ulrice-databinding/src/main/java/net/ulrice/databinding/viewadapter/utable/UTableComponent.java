@@ -49,6 +49,7 @@ import net.ulrice.databinding.bufferedbinding.impl.FilterMode;
 import net.ulrice.databinding.bufferedbinding.impl.TableAM;
 import net.ulrice.databinding.viewadapter.IFCellStateMarker;
 import net.ulrice.databinding.viewadapter.IFCellTooltipHandler;
+import net.ulrice.frame.impl.workarea.GlassPanel;
 import net.ulrice.ui.components.BorderPanel;
 
 /**
@@ -532,6 +533,14 @@ public class UTableComponent extends JPanel {
             if (sorter != null) {
                 List<SortKey> sortKeys = sorter.getGlobalSortKeys();
                 sorter.modelStructureChanged();
+                
+                    // If last column was removed remove it's sort key
+                    for (SortKey sortKey : new ArrayList<SortKey>(sortKeys)) {
+                        if (sortKey.getColumn() >= attributeModel.getColumnCount()) {
+                            sortKeys.remove(sortKey);
+                        }
+                    }
+                
                 sorter.setGlobalSortKeys(sortKeys);
             }
             for (int i = fixedColumns; i < columnDefinitions.size(); i++) {
@@ -1350,4 +1359,5 @@ public class UTableComponent extends JPanel {
             scrollTable.unregisterKeyboardAction(KeyStroke.getKeyStroke(KeyEvent.VK_V, ActionEvent.CTRL_MASK, false));
         }
     }
+    
 }
