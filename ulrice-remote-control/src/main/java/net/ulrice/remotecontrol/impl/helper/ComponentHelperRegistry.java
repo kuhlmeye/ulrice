@@ -30,6 +30,7 @@ public class ComponentHelperRegistry {
         register(new WindowHelper());
         register(new AccordionContentPanelHelper());
         register(new I18nTextComponentHelper());
+        register(new I18nTextPaneHelper());
     }
 
     /**
@@ -69,8 +70,6 @@ public class ComponentHelperRegistry {
                 return (ComponentHelper<Component>) result;
             }
         }
-
         return null;
     }
-
 }
