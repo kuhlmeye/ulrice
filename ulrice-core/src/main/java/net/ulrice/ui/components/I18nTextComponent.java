@@ -138,6 +138,9 @@ public class I18nTextComponent extends JPanel {
 
     public void setAvailableLocales(LocaleSelectorItem... localeItems) {
         if (localeItems != null) {
+            
+            localeSelector.getDropDownMenu().removeAll();
+            
             if (localeItems.length > 0) {
                 localeSelector.setSelectedLocale(localeItems[0]);
                 updateTextField();
@@ -225,6 +228,11 @@ public class I18nTextComponent extends JPanel {
         public void setShowTextAndIcon(boolean showTextAndIcon) {
             this.showTextAndIcon = showTextAndIcon;
         }
+
+        public JPopupMenu getDropDownMenu() {
+            return dropDownMenu;
+        }
+        
     }
 
     public void addDocumentListener(DocumentListener documentListener) {
