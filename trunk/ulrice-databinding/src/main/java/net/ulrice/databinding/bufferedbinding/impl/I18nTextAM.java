@@ -24,6 +24,7 @@ import net.ulrice.databinding.validation.ValidationResult;
 import net.ulrice.databinding.viewadapter.IFViewAdapter;
 import net.ulrice.databinding.viewadapter.IFViewChangeListener;
 import net.ulrice.databinding.viewadapter.impl.I18nTextComponentViewAdapter;
+import net.ulrice.databinding.viewadapter.impl.I18nTextPaneViewAdapter;
 import net.ulrice.ui.components.LocaleSelectorItem;
 
 public class I18nTextAM implements IFAttributeModel<Map<Locale, String>>, IFViewChangeListener {
@@ -85,6 +86,10 @@ public class I18nTextAM implements IFAttributeModel<Map<Locale, String>>, IFView
 			I18nTextComponentViewAdapter i18nVA = (I18nTextComponentViewAdapter) viewAdapter;
 			i18nVA.getComponent().setAvailableLocales(localeItems);
 		}
+		else if(viewAdapter instanceof I18nTextPaneViewAdapter) {
+		    I18nTextPaneViewAdapter i18nVA = (I18nTextPaneViewAdapter) viewAdapter;
+            i18nVA.getComponent().setAvailableLocales(localeItems);
+        }
 
         if (getValueConverter() != null) {
             modelType = getValueConverter().getViewType(modelType);
@@ -126,6 +131,10 @@ public class I18nTextAM implements IFAttributeModel<Map<Locale, String>>, IFView
 					I18nTextComponentViewAdapter i18nVA = (I18nTextComponentViewAdapter) viewAdapter;
 					i18nVA.getComponent().setAvailableLocales(localeItems);
 				}
+				else if(viewAdapter instanceof I18nTextPaneViewAdapter) {
+				    I18nTextPaneViewAdapter i18nVA = (I18nTextPaneViewAdapter) viewAdapter;
+                    i18nVA.getComponent().setAvailableLocales(localeItems);
+                }
 			}
 		}
 	}
