@@ -400,7 +400,7 @@ public class Element {
 	}
 
 	/**
-	 * Return the current value of this element.
+	 * Return the current value of this element. Caution this clones the original value and applies the changes to the new object
 	 */
 	public Object getCurrentValue() {
 		Object result = tableAM.cloneObject(getOriginalValue());
@@ -479,11 +479,7 @@ public class Element {
         return modelList.length;
     }
 
-	/**
-	 * Return the current value object.
-	 *
-	 * @return The value object.
-	 */
+	
 	public Object getOriginalValue() {
 		return originalValue;
 	}
