@@ -739,7 +739,7 @@ public class UTableComponent extends JPanel {
     }
 
     public void selectElement(int index) {
-        getSelectionModel().addSelectionInterval(index, index);
+        getSelectionModel().setSelectionInterval(index, index);
     }
 
     /**
