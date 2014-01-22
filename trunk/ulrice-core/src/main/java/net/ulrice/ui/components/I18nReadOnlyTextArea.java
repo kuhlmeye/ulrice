@@ -8,6 +8,8 @@ import javax.swing.BorderFactory;
 import javax.swing.JScrollPane;
 import javax.swing.JTextPane;
 import javax.swing.UIManager;
+import javax.swing.text.Document;
+import javax.swing.text.html.HTMLDocument;
 
 public class I18nReadOnlyTextArea extends I18nTextPane {
 
@@ -57,8 +59,11 @@ public class I18nReadOnlyTextArea extends I18nTextPane {
     }
 
     public void setMaxLength(int maxLength) {
-        if (getTextPane().getDocument().getClass() == I18nTextPane.I18nPlainDocument.class) {
-            ((I18nTextPane.I18nPlainDocument) getTextPane().getDocument()).setMaxLength(maxLength);
+        if (getTextPane().getDocument().getClass().equals(I18nTextPane.I18nHTMLDocument.class)) {
+            ((I18nTextPane.I18nHTMLDocument) getTextPane().getDocument()).setMaxLength(maxLength);
+        }
+        if (getTextPane().getDocument().getClass().equals( HTMLDocument.class)) {
+            System.out.println(getTextPane().getDocument().getLength());
         }
     }
 }

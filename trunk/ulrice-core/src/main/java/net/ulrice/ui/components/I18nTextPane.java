@@ -51,7 +51,7 @@ public class I18nTextPane extends JPanel {
 
     private final LocaleSelector localeSelector = new LocaleSelector();
 
-    private JTextPane textPane;
+    private final JTextPane textPane;
 
     private Map<Locale, String> valueMap = new HashMap<Locale, String>();
 
@@ -59,7 +59,7 @@ public class I18nTextPane extends JPanel {
         super(new BorderLayout(0, 2));
         this.textPane = textPane;
 
-        localeSelector.setActionListener(new ActionListener() {
+        this.localeSelector.setActionListener(new ActionListener() {
 
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -67,7 +67,7 @@ public class I18nTextPane extends JPanel {
             }
         });
 
-        textPane.setDocument(new HTMLDocument());
+        textPane.setDocument(new I18nHTMLDocument());
         textPane.getDocument().addDocumentListener(documentListener);
         textPane.setOpaque(true);
         setOpaque(false);
@@ -89,6 +89,7 @@ public class I18nTextPane extends JPanel {
             if ((valueMap != null) && valueMap.containsKey(locale)) {
                 String text = valueMap.get(locale);
                 textPane.setText(text);
+//                textPane.setCaretPosition(text == null ? 0 : text.length());
             }
             else {
                 textPane.setText(null);
@@ -239,7 +240,7 @@ public class I18nTextPane extends JPanel {
         return getTextPane().isEditable();
     }
 
-    protected class I18nPlainDocument extends PlainDocument {
+    public class I18nHTMLDocument extends HTMLDocument {
         private static final long serialVersionUID = 1988349089916816464L;
         private int maxLength = Integer.MAX_VALUE;
 
