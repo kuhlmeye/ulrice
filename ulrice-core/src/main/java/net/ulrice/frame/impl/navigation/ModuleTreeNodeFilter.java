@@ -4,5 +4,5 @@ import net.ulrice.module.IFModule;
 
 public interface ModuleTreeNodeFilter {
 
-    boolean accept(IFModule module);
+    boolean accept(IFModule<?> module);
 }

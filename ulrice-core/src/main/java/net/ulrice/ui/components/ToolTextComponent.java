@@ -10,6 +10,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
@@ -17,6 +19,7 @@ import javax.swing.BorderFactory;
 import javax.swing.Icon;
 import javax.swing.JButton;
 import javax.swing.JComponent;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.text.JTextComponent;
 
@@ -24,6 +27,7 @@ public class ToolTextComponent<TEXT_COMPONENT_TYPE extends JTextComponent> exten
 
     private static final long serialVersionUID = -4459008146035175675L;
 
+    private final JLabel label = new JLabel();
     private final TEXT_COMPONENT_TYPE textComponent;
     private final JPanel toolBar = new JPanel(new FlowLayout(FlowLayout.LEFT, 0, 0));
 
@@ -36,6 +40,14 @@ public class ToolTextComponent<TEXT_COMPONENT_TYPE extends JTextComponent> exten
         setBorder(BorderFactory.createLoweredBevelBorder());
         setOpaque(false);
 
+        label.setBorder(BorderFactory.createEmptyBorder(1, 2, 1, 2));
+        label.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                ToolTextComponent.this.textComponent.grabFocus();
+            }
+        });
+        
         textComponent.setBorder(BorderFactory.createEmptyBorder(1, 3, 1, 3));
         textComponent.addFocusListener(new FocusListener() {
             @Override
@@ -50,11 +62,20 @@ public class ToolTextComponent<TEXT_COMPONENT_TYPE extends JTextComponent> exten
         });
         textComponent.setMargin(new Insets(2, 4, 2, 4));
 
-        toolBar.setBorder(BorderFactory.createEmptyBorder(1, 0, 1, 0));
+        toolBar.setBorder(BorderFactory.createEmptyBorder(1, 2, 1, 2));
         toolBar.setOpaque(false);
 
+        add(label, BorderLayout.WEST);
         add(textComponent, BorderLayout.CENTER);
         add(toolBar, BorderLayout.EAST);
+    }
+
+    public void setIcon(Icon icon) {
+        label.setIcon(icon);
+    }
+
+    public void setLabel(String label) {
+        this.label.setText(label);
     }
 
     public TEXT_COMPONENT_TYPE getTextComponent() {
