@@ -13,6 +13,8 @@ import java.nio.channels.FileChannel;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.List;
+import java.util.Properties;
+import java.util.Set;
 import java.util.jar.JarFile;
 import java.util.jar.Pack200;
 import java.util.jar.Pack200.Packer;
@@ -88,6 +90,13 @@ public class GenerateDescriptionMojo extends AbstractMojo {
 	 * @parameter default-value=""
 	 */
 	private String unzipFiles;
+	
+	/**
+	 * Key values for the provided java runtime envrionments. The key will be used as the os attribute..
+	 * 
+	 * @parameter default-value=""
+	 */
+	private Properties providedJRE;
 
 	public void execute() throws MojoExecutionException {
 
@@ -125,6 +134,16 @@ public class GenerateDescriptionMojo extends AbstractMojo {
 			for (File f : dirs) {
 				getLog().info("Scanning : " + f.getAbsolutePath());
 
+				if(providedJRE != null) {
+					for(String key : providedJRE.stringPropertyNames()) {
+						pw.print("<providedJRE ");
+						pw.print("os=\"" + key + "\" ");
+						pw.print("name=\"" + providedJRE.getProperty(key) + "\"");
+						pw.println("/>");
+					}					
+				}
+
+				
 				File[] files = f.listFiles();
 				if (files != null) {
 					for (File file : files) {
@@ -152,7 +171,7 @@ public class GenerateDescriptionMojo extends AbstractMojo {
 							String md5 = null; 
 							if(useMd5) {
 								md5 = calculateMd5(file);
-								getLog().info("-MD5 for file: " + file + " is " + md5);
+								getLog().debug("-MD5 for file: " + file + " is " + md5);
 							}
 							
 							boolean pack200Used = false;						
@@ -177,7 +196,8 @@ public class GenerateDescriptionMojo extends AbstractMojo {
 							if (md5 != null && useMd5) {
 								pw.print("md5=\"" + md5 + "\" ");
 							}		
-							pw.print("pack200=\"" + pack200Used + "\"");
+							pw.print("pack200=\"" + pack200Used + "\" ");
+							pw.print("length=\"" + file.length() + "\"");
 							pw.println("/>");
 							
 							
@@ -190,8 +210,7 @@ public class GenerateDescriptionMojo extends AbstractMojo {
 								try {
 									copyFile(file, targetDir);
 								} catch (IOException e) {
-									throw new MojoExecutionException("Error closing FileChannels copying file "
-											+ file.getAbsolutePath());
+									throw new MojoExecutionException("Error closing FileChannels copying file " + file.getAbsolutePath());
 								}
 							}
 						}
