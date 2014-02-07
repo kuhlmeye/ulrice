@@ -34,6 +34,8 @@ public class Unzip extends AbstractTask {
 
     private static final String BASE_URL_PARAM_NAME = "baseUrl";
 
+    // TODO Unzip Type => Everytime, Checkdir
+    
     @Override
     public boolean doTask(ProcessThread thread) {
         String filter = getParameterAsString(FILTER_PARAM);

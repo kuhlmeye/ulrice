@@ -31,6 +31,7 @@ public class Applet extends java.applet.Applet implements IFProcessEventListener
     @Override
     public void init() {
         super.init();
+        
 
         try {
             UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());

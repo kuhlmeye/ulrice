@@ -5,8 +5,10 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.Stack;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -45,7 +47,6 @@ public class XMLDescriptionReader extends DefaultHandler {
 		this.imagePath = imagePath;
 		this.input = input;
 		this.taskStack = new Stack<TaskDescription>();
-
 	}
 
 	public void parseXML(ApplicationDescription appDescription) throws SAXException, IOException {
@@ -95,6 +96,19 @@ public class XMLDescriptionReader extends DefaultHandler {
 				appDescription.setAppParameters(appParameters);
 			}
 			appParameters.add(paramValue);
+
+		} else if ("providedJRE".equalsIgnoreCase(localName)) {
+
+			ProvidedJRE providedJRE = new ProvidedJRE();
+			providedJRE.setOs(atts.getValue("os"));
+			providedJRE.setFilename(atts.getValue("name"));
+			
+			Set<ProvidedJRE> providedJREs = appDescription.getProvidedJRESet();
+			if (providedJREs == null) {
+				providedJREs = new HashSet<ProvidedJRE>();
+				appDescription.setProvidedJRESet(providedJREs);
+			}
+			providedJREs.add(providedJRE);
 
 		} else if ("application".equalsIgnoreCase(localName)) {
 			appDescription.setName(atts.getValue("applicationName"));
