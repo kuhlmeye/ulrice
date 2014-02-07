@@ -53,7 +53,7 @@ public class GenerateDescriptionMojo extends AbstractMojo {
 	 * @parameter
 	 * @required
 	 */
-	private File outputFilename;
+	private String outputFilename;
 
 	/**
 	 * Base url
@@ -122,26 +122,35 @@ public class GenerateDescriptionMojo extends AbstractMojo {
 			}
 		}
 
-		File descrFile = outputFilename;
-		PrintWriter pw = null;
+		File xmlDescrFile = new File(outputFilename + ".ws.xml");
+		File jsonDescrFile = new File(outputFilename + ".ws.json");
+
+		PrintWriter xmlWriter = null;
+		PrintWriter jsonWriter = null;
 
 		try {
-			pw = new PrintWriter(descrFile);
-			getLog().info("Writing to " + descrFile);
+			xmlWriter = new PrintWriter(xmlDescrFile);
+			jsonWriter = new PrintWriter(jsonDescrFile);			
+			getLog().info("Writing to " + outputFilename);
+			
+
+			jsonWriter.println("{");
 
 			boolean fileFound = false;
 
 			for (File f : dirs) {
 				getLog().info("Scanning : " + f.getAbsolutePath());
 
+				jsonWriter.append("\"providedJREs\" : [");
 				if(providedJRE != null) {
 					for(String key : providedJRE.stringPropertyNames()) {
-						pw.print("<providedJRE ");
-						pw.print("os=\"" + key + "\" ");
-						pw.print("name=\"" + providedJRE.getProperty(key) + "\"");
-						pw.println("/>");
+						jsonWriter.print("{");
+						jsonWriter.print("\"os\" : \"" + key + "\" ");
+						jsonWriter.print("\"name\" : \"" + providedJRE.getProperty(key) + "\"");
+						jsonWriter.println("}");
 					}					
 				}
+				jsonWriter.append("}");
 
 				
 				File[] files = f.listFiles();
@@ -164,7 +173,8 @@ public class GenerateDescriptionMojo extends AbstractMojo {
 						if (matches) {
 							getLog().info("Processing: " + filename);
 							if (!fileFound) {
-								pw.println("<tasklist>");
+								jsonWriter.append("\"tasklist\" : [");
+								xmlWriter.println("<tasklist>");
 								fileFound = true;
 							}
 							
@@ -190,20 +200,33 @@ public class GenerateDescriptionMojo extends AbstractMojo {
 								urlStr = file.getName();
 							}
 							getLog().debug("-Adding file '" + file + "' as '" + urlStr + "'.");
+
+							jsonWriter.print("{");
+							jsonWriter.print("\"type\" : \"DownloadFile\" ");
+							jsonWriter.print("\"classpath\" : \"true\" ");
+							jsonWriter.print("\"url\" : \"" + urlStr + "\" ");
+							jsonWriter.print("{type=\"DownloadFile\" classpath=\"true\" ");							
+							jsonWriter.print("url=\"" + urlStr + "\" ");
 							
-							pw.print("<task type=\"DownloadFile\" classpath=\"true\" ");							
-							pw.print("url=\"" + urlStr + "\" ");
+							xmlWriter.print("<task type=\"DownloadFile\" classpath=\"true\" ");							
+							xmlWriter.print("url=\"" + urlStr + "\" ");
 							if (md5 != null && useMd5) {
-								pw.print("md5=\"" + md5 + "\" ");
+								jsonWriter.print("\"md5\" : \"" + md5 + "\" ");
+								xmlWriter.print("md5=\"" + md5 + "\" ");
 							}		
-							pw.print("pack200=\"" + pack200Used + "\" ");
-							pw.print("length=\"" + file.length() + "\"");
-							pw.println("/>");
+							xmlWriter.print("pack200=\"" + pack200Used + "\" ");
+							xmlWriter.print("length=\"" + file.length() + "\"");
+							xmlWriter.println("/>");
+
+							jsonWriter.print("\"pack200\" : \"" + pack200Used + "\" ");
+							jsonWriter.print("\"length\" : \"" + file.length() + "\" ");
+							jsonWriter.print("}");
 							
 							
 							if(unzipFiles != null && !"".equals(unzipFiles.trim()) && filename.matches(unzipFiles)) {
 								getLog().debug("-Using unzip files");							
-								pw.print("<task type=\"Unzip\" filter=\".*\" url=\"" + urlStr + "\"/>");
+								xmlWriter.print("<task type=\"Unzip\" filter=\".*\" url=\"" + urlStr + "\"/>");
+								xmlWriter.print("{\"type\" : \"Unzip\" \"filter\" : \".*\" \"url\" : \"" + urlStr + "\"}");
 							}
 							
 							if (copyFiles) {
@@ -218,15 +241,20 @@ public class GenerateDescriptionMojo extends AbstractMojo {
 				}
 			}
 			if (fileFound) {
-				pw.println("</tasklist>");
+				jsonWriter.append("]");
+				xmlWriter.println("</tasklist>");
 			}
+			jsonWriter.println("}");
 		} catch (IOException e) {
-			throw new MojoExecutionException("Error creating file " + descrFile, e);
+			throw new MojoExecutionException("Error creating file " + xmlDescrFile, e);
 		} catch (NoSuchAlgorithmException e) {
-			throw new MojoExecutionException("Error creating md5 for file " + descrFile, e);
+			throw new MojoExecutionException("Error creating md5 for file " + xmlDescrFile, e);
 		} finally {
-			if (pw != null) {
-				pw.close();
+			if (xmlWriter != null) {
+				xmlWriter.close();
+			}
+			if (jsonWriter != null) {
+				jsonWriter.close();
 			}
 		}
 	}
