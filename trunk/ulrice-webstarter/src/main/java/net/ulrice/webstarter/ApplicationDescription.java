@@ -2,6 +2,7 @@ package net.ulrice.webstarter;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 import javax.swing.ImageIcon;
 
@@ -45,6 +46,8 @@ public class ApplicationDescription {
 	
 	/** Boolean, if login is needed for this application and the fields in the application must be unblocked. */
 	private boolean needsLogin;
+
+	private Set<ProvidedJRE> providedJRESet;
 
 	public String getName() {
 		return name;
@@ -113,5 +116,13 @@ public class ApplicationDescription {
 	
 	public void restoreTasks() {
 		tasks = new ArrayList<TaskDescription>(taskListBackup);
+	}
+
+	public Set<ProvidedJRE> getProvidedJRESet() {
+		return providedJRESet;
+	}
+	
+	public void setProvidedJRESet(Set<ProvidedJRE> providedJRESet) {
+		this.providedJRESet = providedJRESet;
 	}
 }

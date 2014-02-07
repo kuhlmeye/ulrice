@@ -8,12 +8,14 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.util.List;
+import java.util.Set;
 import java.util.StringTokenizer;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import net.ulrice.webstarter.EncryptionUtils;
 import net.ulrice.webstarter.ProcessThread;
+import net.ulrice.webstarter.ProvidedJRE;
 import net.ulrice.webstarter.util.WebstarterUtils;
 
 /**
@@ -23,7 +25,13 @@ import net.ulrice.webstarter.util.WebstarterUtils;
  */
 public class StartApplication extends AbstractTask {
 
-    /** The logger used by this class. */
+    private static final String JRE_TYPE_PREFER_LOCAL = "preferLocal";
+
+	public enum OSType {
+    	Linux, Windows
+	}
+
+	/** The logger used by this class. */
     private static final Logger LOG = Logger.getLogger(StartApplication.class.getName());
 
     /** Parameter containing the main class value. */
@@ -34,19 +42,30 @@ public class StartApplication extends AbstractTask {
 
     /** Optional parameter containing options for the virtual machine, e.g. Xmx512m */
     private static final String VM_OPTIONS = "vmOptions";
+        
+    private static final String OS = "os";
 
+    private static final String JRE_TYPE = "jreType";
+    private static final String MIN_VERSION = "minVersion";
+    private static final String MAX_VERSION = "maxVersion";
+    // TODO Add check for local JRE
+    
     @Override
     public boolean doTask(ProcessThread thread) {
+    	// Check, if this task is relevant for the current operating system.
+    	Object osParam = getParameter(OS);
+    	OSType osType = determineOS();
+    	
+    	if(osParam != null && !osParam.equals(osType.name())) {
+    		// Operating system does not match. skipping this task.
+    		return true;
+    	}    	    	
 
-        List<String> classPath = thread.getContext().getClassPath();
+    	String jreCommand = getJreStartCmd(osType, thread);
 
         StringBuffer commandBuffer = new StringBuffer();
-        String localDir = WebstarterUtils.resolvePlaceholders(thread.getAppDescription().getLocalDir());
-        String localJre = getParameterAsString(PARAM_LOCAL_JRE);
-        if (localJre != null) {
-            commandBuffer.append(localDir).append(localJre).append(File.separator).append("bin").append(File.separator);
-        }
-        commandBuffer.append("java ");
+        commandBuffer.append(jreCommand).append(" ");
+
 
         String vmOptions = getParameterAsString(VM_OPTIONS);
         if (vmOptions != null) {
@@ -59,6 +78,7 @@ public class StartApplication extends AbstractTask {
             }
         }
 
+        List<String> classPath = thread.getContext().getClassPath();
         commandBuffer.append("-cp ");
         for (String element : classPath) {
             commandBuffer.append(element).append(File.pathSeparator);
@@ -84,6 +104,7 @@ public class StartApplication extends AbstractTask {
         try {
             LOG.log(Level.INFO, commandBuffer.toString());
             // Start application
+    		String localDir = WebstarterUtils.resolvePlaceholders(thread.getAppDescription().getLocalDir());
             Process process = Runtime.getRuntime().exec(commandBuffer.toString(), null, new File(localDir));
             StreamGobbler isGobbler = new StreamGobbler("OUT", process.getInputStream(), System.out);
             StreamGobbler esGobbler = new StreamGobbler("ERR", process.getErrorStream(), System.out);
@@ -98,7 +119,66 @@ public class StartApplication extends AbstractTask {
         return true;
     }
 
-    protected String replacePlaceholders(ProcessThread thread, String appParameter) {
+    private String getJreStartCmd(OSType osType, ProcessThread thread) {
+    	Set<ProvidedJRE> providedJRESet = thread.getAppDescription().getProvidedJRESet();
+    	ProvidedJRE providedJRE = null;
+    	if(osType != null) {
+	    	for(ProvidedJRE item : providedJRESet) {
+	    		if(item.getOs().equals(osType.name())) {
+	    			providedJRE = item;
+	    			break;
+	    		}
+	    	}
+    	}
+    	
+    	String jreType = getParameterAsString(JRE_TYPE, JRE_TYPE_PREFER_LOCAL);
+    	if(!JRE_TYPE_PREFER_LOCAL.equalsIgnoreCase(jreType)) {
+    		// Check local version for version compatibility
+    		String localDir = WebstarterUtils.resolvePlaceholders(thread.getAppDescription().getLocalDir());
+            
+			try {
+				Process process = Runtime.getRuntime().exec("java -version", null, new File(localDir));
+	            BufferedReader br = new BufferedReader(new InputStreamReader(process.getInputStream()));
+	            String line = br.readLine();
+	            
+	            //java version "1.7.0_51"
+	            if(line.startsWith("java version")) {
+	            	String version = line.substring(line.indexOf('"'), line.lastIndexOf('"'));
+	            	System.out.println(version);            	
+	            }
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+           
+    	}
+
+		// Download file
+		// Unzip file
+
+    	
+//        String localDir = WebstarterUtils.resolvePlaceholders(thread.getAppDescription().getLocalDir());
+//        String localJre = getParameterAsString(PARAM_LOCAL_JRE);
+//        if (localJre != null) {
+//            commandBuffer.append(localDir).append(localJre).append(File.separator).append("bin").append(File.separator);
+//        }
+//        commandBuffer.append("java ");
+
+    	return null;
+	}
+
+	private OSType determineOS() {
+    	if(System.getProperty("os.name").contains("Windows")) {
+    		return OSType.Windows;
+    	} else if(System.getProperty("os.name").contains("Linux")) {
+    		return OSType.Linux;
+    	}
+		LOG.severe("Could not determine OS Type for " + System.getProperty("os.name"));
+
+		return null;
+	}
+
+	protected String replacePlaceholders(ProcessThread thread, String appParameter) {
 
         String userId = thread.getContext().getUserId();
         String proxyHost = thread.getContext().getAppSettings().getProperty("http.proxyHost");
