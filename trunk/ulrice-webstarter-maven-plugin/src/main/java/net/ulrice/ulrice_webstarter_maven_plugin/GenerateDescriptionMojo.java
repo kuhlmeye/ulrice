@@ -122,8 +122,8 @@ public class GenerateDescriptionMojo extends AbstractMojo {
 			}
 		}
 
-		File xmlDescrFile = new File(outputFilename + ".ws.xml");
-		File jsonDescrFile = new File(outputFilename + ".ws.json");
+		File xmlDescrFile = new File(targetDir, outputFilename + ".ws.xml");
+		File jsonDescrFile = new File(targetDir, outputFilename + ".ws.json");
 
 		PrintWriter xmlWriter = null;
 		PrintWriter jsonWriter = null;
@@ -135,22 +135,23 @@ public class GenerateDescriptionMojo extends AbstractMojo {
 			
 
 			jsonWriter.println("{");
-
+			jsonWriter.append("\"providedJREs\" : [");
+			if(providedJRE != null) {
+				for(String key : providedJRE.stringPropertyNames()) {
+					jsonWriter.print("{");
+					jsonWriter.print("\"os\" : \"" + key + "\" ");
+					jsonWriter.print("\"name\" : \"" + providedJRE.getProperty(key) + "\"");
+					jsonWriter.println("}");
+				}					
+			}
+			jsonWriter.append("}");
+			
 			boolean fileFound = false;
 
 			for (File f : dirs) {
 				getLog().info("Scanning : " + f.getAbsolutePath());
 
-				jsonWriter.append("\"providedJREs\" : [");
-				if(providedJRE != null) {
-					for(String key : providedJRE.stringPropertyNames()) {
-						jsonWriter.print("{");
-						jsonWriter.print("\"os\" : \"" + key + "\" ");
-						jsonWriter.print("\"name\" : \"" + providedJRE.getProperty(key) + "\"");
-						jsonWriter.println("}");
-					}					
-				}
-				jsonWriter.append("}");
+
 
 				
 				File[] files = f.listFiles();
