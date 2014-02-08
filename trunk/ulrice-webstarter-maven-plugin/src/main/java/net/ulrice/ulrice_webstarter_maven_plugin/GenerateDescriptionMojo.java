@@ -101,6 +101,7 @@ public class GenerateDescriptionMojo extends AbstractMojo {
 	public void execute() throws MojoExecutionException {
 
 		File targetDir = targetDirectory;
+		getLog().info("Output Filename: " + outputFilename);
 		getLog().info("Target-Dir: " + targetDir);
 
 		boolean copyFiles = true;
