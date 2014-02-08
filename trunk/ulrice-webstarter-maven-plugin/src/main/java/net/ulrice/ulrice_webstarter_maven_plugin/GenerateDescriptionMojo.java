@@ -122,10 +122,10 @@ public class GenerateDescriptionMojo extends AbstractMojo {
 			}
 		}
 
-		File xmlDescrFile = new File(outputFilename + ".ws.xml");
+		File xmlDescrFile = new File(targetDir, outputFilename + ".ws.xml");
 		getLog().info("XML-File: " + xmlDescrFile.toString());
 		
-		File jsonDescrFile = new File(outputFilename + ".ws.json");
+		File jsonDescrFile = new File(targetDir, outputFilename + ".ws.json");
 		getLog().info("JSON-File: " + jsonDescrFile.toString());
 		
 		PrintWriter xmlWriter = null;
@@ -133,8 +133,7 @@ public class GenerateDescriptionMojo extends AbstractMojo {
 
 		try {
 			xmlWriter = new PrintWriter(xmlDescrFile);
-			jsonWriter = new PrintWriter(jsonDescrFile);			
-			getLog().info("Writing to " + outputFilename);
+			jsonWriter = new PrintWriter(jsonDescrFile);	
 			
 
 			jsonWriter.println("{");
