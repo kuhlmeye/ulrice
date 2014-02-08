@@ -255,6 +255,9 @@ public class GenerateDescriptionMojo extends AbstractMojo {
 		} catch (NoSuchAlgorithmException e) {
 			getLog().error("Error creating md5 for file " + xmlDescrFile, e);
 			throw new MojoExecutionException("Error creating md5 for file " + xmlDescrFile, e);
+		} catch (Throwable th) {
+			getLog().error("Error generating description file", th);
+			throw new MojoExecutionException("Error generating description file", th);
 		} finally {
 			if (xmlWriter != null) {
 				xmlWriter.close();
