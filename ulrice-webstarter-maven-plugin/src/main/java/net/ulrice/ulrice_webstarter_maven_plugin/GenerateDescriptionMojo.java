@@ -250,8 +250,10 @@ public class GenerateDescriptionMojo extends AbstractMojo {
 			}
 			jsonWriter.println("}");
 		} catch (IOException e) {
+			getLog().error("Error creating file " + xmlDescrFile, e);
 			throw new MojoExecutionException("Error creating file " + xmlDescrFile, e);
 		} catch (NoSuchAlgorithmException e) {
+			getLog().error("Error creating md5 for file " + xmlDescrFile, e);
 			throw new MojoExecutionException("Error creating md5 for file " + xmlDescrFile, e);
 		} finally {
 			if (xmlWriter != null) {
