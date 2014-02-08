@@ -144,7 +144,7 @@ public class GenerateDescriptionMojo extends AbstractMojo {
 					jsonWriter.println("}");
 				}					
 			}
-			jsonWriter.append("}");
+			jsonWriter.append("]");
 			
 			boolean fileFound = false;
 
@@ -242,7 +242,7 @@ public class GenerateDescriptionMojo extends AbstractMojo {
 				}
 			}
 			if (fileFound) {
-				jsonWriter.append("]");
+				jsonWriter.append("}");
 				xmlWriter.println("</tasklist>");
 			}
 			jsonWriter.println("}");
