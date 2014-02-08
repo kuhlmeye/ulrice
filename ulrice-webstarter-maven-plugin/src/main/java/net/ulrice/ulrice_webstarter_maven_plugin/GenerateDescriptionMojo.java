@@ -122,8 +122,8 @@ public class GenerateDescriptionMojo extends AbstractMojo {
 			}
 		}
 
-		File xmlDescrFile = new File(targetDir, outputFilename + ".ws.xml");
-		File jsonDescrFile = new File(targetDir, outputFilename + ".ws.json");
+		File xmlDescrFile = new File(outputFilename + ".ws.xml");
+		File jsonDescrFile = new File(outputFilename + ".ws.json");
 
 		PrintWriter xmlWriter = null;
 		PrintWriter jsonWriter = null;
