@@ -122,7 +122,7 @@ public class StartApplication extends AbstractTask {
     private String getJreStartCmd(OSType osType, ProcessThread thread) {
     	Set<ProvidedJRE> providedJRESet = thread.getAppDescription().getProvidedJRESet();
     	ProvidedJRE providedJRE = null;
-    	if(osType != null) {
+    	if(osType != null && providedJRE != null) {
 	    	for(ProvidedJRE item : providedJRESet) {
 	    		if(item.getOs().equals(osType.name())) {
 	    			providedJRE = item;
