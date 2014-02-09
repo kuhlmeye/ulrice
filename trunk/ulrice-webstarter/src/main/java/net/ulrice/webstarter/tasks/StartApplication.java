@@ -164,7 +164,7 @@ public class StartApplication extends AbstractTask {
 //        }
 //        commandBuffer.append("java ");
 
-    	return null;
+    	return "java ";
 	}
 
 	private OSType determineOS() {
