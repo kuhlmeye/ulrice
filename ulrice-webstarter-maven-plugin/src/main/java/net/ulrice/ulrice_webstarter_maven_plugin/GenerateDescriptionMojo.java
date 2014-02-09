@@ -159,6 +159,7 @@ public class GenerateDescriptionMojo extends AbstractMojo {
 			
 			boolean fileFound = false;
 
+			int i = 0;
 			for (File f : dirs) {
 				getLog().info("Scanning : " + f.getAbsolutePath());
 
@@ -166,7 +167,6 @@ public class GenerateDescriptionMojo extends AbstractMojo {
 
 				
 				File[] files = f.listFiles();
-				int i = 0;
 				if (files != null) {
 					for (File file : files) {
 						String filename = file.getName();
