@@ -138,7 +138,7 @@ public class GenerateDescriptionMojo extends AbstractMojo {
 			
 
 			jsonWriter.println("{");
-			jsonWriter.append("\"  providedJREs\" : [");
+			jsonWriter.append("  \"providedJREs\" : [");
 			if(providedJRE != null) {
 				int i = 0; 
 				for(String key : providedJRE.stringPropertyNames()) {
@@ -149,13 +149,13 @@ public class GenerateDescriptionMojo extends AbstractMojo {
 					}
 					jsonWriter.print("{");
 					jsonWriter.print("\"os\" : \"" + key + "\", ");
-					jsonWriter.print("\"name\" : \"" + providedJRE.getProperty(key) + "\"\n");
+					jsonWriter.print("\"name\" : \"" + providedJRE.getProperty(key) + "\"");
 					jsonWriter.print("}");
 					
 					i++;					
 				}					
 			}
-			jsonWriter.println("], ");
+			jsonWriter.println("\n  ], ");
 			
 			boolean fileFound = false;
 
@@ -186,7 +186,7 @@ public class GenerateDescriptionMojo extends AbstractMojo {
 						if (matches) {
 							getLog().info("Processing: " + filename);
 							if (!fileFound) {
-								jsonWriter.print("\"  tasklist\" : [");
+								jsonWriter.print("  \"tasklist\" : [");
 								xmlWriter.println("<tasklist>");
 								fileFound = true;
 							}
@@ -216,13 +216,14 @@ public class GenerateDescriptionMojo extends AbstractMojo {
 
 							if(i > 0) {
 								jsonWriter.println(", ");
+							} else {
+								jsonWriter.println();
 							}
 							
 							jsonWriter.print("    {");
 							jsonWriter.print("\"type\" : \"DownloadFile\", ");
 							jsonWriter.print("\"classpath\" : \"true\", ");
 							jsonWriter.print("\"url\" : \"" + urlStr + "\", ");
-							jsonWriter.print("url=\"" + urlStr + "\"");
 							
 							xmlWriter.print("<task type=\"DownloadFile\" classpath=\"true\" ");							
 							xmlWriter.print("url=\"" + urlStr + "\" ");
@@ -258,7 +259,7 @@ public class GenerateDescriptionMojo extends AbstractMojo {
 				}
 			}
 			if (fileFound) {
-				jsonWriter.append("}");
+				jsonWriter.append("\n  ]");
 				xmlWriter.println("</tasklist>");
 			}
 			jsonWriter.println("}");
