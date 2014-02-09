@@ -126,40 +126,28 @@ public class GenerateDescriptionMojo extends AbstractMojo {
 		File xmlDescrFile = new File(targetDir, outputFilename + ".ws.xml");
 		getLog().info("XML-File: " + xmlDescrFile.toString());
 		
-		File jsonDescrFile = new File(targetDir, outputFilename + ".ws.json");
-		getLog().info("JSON-File: " + jsonDescrFile.toString());
+		File jsonDescrFile = new File(targetDir, outputFilename + ".ws2.xml");
+		getLog().info("XML2-File: " + jsonDescrFile.toString());
 		
 		PrintWriter xmlWriter = null;
-		PrintWriter jsonWriter = null;
+		PrintWriter xml2Writer = null;
 
 		try {
 			xmlWriter = new PrintWriter(xmlDescrFile);
-			jsonWriter = new PrintWriter(jsonDescrFile);	
+			xml2Writer = new PrintWriter(jsonDescrFile);	
 			
 
-			jsonWriter.println("{");
-			jsonWriter.append("  \"providedJREs\" : [");
+			xmlWriter.println("<description>");
+			xml2Writer.println("<providedJREs>");
 			if(providedJRE != null) {
-				int i = 0; 
 				for(String key : providedJRE.stringPropertyNames()) {
-					if(i > 0) {
-						jsonWriter.print(",\n   ");
-					} else {
-						jsonWriter.print("\n   ");
-					}
-					jsonWriter.print("{");
-					jsonWriter.print("\"os\" : \"" + key + "\", ");
-					jsonWriter.print("\"name\" : \"" + providedJRE.getProperty(key) + "\"");
-					jsonWriter.print("}");
-					
-					i++;					
+					xml2Writer.print("<providedJRE os=\"" + key + "\" name=\"" + providedJRE.getProperty(key) + "\"/>");
 				}					
 			}
-			jsonWriter.println("\n  ], ");
+			xml2Writer.println("</providedJREs>");
 			
 			boolean fileFound = false;
 
-			int i = 0;
 			for (File f : dirs) {
 				getLog().info("Scanning : " + f.getAbsolutePath());
 
@@ -186,7 +174,7 @@ public class GenerateDescriptionMojo extends AbstractMojo {
 						if (matches) {
 							getLog().info("Processing: " + filename);
 							if (!fileFound) {
-								jsonWriter.print("  \"tasklist\" : [");
+								xml2Writer.println("<tasklist>");
 								xmlWriter.println("<tasklist>");
 								fileFound = true;
 							}
@@ -214,36 +202,28 @@ public class GenerateDescriptionMojo extends AbstractMojo {
 							}
 							getLog().debug("-Adding file '" + file + "' as '" + urlStr + "'.");
 
-							if(i > 0) {
-								jsonWriter.println(", ");
-							} else {
-								jsonWriter.println();
-							}
 							
-							jsonWriter.print("    {");
-							jsonWriter.print("\"type\" : \"DownloadFile\", ");
-							jsonWriter.print("\"classpath\" : true, ");
-							jsonWriter.print("\"url\" : \"" + urlStr + "\", ");
-							
+							xml2Writer.print("<task type=\"DownloadFile\" classpath=\"true\" ");							
+							xml2Writer.print("url=\"" + urlStr + "\" ");
 							xmlWriter.print("<task type=\"DownloadFile\" classpath=\"true\" ");							
 							xmlWriter.print("url=\"" + urlStr + "\" ");
 							if (md5 != null && useMd5) {
-								jsonWriter.print(", \"md5\" : \"" + md5 + "\" ");
+								xml2Writer.print("md5=\"" + md5 + "\" ");
 								xmlWriter.print("md5=\"" + md5 + "\" ");
 							}		
+							xml2Writer.print("pack200=\"" + pack200Used + "\" ");
+							xml2Writer.print("length=\"" + file.length() + "\"");
+							xml2Writer.println("/>");
+							
 							xmlWriter.print("pack200=\"" + pack200Used + "\" ");
 							xmlWriter.print("length=\"" + file.length() + "\"");
 							xmlWriter.println("/>");
-
-							jsonWriter.print(", \"pack200\" : " + pack200Used + " ");
-							jsonWriter.print(", \"length\" : " + file.length() + " ");
-							jsonWriter.print("}");
 							
 							
 							if(unzipFiles != null && !"".equals(unzipFiles.trim()) && filename.matches(unzipFiles)) {
 								getLog().debug("-Using unzip files");							
 								xmlWriter.print("<task type=\"Unzip\" filter=\".*\" url=\"" + urlStr + "\"/>");
-								xmlWriter.print("{\"type\" : \"Unzip\" \"filter\" : \".*\" \"url\" : \"" + urlStr + "\"}");
+								xml2Writer.print("<task type=\"Unzip\" filter=\".*\" url=\"" + urlStr + "\"/>");
 							}
 							
 							if (copyFiles) {
@@ -253,16 +233,16 @@ public class GenerateDescriptionMojo extends AbstractMojo {
 									throw new MojoExecutionException("Error closing FileChannels copying file " + file.getAbsolutePath());
 								}
 							}
-							i++;
 						}
 					}
 				}
 			}
 			if (fileFound) {
-				jsonWriter.println("\n  ]");
+				xml2Writer.println("</tasklist>");
 				xmlWriter.println("</tasklist>");
+
 			}
-			jsonWriter.println("}");
+			xml2Writer.println("</description>");
 		} catch (IOException e) {
 			getLog().error("Error creating file " + xmlDescrFile, e);
 			throw new MojoExecutionException("Error creating file " + xmlDescrFile, e);
@@ -276,8 +256,8 @@ public class GenerateDescriptionMojo extends AbstractMojo {
 			if (xmlWriter != null) {
 				xmlWriter.close();
 			}
-			if (jsonWriter != null) {
-				jsonWriter.close();
+			if (xml2Writer != null) {
+				xml2Writer.close();
 			}
 		}
 	}
