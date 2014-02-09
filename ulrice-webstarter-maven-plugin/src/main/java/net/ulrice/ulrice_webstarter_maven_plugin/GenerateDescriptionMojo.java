@@ -222,7 +222,7 @@ public class GenerateDescriptionMojo extends AbstractMojo {
 							
 							jsonWriter.print("    {");
 							jsonWriter.print("\"type\" : \"DownloadFile\", ");
-							jsonWriter.print("\"classpath\" : \"true\", ");
+							jsonWriter.print("\"classpath\" : true, ");
 							jsonWriter.print("\"url\" : \"" + urlStr + "\", ");
 							
 							xmlWriter.print("<task type=\"DownloadFile\" classpath=\"true\" ");							
@@ -235,8 +235,8 @@ public class GenerateDescriptionMojo extends AbstractMojo {
 							xmlWriter.print("length=\"" + file.length() + "\"");
 							xmlWriter.println("/>");
 
-							jsonWriter.print(", \"pack200\" : \"" + pack200Used + "\" ");
-							jsonWriter.print(", \"length\" : \"" + file.length() + "\" ");
+							jsonWriter.print(", \"pack200\" : " + pack200Used + " ");
+							jsonWriter.print(", \"length\" : " + file.length() + " ");
 							jsonWriter.print("}");
 							
 							
