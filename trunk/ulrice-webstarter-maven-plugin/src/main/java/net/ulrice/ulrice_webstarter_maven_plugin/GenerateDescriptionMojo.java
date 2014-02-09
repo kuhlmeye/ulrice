@@ -148,7 +148,7 @@ public class GenerateDescriptionMojo extends AbstractMojo {
 						jsonWriter.print("\n   ");
 					}
 					jsonWriter.print("{");
-					jsonWriter.print("\"os\" : \"" + key + "\" ");
+					jsonWriter.print("\"os\" : \"" + key + "\", ");
 					jsonWriter.print("\"name\" : \"" + providedJRE.getProperty(key) + "\"\n");
 					jsonWriter.print("}");
 					
@@ -219,24 +219,23 @@ public class GenerateDescriptionMojo extends AbstractMojo {
 							}
 							
 							jsonWriter.print("    {");
-							jsonWriter.print("\"type\" : \"DownloadFile\" ");
-							jsonWriter.print("\"classpath\" : \"true\" ");
-							jsonWriter.print("\"url\" : \"" + urlStr + "\" ");
-							jsonWriter.print("{type=\"DownloadFile\" classpath=\"true\" ");							
-							jsonWriter.print("url=\"" + urlStr + "\" ");
+							jsonWriter.print("\"type\" : \"DownloadFile\", ");
+							jsonWriter.print("\"classpath\" : \"true\", ");
+							jsonWriter.print("\"url\" : \"" + urlStr + "\", ");
+							jsonWriter.print("url=\"" + urlStr + "\"");
 							
 							xmlWriter.print("<task type=\"DownloadFile\" classpath=\"true\" ");							
 							xmlWriter.print("url=\"" + urlStr + "\" ");
 							if (md5 != null && useMd5) {
-								jsonWriter.print("\"md5\" : \"" + md5 + "\" ");
+								jsonWriter.print(", \"md5\" : \"" + md5 + "\" ");
 								xmlWriter.print("md5=\"" + md5 + "\" ");
 							}		
 							xmlWriter.print("pack200=\"" + pack200Used + "\" ");
 							xmlWriter.print("length=\"" + file.length() + "\"");
 							xmlWriter.println("/>");
 
-							jsonWriter.print("\"pack200\" : \"" + pack200Used + "\" ");
-							jsonWriter.print("\"length\" : \"" + file.length() + "\" ");
+							jsonWriter.print(", \"pack200\" : \"" + pack200Used + "\" ");
+							jsonWriter.print(", \"length\" : \"" + file.length() + "\" ");
 							jsonWriter.print("}");
 							
 							
