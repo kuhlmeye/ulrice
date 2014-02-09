@@ -138,16 +138,24 @@ public class GenerateDescriptionMojo extends AbstractMojo {
 			
 
 			jsonWriter.println("{");
-			jsonWriter.append("\"providedJREs\" : [");
+			jsonWriter.append("\"  providedJREs\" : [");
 			if(providedJRE != null) {
+				int i = 0; 
 				for(String key : providedJRE.stringPropertyNames()) {
+					if(i > 0) {
+						jsonWriter.print(",\n   ");
+					} else {
+						jsonWriter.print("\n   ");
+					}
 					jsonWriter.print("{");
 					jsonWriter.print("\"os\" : \"" + key + "\" ");
-					jsonWriter.print("\"name\" : \"" + providedJRE.getProperty(key) + "\"");
-					jsonWriter.println("}");
+					jsonWriter.print("\"name\" : \"" + providedJRE.getProperty(key) + "\"\n");
+					jsonWriter.print("}");
+					
+					i++;					
 				}					
 			}
-			jsonWriter.append("]");
+			jsonWriter.println("], ");
 			
 			boolean fileFound = false;
 
@@ -158,6 +166,7 @@ public class GenerateDescriptionMojo extends AbstractMojo {
 
 				
 				File[] files = f.listFiles();
+				int i = 0;
 				if (files != null) {
 					for (File file : files) {
 						String filename = file.getName();
@@ -177,7 +186,7 @@ public class GenerateDescriptionMojo extends AbstractMojo {
 						if (matches) {
 							getLog().info("Processing: " + filename);
 							if (!fileFound) {
-								jsonWriter.append("\"tasklist\" : [");
+								jsonWriter.print("\"  tasklist\" : [");
 								xmlWriter.println("<tasklist>");
 								fileFound = true;
 							}
@@ -205,7 +214,11 @@ public class GenerateDescriptionMojo extends AbstractMojo {
 							}
 							getLog().debug("-Adding file '" + file + "' as '" + urlStr + "'.");
 
-							jsonWriter.print("{");
+							if(i > 0) {
+								jsonWriter.println(", ");
+							}
+							
+							jsonWriter.print("    {");
 							jsonWriter.print("\"type\" : \"DownloadFile\" ");
 							jsonWriter.print("\"classpath\" : \"true\" ");
 							jsonWriter.print("\"url\" : \"" + urlStr + "\" ");
@@ -240,6 +253,7 @@ public class GenerateDescriptionMojo extends AbstractMojo {
 									throw new MojoExecutionException("Error closing FileChannels copying file " + file.getAbsolutePath());
 								}
 							}
+							i++;
 						}
 					}
 				}
