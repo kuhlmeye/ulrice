@@ -1,6 +1,5 @@
 package net.ulrice.webstarter.tasks;
 
-import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -10,12 +9,12 @@ import java.io.InputStream;
 import java.math.BigInteger;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.net.URLConnection;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
+import java.util.Set;
 import java.util.jar.JarOutputStream;
 import java.util.jar.Pack200;
 import java.util.jar.Pack200.Unpacker;
@@ -23,7 +22,9 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import net.ulrice.webstarter.ProcessThread;
+import net.ulrice.webstarter.ProvidedJRE;
 import net.ulrice.webstarter.TaskDescription;
+import net.ulrice.webstarter.net.NetworkUtilities;
 import net.ulrice.webstarter.util.WebstarterUtils;
 
 public class DownloadFile extends AbstractTask {
@@ -33,29 +34,52 @@ public class DownloadFile extends AbstractTask {
     public static final String MD5_PARAM = "md5";
     public static final String PACK200_PARAM = "pack200";
     private static final String BASE_URL_PARAM_NAME = "baseUrl";
+    private static final String LENGTH_PARAM_NAME = "length";
 
     public static final String CLASSPATH_PARAM = "classpath";
 
     @Override
     public boolean doTask(ProcessThread thread) {
-
-        String baseUrlString = getParameterAsString(BASE_URL_PARAM_NAME);
-        String urlStr = getParameterAsString(URL_PARAM);
-        String remoteMd5 = getParameterAsString(MD5_PARAM);
-        boolean usePack200 = Boolean.valueOf(getParameterAsString(PACK200_PARAM));
-
-        if (baseUrlString != null) {
-            urlStr = baseUrlString + urlStr;
+        Set<ProvidedJRE> providedJRESet = thread.getAppDescription().getProvidedJRESet();
+        if(providedJRESet != null) {
+        	for(ProvidedJRE providedJRE : providedJRESet) {
+        		if(providedJRE.getFilename().equals(getParameterAsString(URL_PARAM))) {
+        			providedJRE.setDownloadTask(this);
+        			return true;
+        		}        		
+        	}
         }
 
-        URL fileUrl = null;
         try {
-            fileUrl = new URL(urlStr);
+        	downloadFile(thread);
+        	return true;
         }
-        catch (MalformedURLException e) {
-            LOG.log(Level.SEVERE, "Error creating url from file. ", e);
-            thread.handleError(this, "Error creating url from file.", "Error creating url from file: " + e.getMessage());
+        catch (IOException e) {
+            LOG.log(Level.SEVERE, "IO exception during file download.", e);
         }
+        catch (InstantiationException e) {
+            LOG.log(Level.SEVERE, "Instanciation exception during file download.", e);
+        }
+        catch (IllegalAccessException e) {
+            LOG.log(Level.SEVERE, "Access exception during file download.", e);
+        }
+        finally {
+            thread.fireTaskFinished(this);
+        }
+
+        return false;
+    }
+
+
+	public boolean downloadFile(ProcessThread thread) throws MalformedURLException, IOException, InstantiationException, IllegalAccessException {
+
+        String remoteMd5 = getParameterAsString(MD5_PARAM);
+        boolean usePack200 = Boolean.valueOf(getParameterAsString(PACK200_PARAM));        
+        long remoteFileLen = Long.valueOf(getParameterAsString(LENGTH_PARAM_NAME));
+        
+		String urlStr = getUrl();
+
+        URL fileUrl = new URL(urlStr);
 
         String file = fileUrl.getFile();
         String[] split = file.split("\\/");
@@ -69,19 +93,8 @@ public class DownloadFile extends AbstractTask {
         }
 
         String localDirString = WebstarterUtils.resolvePlaceholders(thread.getAppDescription().getLocalDir());
-        try {
 
-            URLConnection con = fileUrl.openConnection();
-            String reqCookieStr = thread.getContext().getCookieAsString();
-            if (reqCookieStr != null) {
-                con.setRequestProperty("Cookie", reqCookieStr);
-            }
-            con.connect();
-
-            long remoteFileLen = con.getContentLength();
-            int downloaded = 0;
-
-            File localDir = new File(localDirString);
+        File localDir = new File(localDirString);
             localDir.mkdirs();
 
             File localFile = new File(localDir, localFileName);
@@ -131,29 +144,7 @@ public class DownloadFile extends AbstractTask {
                         tempFile = localFile;
                     }
 
-                    FileOutputStream fos = new FileOutputStream(tempFile);
-                    try {
-                        InputStream is = new BufferedInputStream(con.getInputStream(), 1024);
-
-                        try {
-                            byte[] responseBuffer = new byte[1024];
-                            int read = 0;
-                            while ((read = is.read(responseBuffer, 0, 1024)) > 0) {
-
-                                downloaded += read;
-                                int progress = (int) ((100.0 / remoteFileLen) * downloaded);
-                                thread.fireTaskProgressed(this, progress, fileName, null);
-                                fos.write(responseBuffer, 0, read);
-                            }
-                        }
-                        finally {
-                            is.close();
-                        }
-                        fos.flush();
-                    }
-                    finally {
-                        fos.close();
-                    }
+					NetworkUtilities.downloadFile(this, thread, fileUrl, fileName, tempFile);
 
                     if (usePack200 && urlStr.endsWith(".pack200")) {
                         unpack200(tempFile, localFile);
@@ -188,22 +179,10 @@ public class DownloadFile extends AbstractTask {
                 instanciateTask.doTask(thread);
             }
 
-        }
-        catch (IOException e) {
-            LOG.log(Level.SEVERE, "IO exception during file download.", e);
-        }
-        catch (InstantiationException e) {
-            LOG.log(Level.SEVERE, "Instanciation exception during file download.", e);
-        }
-        catch (IllegalAccessException e) {
-            LOG.log(Level.SEVERE, "Access exception during file download.", e);
-        }
-        finally {
+            return !skipDownload;
+	}
 
-            thread.fireTaskFinished(this);
-        }
-        return true;
-    }
+
 
     private String calculateMd5(File file) throws NoSuchAlgorithmException, FileNotFoundException {
         MessageDigest digest = MessageDigest.getInstance("MD5");
@@ -250,4 +229,15 @@ public class DownloadFile extends AbstractTask {
             LOG.log(Level.SEVERE, "IO Exception unpacking file.", e);
         }
     }
+
+
+
+	public String getUrl() {
+		String urlStr = getParameterAsString(URL_PARAM);
+        String baseUrlString = getParameterAsString(BASE_URL_PARAM_NAME);
+        if (baseUrlString != null) {
+            urlStr = baseUrlString + urlStr;
+        }
+		return urlStr;
+	}
 }

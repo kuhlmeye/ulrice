@@ -42,6 +42,8 @@ public class XMLDescriptionReader extends DefaultHandler {
 
 	private String imagePath;
 
+	private String baseUrl;
+
 	public XMLDescriptionReader(InputStream input, String imagePath) {
 		this.cTask = null;
 		this.imagePath = imagePath;
@@ -50,7 +52,12 @@ public class XMLDescriptionReader extends DefaultHandler {
 	}
 
 	public void parseXML(ApplicationDescription appDescription) throws SAXException, IOException {
+		parseXML(appDescription, null);
+	}
+	
+	public void parseXML(ApplicationDescription appDescription, String baseUrl) throws SAXException, IOException {
 		this.appDescription = appDescription;
+		this.baseUrl = baseUrl;
 		XMLReader reader = XMLReaderFactory.createXMLReader();
 		reader.setContentHandler(this);
 		reader.parse(new InputSource(input));
@@ -102,7 +109,7 @@ public class XMLDescriptionReader extends DefaultHandler {
 			ProvidedJRE providedJRE = new ProvidedJRE();
 			providedJRE.setOs(atts.getValue("os"));
 			providedJRE.setFilename(atts.getValue("name"));
-			
+			providedJRE.setBaseUrl(baseUrl);
 			Set<ProvidedJRE> providedJREs = appDescription.getProvidedJRESet();
 			if (providedJREs == null) {
 				providedJREs = new HashSet<ProvidedJRE>();
