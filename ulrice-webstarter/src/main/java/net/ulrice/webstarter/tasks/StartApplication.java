@@ -62,7 +62,10 @@ public class StartApplication extends AbstractTask {
     	}    	    	
 
     	String jreCommand = getJreStartCmd(osType, thread);
-
+    	if(jreCommand == null) {
+    		// No jre found.
+    		return false;
+    	}
         StringBuffer commandBuffer = new StringBuffer();
         commandBuffer.append(jreCommand).append(" ");
 
@@ -119,10 +122,32 @@ public class StartApplication extends AbstractTask {
         return true;
     }
 
+	private boolean isLocalVersionOK(String minJavaVersion, String maxJavaVersion) {
+		String[] splittedMinJavaVersion = minJavaVersion.split("\\.|_");
+		String[] splittedMaxJavaVersion = maxJavaVersion.split("\\.|_");
+		String[] splittedLocalJavaVersion = System.getProperty("java.version").split("\\.|_");
+		
+		int minLength = Math.min(splittedLocalJavaVersion.length, Math.min(splittedMaxJavaVersion.length, splittedMinJavaVersion.length));
+		boolean versionOK = true;
+		for(int i = 0; i < minLength && versionOK; i++) {
+			try {
+				int local = Integer.valueOf(splittedLocalJavaVersion[i]);
+				int max = Integer.valueOf(splittedMaxJavaVersion[i]);
+				int min = Integer.valueOf(splittedMinJavaVersion[i]);
+				versionOK &= (local >= min && local <= max); 			
+			} catch(NumberFormatException e) {
+				return false;
+			}
+			
+		}
+		
+		return versionOK;		
+	}
+    
     private String getJreStartCmd(OSType osType, ProcessThread thread) {
     	Set<ProvidedJRE> providedJRESet = thread.getAppDescription().getProvidedJRESet();
     	ProvidedJRE providedJRE = null;
-    	if(osType != null && providedJRE != null) {
+    	if(osType != null && providedJRESet != null) {
 	    	for(ProvidedJRE item : providedJRESet) {
 	    		if(item.getOs().equals(osType.name())) {
 	    			providedJRE = item;
@@ -130,41 +155,42 @@ public class StartApplication extends AbstractTask {
 	    		}
 	    	}
     	}
-    	
+    	String localDirString = WebstarterUtils.resolvePlaceholders(thread.getAppDescription().getLocalDir());
     	String jreType = getParameterAsString(JRE_TYPE, JRE_TYPE_PREFER_LOCAL);
-    	if(!JRE_TYPE_PREFER_LOCAL.equalsIgnoreCase(jreType)) {
-    		// Check local version for version compatibility
-    		String localDir = WebstarterUtils.resolvePlaceholders(thread.getAppDescription().getLocalDir());
-            
-			try {
-				Process process = Runtime.getRuntime().exec("java -version", null, new File(localDir));
-	            BufferedReader br = new BufferedReader(new InputStreamReader(process.getInputStream()));
-	            String line = br.readLine();
-	            
-	            //java version "1.7.0_51"
-	            if(line.startsWith("java version")) {
-	            	String version = line.substring(line.indexOf('"'), line.lastIndexOf('"'));
-	            	System.out.println(version);            	
-	            }
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-           
+    	if(JRE_TYPE_PREFER_LOCAL.equalsIgnoreCase(jreType) && isLocalVersionOK(getParameterAsString(MIN_VERSION), getParameterAsString(MAX_VERSION))) {
+    		File javaExec = new File(System.getProperty("java.home") + "/bin/java");
+    		if(javaExec.isFile() && javaExec.canExecute()) {
+    			return javaExec.getAbsolutePath();
+    		}
     	}
 
-		// Download file
-		// Unzip file
+    	if(providedJRE != null) {
+    		try {
+				DownloadFile downloadTask = providedJRE.getDownloadTask();
+				boolean downloaded = downloadTask.downloadFile(thread);
+				
+				String jreExecutable = thread.getContext().getPersistentProperties().getProperty(providedJRE.getFilename() + "_start");
+				
+				if(downloaded || jreExecutable == null) {
+					String fileName = UnzipJRE.extractFilename(this, thread, downloadTask.getUrl());
+					jreExecutable = UnzipJRE.unzipJre(this, thread, downloadTask.getUrl(), localDirString, fileName);
+					thread.getContext().getPersistentProperties().setProperty(providedJRE.getFilename() + "_start", jreExecutable);
+				}
+				return jreExecutable;
+			} catch (IOException e) {
+	            LOG.log(Level.SEVERE, "IO exception during file download.", e);
+	        }
+	        catch (InstantiationException e) {
+	            LOG.log(Level.SEVERE, "Instanciation exception during file download.", e);
+	        }
+	        catch (IllegalAccessException e) {
+	            LOG.log(Level.SEVERE, "Access exception during file download.", e);
+	        }
+    	}
 
+        thread.handleError(this, "No Java found.", "Could not found a java runtime. Version must be min: " + getParameterAsString(MIN_VERSION) + " and Max: " + getParameterAsString(MAX_VERSION));
     	
-//        String localDir = WebstarterUtils.resolvePlaceholders(thread.getAppDescription().getLocalDir());
-//        String localJre = getParameterAsString(PARAM_LOCAL_JRE);
-//        if (localJre != null) {
-//            commandBuffer.append(localDir).append(localJre).append(File.separator).append("bin").append(File.separator);
-//        }
-//        commandBuffer.append("java ");
-
-    	return "java ";
+    	return null;
 	}
 
 	private OSType determineOS() {

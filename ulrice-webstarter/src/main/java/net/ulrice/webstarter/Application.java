@@ -46,13 +46,15 @@ public class Application implements IFProcessEventListener, ActionListener {
         frame.getStartButton().addActionListener(this);
         frame.getCancelButton().addActionListener(this);
 
+        int applications = 0;
+        boolean withoutLogin = true;
         try {
 
             File appDirectory = new File(appDirectoryName);
             File[] files = appDirectory.listFiles();
             if (files != null) {
                 for (File file : files) {
-                    if (file.getName().endsWith(".ws.xml")) {
+                	if (file.getName().endsWith(".ws.xml")) {
                         FileInputStream in = new FileInputStream(file);
                         ApplicationDescription appDescription = new ApplicationDescription();
                         try {
@@ -60,14 +62,16 @@ public class Application implements IFProcessEventListener, ActionListener {
                             appDescription.setId(file.getName());
                             reader.parseXML(appDescription);
                             frame.addApplication(appDescription);
+                            
+                            withoutLogin &= !appDescription.isNeedsLogin();
+                            applications++;
                         }
                         finally {
                             in.close();
                         }
-                    }
+                    }                    
                 }
             }
-
         }
         catch (FileNotFoundException e) {
             LOG.log(Level.SEVERE, "Configuration File not found.", e);
@@ -79,7 +83,13 @@ public class Application implements IFProcessEventListener, ActionListener {
             LOG.log(Level.SEVERE, "Error reading configuration file.", e);
         }
 
+        
         loadSettings();
+        
+        if(applications == 1 && withoutLogin) {
+        	startProcess();
+        }
+        
     }
 
     private void loadSettings() {

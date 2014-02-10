@@ -88,7 +88,7 @@ public class ReadTasks extends AbstractTask {
             
             try {
                 XMLDescriptionReader reader = new XMLDescriptionReader(in, null);
-                reader.parseXML(descr);
+                reader.parseXML(descr, baseUrlStr);
                 if ((baseUrlStr != null) && (tasks != null)) {
                     for (TaskDescription task : tasks) {
                         task.getParameters().put(BASE_URL_PARAM_NAME, baseUrlStr);
