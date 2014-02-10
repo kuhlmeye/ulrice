@@ -126,18 +126,18 @@ public class GenerateDescriptionMojo extends AbstractMojo {
 		File xmlDescrFile = new File(targetDir, outputFilename + ".ws.xml");
 		getLog().info("XML-File: " + xmlDescrFile.toString());
 		
-		File jsonDescrFile = new File(targetDir, outputFilename + ".ws2.xml");
-		getLog().info("XML2-File: " + jsonDescrFile.toString());
+		File xml2DescrFile = new File(targetDir, outputFilename + ".ws2.xml");
+		getLog().info("XML2-File: " + xml2DescrFile.toString());
 		
 		PrintWriter xmlWriter = null;
 		PrintWriter xml2Writer = null;
 
 		try {
 			xmlWriter = new PrintWriter(xmlDescrFile);
-			xml2Writer = new PrintWriter(jsonDescrFile);	
+			xml2Writer = new PrintWriter(xml2DescrFile);	
 			
 
-			xmlWriter.println("<description>");
+			xml2Writer.println("<description>");
 			xml2Writer.println("<providedJREs>");
 			if(providedJRE != null) {
 				for(String key : providedJRE.stringPropertyNames()) {
