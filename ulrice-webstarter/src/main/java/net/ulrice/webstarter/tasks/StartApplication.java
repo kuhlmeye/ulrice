@@ -123,8 +123,14 @@ public class StartApplication extends AbstractTask {
     }
 
 	private boolean isLocalVersionOK(String minJavaVersion, String maxJavaVersion) {
-		String[] splittedMinJavaVersion = minJavaVersion.split("\\.|_");
-		String[] splittedMaxJavaVersion = maxJavaVersion.split("\\.|_");
+		String[] splittedMinJavaVersion = new String[]{"0", "0", "0"};
+		if(minJavaVersion != null) {		
+			splittedMinJavaVersion = minJavaVersion.split("\\.|_");
+		}
+		String[] splittedMaxJavaVersion = new String[]{"999", "999", "999"};
+		if(minJavaVersion != null) {		
+			splittedMaxJavaVersion = maxJavaVersion.split("\\.|_");
+		}		
 		String[] splittedLocalJavaVersion = System.getProperty("java.version").split("\\.|_");
 		
 		int minLength = Math.min(splittedLocalJavaVersion.length, Math.min(splittedMaxJavaVersion.length, splittedMinJavaVersion.length));
