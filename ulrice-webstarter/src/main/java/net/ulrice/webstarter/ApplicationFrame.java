@@ -178,10 +178,8 @@ public class ApplicationFrame extends JFrame implements ActionListener,
 		messageAreaScroller.setPreferredSize(new Dimension(getWidth(), 150));
 
 		messageToggleButton = new JToggleButton();
-		messageToggleButton.setIcon(new ImageIcon(ApplicationFrame.class
-				.getResource("up.png")));
-		messageToggleButton.setSelectedIcon(new ImageIcon(
-				ApplicationFrame.class.getResource("down.png")));
+		messageToggleButton.setIcon(new ImageIcon(ApplicationFrame.class.getResource("up.png")));
+		messageToggleButton.setSelectedIcon(new ImageIcon(ApplicationFrame.class.getResource("down.png")));
 		messageToggleButton.addActionListener(this);
 
 		getContentPane().setLayout(new BorderLayout());
