@@ -62,6 +62,7 @@ public class StartApplication extends AbstractTask {
     	}    	    	
 
     	String jreCommand = getJreStartCmd(osType, thread);
+    	LOG.info("Starting Application with " + jreCommand);
     	if(jreCommand == null) {
     		// No jre found.
     		return false;
@@ -146,7 +147,7 @@ public class StartApplication extends AbstractTask {
 			}
 			
 		}
-		
+		LOG.info("Use local java version: " + versionOK);
 		return versionOK;		
 	}
     
@@ -164,9 +165,10 @@ public class StartApplication extends AbstractTask {
     	String localDirString = WebstarterUtils.resolvePlaceholders(thread.getAppDescription().getLocalDir());
     	String jreType = getParameterAsString(JRE_TYPE, JRE_TYPE_PREFER_LOCAL);
     	if(JRE_TYPE_PREFER_LOCAL.equalsIgnoreCase(jreType) && isLocalVersionOK(getParameterAsString(MIN_VERSION), getParameterAsString(MAX_VERSION))) {
-    		File javaExec = new File(System.getProperty("java.home") + "/bin/java");
+    		LOG.info("Local JRE match preconditions");
+    	    File javaExec = new File(System.getProperty("java.home") + "/bin/java");
     		if(javaExec.isFile() && javaExec.canExecute()) {
-    			return javaExec.getAbsolutePath();
+    		    return javaExec.getAbsolutePath();
     		}
     	}
 
