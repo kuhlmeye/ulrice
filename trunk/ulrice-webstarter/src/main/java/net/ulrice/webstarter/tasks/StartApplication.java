@@ -134,6 +134,8 @@ public class StartApplication extends AbstractTask {
 		}		
 		String[] splittedLocalJavaVersion = System.getProperty("java.version").split("\\.|_");
 		
+		LOG.info("Java Version System: " +  System.getProperty("java.version"));
+		
 		int minLength = Math.min(splittedLocalJavaVersion.length, Math.min(splittedMaxJavaVersion.length, splittedMinJavaVersion.length));
 		boolean versionOK = true;
 		for(int i = 0; i < minLength && versionOK; i++) {
@@ -168,6 +170,7 @@ public class StartApplication extends AbstractTask {
     		LOG.info("Local JRE match preconditions");
     	    File javaExec = new File(System.getProperty("java.home") + "/bin/java");
     		if(javaExec.isFile() && javaExec.canExecute()) {
+    		    LOG.info("Local JRE absolute Path: " + javaExec.getAbsolutePath());
     		    return javaExec.getAbsolutePath();
     		}
     	}
