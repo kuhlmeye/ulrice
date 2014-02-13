@@ -68,9 +68,14 @@ public class StartApplication extends AbstractTask {
     		return false;
     	}
         StringBuffer commandBuffer = new StringBuffer();
-        commandBuffer.append(jreCommand).append(" ");
-
-
+        if (osType == OSType.Windows) {
+            commandBuffer.append("\"").append(jreCommand).append("\"").append(" ");
+        } else
+        {
+            commandBuffer.append(jreCommand).append(" ");
+        }
+        
+    	
         String vmOptions = getParameterAsString(VM_OPTIONS);
         if (vmOptions != null) {
             StringTokenizer st = new StringTokenizer(vmOptions, ",");
@@ -109,6 +114,9 @@ public class StartApplication extends AbstractTask {
             LOG.log(Level.INFO, commandBuffer.toString());
             // Start application
     		String localDir = WebstarterUtils.resolvePlaceholders(thread.getAppDescription().getLocalDir());
+    		//  exec(String[] cmdarray, String[] envp, File dir)
+    		
+    		//Runtime.getRuntime().exec(})
             Process process = Runtime.getRuntime().exec(commandBuffer.toString(), null, new File(localDir));
             StreamGobbler isGobbler = new StreamGobbler("OUT", process.getInputStream(), System.out);
             StreamGobbler esGobbler = new StreamGobbler("ERR", process.getErrorStream(), System.out);
@@ -166,19 +174,20 @@ public class StartApplication extends AbstractTask {
     	}
     	String localDirString = WebstarterUtils.resolvePlaceholders(thread.getAppDescription().getLocalDir());
     	String jreType = getParameterAsString(JRE_TYPE, JRE_TYPE_PREFER_LOCAL);
-    	if(JRE_TYPE_PREFER_LOCAL.equalsIgnoreCase(jreType) && isLocalVersionOK(getParameterAsString(MIN_VERSION), getParameterAsString(MAX_VERSION))) {
+        if(JRE_TYPE_PREFER_LOCAL.equalsIgnoreCase(jreType) && isLocalVersionOK(getParameterAsString(MIN_VERSION), getParameterAsString(MAX_VERSION))) {
+            StringBuilder javaExecStringBuilder = new StringBuilder(); 
+            javaExecStringBuilder.append(System.getProperty("java.home")).append("/bin/java");
             if (osType == OSType.Windows) {
-                LOG.info("Windows detected. Use java to start.");
-                return "java";
+                javaExecStringBuilder.append(".exe");
             }
-            File javaExec = new File(System.getProperty("java.home") + "/bin/java");
-    	    LOG.info("Local JRE match preconditions. Local JRE absolute Path: " + javaExec.getAbsolutePath());
-    	    LOG.info("Java is File: " + javaExec.isFile() + " Java could be executed: " + javaExec.canExecute());
-    		if(javaExec.isFile() && javaExec.canExecute()) {
-    		    return javaExec.getAbsolutePath();
-    		}
-    	}
-
+            File javaExec = new File(javaExecStringBuilder.toString());
+            LOG.info("Local JRE match preconditions. Local JRE absolute Path: " + javaExec.getAbsolutePath());
+            LOG.info("Java is File: " + javaExec.isFile() + " Java could be executed: " + javaExec.canExecute());
+            if(javaExec.isFile() && javaExec.canExecute()) {
+                return javaExec.getAbsolutePath();
+            }
+        }
+ 
     	if(providedJRE != null) {
     		try {
 				DownloadFile downloadTask = providedJRE.getDownloadTask();
