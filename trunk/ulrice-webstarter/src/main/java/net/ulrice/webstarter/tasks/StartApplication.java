@@ -167,12 +167,11 @@ public class StartApplication extends AbstractTask {
     	String localDirString = WebstarterUtils.resolvePlaceholders(thread.getAppDescription().getLocalDir());
     	String jreType = getParameterAsString(JRE_TYPE, JRE_TYPE_PREFER_LOCAL);
     	if(JRE_TYPE_PREFER_LOCAL.equalsIgnoreCase(jreType) && isLocalVersionOK(getParameterAsString(MIN_VERSION), getParameterAsString(MAX_VERSION))) {
-    	    StringBuilder javaExecStringBuilder = new StringBuilder(); 
-    	    javaExecStringBuilder.append(System.getProperty("java.home")).append("/bin/java");
-    	    if (osType == OSType.Windows) {
-    	        javaExecStringBuilder.append(".exe");
-    	    }
-    	    File javaExec = new File(javaExecStringBuilder.toString());
+            if (osType == OSType.Windows) {
+                LOG.info("Windows detected. Use java to start.");
+                return "java";
+            }
+            File javaExec = new File(System.getProperty("java.home") + "/bin/java");
     	    LOG.info("Local JRE match preconditions. Local JRE absolute Path: " + javaExec.getAbsolutePath());
     	    LOG.info("Java is File: " + javaExec.isFile() + " Java could be executed: " + javaExec.canExecute());
     		if(javaExec.isFile() && javaExec.canExecute()) {
