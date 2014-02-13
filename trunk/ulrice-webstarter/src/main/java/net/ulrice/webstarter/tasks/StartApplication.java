@@ -167,10 +167,15 @@ public class StartApplication extends AbstractTask {
     	String localDirString = WebstarterUtils.resolvePlaceholders(thread.getAppDescription().getLocalDir());
     	String jreType = getParameterAsString(JRE_TYPE, JRE_TYPE_PREFER_LOCAL);
     	if(JRE_TYPE_PREFER_LOCAL.equalsIgnoreCase(jreType) && isLocalVersionOK(getParameterAsString(MIN_VERSION), getParameterAsString(MAX_VERSION))) {
-    		LOG.info("Local JRE match preconditions");
-    	    File javaExec = new File(System.getProperty("java.home") + "/bin/java");
+    	    StringBuilder javaExecStringBuilder = new StringBuilder(); 
+    	    javaExecStringBuilder.append(System.getProperty("java.home")).append("/bin/java");
+    	    if (osType == OSType.Windows) {
+    	        javaExecStringBuilder.append(".exe");
+    	    }
+    	    File javaExec = new File(javaExecStringBuilder.toString());
+    	    LOG.info("Local JRE match preconditions. Local JRE absolute Path: " + javaExec.getAbsolutePath());
+    	    LOG.info("Java is File: " + javaExec.isFile() + " Java could be executed: " + javaExec.canExecute());
     		if(javaExec.isFile() && javaExec.canExecute()) {
-    		    LOG.info("Local JRE absolute Path: " + javaExec.getAbsolutePath());
     		    return javaExec.getAbsolutePath();
     		}
     	}
@@ -187,6 +192,7 @@ public class StartApplication extends AbstractTask {
 					jreExecutable = UnzipJRE.unzipJre(this, thread, downloadTask.getUrl(), localDirString, fileName);
 					thread.getContext().getPersistentProperties().setProperty(providedJRE.getFilename() + "_start", jreExecutable);
 				}
+				LOG.info("Provided JRE absolute Path: " + jreExecutable);
 				return jreExecutable;
 			} catch (IOException e) {
 	            LOG.log(Level.SEVERE, "IO exception during file download.", e);
