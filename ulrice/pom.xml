@@ -11,7 +11,7 @@
 	<artifactId>ulrice</artifactId>
 	<packaging>pom</packaging>
 	<name>Ulrice</name>
-	<version>0.2.5.27-SNAPSHOT</version>
+	<version>0.2.5.26</version>
 	<description>Ulrice is a framework for rich clients supporting the mvc-based (or module based) development of applications</description>
 	<url>http://www.ulrice.net</url>
 	<licenses>
