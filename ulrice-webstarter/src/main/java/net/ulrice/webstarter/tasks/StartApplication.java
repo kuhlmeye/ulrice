@@ -114,9 +114,6 @@ public class StartApplication extends AbstractTask {
             LOG.log(Level.INFO, commandBuffer.toString());
             // Start application
     		String localDir = WebstarterUtils.resolvePlaceholders(thread.getAppDescription().getLocalDir());
-    		//  exec(String[] cmdarray, String[] envp, File dir)
-    		
-    		//Runtime.getRuntime().exec(})
             Process process = Runtime.getRuntime().exec(commandBuffer.toString(), null, new File(localDir));
             StreamGobbler isGobbler = new StreamGobbler("OUT", process.getInputStream(), System.out);
             StreamGobbler esGobbler = new StreamGobbler("ERR", process.getErrorStream(), System.out);
