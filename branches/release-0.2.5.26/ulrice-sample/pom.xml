@@ -1,0 +1,206 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<artifactId>ulrice-sample</artifactId>
+	<packaging>jar</packaging>
+	<name>Ulrice-Sample</name>
+	<description>Ulrice-Sample is a sample application using Ulrice-Core and some extensions</description>
+	<url>http://ulrice.googlecode.com</url>
+	<licenses>
+		<license>
+			<name>GNU LESSER GENERAL PUBLIC LICENSE</name>
+			<url>http://www.gnu.org/licenses/lgpl.html</url>
+			<distribution>repo</distribution>
+		</license>
+	</licenses>
+	<scm>
+		<connection>scm:svn:https://ulrice.googlecode.com/svn/tags/ulrice-0.2.6/ulrice-sample</connection>
+		<developerConnection>scm:svn:https://ulrice.googlecode.com/svn/tags/ulrice-0.2.6/ulrice-sample</developerConnection>
+		<url>http://ulrice.googlecode.com/svn/tags/ulrice-0.2.6/svn</url>
+	</scm>
+	<developers>
+		<developer>
+			<id>ckuhlmeyer</id>
+			<name>Christof Kuhlmeyer</name>
+			<email />
+		</developer>
+		<developer>
+			<id>apunahassaphemapetilon@hotmail.com</id>
+			<name>Tobias Kavemann</name>
+			<email>apunahassaphemapetilon@hotmail.com</email>
+		</developer>
+	</developers>
+
+	<parent>
+		<groupId>net.ulrice</groupId>
+		<artifactId>ulrice</artifactId>
+		<version>0.2.5.26-SNAPSHOT</version>
+		<relativePath>../ulrice</relativePath>
+	</parent>
+        
+        
+    <distributionManagement>
+      <site>
+        <id>ulrice-ftp-site</id>
+        <name>Ulrice Site</name>
+        <url>ftp://ulrice.net/httpdocs/ulrice-sample</url>
+      </site>
+    </distributionManagement>
+
+	<properties>
+		<version.cucumber>1.0.0.RC13</version.cucumber>
+	</properties>
+	
+	<dependencies>
+		<dependency>
+			<groupId>net.ulrice</groupId>
+			<artifactId>ulrice-core</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>net.ulrice</groupId>
+			<artifactId>ulrice-databinding</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>net.ulrice</groupId>
+			<artifactId>ulrice-remote-control</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>net.ulrice</groupId>
+			<artifactId>ulrice-translator</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>net.ulrice</groupId>
+			<artifactId>ulrice-webstarter-maven-plugin</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>info.cukes</groupId>
+			<artifactId>cucumber-core</artifactId>
+			<version>${version.cucumber}</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>info.cukes</groupId>
+			<artifactId>cucumber-picocontainer</artifactId>
+			<version>${version.cucumber}</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>info.cukes</groupId>
+			<artifactId>cucumber-junit</artifactId>
+			<version>${version.cucumber}</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.picocontainer</groupId>
+			<artifactId>picocontainer</artifactId>
+			<version>2.14.1</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.jbehave</groupId>
+			<artifactId>jbehave-core</artifactId>
+			<version>3.5.4</version>
+			<scope>test</scope>
+		</dependency>
+	</dependencies>
+
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-release-plugin</artifactId>
+			</plugin>
+
+			<!-- <plugin> <groupId>org.riedelcastro</groupId> <artifactId>gcupload-maven-plugin</artifactId> <version>0.9</version> 
+				<configuration> <projectName>ulrice</projectName> <allowSnapshots>true</allowSnapshots> <uploads> <upload> <extensions>jar.pack200</extensions> 
+				</upload> <upload> <extensions>ws.xml</extensions> <labels>Featured</labels> </upload> </uploads> </configuration> </plugin> -->
+		</plugins>
+	</build>
+
+	<profiles>
+		<profile>
+			<id>webstarter</id>
+			<activation>
+				<property>
+					<name>webstarter</name>
+				</property>
+			</activation>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-assembly-plugin</artifactId>
+						<version>2.2-beta-2</version>
+						<configuration>
+							<finalName>ulrice-sample</finalName>
+							<ignoreDirFormatExtensions>true</ignoreDirFormatExtensions>
+							<descriptors>
+								<descriptor>src/assemble/distribution.xml</descriptor>
+							</descriptors>
+						</configuration>
+						<executions>
+							<execution>
+								<phase>package</phase>
+								<goals>
+									<goal>single</goal>
+								</goals>
+							</execution>
+						</executions>
+					</plugin>
+					<plugin>
+						<groupId>net.ulrice</groupId>
+						<artifactId>ulrice-webstarter-maven-plugin</artifactId>
+						<version>${project.version}</version>
+
+						<configuration>
+							<directories>
+								<java.io.File>${project.build.directory}/ulrice-sample-dir/</java.io.File>
+							</directories>
+							<targetDir>${project.build.directory}</targetDir>
+							<outputFilename>${project.build.directory}/${project.artifactId}-${project.version}.ws.xml</outputFilename>
+							<baseUrl>http://ulrice.googlecode.com/files/</baseUrl>
+							<usePack200>false</usePack200>
+							<filenameFilters>
+								<param>.*\.jar</param>
+								<param>.*\.txt</param>
+							</filenameFilters>
+						</configuration>
+						<executions>
+							<execution>
+								<phase>package</phase>
+								<goals>
+									<goal>create-description</goal>
+								</goals>
+							</execution>
+						</executions>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+
+		<profile>
+			<id>acceptance</id>
+			<activation>
+				<property>
+					<name>acceptance</name>
+				</property>
+			</activation>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-failsafe-plugin</artifactId>
+						<executions>
+							<execution>
+								<goals>
+									<goal>integration-test</goal>
+									<goal>verify</goal>
+								</goals>
+							</execution>
+						</executions>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+	</profiles>
+
+</project>
