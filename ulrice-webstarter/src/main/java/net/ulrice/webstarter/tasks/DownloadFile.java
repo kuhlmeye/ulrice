@@ -8,6 +8,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.math.BigInteger;
 import java.net.MalformedURLException;
+import java.net.SocketException;
 import java.net.URL;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -50,32 +51,60 @@ public class DownloadFile extends AbstractTask {
         	}
         }
 
-        try {
+        return downloadFileInternal(thread, 3);
+    }
+
+
+	private boolean downloadFileInternal(ProcessThread thread, int retry) {
+		try {			
         	downloadFile(thread);
         	return true;
         }
+		catch (SocketException e) {
+			if(retry >= 0) {
+				return downloadFileInternal(thread, retry - 1);
+			} else {
+	            LOG.log(Level.SEVERE, "IO exception during file download.", e);
+	            thread.handleError(this, "File not found", "Could not find the file " + getUrl());
+			}
+		}
+        catch (FileNotFoundException e) {
+            LOG.log(Level.SEVERE, "IO exception during file download.", e);
+            thread.handleError(this, "File not found", "Could not find the file " + getUrl());
+        }
         catch (IOException e) {
             LOG.log(Level.SEVERE, "IO exception during file download.", e);
+            thread.handleError(this, "Exception during file download", "Exception downloading file " + getUrl());
         }
         catch (InstantiationException e) {
             LOG.log(Level.SEVERE, "Instanciation exception during file download.", e);
+            thread.handleError(this, "Exception during file download", "Exception downloading file " + getUrl());
         }
         catch (IllegalAccessException e) {
             LOG.log(Level.SEVERE, "Access exception during file download.", e);
+            thread.handleError(this, "Exception during file download", "Exception downloading file " + getUrl());
+        }
+        catch (Throwable th) {
+            LOG.log(Level.SEVERE, "Exception during file download.", th);
+            thread.handleError(this, "Exception during file download", "Exception downloading file " + getUrl());
         }
         finally {
             thread.fireTaskFinished(this);
         }
-
-        return false;
-    }
+		return false;
+	}
 
 
 	public boolean downloadFile(ProcessThread thread) throws MalformedURLException, IOException, InstantiationException, IllegalAccessException {
 
         String remoteMd5 = getParameterAsString(MD5_PARAM);
         boolean usePack200 = Boolean.valueOf(getParameterAsString(PACK200_PARAM));        
-        long remoteFileLen = Long.valueOf(getParameterAsString(LENGTH_PARAM_NAME));
+        
+        long remoteFileLen = -1;
+        try {
+        	remoteFileLen = Long.valueOf(getParameterAsString(LENGTH_PARAM_NAME));
+        } catch(NumberFormatException e) {
+        }
         
 		String urlStr = getUrl();
 
