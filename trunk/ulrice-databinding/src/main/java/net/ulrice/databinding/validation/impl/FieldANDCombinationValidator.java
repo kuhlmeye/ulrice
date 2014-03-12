@@ -1,10 +1,7 @@
 package net.ulrice.databinding.validation.impl;
 
-import java.util.ArrayList;
-
 import net.ulrice.databinding.IFBinding;
 import net.ulrice.databinding.bufferedbinding.impl.GenericAM;
-import net.ulrice.databinding.validation.AbstractValidator;
 import net.ulrice.databinding.validation.ValidationError;
 import net.ulrice.databinding.validation.ValidationResult;
 
@@ -12,15 +9,13 @@ import net.ulrice.databinding.validation.ValidationResult;
  * Checks if all of the fields are filled.
  */
 
-@SuppressWarnings("rawtypes")
-public class FieldANDCombinationValidator extends AbstractValidator {
+public class FieldANDCombinationValidator extends AbstractCrossFieldValidator {
 
-    protected ArrayList<GenericAM< ?>> modelList = new ArrayList<GenericAM< ?>>();
     protected String idString = new String();
 
     public FieldANDCombinationValidator(GenericAM< ?>... models) {
+        super(models);
         for (GenericAM< ?> model : models) {
-            modelList.add(model);
             idString = idString + " " + model.getId();
         }
     }
@@ -29,8 +24,12 @@ public class FieldANDCombinationValidator extends AbstractValidator {
     protected ValidationResult validate(IFBinding bindingId, Object attribute, Object rawAttribute) {
         ValidationResult result = new ValidationResult();
 
+        if (!isModelListInitialized()) {
+            return result;
+        }
+
         if (attribute == null) { /* actual field is cleared right now */
-            for (GenericAM< ?> model : modelList) {
+            for (GenericAM< ?> model : getModelList()) {
                 if (model.getCurrentValue() == null) {
                     // TODO Internationalize
                     result.addValidationError(new ValidationError(bindingId, "all of these fields must be filled "
@@ -41,7 +40,7 @@ public class FieldANDCombinationValidator extends AbstractValidator {
             return result;
         }
 
-        for (GenericAM< ?> model : modelList) { /* actualize dependent fields */
+        for (GenericAM< ?> model : getModelList()) { /* actualize dependent fields */
             if (result.getValidationErrors().isEmpty() != model.isValid()) {
                 model.recalculateStateForThisValidator(this, result.getValidationErrors().isEmpty(), model.getCurrentValue());
             }

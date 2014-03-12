@@ -196,7 +196,7 @@ public class GenericAM<T> implements IFAttributeModel<T>, IFViewChangeListener {
             }
             else if (readOnly) {
                 stateChanged |= (dirty != false);
-                dirty = false; 
+                dirty = false;
             }
             else if ( getCurrentValue() != null && getOriginalValue() != null) {
                 boolean newDirty;
@@ -574,6 +574,11 @@ public class GenericAM<T> implements IFAttributeModel<T>, IFViewChangeListener {
      */
     public void setListOrderRelevant(boolean isListOrderRelevant) {
         this.isListOrderRelevant = isListOrderRelevant;
+    }
+
+    // only package visibility!
+    void setInitialized(boolean initialized) {
+        this.initialized = initialized;
     }
 
 }
