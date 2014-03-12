@@ -1,40 +1,36 @@
 package net.ulrice.databinding.validation.impl;
 
-import java.util.ArrayList;
-
 import net.ulrice.Ulrice;
 import net.ulrice.databinding.IFBinding;
 import net.ulrice.databinding.bufferedbinding.IFAttributeModel;
 import net.ulrice.databinding.bufferedbinding.impl.GenericAM;
-import net.ulrice.databinding.validation.AbstractValidator;
 import net.ulrice.databinding.validation.ValidationError;
 import net.ulrice.databinding.validation.ValidationResult;
 import net.ulrice.message.TranslationUsage;
 
-@SuppressWarnings("rawtypes")
-public class AllOrNothingValidator extends AbstractValidator {
+public class AllOrNothingValidator extends AbstractCrossFieldValidator {
 
-    private final ArrayList<GenericAM< ?>> modelList = new ArrayList<GenericAM< ?>>();
     private final String module;
     private final String key;
 
     public AllOrNothingValidator(String module, String key, IFAttributeModel< ?>... models) {
-        super();
+        super(models);
         this.module = module;
         this.key = key;
-        for (IFAttributeModel model : models) {
-            this.modelList.add((GenericAM< ?>) model);
-        }
     }
 
     @Override
     protected ValidationResult validate(IFBinding bindingId, Object attribute, Object rawAttribute) {
         ValidationResult result = new ValidationResult();
 
+        if (!isModelListInitialized()) {
+            return result;
+        }
+
         boolean allEmpty = true;
         boolean allFilled = true;
 
-        for (GenericAM< ?> model : modelList) {
+        for (GenericAM< ?> model : getModelList()) {
             if (model.getCurrentValue() != null) {
                 allEmpty &= false;
             }
@@ -49,7 +45,7 @@ public class AllOrNothingValidator extends AbstractValidator {
             String text = Ulrice.getTranslationProvider().getTranslationText(module, TranslationUsage.Message, key);
             ValidationError error = new ValidationError(bindingId, text, null);
             result.addValidationError(error);
-            for (GenericAM< ?> model : modelList) {
+            for (GenericAM< ?> model : getModelList()) {
                 if (model.getCurrentValue() == null) {
                     if (!model.equals(bindingId)) {
                         model.addExternalValidationError(error);
@@ -59,7 +55,7 @@ public class AllOrNothingValidator extends AbstractValidator {
             }
         }
         else {
-            for (GenericAM< ?> model : modelList) {
+            for (GenericAM< ?> model : getModelList()) {
                 if (!model.equals(bindingId)) {
                     model.clearExternalValidationErrors();
                     model.recalculateStateForThisValidator(this, result.getValidationErrors().isEmpty(), model.getCurrentValue());
