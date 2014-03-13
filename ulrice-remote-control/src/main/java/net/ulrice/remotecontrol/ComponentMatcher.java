@@ -8,6 +8,9 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
 
+import javax.swing.JPanel;
+import javax.swing.border.TitledBorder;
+
 import net.ulrice.remotecontrol.impl.ComponentRegistry;
 import net.ulrice.remotecontrol.impl.helper.ComponentHelper;
 import net.ulrice.remotecontrol.impl.helper.ComponentHelperRegistry;
@@ -452,7 +455,52 @@ public abstract class ComponentMatcher implements Serializable {
 
         };
     }
+    
+    public static ComponentMatcher bordered(final String regex) throws RemoteControlException {
+        final RegularMatcher matcher = RemoteControlUtils.toMatcher(regex);
 
+        return new ComponentMatcher() {
+
+            private static final long serialVersionUID = -379602592468070748L;
+
+            @Override
+            public Collection<Component> match(Collection<Component> components) throws RemoteControlException {
+                Collection<Component> results = new LinkedHashSet<Component>();
+
+                for (Component component : components) {
+
+                    if(!(component instanceof JPanel)){
+                        continue;
+                    }
+                    JPanel comp = (JPanel) component;
+                    
+                    if(comp.getBorder() == null){
+                        continue;
+                    }
+                    
+                    if(! (comp.getBorder() instanceof TitledBorder)){
+                        continue;
+                    }
+                    TitledBorder border = (TitledBorder) comp.getBorder();
+                    
+                    String title = border.getTitle();
+
+                    if ((title != null) && (matcher.matches(title))) {
+                        results.add(comp);
+                    }
+                }
+
+                return results;
+            }
+
+            @Override
+            public String toString() {
+                return "labeled[" + regex + "]";
+            }
+
+        };
+    }
+    
     /**
      * Matches all components that are enabled
      * 
