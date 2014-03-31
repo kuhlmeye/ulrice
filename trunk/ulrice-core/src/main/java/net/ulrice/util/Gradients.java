@@ -62,8 +62,8 @@ public class Gradients {
             new float[] { 0.0f, Math.min(fraction / 4, 0.97f), Math.min(fraction / 2, 0.98f), Math.min(fraction, 0.99f), 1.0f }, //
             new Color[] { //
             Colors.blend(color, SHADOW_COLOR, shadowStrength), //
-                Colors.blend(color, SHADOW_COLOR, shadowStrength / 2), //
                 Colors.blend(color, SHADOW_COLOR, shadowStrength / 4), //
+                Colors.blend(color, SHADOW_COLOR, shadowStrength / 8), //
                 color, //
                 color //
             });
