@@ -22,7 +22,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.StringTokenizer;
 
-import javax.swing.BorderFactory;
 import javax.swing.DefaultListSelectionModel;
 import javax.swing.JComponent;
 import javax.swing.JPanel;
@@ -49,8 +48,6 @@ import net.ulrice.databinding.bufferedbinding.impl.FilterMode;
 import net.ulrice.databinding.bufferedbinding.impl.TableAM;
 import net.ulrice.databinding.viewadapter.IFCellStateMarker;
 import net.ulrice.databinding.viewadapter.IFCellTooltipHandler;
-import net.ulrice.frame.impl.workarea.GlassPanel;
-import net.ulrice.ui.components.BorderPanel;
 
 /**
  * Ulrice table component with some extended features like sorting, filtering, ...
@@ -74,7 +71,6 @@ public class UTableComponent extends JPanel {
 
     protected UTableVAFilter filter;
     protected UTableRowSorter sorter;
-
 
     protected ListSelectionModel rowSelModel = new DefaultListSelectionModel();
 
@@ -122,8 +118,8 @@ public class UTableComponent extends JPanel {
 
         scrollPane = new JScrollPane();
         scrollPane.setCorner(JScrollPane.UPPER_LEFT_CORNER, staticTable.getTableHeader());
-        scrollPane.setCorner(JScrollPane.UPPER_RIGHT_CORNER, new BorderPanel(null, BorderFactory.createMatteBorder(0, 1, 1, 0, new Color(0x9297a1))));
-        scrollPane.setCorner(JScrollPane.LOWER_LEADING_CORNER, new BorderPanel(null, BorderFactory.createMatteBorder(1, 0, 0, 0, new Color(0x9297a1))));
+        scrollPane.setCorner(JScrollPane.UPPER_RIGHT_CORNER, new UTableCornerComponent("upperRight")); //new BorderPanel(null, BorderFactory.createMatteBorder(0, 1, 1, 0, new Color(0x9297a1))));
+        scrollPane.setCorner(JScrollPane.LOWER_LEADING_CORNER, new UTableCornerComponent("lowerLeading"));
         scrollPane.setRowHeader(staticViewport);
         scrollPane.setViewport(scrollViewport);
 
