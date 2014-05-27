@@ -35,6 +35,8 @@ public class UI implements UIConstants {
         
         UIManager.put("Label.text", UIManager.get("text"));
         UIManager.put(GLASSPANEL_COLOR, new Color(200, 200, 200, 150));
+        
+        UIManager.put(SCROLL_UNIT_INCREMENT, 32);
 
         Font labelFont = UIManager.getFont("Label.font");
         if (null != labelFont) {
