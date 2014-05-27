@@ -40,5 +40,6 @@ public interface UIConstants {
 	String MESSAGEDIALOG_FOREGROUND = "MessageDialog.Foreground";
 	
 	String GLASSPANEL_COLOR = "GlassPanel.Color";
+	String SCROLL_UNIT_INCREMENT = "ScrollUnitIncrement";
 
 }

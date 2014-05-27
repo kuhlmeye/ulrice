@@ -11,7 +11,9 @@ import java.util.List;
 
 import javax.swing.BorderFactory;
 import javax.swing.JPanel;
+import javax.swing.UIManager;
 
+import net.ulrice.ui.UI;
 import net.ulrice.ui.components.VerticalScrollPane;
 
 /**
@@ -48,6 +50,7 @@ public class AccordionPanel extends JPanel implements ActionListener {
         if (handleScrolling) {
             VerticalScrollPane scrollPane = new VerticalScrollPane(contentPane);
             scrollPane.setBorder(BorderFactory.createEmptyBorder());
+            scrollPane.getVerticalScrollBar().setUnitIncrement(UIManager.getInt(UI.SCROLL_UNIT_INCREMENT));
             super.add(scrollPane, BorderLayout.CENTER);
         }
         else {
