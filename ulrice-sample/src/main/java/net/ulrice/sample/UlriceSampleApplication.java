@@ -101,6 +101,10 @@ public class UlriceSampleApplication {
 					regHelper.addTopModule(createAuthModule(ModuleType.NormalModule, CRadioButtonSample.class, "Radio Button", "RADIOBUTTON"));
 					regHelper.addTopModule(createAuthModule(ModuleType.NormalModule, CBehavior.class, "BDD", "BDD"));
 				}
+				
+				@Override
+				public void startupFinished() {
+				}
 			}));
 			UlriceSampleDatabindingConfiguration.initialize();
 		} catch (ConfigurationException e) {
