@@ -81,7 +81,5 @@ public class ModuleActionState {
 	
 	public int getActionState() {
 	    return actionState;
-	}
-	
-		
+	}	
 }

@@ -127,6 +127,8 @@ public class Ulrice {
 
         configuration.getConfigurationCallback().registerModules(new ModuleRegistrationHelper(moduleStructureManager, moduleManager));
         moduleStructureManager.fireModuleStructureChanged();
+        
+        configuration.getConfigurationCallback().startupFinished();
     }
 
 	private static void initMainFrame(final IFUlriceConfiguration configuration) {
