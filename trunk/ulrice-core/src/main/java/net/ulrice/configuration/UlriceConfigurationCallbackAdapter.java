@@ -23,4 +23,8 @@ public class UlriceConfigurationCallbackAdapter implements UlriceConfigurationCa
 	@Override
 	public void registerModules(ModuleRegistrationHelper regHelper) {
 	}
+	
+	@Override
+	public void startupFinished() {
+	}
 }

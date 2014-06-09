@@ -15,4 +15,6 @@ public interface UlriceConfigurationCallback {
 	void configureMenu(Menubar menubar, ModuleActionManager actionManager);
 	
 	void registerModules(ModuleRegistrationHelper regHelper);
+	
+	void startupFinished();
 }

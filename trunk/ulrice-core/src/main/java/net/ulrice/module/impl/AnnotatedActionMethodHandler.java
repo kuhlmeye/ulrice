@@ -4,6 +4,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -50,6 +51,9 @@ public class AnnotatedActionMethodHandler {
 					}
 					
 					ModuleDelegationAction ulriceAction = new ModuleDelegationAction(moduleAction.actionId(), name, moduleAction.initiallyEnabled(), icon);
+
+			        int orderIdx = moduleAction.orderIdx();
+			        ulriceAction.putValue("SORTIDX", orderIdx);
 					ModuleActionState actionState = new ModuleActionState(moduleAction.initiallyEnabled(), ulriceAction);
 					handledActions.add(actionState);
 				}

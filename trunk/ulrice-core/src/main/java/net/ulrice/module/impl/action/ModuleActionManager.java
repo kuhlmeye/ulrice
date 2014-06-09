@@ -8,6 +8,8 @@ import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -283,6 +285,18 @@ public class ModuleActionManager implements IFModuleEventListener, PropertyChang
 						moduleActionList.add(moduleActionState.getAction());
 					}
 				}
+				Collections.sort(moduleActionList, new Comparator<UlriceAction>() {
+
+
+					@Override
+					public int compare(UlriceAction o1, UlriceAction o2) {
+						Integer sortIdx1 = (Integer)o1.getValue("SORTIDX");
+						Integer sortIdx2 = (Integer)o2.getValue("SORTIDX");
+						sortIdx1 = sortIdx1 == null ? 0 : sortIdx1;
+						sortIdx2 = sortIdx2 == null ? 0 : sortIdx2;
+						return sortIdx1.compareTo(sortIdx2);
+					}
+				});
 				return moduleActionList;
 			}
 		}

@@ -15,4 +15,5 @@ public @interface ModuleAction {
 	String name() default "";
 	String iconName() default "";
 	boolean initiallyEnabled() default true;
+	int orderIdx() default 0;
 }
