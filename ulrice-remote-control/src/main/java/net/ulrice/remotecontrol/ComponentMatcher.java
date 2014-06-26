@@ -1,26 +1,22 @@
 package net.ulrice.remotecontrol;
 
-import java.awt.Component;
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Iterator;
-import java.util.LinkedHashSet;
-
-import javax.swing.JPanel;
-import javax.swing.border.TitledBorder;
-
 import net.ulrice.remotecontrol.impl.ComponentRegistry;
 import net.ulrice.remotecontrol.impl.helper.ComponentHelper;
 import net.ulrice.remotecontrol.impl.helper.ComponentHelperRegistry;
 import net.ulrice.remotecontrol.util.ComponentUtils;
 import net.ulrice.remotecontrol.util.RegularMatcher;
 import net.ulrice.remotecontrol.util.RemoteControlUtils;
+import net.ulrice.ui.accordionpanel.AccordionContentPanel;
+
+import javax.swing.*;
+import javax.swing.border.TitledBorder;
+import java.awt.*;
+import java.io.Serializable;
+import java.util.*;
 
 /**
  * Matchers for the {@link ComponentRemoteControl}.
- * 
+ *
  * @author Manfred HANTSCHEL
  */
 public abstract class ComponentMatcher implements Serializable {
@@ -29,7 +25,7 @@ public abstract class ComponentMatcher implements Serializable {
 
     /**
      * Matches all components.
-     * 
+     *
      * @return the matcher
      */
     public static ComponentMatcher all() {
@@ -52,7 +48,7 @@ public abstract class ComponentMatcher implements Serializable {
 
     /**
      * Each component must match each matcher. The result is the intersection of the result of all specified matchers.
-     * 
+     *
      * @param matchers the matchers
      * @return the matcher
      */
@@ -91,7 +87,7 @@ public abstract class ComponentMatcher implements Serializable {
     /**
      * Each component matches at least one of the specified matchers. The result is the union of the results of all
      * specified matchers.
-     * 
+     *
      * @param matchers the matchers
      * @return the matcher
      */
@@ -130,7 +126,7 @@ public abstract class ComponentMatcher implements Serializable {
     /**
      * Keeps those components, that do not match the specified matcher. The result is the inversion of the result of
      * the specified matcher.
-     * 
+     *
      * @param matcher the matcher
      * @return the matcher
      */
@@ -156,7 +152,7 @@ public abstract class ComponentMatcher implements Serializable {
 
     /**
      * Matches components with the specified id. The unique id is generated when a {@link ComponentState} is created.
-     * 
+     *
      * @param uniqueId the unique id
      * @return the matcher
      */
@@ -188,11 +184,11 @@ public abstract class ComponentMatcher implements Serializable {
 
     /**
      * Matches all components of the specified type
-     * 
+     *
      * @param type the type
      * @return the matcher
      */
-    public static ComponentMatcher ofType(final Class< ? extends Component> type) {
+    public static ComponentMatcher ofType(final Class<? extends Component> type) {
         return new ComponentMatcher() {
 
             private static final long serialVersionUID = 7366001726950768210L;
@@ -220,7 +216,7 @@ public abstract class ComponentMatcher implements Serializable {
 
     /**
      * Matches all components with a name, text or title that matches the regular expression.
-     * 
+     *
      * @param regex the regular expression
      * @return the matcher
      * @throws RemoteControlException on occasion
@@ -273,7 +269,7 @@ public abstract class ComponentMatcher implements Serializable {
 
     /**
      * Matches all components with a name that matches the regular expression
-     * 
+     *
      * @param regex the regular expression
      * @return the matcher
      * @throws RemoteControlException on occasion
@@ -314,7 +310,7 @@ public abstract class ComponentMatcher implements Serializable {
     /**
      * Matches all components with a title that matches the regular expression. If the component has no title, it, of
      * course, does not match.
-     * 
+     *
      * @param regex the regular expression
      * @return the matcher
      * @throws RemoteControlException on occasion
@@ -356,7 +352,7 @@ public abstract class ComponentMatcher implements Serializable {
     /**
      * Matches all components with a text, that matches the specified regular expression. If the component has no
      * text, it never matches this matcher.
-     * 
+     *
      * @param regex the regular expression
      * @return the matcher
      * @throws RemoteControlException on occasion
@@ -399,7 +395,7 @@ public abstract class ComponentMatcher implements Serializable {
      * Matches a component, that is referenced by a label with the specified name or text as label-for. E.g. if you
      * have a text field and a label with the text "Name". The property labelFor of the label is set to text field. If
      * you call this matcher with "Name", then it matches the text field.
-     * 
+     *
      * @param regex the regurlar expression
      * @return the matcher
      * @throws RemoteControlException on occasion
@@ -455,7 +451,10 @@ public abstract class ComponentMatcher implements Serializable {
 
         };
     }
-    
+
+    /**
+     * Works with Panels bordered with "TitledBorder" and also with AccordionPanels
+     */
     public static ComponentMatcher bordered(final String regex) throws RemoteControlException {
         final RegularMatcher matcher = RemoteControlUtils.toMatcher(regex);
 
@@ -469,24 +468,35 @@ public abstract class ComponentMatcher implements Serializable {
 
                 for (Component component : components) {
 
-                    if(!(component instanceof JPanel)){
+                    if (!(component instanceof JPanel)) {
                         continue;
                     }
-                    JPanel comp = (JPanel) component;
-                    
-                    if(comp.getBorder() == null){
-                        continue;
-                    }
-                    
-                    if(! (comp.getBorder() instanceof TitledBorder)){
-                        continue;
-                    }
-                    TitledBorder border = (TitledBorder) comp.getBorder();
-                    
-                    String title = border.getTitle();
 
-                    if ((title != null) && (matcher.matches(title))) {
-                        results.add(comp);
+                    JPanel comp = (JPanel) component;
+
+                    if (comp instanceof AccordionContentPanel) {
+
+                        String title = ((AccordionContentPanel) comp).getSeparatorPanel().getTitle();
+
+                        if ((title != null) && (matcher.matches(title))) {
+                            results.add(comp);
+                        }
+                    }
+                    else {
+                        if (comp.getBorder() == null) {
+                            continue;
+                        }
+
+                        if (!(comp.getBorder() instanceof TitledBorder)) {
+                            continue;
+                        }
+                        TitledBorder border = (TitledBorder) comp.getBorder();
+
+                        String title = border.getTitle();
+
+                        if ((title != null) && (matcher.matches(title))) {
+                            results.add(comp);
+                        }
                     }
                 }
 
@@ -500,10 +510,10 @@ public abstract class ComponentMatcher implements Serializable {
 
         };
     }
-    
+
     /**
      * Matches all components that are enabled
-     * 
+     *
      * @return the matcher
      */
     public static ComponentMatcher enabled() {
@@ -536,7 +546,7 @@ public abstract class ComponentMatcher implements Serializable {
 
     /**
      * Matches all components that are visible
-     * 
+     *
      * @return the matcher
      */
     public static ComponentMatcher visible() {
@@ -569,7 +579,7 @@ public abstract class ComponentMatcher implements Serializable {
 
     /**
      * Matches the one component that is the focus owner
-     * 
+     *
      * @return the matcher
      */
     public static ComponentMatcher focusOwner() {
@@ -602,7 +612,7 @@ public abstract class ComponentMatcher implements Serializable {
 
     /**
      * Matches all components which are children of components that match the specified matchers.
-     * 
+     *
      * @param matchers the matchers, concatenated by and
      * @return the matcher
      */
@@ -639,7 +649,7 @@ public abstract class ComponentMatcher implements Serializable {
 
     /**
      * Contains a component that matches the specified matchers.
-     * 
+     *
      * @param matchers the matchers, concatenated by and
      * @return the matcher
      */
@@ -681,7 +691,7 @@ public abstract class ComponentMatcher implements Serializable {
     /**
      * Returns a collection that contains all the components that match. The returned collection may or may not be the
      * components parameters, as well as the actions parameter may or may not be altered.
-     * 
+     *
      * @param components the components
      * @return the matching components
      * @throws RemoteControlException on occasion
