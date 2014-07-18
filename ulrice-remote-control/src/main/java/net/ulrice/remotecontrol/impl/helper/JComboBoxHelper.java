@@ -11,11 +11,16 @@ import net.ulrice.remotecontrol.util.RegularMatcher;
 import net.ulrice.remotecontrol.util.RemoteControlUtils;
 import net.ulrice.remotecontrol.util.Result;
 
+@SuppressWarnings("rawtypes")
 public class JComboBoxHelper extends AbstractJComponentHelper<JComboBox> {
+
+    public JComboBoxHelper() {
+        super();
+    }
 
     /**
      * {@inheritDoc}
-     * 
+     *
      * @see net.ulrice.remotecontrol.impl.helper.ComponentHelper#getType()
      */
     @Override
@@ -25,7 +30,7 @@ public class JComboBoxHelper extends AbstractJComponentHelper<JComboBox> {
 
     /**
      * {@inheritDoc}
-     * 
+     *
      * @see net.ulrice.remotecontrol.impl.helper.AbstractComponentHelper#getText(java.awt.Component)
      */
     @Override
@@ -37,7 +42,7 @@ public class JComboBoxHelper extends AbstractJComponentHelper<JComboBox> {
 
     /**
      * {@inheritDoc}
-     * 
+     *
      * @see net.ulrice.remotecontrol.impl.helper.AbstractComponentHelper#getData(java.awt.Component)
      */
     @Override
@@ -55,13 +60,12 @@ public class JComboBoxHelper extends AbstractJComponentHelper<JComboBox> {
 
     /**
      * {@inheritDoc}
-     * 
+     *
      * @see net.ulrice.remotecontrol.impl.helper.AbstractComponentHelper#enter(java.awt.Robot, java.awt.Component,
      *      java.lang.String)
      */
     @Override
-    public boolean enter(final Robot robot, final JComboBox component, final String text)
-        throws RemoteControlException {
+    public boolean enter(final Robot robot, final JComboBox component, final String text) throws RemoteControlException {
         final Result<Boolean> result = new Result<Boolean>(1);
         final RegularMatcher matcher = RemoteControlUtils.toMatcher(text);
 

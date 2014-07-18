@@ -18,7 +18,7 @@ public class ModuleGroup implements IFModuleGroup {
 	private List<IFModuleGroup> moduleGroups = new ArrayList<IFModuleGroup>();
 
 	/** The list of modules directly assigned to the root group. */
-	private List<IFModule> modules = new ArrayList<IFModule>();
+	private List<IFModule<?>> modules = new ArrayList<IFModule<?>>();
 
     private int orderNumber;
 
@@ -43,7 +43,7 @@ public class ModuleGroup implements IFModuleGroup {
     /**
 	 * @see net.ulrice.module.IFModuleGroup#getModules()
 	 */
-	public List<IFModule> getModules() {
+	public List<IFModule<?>> getModules() {
 		return Collections.unmodifiableList(modules);
 	}
 
@@ -71,7 +71,7 @@ public class ModuleGroup implements IFModuleGroup {
 	 * @param module
 	 *            The module that should be added to this group.
 	 */
-	public void addModule(IFModule module) {
+	public void addModule(IFModule<?> module) {
 
         if (!Ulrice.getSecurityManager().allowRegisterModule(module)) {
             LOG.info("Module [Id: " + module.getUniqueId() + ", Name: " + module.getModuleTitle(Usage.Default)

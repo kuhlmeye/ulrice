@@ -24,7 +24,7 @@ public class ModuleState implements Serializable {
      * @param module the module
      * @return the state
      */
-    public static ModuleState inspect(IFModule module) {
+    public static ModuleState inspect(IFModule<?> module) {
         if (module == null) {
             return null;
         }
@@ -38,10 +38,10 @@ public class ModuleState implements Serializable {
      * @param modules the modules
      * @return a collection of module states
      */
-    public static Collection<ModuleState> inspectModules(Collection<IFModule> modules) {
+    public static Collection<ModuleState> inspectModules(Collection<IFModule<?>> modules) {
         Collection<ModuleState> results = new ArrayList<ModuleState>();
 
-        for (IFModule module : modules) {
+        for (IFModule<?> module : modules) {
             ModuleState state = inspect(module);
 
             if (state != null) {
@@ -52,12 +52,12 @@ public class ModuleState implements Serializable {
         return results;
     }
 
-    private final transient IFModule module;
+    private final transient IFModule<?> module;
 
     private final String uniqueId;
     private final Map<IFModuleTitleProvider.Usage, String> titles;
 
-    protected ModuleState(IFModule module) {
+    protected ModuleState(IFModule<?> module) {
         super();
 
         this.module = module;
@@ -70,7 +70,7 @@ public class ModuleState implements Serializable {
         }
     }
 
-    public IFModule getModule() {
+    public IFModule<?> getModule() {
         return module;
     }
 

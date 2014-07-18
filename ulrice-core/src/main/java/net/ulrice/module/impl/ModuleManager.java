@@ -44,7 +44,7 @@ public class ModuleManager implements IFModuleManager, IFModuleStructureManager,
     private static final Logger LOG = Logger.getLogger(ModuleManager.class.getName());
 
     /** The mapping between module and module id. */
-    private final Map<String, IFModule> moduleMap = new HashMap<String, IFModule>();
+    private final Map<String, IFModule<?>> moduleMap = new HashMap<String, IFModule<?>>();
 
     /** The set of all controller instances. */
     private final OpenControllerPool openControllers = new OpenControllerPool();
@@ -487,13 +487,13 @@ public class ModuleManager implements IFModuleManager, IFModuleStructureManager,
         private final List<IFModuleGroup> moduleGroups = new LinkedList<IFModuleGroup>();
 
         /** The list of modules directly assigned to the root group. */
-        private final List<IFModule> modules = new LinkedList<IFModule>();
+        private final List<IFModule<?>> modules = new LinkedList<IFModule<?>>();
 
         /**
          * @see net.ulrice.module.IFModuleGroup#getModules()
          */
         @Override
-        public List<IFModule> getModules() {
+        public List<IFModule<?>> getModules() {
             return Collections.unmodifiableList(modules);
         }
 
@@ -766,8 +766,8 @@ public class ModuleManager implements IFModuleManager, IFModuleStructureManager,
     }
 
     @Override
-    public List<IFModule> getAllModules() {
-        return new ArrayList<IFModule>(moduleMap.values());
+    public List<IFModule<?>> getAllModules() {
+        return new ArrayList<IFModule<?>>(moduleMap.values());
     }
 
 	@Override

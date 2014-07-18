@@ -2,6 +2,7 @@ package net.ulrice.remotecontrol.util;
 
 import java.awt.AWTException;
 import java.awt.Robot;
+import java.io.Serializable;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.concurrent.ExecutorService;
@@ -13,7 +14,7 @@ import net.ulrice.remotecontrol.RemoteControlException;
 
 /**
  * General utilities for the remote control feature
- * 
+ *
  * @author Manfred HANTSCHEL
  */
 public class RemoteControlUtils {
@@ -35,7 +36,7 @@ public class RemoteControlUtils {
 
     /**
      * Creates a pattern from the specified regular expression
-     * 
+     *
      * @param regex the regular expression
      * @return the matcher
      */
@@ -45,10 +46,11 @@ public class RemoteControlUtils {
 
     /**
      * Creates a collection from the specified values
-     * 
+     *
      * @param values the values
      * @return the collection
      */
+    @SafeVarargs
     public static <TYPE> Collection<TYPE> toCollection(TYPE... values) {
         if (values == null) {
             return null;
@@ -60,7 +62,7 @@ public class RemoteControlUtils {
     /**
      * Starts a new thread that executes the runnable. Currently uses the EXECUTOR_SERVICE, but this may change in
      * future.
-     * 
+     *
      * @param runnable the runnable
      */
     public static void invokeAsync(Runnable runnable) {
@@ -69,7 +71,7 @@ public class RemoteControlUtils {
 
     /**
      * Starts a new thread that executes the runnable
-     * 
+     *
      * @param runnable the runnable
      */
     public static void invokeInThread(Runnable runnable) {
@@ -79,12 +81,11 @@ public class RemoteControlUtils {
     /**
      * Constantly invokes the specified closure until the closure fires a result or the timeout is reached. Block the
      * current thread for a result.
-     * 
+     *
      * @param timeoutInSeconds the timeout the timeout
      * @param closure the closure
      */
-    public static <TYPE> TYPE repeatInThread(final double timeoutInSeconds, final ResultClosure<TYPE> closure)
-        throws RemoteControlException {
+    public static <TYPE> TYPE repeatInThread(final double timeoutInSeconds, final ResultClosure<TYPE> closure) throws RemoteControlException {
 
         final Result<TYPE> result = new Result<TYPE>(timeoutInSeconds);
 
@@ -127,7 +128,7 @@ public class RemoteControlUtils {
 
     /**
      * Calls the invoke and wait method of the {@link SwingUtilities} and waits for it to finish.
-     * 
+     *
      * @param runnable the runnable
      * @throws RemoteControlException on occasion
      */
@@ -165,7 +166,7 @@ public class RemoteControlUtils {
 
     /**
      * Returns the default robot delay multiplied by the speed factor
-     * 
+     *
      * @return the default robot delay
      */
     public static double getRobotDelay() {
@@ -180,7 +181,7 @@ public class RemoteControlUtils {
 
     /**
      * Creates a robot
-     * 
+     *
      * @return the robot
      * @throws RemoteControlException on occasion
      */
@@ -207,7 +208,7 @@ public class RemoteControlUtils {
      * <li>-DRCSpeedFactor=0.1 for ten times the speed</li>
      * <li>-DRCSpeedFactor=10 for a tenth the speed</li>
      * </ul>
-     * 
+     *
      * @return the default speed multiplier
      */
     public static double speedFactor() {
@@ -221,8 +222,7 @@ public class RemoteControlUtils {
                     speedFactor = Double.valueOf(s);
                 }
                 catch (NumberFormatException e) {
-                    System.err.println("Failed to parse the " + SPEED_FACTOR_PROPERTY + " property: "
-                        + e.getMessage());
+                    System.err.println("Failed to parse the " + SPEED_FACTOR_PROPERTY + " property: " + e.getMessage());
                 }
             }
         }
@@ -232,7 +232,7 @@ public class RemoteControlUtils {
 
     /**
      * Overrides the speed factor settings
-     * 
+     *
      * @param speedFactor the speed factor
      */
     public static void overrideSpeedFactor(double speedFactor) {
@@ -243,7 +243,7 @@ public class RemoteControlUtils {
     /**
      * Pauses the current thread for the specified amount of seconds. The value is constant and not multiplied by the
      * speed factor.
-     * 
+     *
      * @param seconds seconds to sleep
      */
     public static void constantPause(double seconds) {
@@ -261,7 +261,7 @@ public class RemoteControlUtils {
 
     /**
      * Pauses the current thread for the specified amount of seconds. The value is multiplied by the speed settings.
-     * 
+     *
      * @param seconds seconds to sleep
      */
     public static void pause(double seconds) {
@@ -270,7 +270,7 @@ public class RemoteControlUtils {
 
     /**
      * Returns the default pause multiplied by the speed factor
-     * 
+     *
      * @return the pause
      */
     public static double getPauseDelay() {
@@ -279,7 +279,7 @@ public class RemoteControlUtils {
 
     /**
      * Returns the wait delay for the wait-for operations
-     * 
+     *
      * @return the delay
      */
     public static long getWaitDelay() {
@@ -305,11 +305,68 @@ public class RemoteControlUtils {
 
     /**
      * Returns true if timeouts are enabled
-     * 
+     *
      * @return true if enabled
      */
     public static boolean isTimeoutEnabled() {
         return System.getProperty(DISABLE_TIMEOUTS_PROPERTY) == null;
+    }
+
+    /**
+     * Ensures, that the specified object is serializable. If it is not serializable, it returns a String with some
+     * description
+     *
+     * @param object the object
+     * @return the serializable representation
+     */
+    public static Serializable ensureSerializable(Object object) {
+        if (object == null) {
+            return null;
+        }
+
+        if (object instanceof Serializable) {
+            return (Serializable) object;
+        }
+
+        return "Data of type " + toString(object.getClass());
+    }
+    
+    /**
+     * Returns the name of the class in a short and readable form.
+     *
+     * @param type the class
+     * @return the name
+     */
+    @SuppressWarnings("rawtypes")
+    public static String toString(Class type) {
+        if (type == null) {
+            return "?";
+        }
+
+        String name = "";
+
+        while (type.isArray()) {
+            name = "[]" + name;
+            type = type.getComponentType();
+        }
+
+        if (type.isPrimitive()) {
+            name = type.getName() + name;
+        }
+        else {
+            name = getShortName(type.getName()) + name;
+        }
+
+        return name;
+    }
+
+    public static String getShortName(String currentName) {
+        int beginIndex = currentName.lastIndexOf('.');
+
+        if (beginIndex >= 0) {
+            currentName = currentName.substring(beginIndex + 1);
+        }
+        return currentName;
     }
 
 }

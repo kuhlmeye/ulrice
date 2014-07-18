@@ -160,7 +160,8 @@ public class ComponentRemoteControlImpl implements ComponentRemoteControl {
     public ComponentState waitFor(double seconds, ComponentMatcher... matchers) throws RemoteControlException {
         Collection<ComponentState> results = waitForAll(seconds, matchers);
 
-        return results.iterator().next();
+        ComponentState next = results.iterator().next();
+        return next;
     }
 
     /**
