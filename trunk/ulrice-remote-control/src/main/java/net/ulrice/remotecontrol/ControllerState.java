@@ -29,7 +29,7 @@ public class ControllerState extends ModuleState {
             return null;
         }
 
-        IFModule module = Ulrice.getModuleManager().getModule(controller);
+        IFModule<?> module = Ulrice.getModuleManager().getModule(controller);
 
         if (module == null) {
             return null;
@@ -66,7 +66,7 @@ public class ControllerState extends ModuleState {
     private final ComponentState view;
     private final boolean current;
 
-    protected ControllerState(IFModule module, IFController controller, boolean current) throws RemoteControlException {
+    protected ControllerState(IFModule<?> module, IFController controller, boolean current) throws RemoteControlException {
         super(module);
 
         this.controller = controller;

@@ -18,35 +18,35 @@ public interface IFModuleManager {
 	/**
 	 * Registers a module as an instanceable module.
 	 */
-	void registerModule(IFModule module);
+	void registerModule(IFModule<?> module);
 
 	/**
 	 * Removes a module from the list of instanceable modules.
 	 */
-	void unregisterModule(IFModule module);
+	void unregisterModule(IFModule<?> module);
 
 	/**
 	 * Opens a module, i.e. initialize it and display its view. If the callback
 	 * is non-null, it is called with the controller
 	 */
-	void openModule(String moduleId, ControllerProviderCallback callback);
+	void openModule(String moduleId, ControllerProviderCallback<?> callback);
 
 	/**
 	 * opens a module as a "child", i.e. creates a new controller instance that
 	 * is closed automatically when the parent controller is closed. Passing <pre>null</pre>
 	 * as a parent makes the newly created controller top-level.
 	 */
-	void openModule(String moduleId, IFController parent, ControllerProviderCallback callback);
+	void openModule(String moduleId, IFController parent, ControllerProviderCallback<?> callback);
 
 	/**
 	 * Opens a module and registers a close callback. This callback is called after the module was closed. 
 	 */
-    void openModule(String moduleId, ControllerProviderCallback callback, IFCloseCallback closeCallback);
+    void openModule(String moduleId, ControllerProviderCallback<?> callback, IFCloseCallback closeCallback);
 
     /**
      * Opens a module as a child and registers a close callback. This callback is called after the module was closed. 
      */
-    void openModule(String moduleId, IFController parent, ControllerProviderCallback callback, IFCloseCallback closeCallback);
+    void openModule(String moduleId, IFController parent, ControllerProviderCallback<?> callback, IFCloseCallback closeCallback);
     
 	/**
 	 * Activates an instance of a module, i.e. give it the focus.
@@ -79,7 +79,7 @@ public interface IFModuleManager {
 	 * @param controller The controller.
 	 * @return The module of the controller
 	 */
-	IFModule getModule(IFController controller);
+	IFModule<?> getModule(IFController controller);
 
 	/**
 	 * Returns the title provider of a controller
@@ -181,7 +181,7 @@ public interface IFModuleManager {
 	 * 
 	 * @return A list of modules.
 	 */
-	List<IFModule> getAllModules();
+	List<IFModule<?>> getAllModules();
 
     void fireModuleNameChanged(IFController controller);
 

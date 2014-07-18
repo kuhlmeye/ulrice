@@ -14,7 +14,7 @@ public interface IFModuleGroup {
 	 * 
 	 * @return The list of modules.
 	 */
-	List<IFModule> getModules();
+	List<IFModule<?>> getModules();
 	
 	/**
 	 * Returns the list of groups contained in this group.
@@ -25,7 +25,7 @@ public interface IFModuleGroup {
 	
 	void addModuleGroup(IFModuleGroup group);
 	
-	void addModule(IFModule module);
+	void addModule(IFModule<?> module);
 	
 	String getTitle();
 }

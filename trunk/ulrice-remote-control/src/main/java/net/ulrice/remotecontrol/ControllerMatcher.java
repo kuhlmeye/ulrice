@@ -171,7 +171,7 @@ public abstract class ControllerMatcher implements Serializable {
 
                 while (it.hasNext()) {
                     IFController controller = it.next();
-                    IFModule module = manager.getModule(controller);
+                    IFModule<?> module = manager.getModule(controller);
 
                     if ((module != null) && (module.getUniqueId() != null)
                         && (matcher.matches(module.getUniqueId()))) {
@@ -254,7 +254,7 @@ public abstract class ControllerMatcher implements Serializable {
 
                 controllerLoop: while (it.hasNext()) {
                     IFController controller = it.next();
-                    IFModule module = manager.getModule(controller);
+                    IFModule<?> module = manager.getModule(controller);
 
                     if (module != null) {
                         if ((module.getUniqueId() != null) && (matcher.matches(module.getUniqueId()))) {

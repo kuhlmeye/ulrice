@@ -6,7 +6,6 @@ import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.Robot;
 import java.awt.event.InputEvent;
-import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 
 import javax.swing.JComponent;
@@ -226,7 +225,7 @@ public abstract class AbstractComponentHelper<TYPE extends Component> implements
     @Override
     public boolean selectAll(Robot robot, final TYPE component) throws RemoteControlException {
         final Result<Boolean> result = new Result<Boolean>(15);
-        
+
         RemoteControlUtils.invokeInSwing(new Runnable() {
 
             @Override
@@ -237,12 +236,12 @@ public abstract class AbstractComponentHelper<TYPE extends Component> implements
                 catch (Exception e) {
                     result.fireException(new RemoteControlException("Failed to invoke selectAll on component", e));
                 }
-                
+
                 result.fireResult(Boolean.TRUE);
             }
-            
+
         });
-        
+
         return result.aquireResult();
     }
 
@@ -252,7 +251,7 @@ public abstract class AbstractComponentHelper<TYPE extends Component> implements
     @Override
     public boolean selectNone(Robot robot, final TYPE component) throws RemoteControlException {
         final Result<Boolean> result = new Result<Boolean>(15);
-        
+
         RemoteControlUtils.invokeInSwing(new Runnable() {
 
             @Override
@@ -263,18 +262,18 @@ public abstract class AbstractComponentHelper<TYPE extends Component> implements
                 catch (Exception e) {
                     result.fireException(new RemoteControlException("Failed to invoke clearSelection on component", e));
                 }
-                
+
                 result.fireResult(Boolean.TRUE);
             }
-            
+
         });
-        
+
         return result.aquireResult();
     }
 
     /**
      * {@inheritDoc}
-     * 
+     *
      * @see net.ulrice.remotecontrol.impl.helper.ComponentHelper#select(java.awt.Robot, java.awt.Component, int, int)
      */
     @Override

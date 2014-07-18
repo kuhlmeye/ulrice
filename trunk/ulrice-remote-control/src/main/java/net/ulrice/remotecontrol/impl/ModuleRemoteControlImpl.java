@@ -97,7 +97,7 @@ public class ModuleRemoteControlImpl implements ModuleRemoteControl {
                     public void run() {
                         try {
                             Ulrice.getModuleManager().openModule(state.getUniqueId(),
-                                new ControllerProviderCallback() {
+                                new ControllerProviderCallback<IFController>() {
 
                                     @Override
                                     public void onFailure(ModuleInstantiationException exc) {

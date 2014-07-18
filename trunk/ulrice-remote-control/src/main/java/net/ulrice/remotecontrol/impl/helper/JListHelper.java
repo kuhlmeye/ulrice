@@ -11,7 +11,12 @@ import net.ulrice.remotecontrol.util.RegularMatcher;
 import net.ulrice.remotecontrol.util.RemoteControlUtils;
 import net.ulrice.remotecontrol.util.Result;
 
+@SuppressWarnings("rawtypes")
 public class JListHelper extends AbstractJComponentHelper<JList> {
+
+    public JListHelper() {
+        super();
+    }
 
     /**
      * {@inheritDoc}
@@ -38,7 +43,7 @@ public class JListHelper extends AbstractJComponentHelper<JList> {
 
     /**
      * {@inheritDoc}
-     * 
+     *
      * @see net.ulrice.remotecontrol.impl.helper.AbstractComponentHelper#enter(java.awt.Robot, java.awt.Component,
      *      java.lang.String)
      */
@@ -91,7 +96,7 @@ public class JListHelper extends AbstractJComponentHelper<JList> {
     public boolean click(Robot robot, JList component, String text) throws RemoteControlException {
         ListModel model = component.getModel();
         final RegularMatcher matcher = RemoteControlUtils.toMatcher(text);
-        
+
         for (int i = 0; i < model.getSize(); i += 1) {
             if (matcher.matches(String.valueOf(model.getElementAt(i)))) {
                 return click(robot, component, i);

@@ -32,7 +32,7 @@ public abstract class ModuleMatcher implements Serializable {
             private static final long serialVersionUID = -2190252870425650444L;
 
             @Override
-            public Collection<IFModule> match(Collection<IFModule> controllers) throws RemoteControlException {
+            public Collection<IFModule<?>> match(Collection<IFModule<?>> controllers) throws RemoteControlException {
                 return controllers;
             }
 
@@ -64,8 +64,8 @@ public abstract class ModuleMatcher implements Serializable {
             private static final long serialVersionUID = -6209456642504973328L;
 
             @Override
-            public Collection<IFModule> match(Collection<IFModule> modules) throws RemoteControlException {
-                Collection<IFModule> results = new LinkedHashSet<IFModule>(modules);
+            public Collection<IFModule<?>> match(Collection<IFModule<?>> modules) throws RemoteControlException {
+                Collection<IFModule<?>> results = new LinkedHashSet<IFModule<?>>(modules);
 
                 for (ModuleMatcher matcher : matchers) {
                     results = matcher.match(results);
@@ -102,11 +102,11 @@ public abstract class ModuleMatcher implements Serializable {
             private static final long serialVersionUID = -6533779666059405536L;
 
             @Override
-            public Collection<IFModule> match(Collection<IFModule> modules) throws RemoteControlException {
-                Collection<IFModule> results = new LinkedHashSet<IFModule>();
+            public Collection<IFModule<?>> match(Collection<IFModule<?>> modules) throws RemoteControlException {
+                Collection<IFModule<?>> results = new LinkedHashSet<IFModule<?>>();
 
                 for (ModuleMatcher matcher : matchers) {
-                    results.addAll(matcher.match(new ArrayList<IFModule>(modules)));
+                    results.addAll(matcher.match(new ArrayList<IFModule<?>>(modules)));
                 }
 
                 return results;
@@ -132,8 +132,8 @@ public abstract class ModuleMatcher implements Serializable {
             private static final long serialVersionUID = 497264784972003925L;
 
             @Override
-            public Collection<IFModule> match(Collection<IFModule> modules) throws RemoteControlException {
-                modules.removeAll(matcher.match(new ArrayList<IFModule>(modules)));
+            public Collection<IFModule<?>> match(Collection<IFModule<?>> modules) throws RemoteControlException {
+                modules.removeAll(matcher.match(new ArrayList<IFModule<?>>(modules)));
 
                 return modules;
             }
@@ -160,11 +160,11 @@ public abstract class ModuleMatcher implements Serializable {
             private static final long serialVersionUID = -245398486090616818L;
 
             @Override
-            public Collection<IFModule> match(Collection<IFModule> modules) throws RemoteControlException {
-                Iterator<IFModule> it = modules.iterator();
+            public Collection<IFModule<?>> match(Collection<IFModule<?>> modules) throws RemoteControlException {
+                Iterator<IFModule<?>> it = modules.iterator();
 
                 while (it.hasNext()) {
-                    IFModule module = it.next();
+                    IFModule<?> module = it.next();
 
                     if ((module.getUniqueId() == null) || (!matcher.matches(module.getUniqueId()))) {
                         it.remove();
@@ -197,11 +197,11 @@ public abstract class ModuleMatcher implements Serializable {
             private static final long serialVersionUID = 5918807697935735273L;
 
             @Override
-            public Collection<IFModule> match(Collection<IFModule> modules) throws RemoteControlException {
-                Iterator<IFModule> it = modules.iterator();
+            public Collection<IFModule<?>> match(Collection<IFModule<?>> modules) throws RemoteControlException {
+                Iterator<IFModule<?>> it = modules.iterator();
 
                 moduleLoop: while (it.hasNext()) {
-                    IFModule module = it.next();
+                    IFModule<?> module = it.next();
 
                     for (IFModuleTitleProvider.Usage usage : IFModuleTitleProvider.Usage.values()) {
                         String title = module.getModuleTitle(usage);
@@ -240,11 +240,11 @@ public abstract class ModuleMatcher implements Serializable {
             private static final long serialVersionUID = 5918807697935735273L;
 
             @Override
-            public Collection<IFModule> match(Collection<IFModule> modules) throws RemoteControlException {
-                Iterator<IFModule> it = modules.iterator();
+            public Collection<IFModule<?>> match(Collection<IFModule<?>> modules) throws RemoteControlException {
+                Iterator<IFModule<?>> it = modules.iterator();
 
                 moduleLoop: while (it.hasNext()) {
-                    IFModule module = it.next();
+                    IFModule<?> module = it.next();
 
                     if (matcher.matches(module.getUniqueId())) {
                         continue;
@@ -279,7 +279,7 @@ public abstract class ModuleMatcher implements Serializable {
      * @return the matching modules
      * @throws RemoteControlException on occasion
      */
-    public abstract Collection<IFModule> match(Collection<IFModule> modules) throws RemoteControlException;
+    public abstract Collection<IFModule<?>> match(Collection<IFModule<?>> modules) throws RemoteControlException;
 
     /**
      * {@inheritDoc}

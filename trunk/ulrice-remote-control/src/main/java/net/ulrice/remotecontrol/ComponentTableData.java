@@ -114,13 +114,13 @@ public class ComponentTableData implements Serializable {
         list.set(column, entry);
     }
 
-    public Object getValue(int row, int column) {
+    public Serializable getValue(int row, int column) {
         ComponentTableDataEntry entry = getEntry(row, column);
 
         return (entry != null) ? entry.getValue() : null;
     }
 
-    public void setValue(int row, int column, Object value) {
+    public void setValue(int row, int column, Serializable value) {
         ComponentTableDataEntry entry = getEntry(row, column);
 
         if (entry == null) {
@@ -215,8 +215,8 @@ public class ComponentTableData implements Serializable {
         return true;
     }
 
-    public Map<String, Object> getRowAsMap(int row) {
-        Map<String, Object> result = new HashMap<String, Object>();
+    public Map<String, Serializable> getRowAsMap(int row) {
+        Map<String, Serializable> result = new HashMap<String, Serializable>();
 
         for (int column = 0; column < getColumnCount(); column += 1) {
             result.put(getHeader(column), getValue(row, column));

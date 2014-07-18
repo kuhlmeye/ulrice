@@ -2,6 +2,8 @@ package net.ulrice.remotecontrol;
 
 import java.io.Serializable;
 
+import net.ulrice.remotecontrol.util.RemoteControlUtils;
+
 /**
  * One entry in the {@link ComponentTableData}.
  * 
@@ -11,22 +13,23 @@ public class ComponentTableDataEntry implements Serializable {
 
     private static final long serialVersionUID = 7609497754833112047L;
 
-    private Object value;
+    private Serializable value;
     private boolean selected;
     private boolean hidden;
 
     public ComponentTableDataEntry(Object value, boolean selected, boolean hidden) {
         super();
-        this.value = value;
+        
+        this.value = RemoteControlUtils.ensureSerializable(value);
         this.selected = selected;
         this.hidden = hidden;
     }
 
-    public Object getValue() {
+    public Serializable getValue() {
         return value;
     }
 
-    public void setValue(Object value) {
+    public void setValue(Serializable value) {
         this.value = value;
     }
 

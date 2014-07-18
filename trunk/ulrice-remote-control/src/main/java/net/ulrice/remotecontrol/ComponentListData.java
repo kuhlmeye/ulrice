@@ -29,7 +29,7 @@ public class ComponentListData implements Serializable {
         return (index < entries.size()) ? entries.get(index) : null;
     }
 
-    public ComponentListData addEntry(Object value, boolean selected) {
+    public ComponentListData addEntry(Serializable value, boolean selected) {
         addEntry(new ComponentListDataEntry(value, selected));
 
         return this;
@@ -57,19 +57,19 @@ public class ComponentListData implements Serializable {
         return this;
     }
 
-    public Object getValue(int index) {
+    public Serializable getValue(int index) {
         ComponentListDataEntry entry = getEntry(index);
 
         return (entry != null) ? entry.getValue() : null;
     }
 
-    public ComponentListData addValue(Object value) {
+    public ComponentListData addValue(Serializable value) {
         entries.add(new ComponentListDataEntry(value, false));
 
         return this;
     }
 
-    public ComponentListData setValue(int index, Object value) {
+    public ComponentListData setValue(int index, Serializable value) {
         ComponentListDataEntry entry = getEntry(index);
 
         if (entry == null) {

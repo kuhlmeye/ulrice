@@ -13,11 +13,10 @@ import net.ulrice.remotecontrol.impl.keyboard.RemoteKeyboardInstruction;
 import net.ulrice.remotecontrol.util.RemoteControlUtils;
 import net.ulrice.remotecontrol.util.Result;
 import ognl.Ognl;
-import ognl.OgnlException;
 
 /**
  * Interactions class for the {@link ComponentRemoteControl}. Specified user interactions with the application.
- * 
+ *
  * @author Manfred HANTSCHEL
  */
 public abstract class ComponentInteraction implements Serializable {
@@ -26,7 +25,7 @@ public abstract class ComponentInteraction implements Serializable {
 
     /**
      * Performs all interaction in sequential order.
-     * 
+     *
      * @param interactions the interactions
      * @return the interaction
      */
@@ -73,7 +72,7 @@ public abstract class ComponentInteraction implements Serializable {
 
     /**
      * Performs the interaction in sequential order for the number of times.
-     * 
+     *
      * @param times the number of times to repeat the interactions
      * @param interaction the interaction
      * @return the interaction
@@ -110,7 +109,7 @@ public abstract class ComponentInteraction implements Serializable {
 
     /**
      * Pauses for the specified amount of seconds.
-     * 
+     *
      * @param seconds the seconds, > 0
      * @return the interaction
      */
@@ -145,7 +144,7 @@ public abstract class ComponentInteraction implements Serializable {
 
     /**
      * Pauses for the specified amount of seconds (not influenced by the speed factor).
-     * 
+     *
      * @param seconds the seconds, > 0
      * @return the interaction
      */
@@ -180,7 +179,7 @@ public abstract class ComponentInteraction implements Serializable {
 
     /**
      * Performs a click on all matched components.
-     * 
+     *
      * @return the interaction
      */
     public static ComponentInteraction click() {
@@ -214,7 +213,7 @@ public abstract class ComponentInteraction implements Serializable {
     /**
      * Performs a click on the specified index of all matched components. Does nothing if the component does not
      * support an index clicks.
-     * 
+     *
      * @param index the index, if negative, counts from the last backwards
      * @return the interaction
      */
@@ -249,7 +248,7 @@ public abstract class ComponentInteraction implements Serializable {
     /**
      * Performs a click on the specified text of all matched components. Does nothing if the component does not
      * support text clicks.
-     * 
+     *
      * @param text the text
      * @return the interaction
      */
@@ -283,7 +282,7 @@ public abstract class ComponentInteraction implements Serializable {
     /**
      * Performs a click on the specified row and column of all matched components. Does nothing if the component does
      * not support clicks on row and column.
-     * 
+     *
      * @param row the row, if negative, counts from the last upwards
      * @param column the column, if negative, counts from the last backwards
      * @return the interaction
@@ -317,7 +316,7 @@ public abstract class ComponentInteraction implements Serializable {
 
     /**
      * Performs a double click on all matched components.
-     * 
+     *
      * @return the interaction
      */
     public static ComponentInteraction doubleClick() {
@@ -327,7 +326,7 @@ public abstract class ComponentInteraction implements Serializable {
     /**
      * Performs a double click on the specified index of all matched components. Does nothing if the component does
      * not support an index clicks.
-     * 
+     *
      * @param index the index, if nagative, counts from the last backwards
      * @return the interaction
      */
@@ -338,7 +337,7 @@ public abstract class ComponentInteraction implements Serializable {
     /**
      * Performs a double click on the specified text of all matched components. Does nothing if the component does not
      * support text clicks.
-     * 
+     *
      * @param text the text
      * @return the interaction
      */
@@ -349,7 +348,7 @@ public abstract class ComponentInteraction implements Serializable {
     /**
      * Performs a double click on the specified row and column of all matched components. Does nothing if the
      * component does not support clicks on row and column.
-     * 
+     *
      * @param row the row, if negative, counts from the last upwards
      * @param column the column, if negative, counts from the last backwards
      * @return the interaction
@@ -360,7 +359,7 @@ public abstract class ComponentInteraction implements Serializable {
 
     /**
      * Grabs the focus in sequential order for all matched components.
-     * 
+     *
      * @return the interaction
      */
     public static ComponentInteraction focus() {
@@ -393,7 +392,7 @@ public abstract class ComponentInteraction implements Serializable {
 
     /**
      * Performs a select all on all matched components. Does nothing if the component does not support select all.
-     * 
+     *
      * @return the interaction
      */
     public static ComponentInteraction selectAll() {
@@ -423,7 +422,7 @@ public abstract class ComponentInteraction implements Serializable {
 
         };
     }
-    
+
     public static ComponentInteraction selectNone() {
         return new ComponentInteraction() {
 
@@ -454,7 +453,7 @@ public abstract class ComponentInteraction implements Serializable {
 
     /**
      * Performs a select from start to end (incl.).
-     * 
+     *
      * @return the interaction
      */
     public static ComponentInteraction select(final int start, final int end) {
@@ -488,7 +487,7 @@ public abstract class ComponentInteraction implements Serializable {
     /**
      * Enters the specified text into all matched components. Usually it tries to grab the focus of the component,
      * calls select all and types the text, but the interaction may differ per component.
-     * 
+     *
      * @param text the text
      * @return the interaction
      */
@@ -523,7 +522,7 @@ public abstract class ComponentInteraction implements Serializable {
     /**
      * Enters the specified text into all matched components. Usually it tries to click the component and types the
      * text, but the interaction may differ per component.
-     * 
+     *
      * @param text the text
      * @param index the index, if negative, counts from the last backwards
      * @return the interaction
@@ -532,7 +531,7 @@ public abstract class ComponentInteraction implements Serializable {
         return new ComponentInteraction() {
 
             /**
-             * 
+             *
              */
             private static final long serialVersionUID = -8335783163131700780L;
 
@@ -562,7 +561,7 @@ public abstract class ComponentInteraction implements Serializable {
     /**
      * Enters the specified text into all matched components. Usually it tries to double click the component and types
      * the text, but the interaction may differ per component.
-     * 
+     *
      * @param text the text
      * @param row the row, if negative, counts from the last upwards
      * @param column the column, if negative, counts from the last backwards
@@ -576,8 +575,7 @@ public abstract class ComponentInteraction implements Serializable {
             @Override
             public boolean interact(Component component, Robot robot) throws RemoteControlException {
                 try {
-                    return ComponentHelperRegistry.get(component.getClass()).enter(robot, component, text, row,
-                        column);
+                    return ComponentHelperRegistry.get(component.getClass()).enter(robot, component, text, row, column);
                 }
                 finally {
                     RemoteControlUtils.pause();
@@ -600,14 +598,14 @@ public abstract class ComponentInteraction implements Serializable {
     /**
      * Types the specified text. Unlike the enter commands, the typing is not component related. The text supports the
      * following format:
-     * 
+     *
      * <pre>
      * text       = { CHARACTER | "{" command "}" }.
      * command    = ( "pause " seconds ) | keyCommand.
-     * keyCommand = { "shift " | "control " | "ctrl " | "alt graph " | "alt gr " | "altgr " | "alt " | "meta " | "windows " | "win " } 
+     * keyCommand = { "shift " | "control " | "ctrl " | "alt graph " | "alt gr " | "altgr " | "alt " | "meta " | "windows " | "win " }
      *              ( "key 0x" hexCode | CODE | CHARACTER ).
      * </pre>
-     * 
+     *
      * @param text the text
      * @return the interaction
      */
@@ -649,7 +647,7 @@ public abstract class ComponentInteraction implements Serializable {
 
     /**
      * Holds the shift key while performing the specified interactions.
-     * 
+     *
      * @param interactions the interactions
      * @return the interaction
      */
@@ -659,7 +657,7 @@ public abstract class ComponentInteraction implements Serializable {
 
     /**
      * Holds the control key while performing the specified interactions.
-     * 
+     *
      * @param interactions the interactions
      * @return the interaction
      */
@@ -669,7 +667,7 @@ public abstract class ComponentInteraction implements Serializable {
 
     /**
      * Holds the alt key while performing the specified interactions.
-     * 
+     *
      * @param interactions the interactions
      * @return the interaction
      */
@@ -702,8 +700,7 @@ public abstract class ComponentInteraction implements Serializable {
 
             @Override
             public String toString() {
-                return String.format("holdKey[%s for %s]", RemoteKeyboardInstruction.getKeyCodeConstant(keyCode),
-                    interaction);
+                return String.format("holdKey[%s for %s]", RemoteKeyboardInstruction.getKeyCodeConstant(keyCode), interaction);
             }
 
         };
@@ -711,7 +708,7 @@ public abstract class ComponentInteraction implements Serializable {
 
     /**
      * Uses OGNL to invoke a method on the component
-     * 
+     *
      * @param expression the expression
      * @return true if invoked
      */
@@ -722,7 +719,7 @@ public abstract class ComponentInteraction implements Serializable {
 
             /**
              * {@inheritDoc}
-             * 
+             *
              * @see net.ulrice.remotecontrol.ComponentInteraction#interact(java.awt.Component, java.awt.Robot)
              */
             @Override
@@ -730,6 +727,7 @@ public abstract class ComponentInteraction implements Serializable {
                 final Result<Boolean> result = new Result<Boolean>(5);
 
                 RemoteControlUtils.invokeInSwing(new Runnable() {
+                    @Override
                     public void run() {
                         try {
                             Ognl.getValue(expression, component);
@@ -772,7 +770,7 @@ public abstract class ComponentInteraction implements Serializable {
 
     /**
      * Executes the interaction on the specified component using the specified robot
-     * 
+     *
      * @param component the component
      * @param robot the robot
      * @return true for success
@@ -782,14 +780,14 @@ public abstract class ComponentInteraction implements Serializable {
 
     /**
      * An estimation of the duration
-     * 
+     *
      * @return an estimation of the duration
      */
     public abstract double duration();
 
     /**
      * {@inheritDoc}
-     * 
+     *
      * @see java.lang.Object#toString()
      */
     @Override
