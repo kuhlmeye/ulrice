@@ -35,6 +35,7 @@ import net.ulrice.remotecontrol.impl.ModuleRemoteControlImpl;
 import net.ulrice.remotecontrol.ui.RemoteControlWindow;
 import net.ulrice.remotecontrol.util.RemoteControlUtils;
 import net.ulrice.remotecontrol.util.StreamConsumer;
+import net.ulrice.util.ServiceInitializationAware;
 
 /**
  * The main class for the remote control feature of Ulrice.
@@ -500,6 +501,19 @@ public class RemoteControlCenter {
      */
     public static ModuleRemoteControl moduleRC() throws RemoteControlException {
         return get(ModuleRemoteControl.class);
+    }
+
+    /**
+     * Does spring initialization of given service
+     */
+    public static void initializeServiceOfType(Class< ?> type) throws RemoteControlException {
+
+        ServiceInitializationAware initializationAware = get(ServiceInitializationAware.class);
+        if(initializationAware == null){
+            return;
+        }
+
+        initializationAware.ensureBeanOfType(type);
     }
 
     /**
