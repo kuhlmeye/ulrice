@@ -14,22 +14,41 @@ import javax.swing.border.Border;
  * @author EXSTHUB
  */
 public class BorderPanel extends JPanel {
+    
     private static final long serialVersionUID = 4952054987230225000L;
-
+    
+    public static final int DEFAULT_INSETS = 5;
+    
     private final JPanel contentPane;
 
     public BorderPanel(Component component) {
         this(component, false);
     }
 
-    public BorderPanel(Component component, boolean scolling) {
-        this(component, BorderFactory.createEmptyBorder(5, 5, 5, 5), scolling);
+    public BorderPanel(Component component, int insets) {
+        this(component, insets, false);
     }
 
+    public BorderPanel(Component component, int verticalInsets, int horizontalInsets) {
+        this(component, verticalInsets, horizontalInsets, false);
+    }
+
+    public BorderPanel(Component component, boolean scolling) {
+        this(component, DEFAULT_INSETS, scolling);
+    }
+
+    public BorderPanel(Component component, int insets, boolean scrolling) {
+        this(component, insets, insets, scrolling);
+    }
+
+    public BorderPanel(Component component, int verticalInsets, int horizontalInsets, boolean scrolling) {
+        this(component, BorderFactory.createEmptyBorder(verticalInsets, horizontalInsets, verticalInsets, horizontalInsets), scrolling);
+    }
+    
     public BorderPanel(Component component, Border border) {
         this(component, border, false);
     }
-
+    
     public BorderPanel(Component component, Border border, boolean scrolling) {
         super(new BorderLayout());
 
