@@ -67,7 +67,7 @@ public class AccordionPanelLayout implements LayoutManager2, Serializable {
 
     /**
      * {@inheritDoc}
-     * 
+     *
      * @see java.awt.LayoutManager#addLayoutComponent(java.lang.String, java.awt.Component)
      */
     @Override
@@ -87,7 +87,7 @@ public class AccordionPanelLayout implements LayoutManager2, Serializable {
 
     /**
      * {@inheritDoc}
-     * 
+     *
      * @see java.awt.LayoutManager2#addLayoutComponent(java.awt.Component, java.lang.Object)
      */
     @Override
@@ -104,7 +104,7 @@ public class AccordionPanelLayout implements LayoutManager2, Serializable {
 
     /**
      * {@inheritDoc}
-     * 
+     *
      * @see java.awt.LayoutManager#removeLayoutComponent(java.awt.Component)
      */
     @Override
@@ -114,7 +114,7 @@ public class AccordionPanelLayout implements LayoutManager2, Serializable {
 
     /**
      * {@inheritDoc}
-     * 
+     *
      * @see java.awt.LayoutManager#preferredLayoutSize(java.awt.Container)
      */
     @Override
@@ -172,7 +172,7 @@ public class AccordionPanelLayout implements LayoutManager2, Serializable {
 
     /**
      * {@inheritDoc}
-     * 
+     *
      * @see java.awt.LayoutManager#minimumLayoutSize(java.awt.Container)
      */
     @Override
@@ -207,7 +207,7 @@ public class AccordionPanelLayout implements LayoutManager2, Serializable {
     /**
      * Returns the minimum size of the component. If the component is an {@link AccordionContentPanel} the minimum
      * height is computed using the unfolded factor
-     * 
+     *
      * @param component the component
      * @return the minimum size
      */
@@ -232,7 +232,7 @@ public class AccordionPanelLayout implements LayoutManager2, Serializable {
 
     /**
      * {@inheritDoc}
-     * 
+     *
      * @see java.awt.LayoutManager2#maximumLayoutSize(java.awt.Container)
      */
     @Override
@@ -256,7 +256,7 @@ public class AccordionPanelLayout implements LayoutManager2, Serializable {
 
     /**
      * {@inheritDoc}
-     * 
+     *
      * @see java.awt.LayoutManager#layoutContainer(java.awt.Container)
      */
     @Override
@@ -264,6 +264,7 @@ public class AccordionPanelLayout implements LayoutManager2, Serializable {
         AccordionPanel accordionPanel = getAccordionPanel(parent);
         double totalWeight = 0;
         int minimumHeight = 0;
+        int visibleComponentCount = 0;
 
         for (Component component : parent.getComponents()) {
             if (component.isVisible()) {
@@ -274,8 +275,13 @@ public class AccordionPanelLayout implements LayoutManager2, Serializable {
                 }
 
                 totalWeight += weight;
-                minimumHeight += getPreferredSize(component).height;
+                minimumHeight += getPreferredSize(component).height + accordionPanel.getGap();
+                visibleComponentCount += 1;
             }
+        }
+
+        if (visibleComponentCount > 0) {
+            minimumHeight -= accordionPanel.getGap();
         }
 
         int totalSpare = parent.getHeight() - minimumHeight;
@@ -314,7 +320,7 @@ public class AccordionPanelLayout implements LayoutManager2, Serializable {
 
     /**
      * {@inheritDoc}
-     * 
+     *
      * @see java.awt.LayoutManager2#getLayoutAlignmentX(java.awt.Container)
      */
     @Override
@@ -324,7 +330,7 @@ public class AccordionPanelLayout implements LayoutManager2, Serializable {
 
     /**
      * {@inheritDoc}
-     * 
+     *
      * @see java.awt.LayoutManager2#getLayoutAlignmentY(java.awt.Container)
      */
     @Override
@@ -334,7 +340,7 @@ public class AccordionPanelLayout implements LayoutManager2, Serializable {
 
     /**
      * {@inheritDoc}
-     * 
+     *
      * @see java.awt.LayoutManager2#invalidateLayout(java.awt.Container)
      */
     @Override
