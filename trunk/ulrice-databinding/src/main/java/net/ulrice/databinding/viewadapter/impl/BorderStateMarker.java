@@ -16,7 +16,7 @@ import net.ulrice.databinding.viewadapter.IFStateMarker;
 /**
  * Implementation of the state marker interface. Draws the border and an image depending on the current state of the
  * data in the attribute model.
- * 
+ *
  * @author christof
  */
 public class BorderStateMarker extends UBorder implements ImageObserver, IFStateMarker {
@@ -50,7 +50,7 @@ public class BorderStateMarker extends UBorder implements ImageObserver, IFState
 
     /**
      * Creates a new border state marker.
-     * 
+     *
      * @param iconOnly true, if only the icon should be shown.
      */
     public BorderStateMarker(BorderStateMarkerStrategy strategy, boolean borderVisible, boolean clipLeft, boolean clipRight) {
@@ -66,7 +66,7 @@ public class BorderStateMarker extends UBorder implements ImageObserver, IFState
 
     /**
      * Creates a new border state marker.
-     * 
+     *
      * @param iconOnly true, if only the icon should be shown.
      */
     @Deprecated
@@ -94,7 +94,7 @@ public class BorderStateMarker extends UBorder implements ImageObserver, IFState
 
     /**
      * Draws a normal border.
-     * 
+     *
      * @param g The graphics.
      * @param x The x coordinate of the component.
      * @param y The y coordinate of the component.
@@ -103,13 +103,15 @@ public class BorderStateMarker extends UBorder implements ImageObserver, IFState
      */
     private void drawNormal(Component c, Graphics g, int x, int y, int width, int height) {
         if (isBorderVisible()) {
-            paintBorder(c, g, null, x, y, width, height);
+            setHighlight(null);
+
+            super.paintBorder(c, g, x, y, width, height);
         }
     }
 
     /**
      * Draws a changed border.
-     * 
+     *
      * @param g The graphics.
      * @param x The x coordinate of the component.
      * @param y The y coordinate of the component.
@@ -118,7 +120,9 @@ public class BorderStateMarker extends UBorder implements ImageObserver, IFState
      */
     private void drawChanged(Component c, Graphics g, int x, int y, int width, int height) {
         if (strategy != BorderStateMarkerStrategy.ICON_ONLY) {
-            paintBorder(c, g, UIManager.getColor(BindingUIConstants.BORDER_STATE_MARKER_CHANGED_BORDER), x, y, width, height);
+            setHighlight(UIManager.getColor(BindingUIConstants.BORDER_STATE_MARKER_CHANGED_BORDER));
+
+            super.paintBorder(c, g, x, y, width, height);
         }
         if ((strategy != BorderStateMarkerStrategy.BORDER_ONLY) && (changedIcon != null)) {
             changedIcon.paintIcon(c, g, (x + width) - 10, 0);
@@ -127,7 +131,7 @@ public class BorderStateMarker extends UBorder implements ImageObserver, IFState
 
     /**
      * Draws an invalid border.
-     * 
+     *
      * @param g The graphics.
      * @param x The x coordinate of the component.
      * @param y The y coordinate of the component.
@@ -136,7 +140,9 @@ public class BorderStateMarker extends UBorder implements ImageObserver, IFState
      */
     private void drawInvalid(Component c, Graphics g, int x, int y, int width, int height) {
         if (strategy != BorderStateMarkerStrategy.ICON_ONLY) {
-            paintBorder(c, g, UIManager.getColor(BindingUIConstants.BORDER_STATE_MARKER_INVALID_BORDER), x, y, width, height);
+            setHighlight(UIManager.getColor(BindingUIConstants.BORDER_STATE_MARKER_INVALID_BORDER));
+
+            super.paintBorder(c, g, x, y, width, height);
         }
         if ((strategy != BorderStateMarkerStrategy.BORDER_ONLY) && (invalidIcon != null)) {
             invalidIcon.paintIcon(c, g, (x + width) - 10, 0);

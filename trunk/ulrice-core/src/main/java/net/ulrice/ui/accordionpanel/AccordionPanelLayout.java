@@ -284,8 +284,8 @@ public class AccordionPanelLayout implements LayoutManager2, Serializable {
             minimumHeight -= accordionPanel.getGap();
         }
 
-        int totalSpare = parent.getHeight() - minimumHeight;
         Insets insets = parent.getInsets();
+        int totalSpare = parent.getHeight() - minimumHeight - insets.top - insets.bottom;
         Rectangle bounds = new Rectangle(insets.left, insets.top, parent.getWidth() - insets.left - insets.right, 0);
 
         for (Component component : parent.getComponents()) {

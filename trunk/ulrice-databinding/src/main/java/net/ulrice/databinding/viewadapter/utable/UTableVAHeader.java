@@ -129,8 +129,10 @@ public class UTableVAHeader extends JTableHeader {
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
         
-        g.setColor(new Color(0x9297a1));
-        g.drawLine(0, getHeight() - 1, getWidth(), getHeight() - 1);
+        g.setColor(Color.WHITE);
+        g.fillRect(0, getHeight() - 3, getWidth(), 3);
+        g.setColor(new Color(0xc0c0c0));
+        g.drawLine(0, getHeight() - 2, getWidth(), getHeight() - 2);
     }
 
     /**
