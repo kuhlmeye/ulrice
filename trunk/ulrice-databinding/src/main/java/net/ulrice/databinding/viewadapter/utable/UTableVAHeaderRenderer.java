@@ -44,7 +44,7 @@ public class UTableVAHeaderRenderer implements TableCellRenderer {
 
         Component component =
                 labelRenderer.getTableCellRendererComponent(table, renderValue, isSelected, hasFocus, row, column);
-        if (JComponent.class.isAssignableFrom(JComponent.class)) {
+        if (component.getClass().isAssignableFrom(JComponent.class)) {
             ((JComponent) component).setToolTipText(tooltipText);
         }
 
