@@ -1,10 +1,9 @@
 package net.ulrice.remotecontrol.impl.helper;
 
 import javax.swing.JPanel;
-import javax.swing.border.Border;
-import javax.swing.border.TitledBorder;
 
 import net.ulrice.remotecontrol.RemoteControlException;
+import net.ulrice.remotecontrol.util.ComponentUtils;
 
 public class JPanelHelper extends AbstractJComponentHelper<JPanel> {
 
@@ -18,11 +17,7 @@ public class JPanelHelper extends AbstractJComponentHelper<JPanel> {
 
     @Override
     public String getTitle(JPanel panel) throws RemoteControlException {
-        Border border = panel.getBorder();
-        if (border instanceof TitledBorder) {
-            return ((TitledBorder) border).getTitle();
-        }
-        return null;
+        return ComponentUtils.getTitle(panel);
     }
 
 }

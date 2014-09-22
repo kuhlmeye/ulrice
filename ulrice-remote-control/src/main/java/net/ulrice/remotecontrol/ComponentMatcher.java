@@ -1,18 +1,21 @@
 package net.ulrice.remotecontrol;
 
+import java.awt.Component;
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Iterator;
+import java.util.LinkedHashSet;
+
+import javax.swing.JPanel;
+
 import net.ulrice.remotecontrol.impl.ComponentRegistry;
 import net.ulrice.remotecontrol.impl.helper.ComponentHelper;
 import net.ulrice.remotecontrol.impl.helper.ComponentHelperRegistry;
 import net.ulrice.remotecontrol.util.ComponentUtils;
 import net.ulrice.remotecontrol.util.RegularMatcher;
 import net.ulrice.remotecontrol.util.RemoteControlUtils;
-import net.ulrice.ui.accordionpanel.AccordionContentPanel;
-
-import javax.swing.*;
-import javax.swing.border.TitledBorder;
-import java.awt.*;
-import java.io.Serializable;
-import java.util.*;
 
 /**
  * Matchers for the {@link ComponentRemoteControl}.
@@ -188,7 +191,7 @@ public abstract class ComponentMatcher implements Serializable {
      * @param type the type
      * @return the matcher
      */
-    public static ComponentMatcher ofType(final Class<? extends Component> type) {
+    public static ComponentMatcher ofType(final Class< ? extends Component> type) {
         return new ComponentMatcher() {
 
             private static final long serialVersionUID = 7366001726950768210L;
@@ -472,31 +475,10 @@ public abstract class ComponentMatcher implements Serializable {
                         continue;
                     }
 
-                    JPanel comp = (JPanel) component;
+                    String title = ComponentUtils.getTitle((JPanel) component);
 
-                    if (comp instanceof AccordionContentPanel) {
-
-                        String title = ((AccordionContentPanel) comp).getSeparatorPanel().getTitle();
-
-                        if ((title != null) && (matcher.matches(title))) {
-                            results.add(comp);
-                        }
-                    }
-                    else {
-                        if (comp.getBorder() == null) {
-                            continue;
-                        }
-
-                        if (!(comp.getBorder() instanceof TitledBorder)) {
-                            continue;
-                        }
-                        TitledBorder border = (TitledBorder) comp.getBorder();
-
-                        String title = border.getTitle();
-
-                        if ((title != null) && (matcher.matches(title))) {
-                            results.add(comp);
-                        }
+                    if ((title != null) && (matcher.matches(title))) {
+                        results.add(component);
                     }
                 }
 

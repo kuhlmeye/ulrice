@@ -12,33 +12,38 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowFocusListener;
 import java.awt.event.WindowListener;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.Collection;
 import java.util.LinkedHashSet;
 
 import javax.swing.JComponent;
 import javax.swing.JFrame;
+import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
+import javax.swing.border.Border;
+import javax.swing.border.TitledBorder;
 
 import net.ulrice.remotecontrol.ComponentMatcher;
 import net.ulrice.remotecontrol.RemoteControlException;
+import net.ulrice.ui.accordionpanel.AccordionContentPanel;
 
 /**
  * Utility methods for components
- * 
+ *
  * @author Manfred HANTSCHEL
  */
 public class ComponentUtils {
 
     /**
      * Collects all children of the specified components and matches them against the specified matcher
-     * 
+     *
      * @param matcher the matcher
      * @param components the components
      * @return the result of the match operation
      * @throws RemoteControlException on occasion
      */
-    public static Collection<Component> find(ComponentMatcher matcher, Component... components)
-        throws RemoteControlException {
+    public static Collection<Component> find(ComponentMatcher matcher, Component... components) throws RemoteControlException {
         Collection<Component> results = collect(components);
 
         return matcher.match(results);
@@ -46,7 +51,7 @@ public class ComponentUtils {
 
     /**
      * Collects all children of the specified components
-     * 
+     *
      * @param components the components
      * @return a collection of all components and their children
      */
@@ -56,7 +61,7 @@ public class ComponentUtils {
 
     /**
      * Collects all children of the specified components
-     * 
+     *
      * @param results adds all children to these results
      * @param components the components
      * @return the results collection
@@ -77,7 +82,7 @@ public class ComponentUtils {
 
     /**
      * Collects all parents of the specified component.
-     * 
+     *
      * @param component the component
      * @return a collection of all parents
      */
@@ -96,7 +101,7 @@ public class ComponentUtils {
 
     /**
      * Tries to bring the specified component to the front
-     * 
+     *
      * @param component the component
      * @return true if successful
      * @throws RemoteControlException on occasion
@@ -184,7 +189,7 @@ public class ComponentUtils {
 
     /**
      * Tries to focus the component
-     * 
+     *
      * @param component the component
      * @return true if successful
      * @throws RemoteControlException on occasion
@@ -227,7 +232,7 @@ public class ComponentUtils {
     /**
      * Tries to move the specified point of the specified component to the visible part of the viewport of the
      * parents.
-     * 
+     *
      * @param component the component
      * @param point the point
      * @throws RemoteControlException on occasion
@@ -239,7 +244,7 @@ public class ComponentUtils {
     /**
      * Tries to move the specified point of the specified component to the visible part of the viewport of the
      * parents. If the size is < 2, it is interpreted as 2.
-     * 
+     *
      * @param component the component
      * @param point the point
      * @param size creates a rectangle out of the point with the specified size as width and height
@@ -256,13 +261,12 @@ public class ComponentUtils {
     /**
      * Tries to move the specified rectangle of the specified component to the visible part of the viewport of the
      * parents.
-     * 
+     *
      * @param component the component
      * @param rectangle the rectangle
      * @throws RemoteControlException on occasion
      */
-    public static void scrollRectToVisible(final Component component, final Rectangle rectangle)
-        throws RemoteControlException {
+    public static void scrollRectToVisible(final Component component, final Rectangle rectangle) throws RemoteControlException {
 
         if (component instanceof JComponent) {
             try {
@@ -280,6 +284,37 @@ public class ComponentUtils {
                 throw new RemoteControlException("Failed to scroll component", e);
             }
         }
+    }
+
+    public static String getTitle(JPanel panel) {
+        if (panel == null) {
+            return null;
+        }
+
+        if (panel instanceof AccordionContentPanel) {
+            return ((AccordionContentPanel) panel).getSeparatorPanel().getTitle();
+        }
+        
+        Border border = panel.getBorder();
+        
+        if (border == null) {
+            return null;
+        }
+        
+        if (border instanceof TitledBorder) {
+            return ((TitledBorder) border).getTitle();
+        }
+
+        try {
+            Method method = border.getClass().getMethod("getTitle");
+
+            return (String) method.invoke(border);
+        }
+        catch (NoSuchMethodException | SecurityException | IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
+            // ignore
+        }
+
+        return null;
     }
 
 }

@@ -116,7 +116,7 @@ public class AccordionContentPanel extends JPanel implements ActionListener {
 
         footer = new AccordionContentFooter();
 
-        add(separatorPanel);
+        add(separatorPanel, BorderLayout.NORTH);
         add(scrollPane, BorderLayout.CENTER);
         add(footer, BorderLayout.SOUTH);
     }
