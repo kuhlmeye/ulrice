@@ -20,11 +20,11 @@ public class AccordionSeparatorPanel extends JButton implements MouseListener {
 
     private static final long serialVersionUID = 7528047902693951355L;
 
-    private static final String UI_NAME = AccordionSeparatorPanel.class.getSimpleName();
-    private static final String UI_FONT = UI_NAME + ".font";
-    private static final String UI_FOREGROUND = UI_NAME + ".foreground";
-    private static final String UI_CONTENT_MARGINS = UI_NAME + ".contentMargins";
-    private static final String UI_BACKGROUND_PAINTER = UI_NAME + ".backgroundPainter";
+    public static final String UI_NAME = AccordionSeparatorPanel.class.getSimpleName();
+    public static final String UI_FONT = UI_NAME + ".font";
+    public static final String UI_FOREGROUND = UI_NAME + ".foreground";
+    public static final String UI_CONTENT_MARGINS = UI_NAME + ".contentMargins";
+    public static final String UI_BACKGROUND_PAINTER = UI_NAME + ".backgroundPainter";
 
     private static final Insets UI_CONTENT_MARGINS_DEFAULT = new Insets(0, 0, 0, 0);
     private static final AccordionSeparatorPanelBackgroundPainter UI_BACKGROUND_PAINTER_DEFAULT = new AccordionSeparatorPanelBackgroundPainter();
