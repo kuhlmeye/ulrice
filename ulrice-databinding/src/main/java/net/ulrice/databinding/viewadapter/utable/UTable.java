@@ -7,6 +7,7 @@ import java.util.EventObject;
 import javax.swing.DefaultCellEditor;
 import javax.swing.JTable;
 import javax.swing.JTextField;
+import javax.swing.UIManager;
 
 
 public class UTable extends JTable {
@@ -47,7 +48,25 @@ public class UTable extends JTable {
         setDefaultEditor(Character.class, new DefaultCellEditor(new JTextField()));                 
 	}
 
-	public void setRowHeight(int rowHeight) {
+	/**
+     * {@inheritDoc}
+     * 
+     * @see javax.swing.JTable#updateUI()
+     */
+    @Override
+    public void updateUI() {
+        super.updateUI();
+        
+        if (UIManager.getBoolean("Table.showVerticalLines")) {
+            setShowVerticalLines(true);
+        }
+        
+        if (UIManager.getBoolean("Table.showHorizontalLines")) {
+            setShowHorizontalLines(true);
+        }
+    }
+
+    public void setRowHeight(int rowHeight) {
 		super.setRowHeight(rowHeight);
 		if(assocTable != null && assocTable.getRowHeight() != rowHeight) {
 			assocTable.setRowHeight(rowHeight);
