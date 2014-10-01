@@ -1,10 +1,10 @@
 package net.ulrice.databinding.viewadapter.utable;
 
-import java.awt.Color;
 import java.awt.Component;
 import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.Graphics;
+import java.awt.Graphics2D;
 import java.awt.Insets;
 import java.awt.LayoutManager;
 import java.awt.LayoutManager2;
@@ -18,7 +18,9 @@ import java.util.Map.Entry;
 
 import javax.swing.JLabel;
 import javax.swing.KeyStroke;
+import javax.swing.Painter;
 import javax.swing.SwingConstants;
+import javax.swing.UIManager;
 import javax.swing.event.TableColumnModelEvent;
 import javax.swing.table.JTableHeader;
 import javax.swing.table.TableCellRenderer;
@@ -31,13 +33,20 @@ import javax.swing.table.TableColumnModel;
  */
 public class UTableVAHeader extends JTableHeader {
 
+    /** Default generated serial version uid. */
+    private static final long serialVersionUID = 9040213273578605389L;
+    
+    public static final String UI_NAME = UTableVAHeader.class.getSimpleName();
+    public static final String UI_BACKGROUND_PAINTER = UI_NAME + ".backgroundPainter";
+
+    private static final UTableVAHeaderPainter UI_BACKGROUND_PAINTER_DEFAULT = new UTableVAHeaderPainter();
+
     /**
      * if the components (serach filter should extend the heigt of the table header
      */
     private boolean extendInHeight = true;
 
-    /** Default generated serial version uid. */
-    private static final long serialVersionUID = 9040213273578605389L;
+    private Painter<UTableVAHeader> painter;
 
     /**
      * Create a new table header with space for possible filter boxes.
@@ -56,6 +65,16 @@ public class UTableVAHeader extends JTableHeader {
         if (renderer instanceof JLabel) {
             ((JLabel) renderer).setVerticalAlignment(SwingConstants.TOP);
         }
+    }
+
+    @Override
+    public void updateUI() {
+        super.updateUI();
+
+        @SuppressWarnings("unchecked")
+        Painter<UTableVAHeader> painter = (Painter<UTableVAHeader>) UIManager.get(UI_BACKGROUND_PAINTER);
+
+        this.painter = (painter != null) ? painter : UI_BACKGROUND_PAINTER_DEFAULT;
     }
 
     /**
@@ -129,10 +148,7 @@ public class UTableVAHeader extends JTableHeader {
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
         
-        g.setColor(Color.WHITE);
-        g.fillRect(0, getHeight() - 3, getWidth(), 3);
-        g.setColor(new Color(0xc0c0c0));
-        g.drawLine(0, getHeight() - 2, getWidth(), getHeight() - 2);
+        painter.paint((Graphics2D) g.create(), this, getWidth(), getHeight());
     }
 
     /**
