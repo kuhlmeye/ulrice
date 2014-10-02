@@ -62,5 +62,7 @@ public class ClearableTextComponent<TEXT_COMPONENT_TYPE extends JTextComponent> 
         String text = getTextComponent().getText();
 
         eraseButton.setVisible((text != null) && (text.trim().length() > 0));
+        
+        updateToolBarState();
     }
 }

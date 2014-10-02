@@ -40,15 +40,17 @@ public class ToolTextComponent<TEXT_COMPONENT_TYPE extends JTextComponent> exten
         setBorder(BorderFactory.createLoweredBevelBorder());
         setOpaque(false);
 
-        label.setBorder(BorderFactory.createEmptyBorder(1, 2, 1, 2));
+        label.setBorder(BorderFactory.createEmptyBorder(1, 0, 0, 0));
         label.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
                 ToolTextComponent.this.textComponent.grabFocus();
             }
         });
-        
-        textComponent.setBorder(BorderFactory.createEmptyBorder(1, 3, 1, 3));
+
+        updateLabelState();
+
+        textComponent.setBorder(BorderFactory.createEmptyBorder(1, 3, 0, 3));
         textComponent.addFocusListener(new FocusListener() {
             @Override
             public void focusLost(FocusEvent e) {
@@ -60,10 +62,12 @@ public class ToolTextComponent<TEXT_COMPONENT_TYPE extends JTextComponent> exten
                 repaint();
             }
         });
-        textComponent.setMargin(new Insets(2, 4, 2, 4));
+        textComponent.setMargin(new Insets(2, 0, 2, 0));
 
-        toolBar.setBorder(BorderFactory.createEmptyBorder(1, 2, 1, 2));
+        toolBar.setBorder(BorderFactory.createEmptyBorder(1, 0, 0, 0));
         toolBar.setOpaque(false);
+
+        updateToolBarState();
 
         add(label, BorderLayout.WEST);
         add(textComponent, BorderLayout.CENTER);
@@ -72,10 +76,18 @@ public class ToolTextComponent<TEXT_COMPONENT_TYPE extends JTextComponent> exten
 
     public void setIcon(Icon icon) {
         label.setIcon(icon);
+
+        updateLabelState();
     }
 
-    public void setLabel(String label) {
-        this.label.setText(label);
+    public void setLabel(String text) {
+        label.setText(text);
+
+        updateLabelState();
+    }
+
+    protected void updateLabelState() {
+        label.setVisible((label.getIcon() != null) || ((label.getText() != null) && (label.getText().trim().length() > 0)));
     }
 
     public TEXT_COMPONENT_TYPE getTextComponent() {
@@ -127,7 +139,22 @@ public class ToolTextComponent<TEXT_COMPONENT_TYPE extends JTextComponent> exten
 
         toolBar.add(component);
 
+        updateToolBarState();
+
         return component;
+    }
+
+    protected void updateToolBarState() {
+        boolean visible = false;
+        
+        for (Component component : toolBar.getComponents()) {
+            if (component.isVisible()) {
+                visible = true;
+                break;
+            }
+        }
+        
+        toolBar.setVisible(visible);
     }
 
     @Override
