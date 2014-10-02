@@ -17,6 +17,11 @@ public class I18nTextArea extends I18nTextComponent {
 		super(new JTextArea() {
 			private static final long serialVersionUID = 5152597750522473770L;
 
+			{
+			    setLineWrap(true);
+			    setWrapStyleWord(true);
+			}
+			
 			public void updateUI() {
 				super.updateUI();
 				setOpaque(false);
