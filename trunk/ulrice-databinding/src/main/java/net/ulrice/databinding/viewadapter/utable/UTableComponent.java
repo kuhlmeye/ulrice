@@ -823,9 +823,10 @@ public class UTableComponent extends JPanel {
     /**
      * Duplicate the selected rows in the table. Copied rows are in new state.
      */
+    @SuppressWarnings("rawtypes")
     public void copySelectedRows() {
         checkAttributeModelSet();
-        List<Object> values = getSelectedObjects();
+        List values = getSelectedObjects();
         if (values != null) {
             for (Object value : values) {
                 attributeModel.addElement(value);
@@ -884,7 +885,7 @@ public class UTableComponent extends JPanel {
      * Return the list of selected as objects.
      */
     @SuppressWarnings({ "rawtypes", "unchecked" })
-    public List<Object> getSelectedObjects() {
+    public List getSelectedObjects() {
         checkAttributeModelSet();
         
         int[] rowsInModel = getSelectedRowsModelIndex();
