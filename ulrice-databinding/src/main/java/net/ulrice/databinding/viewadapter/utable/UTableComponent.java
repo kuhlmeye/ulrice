@@ -1,7 +1,6 @@
 package net.ulrice.databinding.viewadapter.utable;
 
 import java.awt.BorderLayout;
-import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Point;
@@ -677,7 +676,7 @@ public class UTableComponent extends JPanel {
             }
 
             if(attributeModel != null) {
-				ColumnDefinition definition = attributeModel.getColumnByIndex(convertColumnIndexToModel(vColIndex));
+				ColumnDefinition<?> definition = attributeModel.getColumnByIndex(convertColumnIndexToModel(vColIndex));
 				if(FilterMode.ComboBox.equals(definition.getFilterMode())) {
 					//getFilter().
 				}
@@ -782,6 +781,10 @@ public class UTableComponent extends JPanel {
 
     }
 
+    public TableAM getAttributeModel() {
+        return attributeModel;
+    }
+
     public void setAttributeModel(TableAM attributeModel) {
         this.attributeModel = attributeModel;
     }
@@ -881,14 +884,16 @@ public class UTableComponent extends JPanel {
      * Return the list of selected as objects.
      */
     @SuppressWarnings({ "rawtypes", "unchecked" })
-    public List getSelectedObjects() {
+    public List<Object> getSelectedObjects() {
         checkAttributeModelSet();
+        
         int[] rowsInModel = getSelectedRowsModelIndex();
-
-        List result = new ArrayList(rowsInModel.length);
+        List<Object> result = new ArrayList(rowsInModel.length);
+        
         for (int row : rowsInModel) {
             result.add(attributeModel.getCurrentValueAt(row));
         }
+        
         return result;
     }
 
