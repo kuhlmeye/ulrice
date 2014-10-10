@@ -7,6 +7,8 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.ThreadFactory;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import javax.swing.SwingUtilities;
 
@@ -30,7 +32,17 @@ public class RemoteControlUtils {
 
     public static final double WAIT_DELAY = 0.1;
 
-    private static ExecutorService EXECUTOR_SERVICE = Executors.newFixedThreadPool(4);
+    private static ExecutorService EXECUTOR_SERVICE = Executors.newFixedThreadPool(4, new ThreadFactory() {
+        private final AtomicInteger threadNumber = new AtomicInteger(1);
+
+        @Override
+        public Thread newThread(Runnable r) {
+            final Thread result = new Thread(r);
+            result.setName("Ulrice Remote Control #" + threadNumber.getAndIncrement());
+            result.setDaemon(true);
+            return result;
+        }
+    });
 
     private static Double speedFactor;
 
@@ -330,7 +342,7 @@ public class RemoteControlUtils {
 
         return "Data of type " + toString(object.getClass());
     }
-    
+
     /**
      * Returns the name of the class in a short and readable form.
      *
