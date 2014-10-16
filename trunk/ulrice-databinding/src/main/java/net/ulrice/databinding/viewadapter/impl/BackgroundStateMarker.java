@@ -13,7 +13,10 @@ import net.ulrice.util.Colors;
 
 public class BackgroundStateMarker implements IFStateMarker, IFCellStateMarker {
 
-    private static final Color NORMAL_BG_COLOR = BindingUI.getColor(BindingUI.BACKGROUND_STATE_MARKER_NORMAL_EVEN, new Color(230, 230, 230));
+    private static final Color NORMAL_BG_COLOR = BindingUI.getColor(BindingUI.BACKGROUND_STATE_MARKER_NORMAL,
+        BindingUI.getColor(BindingUI.BACKGROUND_STATE_MARKER_NORMAL_EVEN, new Color(230, 230, 230)));
+    private static final Color READONLY_BG_COLOR = BindingUI.getColor(BindingUI.BACKGROUND_STATE_MARKER_READONLY,
+        BindingUI.getColor(BindingUI.BACKGROUND_STATE_MARKER_READONLY_EVEN, new Color(200, 200, 255)));
     private static final Color INVALID_BG_COLOR = BindingUI.getColor(BindingUI.BACKGROUND_STATE_MARKER_INVALID, new Color(200, 130, 130));
     private static final Color CHANGED_BG_COLOR = BindingUI.getColor(BindingUI.BACKGROUND_STATE_MARKER_CHANGED, new Color(186, 207, 226));
     private static final Color SELECTED_BG_COLOR = BindingUI.getColor(BindingUI.BACKGROUND_STATE_MARKER_SELECTED, new Color(200, 200, 255));
@@ -40,7 +43,7 @@ public class BackgroundStateMarker implements IFStateMarker, IFCellStateMarker {
     public void updateState(Element value, int row, boolean selected, boolean editable, boolean dirty, boolean valid, ColumnColorOverride columnColorOverride, JComponent component) {
         Color foreground = normalFGColor;
         Color background = columnColorOverride == null ? NORMAL_BG_COLOR : columnColorOverride.getColor();
-        
+
         if (value.isRemoved()) {
             foreground = Colors.blend(foreground, Color.WHITE, 0.75);
 
@@ -50,7 +53,7 @@ public class BackgroundStateMarker implements IFStateMarker, IFCellStateMarker {
         }
         else {
             if (!editable) {
-                background = Colors.blend(background, Color.BLACK, 0.15);
+                background = READONLY_BG_COLOR;
             }
 
             if (!valid) {
@@ -75,11 +78,11 @@ public class BackgroundStateMarker implements IFStateMarker, IFCellStateMarker {
 
     @Override
     public void initialize(JComponent component) {
-        if (this.normalFGColor == null) {
-            this.normalFGColor = component.getForeground();
+        if (normalFGColor == null) {
+            normalFGColor = component.getForeground();
         }
-        if (this.normalBGColor == null) {
-            this.normalBGColor = component.getBackground();
+        if (normalBGColor == null) {
+            normalBGColor = component.getBackground();
         }
     }
 

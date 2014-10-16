@@ -13,7 +13,7 @@ import net.ulrice.databinding.ui.BindingUI;
 
 /**
  * TreeTableCellRenderer renders the tree in the first column of the tree table
- * 
+ *
  * @author rad
  */
 public class TreeTableCellRenderer extends JTree implements TableCellRenderer {
@@ -22,7 +22,8 @@ public class TreeTableCellRenderer extends JTree implements TableCellRenderer {
      * TODO: description
      */
     private static final long serialVersionUID = 3544864181158317610L;
-    private static final Color NORMAL_BG_COLOR = BindingUI.getColor(BindingUI.BACKGROUND_STATE_MARKER_NORMAL_EVEN, new Color(230, 230, 230));
+    private static final Color NORMAL_BG_COLOR = BindingUI.getColor(BindingUI.BACKGROUND_STATE_MARKER_NORMAL,
+        BindingUI.getColor(BindingUI.BACKGROUND_STATE_MARKER_NORMAL_EVEN, new Color(230, 230, 230)));
     private static final Color SELECTED_BG_COLOR = BindingUI.getColor(BindingUI.BACKGROUND_STATE_MARKER_SELECTED, new Color(200, 200, 255));
 
     protected int visibleRow;
