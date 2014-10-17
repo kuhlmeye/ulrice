@@ -100,7 +100,7 @@ public class WindowWorkarea extends JDesktopPane implements IFWorkarea {
         frame.setVisible(true);
 
         add(frame);
-        frame.toFront();
+        // frame.toFront();
     }
 
     @Override
@@ -112,7 +112,7 @@ public class WindowWorkarea extends JDesktopPane implements IFWorkarea {
         }
         catch (PropertyVetoException e1) {
         }
-        controllerFrame.toFront();
+        // controllerFrame.toFront();
     }
 
     @Override
