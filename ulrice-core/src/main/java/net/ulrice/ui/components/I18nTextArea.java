@@ -46,14 +46,19 @@ public class I18nTextArea extends I18nTextComponent {
 		});
 		
 		getLocaleSelector().setShowTextAndIcon(true);
-		getLocaleSelector().setBorder(BorderFactory.createEmptyBorder(0, 6, 0, 0));
+		getLocaleSelector().setBorder(BorderFactory.createEmptyBorder(0, 1, 0, 0));
 		getTextComponent().setBorder(BorderFactory.createEmptyBorder(1, 3, 1, 3));
 		getTextComponent().setOpaque(false);
 		
 		setBorder(BorderFactory.createEmptyBorder());
 		
 		add(getLocaleSelector(), BorderLayout.NORTH);
-		add(new JScrollPane(getTextComponent()), BorderLayout.CENTER);
+		
+		JScrollPane scrollPane = new JScrollPane(getTextComponent());
+		
+		scrollPane.setBorder(BorderFactory.createMatteBorder(1, 0, 0, 0, Color.LIGHT_GRAY));
+		
+        add(scrollPane, BorderLayout.CENTER);
 	}
 	
 	public void setMaxLength(int maxLength) {

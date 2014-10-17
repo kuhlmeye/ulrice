@@ -180,7 +180,7 @@ public class I18nTextComponent extends JPanel {
             super();
 
             setBorder(new EmptyBorder(1, 1, 1, 4));
-            setOpaque(true);
+            setOpaque(false);
 
             addMouseListener(new JPopupMenuTriggerListener(dropDownMenu, TriggerType.ALL_MOUSE_BUTTONS));
         }
