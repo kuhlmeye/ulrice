@@ -53,7 +53,7 @@ public class BackgroundStateMarker implements IFStateMarker, IFCellStateMarker {
         }
         else {
             if (!editable) {
-                background = READONLY_BG_COLOR;
+                background = columnColorOverride == null ? READONLY_BG_COLOR : Colors.blend(columnColorOverride.getColor(), Color.BLACK, 0.05);
             }
 
             if (!valid) {
