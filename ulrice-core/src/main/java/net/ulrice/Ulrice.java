@@ -23,7 +23,6 @@ import net.ulrice.security.GrantAllAuthCallback;
 import net.ulrice.security.IFAuthCallback;
 import net.ulrice.ui.UI;
 
-// test
 /**
  * Class holding all context object of ulrice.
  * 
