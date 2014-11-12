@@ -24,7 +24,8 @@ public interface BindingUIConstants {
     String BACKGROUND_STATE_MARKER_CHANGED = "Ulrice.Binding.BackgroundStateMarker.ChangedBackground";
     String BACKGROUND_STATE_MARKER_REMOVED_BG = "Ulrice.Binding.BackgroundStateMarker.RemovedBackground";
     String BACKGROUND_STATE_MARKER_REMOVED_FG = "Ulrice.Bidning.BackgroundStateMarker.RemovedForeground";
-    
+    String BACKGROUND_STATE_MARKER_ZEBRA = "Ulrice.Binding.JTableVARenderer.ZebraBackground";
+
     String MARKABLE_DURING_DISABLED_STATE  = "Ulrice.Binding.ViewAdapter.MarkableDuringDisabledState";
     String DISABLED_FOREGROUND = "Ulrice.Binding.ViewAdapter.DisabledForeground";
     String DISABLED_BACKGROUND = "Ulrice.Binding.ViewAdapter.DisabledBackground";

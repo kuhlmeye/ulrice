@@ -20,6 +20,7 @@ public class BackgroundStateMarker implements IFStateMarker, IFCellStateMarker {
     private static final Color INVALID_BG_COLOR = BindingUI.getColor(BindingUI.BACKGROUND_STATE_MARKER_INVALID, new Color(200, 130, 130));
     private static final Color CHANGED_BG_COLOR = BindingUI.getColor(BindingUI.BACKGROUND_STATE_MARKER_CHANGED, new Color(186, 207, 226));
     private static final Color SELECTED_BG_COLOR = BindingUI.getColor(BindingUI.BACKGROUND_STATE_MARKER_SELECTED, new Color(200, 200, 255));
+    private static final Color ZEBRA_BG_COLOR = BindingUI.getColor(BindingUI.BACKGROUND_STATE_MARKER_ZEBRA, new Color(0x698aa5));
 
     private Color normalFGColor;
     private Color normalBGColor;
@@ -65,7 +66,7 @@ public class BackgroundStateMarker implements IFStateMarker, IFCellStateMarker {
         }
 
         if ((row % 2) == 1) {
-            background = Colors.blend(background, Color.BLACK, 0.05);
+            background = Colors.blend(background, ZEBRA_BG_COLOR, 0.075);
         }
 
         if (selected) {
