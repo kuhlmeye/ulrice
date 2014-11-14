@@ -29,7 +29,7 @@ public class JTextComponentHelper extends AbstractJComponentHelper<JTextComponen
 
                 @Override
                 public void run() {
-                    component.requestFocus();
+                    component.requestFocusInWindow();
                     component.setText(text);
                     component.transferFocus();
                 }

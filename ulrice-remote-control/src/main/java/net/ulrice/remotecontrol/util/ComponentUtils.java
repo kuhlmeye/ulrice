@@ -215,7 +215,7 @@ public class ComponentUtils {
         component.addFocusListener(focusListener);
 
         try {
-            component.requestFocus();
+            component.requestFocusInWindow();
 
             try {
                 return result.aquireResult();
