@@ -23,37 +23,36 @@ import net.ulrice.module.ModuleIconSize;
 
 /**
  * Workarea displaying the modules as internal frames.
- * 
+ *
  * @author DL10KUH
  */
 public class WindowWorkarea extends JDesktopPane implements IFWorkarea {
-    
+
     private static final long serialVersionUID = 6510498627910475397L;
 
-    private Map<IFController, ControllerFrame> ctrlFrameMap = new HashMap<IFController, ControllerFrame>();
-    private JPopupMenu popup = new JPopupMenu("Arrange");
-    
-    
-    public WindowWorkarea() {        
+    private final Map<IFController, ControllerFrame> ctrlFrameMap = new HashMap<IFController, ControllerFrame>();
+    private final JPopupMenu popup = new JPopupMenu("Arrange");
+
+    public WindowWorkarea() {
         setDragMode(JDesktopPane.OUTLINE_DRAG_MODE);
-        
+
         addMouseListener(new MouseAdapter() {
-            
+
             @Override
             public void mouseClicked(MouseEvent e) {
                 super.mouseClicked(e);
-                
-                if(getPopup().getComponentCount() > 0) {
+
+                if (getPopup().getComponentCount() > 0) {
                     popup.show(e.getComponent(), e.getX(), e.getY());
                 }
-            }            
+            }
         });
     }
-    
+
     public JPopupMenu getPopup() {
         return popup;
     }
-    
+
     @Override
     public String getComponentId() {
         return "WindowWorkarea";
@@ -63,26 +62,26 @@ public class WindowWorkarea extends JDesktopPane implements IFWorkarea {
     public void openModule(IFController activeController) {
         ControllerFrame frame = new ControllerFrame();
         frame.controller = activeController;
-        
+
         ctrlFrameMap.put(activeController, frame);
-        
+
         frame.setLayout(new BorderLayout());
         frame.add(activeController.getView());
         frame.setTitle(Ulrice.getModuleManager().getModuleTitle(activeController, Usage.DetailedTitle));
         frame.addInternalFrameListener(new InternalFrameAdapter() {
-            
+
             @Override
             public void internalFrameDeiconified(InternalFrameEvent e) {
                 ControllerFrame frame = (ControllerFrame) e.getInternalFrame();
                 Ulrice.getModuleManager().activateModule(frame.controller);
             }
-            
+
             @Override
             public void internalFrameClosing(InternalFrameEvent e) {
                 ControllerFrame frame = (ControllerFrame) e.getInternalFrame();
                 Ulrice.getModuleManager().closeController(frame.controller, null);
             }
-            
+
             @Override
             public void internalFrameActivated(InternalFrameEvent e) {
                 ControllerFrame frame = (ControllerFrame) e.getInternalFrame();
@@ -100,7 +99,7 @@ public class WindowWorkarea extends JDesktopPane implements IFWorkarea {
         frame.setVisible(true);
 
         add(frame);
-        // frame.toFront();
+        frame.toFront();
     }
 
     @Override
@@ -112,7 +111,7 @@ public class WindowWorkarea extends JDesktopPane implements IFWorkarea {
         }
         catch (PropertyVetoException e1) {
         }
-        // controllerFrame.toFront();
+        controllerFrame.toFront();
     }
 
     @Override
@@ -122,13 +121,13 @@ public class WindowWorkarea extends JDesktopPane implements IFWorkarea {
     @Override
     public void closeController(IFController activeController) {
         ControllerFrame controllerFrame = ctrlFrameMap.remove(activeController);
-        remove(controllerFrame);        
+        remove(controllerFrame);
     }
 
     @Override
     public void moduleBlocked(IFController controller, Object blocker) {
         ControllerFrame controllerFrame = ctrlFrameMap.get(controller);
-        if(controllerFrame != null) {
+        if (controllerFrame != null) {
             controllerFrame.getGlassPane().setVisible(true);
         }
     }
@@ -159,16 +158,16 @@ public class WindowWorkarea extends JDesktopPane implements IFWorkarea {
     public void onActivateWorkarea() {
         Ulrice.getModuleManager().addModuleEventListener(this);
         List<IFController> controllers = Ulrice.getModuleManager().getActiveControllers();
-        if(controllers != null) {
-            for(IFController controller : controllers) {
+        if (controllers != null) {
+            for (IFController controller : controllers) {
                 openModule(controller);
             }
 
             IFController activeController = Ulrice.getModuleManager().getCurrentController();
-            if(activeController != null) {
+            if (activeController != null) {
                 activateModule(activeController);
             }
-        }        
+        }
     }
 
     @Override
@@ -179,8 +178,8 @@ public class WindowWorkarea extends JDesktopPane implements IFWorkarea {
     }
 
     private static class ControllerFrame extends JInternalFrame {
-        
+
         private static final long serialVersionUID = -1677737799839584216L;
-        private IFController controller;                
+        private IFController controller;
     }
 }

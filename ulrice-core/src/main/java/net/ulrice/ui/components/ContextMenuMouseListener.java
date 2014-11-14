@@ -103,7 +103,7 @@ public class ContextMenuMouseListener extends MouseAdapter {
             }
 
             textComponent = (JTextComponent) e.getSource();
-            textComponent.requestFocus();
+            textComponent.requestFocusInWindow();
 
             boolean enabled = textComponent.isEnabled();
             boolean editable = textComponent.isEditable();
