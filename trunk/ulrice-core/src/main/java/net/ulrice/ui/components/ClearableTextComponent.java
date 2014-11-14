@@ -34,7 +34,7 @@ public class ClearableTextComponent<TEXT_COMPONENT_TYPE extends JTextComponent> 
             @Override
             public void actionPerformed(ActionEvent e) {
                 getTextComponent().setText(null);
-                getTextComponent().requestFocus();
+                getTextComponent().requestFocusInWindow();
             }
         });
 
