@@ -1,31 +1,19 @@
 package net.ulrice.ui.components;
 
-import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.util.HashMap;
-import java.util.Locale;
-import java.util.Map;
+import net.ulrice.ui.components.JPopupMenuTriggerListener.TriggerType;
 
-import javax.swing.BorderFactory;
-import javax.swing.JLabel;
-import javax.swing.JMenuItem;
-import javax.swing.JPanel;
-import javax.swing.JPopupMenu;
-import javax.swing.JTextPane;
-import javax.swing.UIManager;
+import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.text.AttributeSet;
 import javax.swing.text.BadLocationException;
-import javax.swing.text.PlainDocument;
 import javax.swing.text.html.HTMLDocument;
-
-import net.ulrice.ui.components.JPopupMenuTriggerListener;
-import net.ulrice.ui.components.JPopupMenuTriggerListener.TriggerType;
-import net.ulrice.ui.components.LocaleSelectorItem;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.util.*;
+import java.util.List;
 
 public class I18nTextPane extends JPanel {
 
@@ -59,7 +47,8 @@ public class I18nTextPane extends JPanel {
         super(new BorderLayout(0, 2));
         this.textPane = textPane;
 
-        this.localeSelector.setActionListener(new ActionListener() {
+        localeSelector.setOpaque(false);
+        localeSelector.setActionListener(new ActionListener() {
 
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -78,7 +67,7 @@ public class I18nTextPane extends JPanel {
         return textPane;
     }
 
-    protected LocaleSelector getLocaleSelector() {
+    public LocaleSelector getLocaleSelector() {
         return localeSelector;
     }
 
@@ -155,6 +144,10 @@ public class I18nTextPane extends JPanel {
         return localeSelector.getSelectedLocale();
     }
 
+    public List<Locale> getAvailableLocales() {
+        return localeSelector.getAvailableLocales();
+    }
+
     public void setData(Map<Locale, String> valueMap) {
         this.valueMap = valueMap;
         updateTextField();
@@ -163,65 +156,6 @@ public class I18nTextPane extends JPanel {
     public Map<Locale, String> getData() {
         updateTextMap();
         return valueMap;
-    }
-
-    protected class LocaleSelector extends JLabel {
-        private static final long serialVersionUID = 1L;
-        private final JPopupMenu dropDownMenu = new JPopupMenu();
-        private Locale selectedLocale = null;
-        private ActionListener listener = null;
-        private boolean showTextAndIcon = false;
-
-        public LocaleSelector() {
-            super();
-            setBorder(new EmptyBorder(1, 1, 1, 4));
-            setOpaque(true);
-            addMouseListener(new JPopupMenuTriggerListener(dropDownMenu, TriggerType.ALL_MOUSE_BUTTONS));
-        }
-
-        public void setSelectedLocale(LocaleSelectorItem localeItem) {
-            selectedLocale = localeItem.getLocale();
-            if (localeItem.getIcon() != null) {
-                setIcon(localeItem.getIcon());
-                if (showTextAndIcon) {
-                    setText(localeItem.getText());
-                }
-                else {
-                    setToolTipText(localeItem.getText());
-                }
-            }
-            else {
-                setText(localeItem.getText());
-            }
-        }
-
-        public void setActionListener(ActionListener listener) {
-            this.listener = listener;
-        }
-
-        public Locale getSelectedLocale() {
-            return selectedLocale;
-        }
-
-        /**
-         * Add a search provider to the list of selectable search providers
-         */
-        public void addLocale(final LocaleSelectorItem localeItem) {
-            final JMenuItem menuItem = new JMenuItem(localeItem.getText(), localeItem.getIcon());
-            menuItem.addActionListener(new ActionListener() {
-
-                @Override
-                public void actionPerformed(ActionEvent e) {
-                    setSelectedLocale(localeItem);
-                    listener.actionPerformed(e);
-                }
-            });
-            dropDownMenu.add(menuItem);
-        }
-
-        public void setShowTextAndIcon(boolean showTextAndIcon) {
-            this.showTextAndIcon = showTextAndIcon;
-        }
     }
 
     public void addDocumentListener(DocumentListener documentListener) {

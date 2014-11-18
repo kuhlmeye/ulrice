@@ -4,9 +4,7 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.HashMap;
-import java.util.Locale;
-import java.util.Map;
+import java.util.*;
 
 import javax.swing.BorderFactory;
 import javax.swing.JLabel;
@@ -56,6 +54,7 @@ public class I18nTextComponent extends JPanel {
         super(new BorderLayout(0, 2));
         this.textComponent = textComponent;
 
+        localeSelector.setOpaque(false);
         localeSelector.setActionListener(new ActionListener() {
 
             @Override
@@ -74,7 +73,7 @@ public class I18nTextComponent extends JPanel {
         return textComponent;
     }
 
-    protected LocaleSelector getLocaleSelector() {
+    public LocaleSelector getLocaleSelector() {
         return localeSelector;
     }
 
@@ -155,6 +154,10 @@ public class I18nTextComponent extends JPanel {
         return localeSelector.getSelectedLocale();
     }
 
+    public List<Locale> getAvailableLocales() {
+        return localeSelector.getAvailableLocales();
+    }
+
     public void setData(Map<Locale, String> valueMap) {
         this.valueMap = valueMap;
         updateTextField();
@@ -163,76 +166,6 @@ public class I18nTextComponent extends JPanel {
     public Map<Locale, String> getData() {
         updateTextMap();
         return valueMap;
-    }
-
-    protected class LocaleSelector extends JLabel {
-
-        private static final long serialVersionUID = 1L;
-
-        private final JPopupMenu dropDownMenu = new JPopupMenu();
-        private Locale selectedLocale = null;
-
-        private ActionListener listener = null;
-
-        private boolean showTextAndIcon = false;
-
-        public LocaleSelector() {
-            super();
-
-            setBorder(new EmptyBorder(1, 1, 1, 4));
-            setOpaque(false);
-
-            addMouseListener(new JPopupMenuTriggerListener(dropDownMenu, TriggerType.ALL_MOUSE_BUTTONS));
-        }
-
-        public void setSelectedLocale(LocaleSelectorItem localeItem) {
-            selectedLocale = localeItem.getLocale();
-            if (localeItem.getIcon() != null) {
-                setIcon(localeItem.getIcon());
-                if (showTextAndIcon) {
-                    setText(localeItem.getText());
-                }
-                else {
-                    setToolTipText(localeItem.getText());
-                }
-            }
-            else {
-                setText(localeItem.getText());
-            }
-        }
-
-        public void setActionListener(ActionListener listener) {
-            this.listener = listener;
-        }
-
-        public Locale getSelectedLocale() {
-            return selectedLocale;
-        }
-
-        /**
-         * Add a search provider to the list of selectable search providers
-         */
-        public void addLocale(final LocaleSelectorItem localeItem) {
-            final JMenuItem menuItem = new JMenuItem(localeItem.getText(), localeItem.getIcon());
-            menuItem.addActionListener(new ActionListener() {
-
-                @Override
-                public void actionPerformed(ActionEvent e) {
-                    setSelectedLocale(localeItem);
-                    listener.actionPerformed(e);
-                }
-            });
-            dropDownMenu.add(menuItem);
-        }
-
-        public void setShowTextAndIcon(boolean showTextAndIcon) {
-            this.showTextAndIcon = showTextAndIcon;
-        }
-
-        public JPopupMenu getDropDownMenu() {
-            return dropDownMenu;
-        }
-        
     }
 
     public void addDocumentListener(DocumentListener documentListener) {
