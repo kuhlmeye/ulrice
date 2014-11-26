@@ -30,7 +30,8 @@ public class StringToIntegerConverter implements IFValueConverter<Integer, Strin
 		try {
 			return Integer.valueOf(view.toString());
 		} catch (NumberFormatException ex) {
-			throw new ValueConverterException(ex);
+			//throw new ValueConverterException(ex);
+			return null;
 		}
 		
 	}
