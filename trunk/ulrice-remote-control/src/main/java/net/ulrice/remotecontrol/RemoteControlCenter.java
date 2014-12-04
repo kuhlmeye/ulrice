@@ -135,8 +135,8 @@ public class RemoteControlCenter {
                     throw new RemoteControlException("Failed to start process", e);
                 }
 
-                new Thread(new StreamConsumer(process.getInputStream(), System.out), "RemoteControl Stream").start();
-                new Thread(new StreamConsumer(process.getErrorStream(), System.err), "RemoteControl Stream").start();
+                new Thread(new StreamConsumer(process.getInputStream(), "RC.out> ", System.out), "RemoteControl Stream").start();
+                new Thread(new StreamConsumer(process.getErrorStream(), "RC.err> ", System.err), "RemoteControl Stream").start();
 
                 return true;
             }
