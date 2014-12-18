@@ -79,7 +79,6 @@ public class RecorderAPITest {
 	public void testExportToHtml() throws IOException {
 		File outputFile = RecorderAPI.saveRecording(new File(System.getProperty("java.io.tmpdir")), recording);
 		Assert.assertNotNull(outputFile);
-		
 		RecorderAPI.exportRecordingsToHtml(null, new File(System.getProperty("java.io.tmpdir")), outputFile);
 	}
 }
