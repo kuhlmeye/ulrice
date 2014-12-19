@@ -13,6 +13,7 @@ import javax.swing.SwingUtilities;
 
 import net.ulrice.Ulrice;
 import net.ulrice.databinding.bufferedbinding.impl.BindingGroup;
+import net.ulrice.module.ModuleParam;
 import net.ulrice.module.impl.AbstractController;
 import net.ulrice.module.impl.IFClosing;
 import net.ulrice.module.impl.ModuleActionState;

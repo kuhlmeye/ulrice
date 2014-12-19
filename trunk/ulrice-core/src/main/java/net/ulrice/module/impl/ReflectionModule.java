@@ -6,12 +6,7 @@ import java.util.Map;
 
 import javax.swing.ImageIcon;
 
-import net.ulrice.module.ControllerProviderCallback;
-import net.ulrice.module.IFController;
-import net.ulrice.module.IFModule;
-import net.ulrice.module.IFModuleTitleProvider;
-import net.ulrice.module.ModuleIconSize;
-import net.ulrice.module.ModuleType;
+import net.ulrice.module.*;
 import net.ulrice.module.exception.ModuleInstantiationException;
 
 /**
@@ -50,7 +45,6 @@ public class ReflectionModule<T extends IFController> implements IFModule<T> {
 	 * 
 	 * @param uniqueId The unique id of the module
 	 * @param controllerClassName The name of the controller class that should be instanciated.
-	 * @param titleRenderer The renderer used to render the title of this module.
 	 */
 	public ReflectionModule(String uniqueId, ModuleType moduleType, String controllerClassName, String iconName) {
 		this(uniqueId, moduleType, controllerClassName, iconName, new SimpleModuleTitleRenderer(uniqueId));
@@ -135,16 +129,16 @@ public class ReflectionModule<T extends IFController> implements IFModule<T> {
 
 	
 	@Override
-	public void instantiateModule(ControllerProviderCallback<T> callback, IFController parent) {
+	public void instantiateModule(ControllerProviderCallback<T> callback, IFController parent, Map<String, ModuleParam> moduleParams) {
 	    try {
-	        callback.onControllerReady (instantiateModuleInternal());
+	        callback.onControllerReady (instantiateModuleInternal(moduleParams));
 	    }
 	    catch (ModuleInstantiationException exc) {
 	        callback.onFailure(exc);
 	    }
 	}
 	
-	private T instantiateModuleInternal() throws ModuleInstantiationException {
+	private T instantiateModuleInternal(Map<String, ModuleParam> moduleParams) throws ModuleInstantiationException {
 		if (controllerClassName == null) {
 			throw new ModuleInstantiationException("Controller class name is null.", null);
 		}

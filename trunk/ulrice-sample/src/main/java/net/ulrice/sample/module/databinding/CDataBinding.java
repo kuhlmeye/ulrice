@@ -14,6 +14,7 @@ import javax.swing.SwingWorker;
 import net.ulrice.Ulrice;
 import net.ulrice.databinding.bufferedbinding.impl.ListDataProvider;
 import net.ulrice.databinding.viewadapter.utable.UTableViewAdapter;
+import net.ulrice.module.ModuleParam;
 import net.ulrice.module.impl.AbstractController;
 import net.ulrice.module.impl.IFClosing;
 import net.ulrice.process.AbstractProcess;

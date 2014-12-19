@@ -20,15 +20,8 @@ import javax.swing.event.EventListenerList;
 
 import net.ulrice.ConfigurationListener;
 import net.ulrice.Ulrice;
-import net.ulrice.module.ControllerProviderCallback;
-import net.ulrice.module.IFController;
-import net.ulrice.module.IFModule;
-import net.ulrice.module.IFModuleGroup;
-import net.ulrice.module.IFModuleManager;
-import net.ulrice.module.IFModuleStructureManager;
-import net.ulrice.module.IFModuleTitleProvider;
+import net.ulrice.module.*;
 import net.ulrice.module.IFModuleTitleProvider.Usage;
-import net.ulrice.module.ModuleType;
 import net.ulrice.module.event.IFModuleEventListener;
 import net.ulrice.module.event.IFModuleStructureEventListener;
 import net.ulrice.module.exception.ModuleInstantiationException;
@@ -77,23 +70,30 @@ public class ModuleManager implements IFModuleManager, IFModuleStructureManager,
     }
 
     @Override
-    public void openModule(final String moduleId, final ControllerProviderCallback callback) {
-        openModule(moduleId, null, callback);
+    public void openModule(final String moduleId, final ControllerProviderCallback callback, ModuleParam... params) {
+        openModule(moduleId, null, callback, params);
     }
 
     @Override
-    public void openModule(final String moduleId, final ControllerProviderCallback callback, final IFCloseCallback closeCallback) {
-        openModule(moduleId, null, callback, closeCallback);
+    public void openModule(final String moduleId, final ControllerProviderCallback callback, final IFCloseCallback closeCallback, ModuleParam... params) {
+        openModule(moduleId, null, callback, closeCallback, params);
     }
 
     @Override
-    public void openModule(final String moduleId, final IFController parent, final ControllerProviderCallback callback) {
-        openModule(moduleId, parent, callback, null);
+    public void openModule(final String moduleId, final IFController parent, final ControllerProviderCallback callback, ModuleParam... params) {
+        openModule(moduleId, parent, callback, null, params);
     }
 
     @Override
-    public void openModule(final String moduleId, final IFController parent, final ControllerProviderCallback callback, final IFCloseCallback closeCallback) {
+    public void openModule(final String moduleId, final IFController parent, final ControllerProviderCallback callback, final IFCloseCallback closeCallback, final ModuleParam... params) {
         final IFModule module = moduleMap.get(moduleId);
+
+        final Map<String, ModuleParam> paramMap = new HashMap<>();
+        if(params != null) {
+            for(ModuleParam param : params) {
+                paramMap.put(param.getKey(), param);
+            }
+        }
 
         if (module == null) {
             LOG.warning("Module with id (" + moduleId + ") could not be found.");
@@ -136,7 +136,7 @@ public class ModuleManager implements IFModuleManager, IFModuleStructureManager,
                         }
 
                         if (callback != null) {
-                            callback.onControllerInitialization(controller);
+                            callback.onControllerInitialization(controller, paramMap);
                         }
 
                         // Inform event listeners.
@@ -170,7 +170,7 @@ public class ModuleManager implements IFModuleManager, IFModuleStructureManager,
                             callback.onFailure(exc);
                         }
                     }
-                }, parent);
+                }, parent, paramMap);
             }
         }
         finally {

@@ -9,6 +9,7 @@ import net.ulrice.message.MessageSeverity;
 import net.ulrice.message.ModuleTranslationProvider;
 import net.ulrice.module.IFController;
 import net.ulrice.module.IFModuleTitleProvider;
+import net.ulrice.module.ModuleParam;
 import net.ulrice.module.impl.action.UActionState;
 
 /**
