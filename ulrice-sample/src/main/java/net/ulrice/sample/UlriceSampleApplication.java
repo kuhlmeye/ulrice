@@ -1,5 +1,6 @@
 package net.ulrice.sample;
 
+import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -15,12 +16,7 @@ import net.ulrice.configuration.UlriceConfigurationCallback;
 import net.ulrice.frame.impl.MainFrameConfig;
 import net.ulrice.frame.impl.Menubar;
 import net.ulrice.frame.impl.Toolbar;
-import net.ulrice.module.ControllerProviderCallback;
-import net.ulrice.module.IFController;
-import net.ulrice.module.IFModule;
-import net.ulrice.module.ModuleIconSize;
-import net.ulrice.module.ModuleRegistrationHelper;
-import net.ulrice.module.ModuleType;
+import net.ulrice.module.*;
 import net.ulrice.module.impl.AuthReflectionModule;
 import net.ulrice.module.impl.SimpleModuleTitleRenderer;
 import net.ulrice.module.impl.action.CloseAllModulesAction;
@@ -144,7 +140,7 @@ public class UlriceSampleApplication {
             }
 
             @Override
-            public void instantiateModule(ControllerProviderCallback<CTranslator> callback, IFController parent) {
+            public void instantiateModule(ControllerProviderCallback<CTranslator> callback, IFController parent, Map<String, ModuleParam> moduleParams) {
                 callback.onControllerReady (new CTranslator (translatorService));
             }
 		    

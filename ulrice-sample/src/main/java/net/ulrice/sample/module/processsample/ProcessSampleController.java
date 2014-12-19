@@ -10,6 +10,7 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 
+import net.ulrice.module.ModuleParam;
 import net.ulrice.module.impl.AbstractController;
 import net.ulrice.module.impl.IFClosing;
 import net.ulrice.process.CtrlProcessExecutor;

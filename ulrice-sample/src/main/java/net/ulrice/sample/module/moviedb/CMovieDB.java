@@ -13,6 +13,7 @@ import net.ulrice.databinding.bufferedbinding.impl.BindingGroup;
 import net.ulrice.databinding.bufferedbinding.impl.ColumnDefinition.ColumnType;
 import net.ulrice.databinding.bufferedbinding.impl.Element;
 import net.ulrice.databinding.validation.impl.StringLengthValidator;
+import net.ulrice.module.ModuleParam;
 import net.ulrice.module.impl.AbstractController;
 import net.ulrice.module.impl.IFClosing;
 import net.ulrice.module.impl.ModuleActionState;

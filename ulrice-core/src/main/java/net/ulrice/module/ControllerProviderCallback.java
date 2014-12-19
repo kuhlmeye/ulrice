@@ -3,6 +3,8 @@ package net.ulrice.module;
 import net.ulrice.Ulrice;
 import net.ulrice.module.exception.ModuleInstantiationException;
 
+import java.util.Map;
+
 /**
  * Callback for the instantiation of a controller.
  */
@@ -20,7 +22,7 @@ public abstract class ControllerProviderCallback<CONTROLLER_TYPE extends IFContr
 	 * controller. The controller is not yet fully registered at the
 	 * application. In this method basic data initialization could be done.
 	 */
-	public void onControllerInitialization(CONTROLLER_TYPE controller) {	
+	public void onControllerInitialization(CONTROLLER_TYPE controller, Map<String, ModuleParam> moduleParam) {
 	}
 
 	/**

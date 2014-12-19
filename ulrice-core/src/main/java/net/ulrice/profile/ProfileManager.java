@@ -10,6 +10,7 @@ import javax.swing.event.EventListenerList;
 import net.ulrice.Ulrice;
 import net.ulrice.module.ControllerProviderCallback;
 import net.ulrice.module.IFController;
+import net.ulrice.module.ModuleParam;
 import net.ulrice.module.exception.ModuleInstantiationException;
 import net.ulrice.profile.persister.ProfilePersister;
 
@@ -45,9 +46,9 @@ public class ProfileManager {
 			public void onFailure(ModuleInstantiationException exc) {
 				controllerProviderCallback.onFailure(exc);
 			}
-			
+
 			@Override
-			public void onControllerInitialization(IFController controller) {
+			public void onControllerInitialization(IFController controller, Map paramMap) {
 				loadProfileInternal(profiledModule.getProfileHandlerModule(), profiledModule.getProfileId(), controller);
 			}
 

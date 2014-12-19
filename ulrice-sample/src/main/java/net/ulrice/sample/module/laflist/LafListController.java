@@ -2,6 +2,7 @@ package net.ulrice.sample.module.laflist;
 
 import javax.swing.JComponent;
 
+import net.ulrice.module.ModuleParam;
 import net.ulrice.module.impl.AbstractController;
 import net.ulrice.module.impl.action.ModuleAction;
 
