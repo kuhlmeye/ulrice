@@ -49,7 +49,7 @@
 	<parent>
 		<groupId>net.ulrice</groupId>
 		<artifactId>ulrice</artifactId>
-		<version>0.2.5.32-SNAPSHOT</version>
+		<version>0.2.5.32</version>
 		<relativePath>../ulrice</relativePath>
 	</parent>
 
