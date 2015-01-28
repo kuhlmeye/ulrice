@@ -119,6 +119,7 @@ public class UTableComponent extends JPanel {
         scrollPane.setCorner(JScrollPane.UPPER_LEFT_CORNER, staticTable.getTableHeader());
         scrollPane.setCorner(JScrollPane.UPPER_RIGHT_CORNER, new UTableCornerComponent("upperRight")); //new BorderPanel(null, BorderFactory.createMatteBorder(0, 1, 1, 0, new Color(0x9297a1))));
         scrollPane.setCorner(JScrollPane.LOWER_LEADING_CORNER, new UTableCornerComponent("lowerLeading"));
+        scrollPane.setCorner(JScrollPane.LOWER_RIGHT_CORNER, new UTableCornerComponent("lowerRight"));
         scrollPane.setRowHeader(staticViewport);
         scrollPane.setViewport(scrollViewport);
 
