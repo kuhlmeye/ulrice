@@ -38,4 +38,8 @@ public class RegularMatcher implements Serializable {
         return regex.equalsIgnoreCase(value);
     }
 
+    @Override
+    public String toString() {
+        return "/" + regex + "/";
+    }
 }
