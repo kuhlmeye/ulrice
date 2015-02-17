@@ -138,7 +138,12 @@ public class TableAM implements IFAttributeModel {
     }
     
     private String getErrorMessageText() {
-        return Ulrice.getTranslationProvider().getUlriceTranslation(TranslationUsage.Message, TranslationConstants.UNIQUE_KEY_CONSTRAINT_ERROR).toString();
+        if (Ulrice.getTranslationProvider() != null) {
+            return Ulrice.getTranslationProvider().getUlriceTranslation(TranslationUsage.Message, TranslationConstants.UNIQUE_KEY_CONSTRAINT_ERROR).toString();
+        }
+        else {
+            return null;
+        }
     }
     
     /**

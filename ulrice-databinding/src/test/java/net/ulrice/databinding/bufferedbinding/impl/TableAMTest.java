@@ -1,14 +1,6 @@
 package net.ulrice.databinding.bufferedbinding.impl;
 
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.List;
-
 import net.ulrice.databinding.IFBinding;
 import net.ulrice.databinding.bufferedbinding.impl.ColumnDefinition.ColumnType;
 import net.ulrice.databinding.modelaccess.impl.DynamicReflectionMVA;
@@ -16,18 +8,21 @@ import net.ulrice.databinding.modelaccess.impl.IndexedReflectionMVA;
 import net.ulrice.databinding.validation.AbstractValidator;
 import net.ulrice.databinding.validation.ValidationError;
 import net.ulrice.databinding.validation.ValidationResult;
-
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
+
+import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.List;
+
+import static org.junit.Assert.*;
 
 /**
  * Tests the list attribute model. 
  * @author christof
  */
-@Ignore
 public class TableAMTest {
 
 	private TableAM tableAM;
