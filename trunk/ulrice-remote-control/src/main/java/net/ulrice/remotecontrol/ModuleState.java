@@ -1,10 +1,7 @@
 package net.ulrice.remotecontrol;
 
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 import net.ulrice.module.IFModule;
 import net.ulrice.module.IFModuleTitleProvider;
@@ -39,7 +36,7 @@ public class ModuleState implements Serializable {
      * @return a collection of module states
      */
     public static Collection<ModuleState> inspectModules(Collection<IFModule<?>> modules) {
-        Collection<ModuleState> results = new ArrayList<ModuleState>();
+        Collection<ModuleState> results = new ArrayList<>();
 
         for (IFModule<?> module : modules) {
             ModuleState state = inspect(module);
@@ -63,7 +60,7 @@ public class ModuleState implements Serializable {
         this.module = module;
 
         uniqueId = module.getUniqueId();
-        titles = new HashMap<IFModuleTitleProvider.Usage, String>();
+        titles = new EnumMap<>(IFModuleTitleProvider.Usage.class);
 
         for (IFModuleTitleProvider.Usage usage : IFModuleTitleProvider.Usage.values()) {
             titles.put(usage, module.getModuleTitle(usage));
@@ -84,7 +81,7 @@ public class ModuleState implements Serializable {
 
     @Override
     public String toString() {
-        return "ModuleState [uniqueId=" + uniqueId + ", titles=" + titles + "]";
+        return "ModuleState [uniqueId=" + uniqueId + ", titles=" + titles + ']';
     }
 
 }
