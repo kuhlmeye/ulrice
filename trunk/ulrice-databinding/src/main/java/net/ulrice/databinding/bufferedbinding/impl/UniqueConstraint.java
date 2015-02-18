@@ -1,30 +1,28 @@
 package net.ulrice.databinding.bufferedbinding.impl;
 
-import gnu.trove.map.TLongObjectMap;
-import gnu.trove.map.hash.TLongObjectHashMap;
-import gnu.trove.set.TLongSet;
-import gnu.trove.set.hash.TLongHashSet;
+import it.unimi.dsi.fastutil.longs.Long2ObjectArrayMap;
+import it.unimi.dsi.fastutil.longs.LongArraySet;
+import it.unimi.dsi.fastutil.objects.Object2ObjectArrayMap;
+import net.ulrice.databinding.validation.ValidationError;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import net.ulrice.databinding.validation.ValidationError;
+import java.util.Set;
 
 public class UniqueConstraint implements ElementLifecycleListener {
 
 	private String[] columnIds;
 
-	private Map<List<?>, TLongSet> uniqueMap = new HashMap<List<?>, TLongSet>();
+	private Map<List<?>, Set<Long>> uniqueMap = new Object2ObjectArrayMap<>();
 	
-	private Map<List<?>, TLongSet> uniqueDeleteMap = new HashMap<List<?>, TLongSet>();
+	private Map<List<?>, Set<Long>> uniqueDeleteMap = new Object2ObjectArrayMap<>();
 
-	private TLongObjectMap<List<?>> keyMap = new TLongObjectHashMap<List<?>>();
+	private Map<Long, List<?>> keyMap = new Long2ObjectArrayMap<>();
 	
-	private TLongObjectMap<List<?>> keyDeleteMap = new TLongObjectHashMap<List<?>>();
+	private Map<Long, List<?>> keyDeleteMap = new Long2ObjectArrayMap<>();
 
-	private Map<List<?>, ValidationError> currentErrorMap = new HashMap<List<?>, ValidationError>();
+	private Map<List<?>, ValidationError> currentErrorMap = new Object2ObjectArrayMap<>();
 
 	public UniqueConstraint(String... columnIds) {
 		this.columnIds = columnIds;
@@ -59,18 +57,18 @@ public class UniqueConstraint implements ElementLifecycleListener {
         List< ?> key = buildKey(element);
         if (handleKey(table, element.getUniqueId(), key)) {
             if (uniqueMap.containsKey(key)) {
-                TLongSet uniqueIdSet = uniqueMap.get(key);
+                Set<Long> uniqueIdSet = uniqueMap.get(key);
                 uniqueIdSet.add(element.getUniqueId());
                 if (uniqueIdSet.size() > 1) {
                     ValidationError uniqueConstraintError = new ValidationError(table, "Unique key constraint error", null);
                     currentErrorMap.put(key, uniqueConstraintError);
-                    for (long uniqueId : uniqueIdSet.toArray()) {
+                    for (long uniqueId : uniqueIdSet) {
                         table.getElementById(uniqueId).addElementValidationError(uniqueConstraintError);
                     }
                 }
             }
             else {
-                TLongSet uniqueIdSet = new TLongHashSet();
+                Set<Long> uniqueIdSet = new LongArraySet();
                 uniqueIdSet.add(element.getUniqueId());
                 uniqueMap.put(key, uniqueIdSet);
             }
@@ -86,22 +84,22 @@ public class UniqueConstraint implements ElementLifecycleListener {
 
         if (key == null || !key.equals(oldKey)) {
             if (oldKey != null) {
-                final TLongSet uniqueKeySet = uniqueMap.get(oldKey);
+                final Set<Long> uniqueKeySet = uniqueMap.get(oldKey);
                 uniqueKeySet.remove(uniqueId);
                 // should not happen
                 if (uniqueDeleteMap.containsKey(oldKey)) {
-                    final TLongSet uniqueDeleteKeySet = uniqueDeleteMap.get(oldKey);
+                    final Set<Long> uniqueDeleteKeySet = uniqueDeleteMap.get(oldKey);
                     uniqueDeleteKeySet.add(uniqueId);
                 }
                 else {
-                    final TLongSet uniqueIdSet = new TLongHashSet();
+                    final Set<Long> uniqueIdSet = new LongArraySet();
                     uniqueIdSet.add(uniqueId);
                     uniqueDeleteMap.put(oldKey, uniqueIdSet);
                 }
                 if (uniqueKeySet.size() <= 1 && currentErrorMap.containsKey(oldKey)) {
                     final ValidationError validationError = currentErrorMap.remove(oldKey);
                     table.getElementById(uniqueId).removeElementValidationError(validationError);
-                    for (final long uniqueElementId : uniqueKeySet.toArray()) {
+                    for (final long uniqueElementId : uniqueKeySet) {
                         table.getElementById(uniqueElementId).removeElementValidationError(validationError);
                     }
 
@@ -115,7 +113,7 @@ public class UniqueConstraint implements ElementLifecycleListener {
     }
 
 	private List<?> buildKey(Element element) {
-	    List<Object> key = new ArrayList<Object>(columnIds.length);
+	    List<Object> key = new ArrayList<>(columnIds.length);
 	    for (String columnId : columnIds) {
 	        key.add(element.getValueAt(columnId));
 		}

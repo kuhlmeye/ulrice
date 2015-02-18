@@ -1,23 +1,9 @@
 package net.ulrice.databinding.bufferedbinding.impl;
 
-import gnu.trove.map.TLongObjectMap;
-import gnu.trove.map.TObjectIntMap;
-import gnu.trove.map.hash.TLongObjectHashMap;
-import gnu.trove.set.TLongSet;
-import gnu.trove.set.hash.TCustomHashSet;
-import gnu.trove.set.hash.TLongHashSet;
-import gnu.trove.strategy.IdentityHashingStrategy;
-
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
-import javax.swing.RowSorter.SortKey;
-import javax.swing.SwingUtilities;
-import javax.swing.event.EventListenerList;
-
+import it.unimi.dsi.fastutil.longs.Long2ObjectArrayMap;
+import it.unimi.dsi.fastutil.longs.LongArraySet;
+import it.unimi.dsi.fastutil.objects.Object2ObjectArrayMap;
+import it.unimi.dsi.fastutil.objects.ObjectArraySet;
 import net.ulrice.Ulrice;
 import net.ulrice.databinding.bufferedbinding.IFAttributeInfo;
 import net.ulrice.databinding.bufferedbinding.IFAttributeModel;
@@ -37,6 +23,14 @@ import net.ulrice.message.TranslationUsage;
 import net.ulrice.module.IFController;
 import net.ulrice.process.AbstractProcess;
 
+import javax.swing.RowSorter.SortKey;
+import javax.swing.*;
+import javax.swing.event.EventListenerList;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
 /**
  * Table attribute model. Model for all UTableComponents
  * 
@@ -47,26 +41,26 @@ public class TableAM implements IFAttributeModel {
 
     private IFIndexedModelValueAccessor tableMVA;
 
-    private List<ColumnDefinition< ? extends Object>> columns = new ArrayList<ColumnDefinition< ? extends Object>>();
-    private Map<String, ColumnDefinition> columnIdMap = new HashMap<String, ColumnDefinition>();
-    private TObjectIntMap<String> idModelIndexMap;
+    private List<ColumnDefinition< ?>> columns = new ArrayList<>();
+    private Map<String, ColumnDefinition> columnIdMap = new Object2ObjectArrayMap<>();
+    private Map<String, Integer> idModelIndexMap;
 
-    protected List<Element> elements = new ArrayList<Element>();
-    protected TLongObjectMap<Element> elementIdMap = new TLongObjectHashMap<Element>();
+    protected List<Element> elements = new ArrayList<>();
+    protected Map<Long, Element> elementIdMap = new Long2ObjectArrayMap<>();
     
 
-    private List<IFValidator> validators = new ArrayList<IFValidator>();
+    private List<IFValidator> validators = new ArrayList<>();
     private EventListenerList listenerList = new EventListenerList();
     private String id;
     private boolean readOnly;
     private long nextUniqueId;
 
-    private Set<Element> newElements = new TCustomHashSet<Element>(new IdentityHashingStrategy<Element>());
-    private Set<Element> modElements = new TCustomHashSet<Element>(new IdentityHashingStrategy<Element>());
-    private Set<Element> delElements = new TCustomHashSet<Element>(new IdentityHashingStrategy<Element>());
-    private Set<Element> invElements = new TCustomHashSet<Element>(new IdentityHashingStrategy<Element>());
+    private Set<Element> newElements = new ObjectArraySet<>();
+    private Set<Element> modElements = new ObjectArraySet<>();
+    private Set<Element> delElements = new ObjectArraySet<>();
+    private Set<Element> invElements = new ObjectArraySet<>();
 
-    private List<IFViewAdapter> viewAdapterList = new ArrayList<IFViewAdapter>();
+    private List<IFViewAdapter> viewAdapterList = new ArrayList<>();
     
     private IFValueConverter valueConverter;
 
@@ -84,9 +78,9 @@ public class TableAM implements IFAttributeModel {
 
     // unique constraint handling
     private String[] uniqueKeyColumnIds = null;
-    private Map<List< ?>, TLongSet> uniqueMap = new HashMap<List< ?>, TLongSet>();
-    private TLongObjectMap<List< ?>> keyMap = new TLongObjectHashMap<List< ?>>();
-    private Map<List< ?>, ValidationError> currentErrorMap = new HashMap<List< ?>, ValidationError>();
+    private Map<List< ?>, Set<Long>> uniqueMap = new Object2ObjectArrayMap<>();
+    private Map<Long, List< ?>> keyMap = new Long2ObjectArrayMap<>();
+    private Map<List< ?>, ValidationError> currentErrorMap = new Object2ObjectArrayMap<>();
 
     private String pathToChildren;
 
@@ -165,19 +159,19 @@ public class TableAM implements IFAttributeModel {
         checkKeyChangeAndUpdateDatastructure(element.getUniqueId(), key);
                
         if (uniqueMap.containsKey(key)) {
-            TLongSet uniqueIdSet = uniqueMap.get(key);
+            Set<Long> uniqueIdSet = uniqueMap.get(key);
             uniqueIdSet.add(element.getUniqueId());
             if (uniqueIdSet.size() > 1) {
                 UniqueKeyConstraintError uniqueConstraintError = new UniqueKeyConstraintError(this, getErrorMessageText(), null);
                 currentErrorMap.put(key, uniqueConstraintError);
-                for (long uniqueId : uniqueIdSet.toArray()) {
+                for (long uniqueId : uniqueIdSet) {
                     Element elementById = getElementById(uniqueId);
                     elementById.putUniqueKeyConstraintError(uniqueConstraintError);
                 }
             }
         }
         else {
-            TLongSet uniqueIdSet = new TLongHashSet();
+            Set<Long> uniqueIdSet = new LongArraySet();
             uniqueIdSet.add(element.getUniqueId());
             uniqueMap.put(key, uniqueIdSet);
         }
@@ -200,7 +194,7 @@ public class TableAM implements IFAttributeModel {
 
         if (key == null || !key.equals(oldKey)) {
             if (oldKey != null) {
-                TLongSet uniqueKeySet = uniqueMap.get(oldKey);
+                Set<Long> uniqueKeySet = uniqueMap.get(oldKey);
                 uniqueKeySet.remove(uniqueId);
 
                 if (uniqueKeySet.isEmpty()) {
@@ -211,7 +205,7 @@ public class TableAM implements IFAttributeModel {
                     getElementById(uniqueId).removeElementValidationError(validationError);
                     getElementById(uniqueId).removeUniqueKeyConstraintErrors();
                     
-                    for (long uniqueElementId : uniqueKeySet.toArray()) {
+                    for (long uniqueElementId : uniqueKeySet) {
                         getElementById(uniqueElementId).removeElementValidationError(validationError);
                         getElementById(uniqueElementId).removeUniqueKeyConstraintErrors();
                     }
@@ -229,7 +223,7 @@ public class TableAM implements IFAttributeModel {
      * Returns the key of an element.
      */
     private List< ?> buildKey(Element element) {
-        List<Object> key = new ArrayList<Object>(uniqueKeyColumnIds != null ? uniqueKeyColumnIds.length : 0);
+        List<Object> key = new ArrayList<>(uniqueKeyColumnIds != null ? uniqueKeyColumnIds.length : 0);
         if (uniqueKeyColumnIds != null) {
             for (String columnId : uniqueKeyColumnIds) {
                 key.add(element.getValueAt(columnId));
@@ -371,7 +365,7 @@ public class TableAM implements IFAttributeModel {
     }
 
     /**
-     * @see net.ulrice.databinding.bufferedbinding.IFAttributeModel#setValidator(net.ulrice.databinding.validation.IFValidator)
+     * @see net.ulrice.databinding.bufferedbinding.IFAttributeModel#addValidator(net.ulrice.databinding.validation.IFValidator)
      */
     @Override
     public void addValidator(IFValidator validator) {
@@ -379,7 +373,7 @@ public class TableAM implements IFAttributeModel {
     }
 
     /**
-     * @see net.ulrice.databinding.bufferedbinding.IFAttributeModel#getValidator()
+     * @see net.ulrice.databinding.bufferedbinding.IFAttributeModel#getValidators()
      */
     @Override
     public List<IFValidator> getValidators() {
@@ -781,7 +775,7 @@ public class TableAM implements IFAttributeModel {
      * Delete all columns from this table model.
      */
     public void delAllColumns() {
-        List<ColumnDefinition< ? extends Object>> list = new ArrayList<ColumnDefinition< ?>>(columns);
+        List<ColumnDefinition< ?>> list = new ArrayList<>(columns);
         for (ColumnDefinition< ?> colDef : list) {
             delColumn(colDef);
         }
@@ -804,13 +798,10 @@ public class TableAM implements IFAttributeModel {
     /**
      * Returns the list of all column definitions
      */
-    public List<ColumnDefinition< ? extends Object>> getColumns() {
+    public List<ColumnDefinition< ?>> getColumns() {
         return columns;
     }
 
-    /**
-     * @see net.ulrice.databinding.bufferedbinding.IFAttributeModel#gaChanged(net.ulrice.databinding.IFGuiAccessor, java.lang.Object)
-     */
     @Override
     public void gaChanged(IFViewAdapter viewAdapter, Object value) {
         fireUpdateViews();
@@ -1831,12 +1822,12 @@ public class TableAM implements IFAttributeModel {
                 key.add(colDef.getDataAccessor().getValue(object));
             }
 
-            TLongSet idSet = uniqueMap.get(key);
+            Set<Long> idSet = uniqueMap.get(key);
             if (idSet != null) {
                 if (idSet.size() == 1) {
                     return getElementById(idSet.iterator().next());
                 }
-                for (long id : idSet.toArray()) {
+                for (long id : idSet) {
                     Element element = getElementById(id);
                     if (element.getCurrentValue().equals(object)) {
                         return element;
@@ -1868,12 +1859,12 @@ public class TableAM implements IFAttributeModel {
         if (uniqueKeyColumnIds != null) {
             Element tempElement = createElement(object, false, false, true);
             List< ?> key = buildKey(tempElement);
-            TLongSet idSet = uniqueMap.get(key);
+            Set<Long> idSet = uniqueMap.get(key);
             if (idSet != null) {
                 if (idSet.size() == 1) {
                     return getElementById(idSet.iterator().next());
                 }
-                for (long id : idSet.toArray()) {
+                for (long id : idSet) {
                     Element element = getElementById(id);
                     if (element.getCurrentValue().equals(object)) {
                         return element;
@@ -1993,7 +1984,7 @@ public class TableAM implements IFAttributeModel {
     }
 
     /**
-     * @param selectOnlyNodes the selectOnlyNodes to set
+     * @param virtualTreeNodes the selectOnlyNodes to set
      */
     public void setVirtualTreeNodes(boolean virtualTreeNodes) {
         this.virtualTreeNodes = virtualTreeNodes;
@@ -2014,11 +2005,11 @@ public class TableAM implements IFAttributeModel {
         return result;
     }
     
-    public TObjectIntMap<String> getIdModelIndexMap() {
+    public Map<String, Integer> getIdModelIndexMap() {
         return idModelIndexMap;
     }
     
-    public void setIdModelIndexMap(TObjectIntMap<String> idModelIndexMap) {
+    public void setIdModelIndexMap(Map<String, Integer> idModelIndexMap) {
         this.idModelIndexMap = idModelIndexMap;
     }
 }

@@ -27,7 +27,7 @@ public interface IFAttributeModel<T> extends IFBinding {
 	/**
 	 * Called by a gui accessor if a value was changed.
 	 * 
-	 * @param guiAccessor Gui accessor which changes the value.
+	 * @param viewAdapter Gui accessor which changes the value.
 	 * @param value The new value.
 	 */
 	void gaChanged(IFViewAdapter viewAdapter, T value);
