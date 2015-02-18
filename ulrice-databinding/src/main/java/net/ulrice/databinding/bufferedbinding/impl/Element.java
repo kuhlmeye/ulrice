@@ -1,11 +1,6 @@
 package net.ulrice.databinding.bufferedbinding.impl;
 
-import gnu.trove.map.hash.TObjectIntHashMap;
-
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-
+import it.unimi.dsi.fastutil.objects.Object2IntArrayMap;
 import net.ulrice.databinding.IFBinding;
 import net.ulrice.databinding.bufferedbinding.IFAttributeInfo;
 import net.ulrice.databinding.bufferedbinding.impl.ColumnDefinition.ColumnType;
@@ -16,6 +11,10 @@ import net.ulrice.databinding.validation.UniqueKeyConstraintError;
 import net.ulrice.databinding.validation.ValidationError;
 import net.ulrice.databinding.validation.ValidationResult;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
 /**
  * The element of the list attribute model. It manages the models for all
  * attributes of a data row.
@@ -25,7 +24,7 @@ import net.ulrice.databinding.validation.ValidationResult;
 public class Element {
 
 	private long uniqueId;
-	private IFElementInternalAM<? extends Object>[] modelList;
+	private IFElementInternalAM<?>[] modelList;
 
 	private Object originalValue;
 	private ValidationResult validationResult = null;
@@ -62,19 +61,8 @@ public class Element {
 
 	/**
 	 * Creates a new element.
-	 *
-	 * @param tableAM
-	 * @param uniqueId
-	 *            The unique identifier.
-	 * @param columns
-	 *            The list of column definitions
-	 * @param valueObject
-	 *            The value.
-	 * @param editable
-	 *            True, if this element should be readonly.
 	 */
-	public Element(TableAM tableAM, long uniqueId, Object valueObject, boolean readOnly, boolean dirty,
-			boolean valid, boolean inserted) {
+	public Element(TableAM tableAM, long uniqueId, Object valueObject, boolean readOnly, boolean dirty, boolean valid, boolean inserted) {
 		this.originalValueDirty = dirty;
 		this.originalValueValid = valid;
 		this.tableAM = tableAM;
@@ -300,22 +288,11 @@ public class Element {
 
 	/**
 	 * Fires the event that the state changed.
-	 *
-	 * @param newState
-	 *            The new state
-	 * @param oldState
-	 *            The old state
 	 */
 	private void fireStateChanged() {
 		tableAM.handleElementStateChange(this);
 	}
 
-	/**
-	 * @param aValue
-	 * @param columnId
-	 * @param newValue
-	 * @param oldValue
-	 */
 	private void fireValueChanged(String columnId) {
 		tableAM.handleElementDataChanged(this, columnId);
 	}
@@ -445,7 +422,7 @@ public class Element {
             for (int i = 0; i < columns.size(); i++) {
             	ColumnDefinition< ? extends Object> column = columns.get(i);
 
-            	IFElementInternalAM attributeModel = null;
+            	IFElementInternalAM attributeModel;
             	if(column.isUseListAM()) {
                     attributeModel = column.createListAM();
             	} else {
@@ -456,7 +433,7 @@ public class Element {
                 attributeModel.setReadOnly(column.getColumnType().equals(ColumnType.ReadOnly));
                 modelList[i] = attributeModel;
                 if (tableAM.getIdModelIndexMap() == null) {
-                    tableAM.setIdModelIndexMap(new TObjectIntHashMap<String>());
+                    tableAM.setIdModelIndexMap(new Object2IntArrayMap<String>());
                 }
                 if (tableAM.getIdModelIndexMap().size() < columns.size()) {
                     tableAM.getIdModelIndexMap().put(column.getId(), i);
@@ -518,11 +495,11 @@ public class Element {
 	 * Returns the list of validation errors for this element
 	 */
 	public List<ValidationError> getValidationErrors() {
-		List<ValidationError> errors = null;
+		List<ValidationError> errors;
 		if(validationResult == null) {
-			errors = new ArrayList<ValidationError>();
+			errors = new ArrayList<>();
 		} else {
-			errors = new ArrayList<ValidationError>(validationResult.getValidationErrors());
+			errors = new ArrayList<>(validationResult.getValidationErrors());
 		}
 
 		if (modelList != null) {
@@ -540,7 +517,7 @@ public class Element {
 	 */
 	public List<String> getValidationFailures() {
 
-		List<String> result = new ArrayList<String>();
+		List<String> result = new ArrayList<>();
 		if (modelList != null) {
 			for (IFElementInternalAM<?> attributeModel : modelList) {
 				result.addAll(attributeModel.getValidationFailures());
@@ -558,7 +535,7 @@ public class Element {
 	 * Returns a string presentation of the validation errors of a certain column
 	 */
 	public List<String> getValidationFailures(String columnId) {
-		List<String> errors = new ArrayList<String>();
+		List<String> errors = new ArrayList<>();
 
 		if (tableAM.getIdModelIndexMap().containsKey(columnId)) {
 			IFElementInternalAM<?> model = modelList[tableAM.getIdModelIndexMap().get(columnId)];
@@ -863,7 +840,7 @@ public class Element {
 	 */
 	public void addChildElement(Element element) {
 	    if (childElements == null) {
-	        childElements = new ArrayList<Element>();
+	        childElements = new ArrayList<>();
 	    }
 		childElements.add(element);
 		element.setParent(this);
@@ -871,7 +848,7 @@ public class Element {
 
     public List<Element> getChilds() {
         if (childElements == null) {
-            return Collections.<Element> emptyList();
+            return Collections.emptyList();
         }
         return childElements;
     }
