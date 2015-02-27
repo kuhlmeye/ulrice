@@ -168,7 +168,7 @@ public class Ulrice {
      * 
      * @throws ConfigurationException on occasion
      */
-    private static void initializeRemoteControl() throws ConfigurationException {
+    public static void initializeRemoteControl() throws ConfigurationException {
         try {
             Class< ?> remoteControlCenter = Class.forName("net.ulrice.remotecontrol.RemoteControlCenter");
 

@@ -192,7 +192,8 @@ public class RemoteControlCenter {
     public static void startServer(int port) throws RemoteControlException {
         synchronized (RemoteControlCenter.class) {
             if (serverConnector != null) {
-                throw new RemoteControlException("Already serving");
+                return;
+                // throw new RemoteControlException("Already serving");
             }
 
             if (clientConnector != null) {
