@@ -152,6 +152,8 @@ public class Element {
             return null;
         }
         return modelList[modelColumnIndex].getCurrentValue();
+
+
 	}
 
 	/**
