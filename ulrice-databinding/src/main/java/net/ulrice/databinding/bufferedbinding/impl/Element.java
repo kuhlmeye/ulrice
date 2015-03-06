@@ -148,7 +148,10 @@ public class Element {
 		if (modelColumnIndex < 0 || modelColumnIndex >= modelList.length) {
 			throw new IndexOutOfBoundsException("ColumnIndex: " + modelColumnIndex + ", Size: " + modelList.length);
 		}
-		return modelList[modelColumnIndex].getCurrentValue();
+        if(modelList[modelColumnIndex] == null){
+            return null;
+        }
+        return modelList[modelColumnIndex].getCurrentValue();
 	}
 
 	/**
