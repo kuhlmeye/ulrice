@@ -1,8 +1,6 @@
 package net.ulrice.databinding.viewadapter.utable;
 
-import it.unimi.dsi.fastutil.longs.Long2ObjectArrayMap;
-import it.unimi.dsi.fastutil.longs.LongArrayList;
-import it.unimi.dsi.fastutil.longs.LongArraySet;
+import it.unimi.dsi.fastutil.longs.*;
 import net.ulrice.Ulrice;
 import net.ulrice.databinding.bufferedbinding.impl.Element;
 import net.ulrice.databinding.bufferedbinding.impl.TableAM;
@@ -128,7 +126,7 @@ public class UTreeTableComponent extends UTableComponent implements ExpandColaps
                     nested = false;
                 }
 
-                Set<Long> selUniqueIds = new LongArraySet();
+                LongSet selUniqueIds = new LongOpenHashSet();
                 List<Element> selElements =
                         UTreeTableComponent.this.getSelectedElementsTreeIntern(getSelectedRowsModelIndex());
 
@@ -256,7 +254,7 @@ public class UTreeTableComponent extends UTableComponent implements ExpandColaps
     }
 
     private List<Element> reduceDoubleElements(List<Element> elements) {
-        Map<Long, Element> elementsByUniquId = new Long2ObjectArrayMap<>();
+        Long2ObjectMap<Element> elementsByUniquId = new Long2ObjectOpenHashMap<>();
         for (Element element : elements) {
             mapDoubleElement(elementsByUniquId, element);
         }

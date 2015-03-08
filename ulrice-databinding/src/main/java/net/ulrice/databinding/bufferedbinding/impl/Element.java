@@ -1,6 +1,6 @@
 package net.ulrice.databinding.bufferedbinding.impl;
 
-import it.unimi.dsi.fastutil.objects.Object2IntArrayMap;
+import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
 import net.ulrice.databinding.IFBinding;
 import net.ulrice.databinding.bufferedbinding.IFAttributeInfo;
 import net.ulrice.databinding.bufferedbinding.impl.ColumnDefinition.ColumnType;
@@ -438,7 +438,7 @@ public class Element {
                 attributeModel.setReadOnly(column.getColumnType().equals(ColumnType.ReadOnly));
                 modelList[i] = attributeModel;
                 if (tableAM.getIdModelIndexMap() == null) {
-                    tableAM.setIdModelIndexMap(new Object2IntArrayMap<String>());
+                    tableAM.setIdModelIndexMap(new Object2IntOpenHashMap<String>());
                 }
                 if (tableAM.getIdModelIndexMap().size() < columns.size()) {
                     tableAM.getIdModelIndexMap().put(column.getId(), i);
