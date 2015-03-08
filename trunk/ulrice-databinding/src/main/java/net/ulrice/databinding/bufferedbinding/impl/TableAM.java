@@ -1,9 +1,10 @@
 package net.ulrice.databinding.bufferedbinding.impl;
 
-import it.unimi.dsi.fastutil.longs.Long2ObjectArrayMap;
-import it.unimi.dsi.fastutil.longs.LongArraySet;
-import it.unimi.dsi.fastutil.objects.Object2ObjectArrayMap;
-import it.unimi.dsi.fastutil.objects.ObjectArraySet;
+import it.unimi.dsi.fastutil.longs.Long2ObjectMap;
+import it.unimi.dsi.fastutil.longs.Long2ObjectOpenHashMap;
+import it.unimi.dsi.fastutil.longs.LongOpenHashSet;
+import it.unimi.dsi.fastutil.longs.LongSet;
+import it.unimi.dsi.fastutil.objects.Object2IntMap;
 import net.ulrice.Ulrice;
 import net.ulrice.databinding.bufferedbinding.IFAttributeInfo;
 import net.ulrice.databinding.bufferedbinding.IFAttributeModel;
@@ -26,10 +27,7 @@ import net.ulrice.process.AbstractProcess;
 import javax.swing.RowSorter.SortKey;
 import javax.swing.*;
 import javax.swing.event.EventListenerList;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 /**
  * Table attribute model. Model for all UTableComponents
@@ -42,11 +40,11 @@ public class TableAM implements IFAttributeModel {
     private IFIndexedModelValueAccessor tableMVA;
 
     private List<ColumnDefinition< ?>> columns = new ArrayList<>();
-    private Map<String, ColumnDefinition> columnIdMap = new Object2ObjectArrayMap<>();
-    private Map<String, Integer> idModelIndexMap;
+    private Map<String, ColumnDefinition> columnIdMap = new HashMap<>();
+    private Object2IntMap<String> idModelIndexMap;
 
     protected List<Element> elements = new ArrayList<>();
-    protected Map<Long, Element> elementIdMap = new Long2ObjectArrayMap<>();
+    protected Long2ObjectMap<Element> elementIdMap = new Long2ObjectOpenHashMap<>();
     
 
     private List<IFValidator> validators = new ArrayList<>();
@@ -55,10 +53,10 @@ public class TableAM implements IFAttributeModel {
     private boolean readOnly;
     private long nextUniqueId;
 
-    private Set<Element> newElements = new ObjectArraySet<>();
-    private Set<Element> modElements = new ObjectArraySet<>();
-    private Set<Element> delElements = new ObjectArraySet<>();
-    private Set<Element> invElements = new ObjectArraySet<>();
+    private Set<Element> newElements = new HashSet<>();
+    private Set<Element> modElements = new HashSet<>();
+    private Set<Element> delElements = new HashSet<>();
+    private Set<Element> invElements = new HashSet<>();
 
     private List<IFViewAdapter> viewAdapterList = new ArrayList<>();
     
@@ -78,9 +76,9 @@ public class TableAM implements IFAttributeModel {
 
     // unique constraint handling
     private String[] uniqueKeyColumnIds = null;
-    private Map<List< ?>, Set<Long>> uniqueMap = new Object2ObjectArrayMap<>();
-    private Map<Long, List< ?>> keyMap = new Long2ObjectArrayMap<>();
-    private Map<List< ?>, ValidationError> currentErrorMap = new Object2ObjectArrayMap<>();
+    private Map<List< ?>, LongSet> uniqueMap = new HashMap<>();
+    private Long2ObjectMap<List< ?>> keyMap = new Long2ObjectOpenHashMap<>();
+    private Map<List< ?>, ValidationError> currentErrorMap = new HashMap<>();
 
     private String pathToChildren;
 
@@ -159,7 +157,7 @@ public class TableAM implements IFAttributeModel {
         checkKeyChangeAndUpdateDatastructure(element.getUniqueId(), key);
                
         if (uniqueMap.containsKey(key)) {
-            Set<Long> uniqueIdSet = uniqueMap.get(key);
+            LongSet uniqueIdSet = uniqueMap.get(key);
             uniqueIdSet.add(element.getUniqueId());
             if (uniqueIdSet.size() > 1) {
                 UniqueKeyConstraintError uniqueConstraintError = new UniqueKeyConstraintError(this, getErrorMessageText(), null);
@@ -171,7 +169,7 @@ public class TableAM implements IFAttributeModel {
             }
         }
         else {
-            Set<Long> uniqueIdSet = new LongArraySet();
+            LongSet uniqueIdSet = new LongOpenHashSet();
             uniqueIdSet.add(element.getUniqueId());
             uniqueMap.put(key, uniqueIdSet);
         }
@@ -2009,7 +2007,7 @@ public class TableAM implements IFAttributeModel {
         return idModelIndexMap;
     }
     
-    public void setIdModelIndexMap(Map<String, Integer> idModelIndexMap) {
+    public void setIdModelIndexMap(Object2IntMap<String> idModelIndexMap) {
         this.idModelIndexMap = idModelIndexMap;
     }
 }

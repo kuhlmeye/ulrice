@@ -1,28 +1,29 @@
 package net.ulrice.databinding.bufferedbinding.impl;
 
-import it.unimi.dsi.fastutil.longs.Long2ObjectArrayMap;
-import it.unimi.dsi.fastutil.longs.LongArraySet;
-import it.unimi.dsi.fastutil.objects.Object2ObjectArrayMap;
+import it.unimi.dsi.fastutil.longs.Long2ObjectMap;
+import it.unimi.dsi.fastutil.longs.Long2ObjectOpenHashMap;
+import it.unimi.dsi.fastutil.longs.LongOpenHashSet;
+import it.unimi.dsi.fastutil.longs.LongSet;
 import net.ulrice.databinding.validation.ValidationError;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 public class UniqueConstraint implements ElementLifecycleListener {
 
 	private String[] columnIds;
 
-	private Map<List<?>, Set<Long>> uniqueMap = new Object2ObjectArrayMap<>();
+	private Map<List<?>, LongSet> uniqueMap = new HashMap<>();
 	
-	private Map<List<?>, Set<Long>> uniqueDeleteMap = new Object2ObjectArrayMap<>();
+	private Map<List<?>, LongSet> uniqueDeleteMap = new HashMap<>();
 
-	private Map<Long, List<?>> keyMap = new Long2ObjectArrayMap<>();
+	private Long2ObjectMap<List<?>> keyMap = new Long2ObjectOpenHashMap<>();
 	
-	private Map<Long, List<?>> keyDeleteMap = new Long2ObjectArrayMap<>();
+	private Long2ObjectMap<List<?>> keyDeleteMap = new Long2ObjectOpenHashMap<>();
 
-	private Map<List<?>, ValidationError> currentErrorMap = new Object2ObjectArrayMap<>();
+	private Map<List<?>, ValidationError> currentErrorMap = new HashMap<>();
 
 	public UniqueConstraint(String... columnIds) {
 		this.columnIds = columnIds;
@@ -57,7 +58,7 @@ public class UniqueConstraint implements ElementLifecycleListener {
         List< ?> key = buildKey(element);
         if (handleKey(table, element.getUniqueId(), key)) {
             if (uniqueMap.containsKey(key)) {
-                Set<Long> uniqueIdSet = uniqueMap.get(key);
+                LongSet uniqueIdSet = uniqueMap.get(key);
                 uniqueIdSet.add(element.getUniqueId());
                 if (uniqueIdSet.size() > 1) {
                     ValidationError uniqueConstraintError = new ValidationError(table, "Unique key constraint error", null);
@@ -68,7 +69,7 @@ public class UniqueConstraint implements ElementLifecycleListener {
                 }
             }
             else {
-                Set<Long> uniqueIdSet = new LongArraySet();
+                LongSet uniqueIdSet = new LongOpenHashSet();
                 uniqueIdSet.add(element.getUniqueId());
                 uniqueMap.put(key, uniqueIdSet);
             }
@@ -84,15 +85,15 @@ public class UniqueConstraint implements ElementLifecycleListener {
 
         if (key == null || !key.equals(oldKey)) {
             if (oldKey != null) {
-                final Set<Long> uniqueKeySet = uniqueMap.get(oldKey);
+                final LongSet uniqueKeySet = uniqueMap.get(oldKey);
                 uniqueKeySet.remove(uniqueId);
                 // should not happen
                 if (uniqueDeleteMap.containsKey(oldKey)) {
-                    final Set<Long> uniqueDeleteKeySet = uniqueDeleteMap.get(oldKey);
+                    final LongSet uniqueDeleteKeySet = uniqueDeleteMap.get(oldKey);
                     uniqueDeleteKeySet.add(uniqueId);
                 }
                 else {
-                    final Set<Long> uniqueIdSet = new LongArraySet();
+                    final LongSet uniqueIdSet = new LongOpenHashSet();
                     uniqueIdSet.add(uniqueId);
                     uniqueDeleteMap.put(oldKey, uniqueIdSet);
                 }
