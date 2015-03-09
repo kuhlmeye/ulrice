@@ -28,17 +28,19 @@ public class ColumnChooserView extends JDialog {
     private ColumnTableModel tableModel;
     private JButton saveButton;
     private JButton cancleButton;
+    private JButton resetButton;
     private ColumnChooserTable table;
 
     private void initGUI() {
         TranslationProvider tp = Ulrice.getTranslationProvider();
         setDefaultCloseOperation(DISPOSE_ON_CLOSE);
-        String title = tp.getUlriceTranslation(TranslationUsage.Title, "ColumnChooser").getText();
-        String importButtonText = tp.getUlriceTranslation(TranslationUsage.Button, "OK").getText();
+        String dialogTitleText = tp.getUlriceTranslation(TranslationUsage.Title, "ColumnChooser").getText();
+        String okButtonText = tp.getUlriceTranslation(TranslationUsage.Button, "OK").getText();
+        String resetButtonText = tp.getUlriceTranslation(TranslationUsage.Button, "Reset").getText();
         String cancelButtonText = tp.getUlriceTranslation(TranslationUsage.Button, "Cancel").getText();
-        setTitle(title);
+        setTitle(dialogTitleText);
 
-        setSize(520, 550);
+        //        setSize(520, 550);
         setMinimumSize(new Dimension(520, 550));
 
         table = new ColumnChooserTable();
@@ -47,8 +49,9 @@ public class ColumnChooserView extends JDialog {
         JScrollPane tableScrollPane = new JScrollPane(table, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
         tableScrollPane.setBorder(BorderFactory.createEmptyBorder());
 
-        saveButton = new JButton(importButtonText);
+        saveButton = new JButton(okButtonText);
         cancleButton = new JButton(cancelButtonText);
+        resetButton = new JButton(resetButtonText);
         cancleButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -61,13 +64,14 @@ public class ColumnChooserView extends JDialog {
         tableCol0.setCellRenderer(new CheckboxCellRenderer(tableModel, true));
 
         TableColumn tableCol2 = table.getColumnModel().getColumn(2);
-        tableCol2.setMaxWidth(75);
-        tableCol2.setMinWidth(75);
+        tableCol2.setMaxWidth(100);
+        tableCol2.setMinWidth(100);
         tableCol2.setCellRenderer(new CheckboxCellRenderer(tableModel, false));
 
         setLayout(new BorderLayout());
 
         JPanel buttonPanel = new JPanel(new FlowLayout());
+        buttonPanel.add(resetButton);
         buttonPanel.add(saveButton);
         buttonPanel.add(cancleButton);
 
@@ -79,16 +83,8 @@ public class ColumnChooserView extends JDialog {
         return saveButton;
     }
 
-    public void setSaveButton(JButton saveButton) {
-        this.saveButton = saveButton;
-    }
-
     public JButton getCancleButton() {
         return cancleButton;
-    }
-
-    public void setCancleButton(JButton cancleButton) {
-        this.cancleButton = cancleButton;
     }
 
     public JTable getTable() {
@@ -99,4 +95,7 @@ public class ColumnChooserView extends JDialog {
         return tableModel;
     }
 
+    public JButton getResetButton() {
+        return resetButton;
+    }
 }
