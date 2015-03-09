@@ -108,6 +108,7 @@ public class ColumnChooser {
 
     public void showDialog() {
         init();
+        view.setLocationRelativeTo(Ulrice.getMainFrame().getFrame());
         view.setVisible(true);
     }
 
