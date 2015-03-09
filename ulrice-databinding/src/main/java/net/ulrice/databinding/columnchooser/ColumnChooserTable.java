@@ -14,7 +14,7 @@ public class ColumnChooserTable extends JTable {
     public void setBounds(int x, int y, int width, int height) {
         super.setBounds(x, y, width, height);
 
-        setPreferredColumnWidths(new double[] { 0.45, 0.45, 0.1});
+        setPreferredColumnWidths(new double[] { 0.45, 0.45, 0.1 });
     }
 
     protected void setPreferredColumnWidths(double[] percentages) {

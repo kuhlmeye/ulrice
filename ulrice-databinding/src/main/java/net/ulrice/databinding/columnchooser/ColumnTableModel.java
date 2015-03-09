@@ -102,8 +102,8 @@ public class ColumnTableModel extends AbstractTableModel {
         }
     }
 
-    public void addRow(String columnId, String translatedName, boolean isUniqueKeyColumn, ColumnDefinition.ColumnType defaultColumnType, boolean showColumn) {
-        rows.add(new Row(columnId, translatedName, isUniqueKeyColumn, defaultColumnType, showColumn));
+    public void addRow(String columnId, String translatedName, boolean isUniqueKeyColumn, boolean showColumn) {
+        rows.add(new Row(columnId, translatedName, isUniqueKeyColumn, showColumn));
     }
 
     public boolean isRowUnique(int row) {
@@ -115,15 +115,13 @@ public class ColumnTableModel extends AbstractTableModel {
         private String columnId;
         private String translatedName;
         private boolean isUniqueKeyColumn;
-        private ColumnDefinition.ColumnType defaultColumnType;
 
         private boolean showColumn;
 
-        public Row(String columnId, String translatedName, boolean isUniqueKeyColumn, ColumnDefinition.ColumnType defaultColumnType, boolean showColumn) {
+        public Row(String columnId, String translatedName, boolean isUniqueKeyColumn, boolean showColumn) {
             this.columnId = columnId;
             this.translatedName = translatedName;
             this.isUniqueKeyColumn = isUniqueKeyColumn;
-            this.defaultColumnType = defaultColumnType;
             this.showColumn = showColumn;
         }
 
@@ -137,10 +135,6 @@ public class ColumnTableModel extends AbstractTableModel {
 
         public boolean isUniqueKeyColumn() {
             return isUniqueKeyColumn;
-        }
-
-        public ColumnDefinition.ColumnType getDefaultColumnType() {
-            return defaultColumnType;
         }
 
         public boolean isShowColumn() {
