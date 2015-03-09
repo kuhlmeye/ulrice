@@ -45,7 +45,8 @@ public class TableAM implements IFAttributeModel {
 
     protected List<Element> elements = new ArrayList<>();
     protected Long2ObjectMap<Element> elementIdMap = new Long2ObjectOpenHashMap<>();
-    
+
+    private String columnChooserID;
 
     private List<IFValidator> validators = new ArrayList<>();
     private EventListenerList listenerList = new EventListenerList();
@@ -2009,5 +2010,25 @@ public class TableAM implements IFAttributeModel {
     
     public void setIdModelIndexMap(Object2IntMap<String> idModelIndexMap) {
         this.idModelIndexMap = idModelIndexMap;
+    }
+
+    public boolean isUniquePathColumn(String columnId){
+        if(uniqueKeyColumnIds == null){
+            return false;
+        }
+        for(String s : uniqueKeyColumnIds){
+            if(s.equals(columnId)){
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public String getColumnChooserID() {
+        return columnChooserID;
+    }
+
+    public void setColumnChooserID(String columnChooserID) {
+        this.columnChooserID = columnChooserID;
     }
 }
