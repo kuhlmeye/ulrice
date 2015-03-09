@@ -19,6 +19,7 @@ import net.ulrice.databinding.bufferedbinding.impl.ColumnDefinition;
 import net.ulrice.databinding.bufferedbinding.impl.Element;
 import net.ulrice.databinding.bufferedbinding.impl.TableAM;
 import net.ulrice.databinding.bufferedbinding.impl.TableAMListener;
+import net.ulrice.databinding.columnchooser.ColumnChooser;
 import net.ulrice.databinding.viewadapter.AbstractViewAdapter;
 import net.ulrice.databinding.viewadapter.IFCellStateMarker;
 import net.ulrice.databinding.viewadapter.IFCellTooltipHandler;
@@ -35,6 +36,9 @@ public class UTableViewAdapter extends AbstractViewAdapter implements TableModel
     private TableAM attributeModel;
 
     private UTableComponent table;
+
+    // only set if it was added
+    private ColumnChooser columnChooser;
 
     private TableAMListener tableAMListener = new TableAMListener() {
 
@@ -101,9 +105,7 @@ public class UTableViewAdapter extends AbstractViewAdapter implements TableModel
      * @see net.ulrice.databinding.IFGuiAccessor#setAttributeModel(net.ulrice.databinding.IFAttributeModel)
      */
     public void setAttributeModel(TableAM attributeModel) {
-       
-        
-        
+
         if (this.attributeModel == null || !this.attributeModel.equals(attributeModel)) {
             if (this.attributeModel != null) {
                
@@ -117,6 +119,11 @@ public class UTableViewAdapter extends AbstractViewAdapter implements TableModel
               
             }
             table.setAttributeModel(attributeModel);
+
+            if(attributeModel.getColumnChooserID() != null){
+                columnChooser = new ColumnChooser(attributeModel, table, attributeModel.getColumnChooserID());
+            }
+
 //            table.updateColumnModel();
             fireAttributeModelBound(this.attributeModel);
             //fireTableStructureChanged();
