@@ -7,6 +7,7 @@ import java.awt.event.MouseListener;
 import java.util.List;
 
 import javax.swing.JComponent;
+import javax.swing.ListSelectionModel;
 import javax.swing.event.EventListenerList;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.event.TableModelEvent;
@@ -567,6 +568,22 @@ public class UTableViewAdapter extends AbstractViewAdapter implements TableModel
      */
     public void selectElement(int index) {
         table.selectElement(index);
+    }
+
+    /**
+     * Select elements with the given index. However, the behaviour depends on the
+     * {@link ListSelectionModel#getSelectionMode()}:
+     * <ul>
+     * <li>For {@link ListSelectionModel#SINGLE_SELECTION} only the 1st of the given indexes will be selected.</li>
+     * <li>For {@link ListSelectionModel#SINGLE_INTERVAL_SELECTION} the range between the 1st and the last given
+     * indexes will be selected.</li>
+     * <li>For {@link ListSelectionModel#MULTIPLE_INTERVAL_SELECTION} all of the given indexes will be selected.</li>
+     * </ul>
+     * 
+     * @param indexes
+     */
+    public void selectElements(int... indexes) {
+        table.selectElements(indexes);
     }
 
     public void setTreeTableModelAdapter(TreeTableModelAdapter treeTableModelAdapter) {

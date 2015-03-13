@@ -31,6 +31,12 @@ public class UBorder implements Border {
         return painter.getMargin();
     }
 
+    public UBorder setFocusVisible(boolean focusVisible) {
+        painter.setFocusVisible(focusVisible);
+
+        return this;
+    }
+
     public UBorder setMargin(Insets margin) {
         painter.setMargin(margin);
 

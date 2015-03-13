@@ -739,6 +739,45 @@ public class UTableComponent extends JPanel {
     }
 
     /**
+     * Behaviour depends on the {@link ListSelectionModel#getSelectionMode()}:
+     * <ul>
+     * <li>For {@link ListSelectionModel#SINGLE_SELECTION} only the 1st of the given indexes will be selected.</li>
+     * <li>For {@link ListSelectionModel#SINGLE_INTERVAL_SELECTION} the range between the 1st and the last given
+     * indexes will be selected.</li>
+     * <li>For {@link ListSelectionModel#MULTIPLE_INTERVAL_SELECTION} all of the given indexes will be selected.</li>
+     * </ul>
+     * 
+     * @param indexes
+     */
+    public void selectElements(int... indexes) {
+
+        switch (getSelectionModel().getSelectionMode()) {
+
+            case ListSelectionModel.SINGLE_SELECTION:
+                if (indexes != null && indexes.length > 0) {
+                    selectElement(indexes[0]);
+                }
+                break;
+
+            case ListSelectionModel.MULTIPLE_INTERVAL_SELECTION:
+                getSelectionModel().clearSelection();
+                if (indexes != null && indexes.length > 0) {
+                    for (int index : indexes) {
+                        getSelectionModel().addSelectionInterval(index, index);
+                    }
+                }
+                break;
+
+            case ListSelectionModel.SINGLE_INTERVAL_SELECTION:
+                getSelectionModel().clearSelection();
+                if (indexes != null && indexes.length > 0) {
+                    getSelectionModel().addSelectionInterval(indexes[0], indexes[indexes.length - 1]);
+                }
+                break;
+        }
+    }
+
+    /**
      * Returns true, if exactly one table row is selected.
      */
     public boolean isSingleRowSelected() {
