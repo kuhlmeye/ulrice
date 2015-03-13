@@ -1,7 +1,10 @@
 package net.ulrice.remotecontrol.impl;
 
 import java.awt.AWTException;
+import java.awt.Color;
+import java.awt.Graphics2D;
 import java.awt.Rectangle;
+import java.awt.RenderingHints;
 import java.awt.Robot;
 import java.awt.Window;
 import java.awt.image.BufferedImage;
@@ -25,14 +28,14 @@ import net.ulrice.remotecontrol.util.ResultClosure;
 
 /**
  * Implementation of the {@link ApplicationRemoteControl}
- * 
+ *
  * @author Manfred HANTSCHEL
  */
 public class ApplicationRemoteControlImpl implements ApplicationRemoteControl {
 
     /**
      * {@inheritDoc}
-     * 
+     *
      * @see net.ulrice.remotecontrol.ApplicationRemoteControl#ping()
      */
     @Override
@@ -42,7 +45,7 @@ public class ApplicationRemoteControlImpl implements ApplicationRemoteControl {
 
     /**
      * {@inheritDoc}
-     * 
+     *
      * @see net.ulrice.remotecontrol.ApplicationRemoteControl#shutdown()
      */
     @Override
@@ -52,7 +55,7 @@ public class ApplicationRemoteControlImpl implements ApplicationRemoteControl {
 
     /**
      * {@inheritDoc}
-     * 
+     *
      * @see net.ulrice.remotecontrol.ApplicationRemoteControl#screenshot()
      */
     @Override
@@ -79,7 +82,22 @@ public class ApplicationRemoteControlImpl implements ApplicationRemoteControl {
             throw new RemoteControlException("Failed to tell robot to capture screenshot", e);
         }
 
-        BufferedImage screenshot = robot.createScreenCapture(rectangle);
+        BufferedImage screenshot;
+
+        if (rectangle == null) {
+            screenshot = new BufferedImage(640, 480, BufferedImage.TYPE_INT_RGB);
+            
+            Graphics2D g = screenshot.createGraphics();
+            
+            g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+            g.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
+            
+            g.setColor(Color.GRAY);
+            g.drawString("[process has no window]", 10, 20);
+        }
+        else {
+            screenshot = robot.createScreenCapture(rectangle);
+        }
 
         // if (description != null) {
         // Graphics2D g = screenshot.createGraphics();
@@ -140,7 +158,7 @@ public class ApplicationRemoteControlImpl implements ApplicationRemoteControl {
 
     /**
      * {@inheritDoc}
-     * 
+     *
      * @see net.ulrice.remotecontrol.ApplicationRemoteControl#overrideSpeedFactor(double)
      */
     @Override
@@ -150,7 +168,7 @@ public class ApplicationRemoteControlImpl implements ApplicationRemoteControl {
 
     /**
      * {@inheritDoc}
-     * 
+     *
      * @see net.ulrice.remotecontrol.ApplicationRemoteControl#combinedWaitFor(double,
      *      net.ulrice.remotecontrol.ComponentMatcher, net.ulrice.remotecontrol.ControllerMatcher)
      */

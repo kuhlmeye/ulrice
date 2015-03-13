@@ -6,6 +6,7 @@ import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.Image;
 import java.awt.LinearGradientPaint;
 import java.awt.Point;
 import java.awt.event.ActionEvent;
@@ -52,7 +53,7 @@ public class RemoteControlWindow extends JWindow implements ActionListener {
 
         /**
          * {@inheritDoc}
-         * 
+         *
          * @see java.awt.event.MouseListener#mousePressed(java.awt.event.MouseEvent)
          */
         @Override
@@ -62,7 +63,7 @@ public class RemoteControlWindow extends JWindow implements ActionListener {
 
         /**
          * {@inheritDoc}
-         * 
+         *
          * @see java.awt.event.MouseListener#mouseReleased(java.awt.event.MouseEvent)
          */
         @Override
@@ -72,7 +73,7 @@ public class RemoteControlWindow extends JWindow implements ActionListener {
 
         /**
          * {@inheritDoc}
-         * 
+         *
          * @see java.awt.event.MouseMotionListener#mouseDragged(java.awt.event.MouseEvent)
          */
         @Override
@@ -101,6 +102,7 @@ public class RemoteControlWindow extends JWindow implements ActionListener {
     private static final String PLUS_ACTION = "plus";
     private static final String STOP_ACTION = "stop";
 
+    private static final Image WINDOW_IMAGE;
     private static final Icon GRIP_ICON;
     private static final Icon PLAY_ICON;
     private static final Icon PAUSE_ICON;
@@ -122,13 +124,12 @@ public class RemoteControlWindow extends JWindow implements ActionListener {
 
     static {
         try {
+            WINDOW_IMAGE = ImageIO.read(RemoteControlWindow.class.getResource("window.png"));
             GRIP_ICON = new ImageIcon(ImageIO.read(RemoteControlWindow.class.getResource("grip.png")));
             PLAY_ICON = new ImageIcon(ImageIO.read(RemoteControlWindow.class.getResource("play.png")));
             PAUSE_ICON = new ImageIcon(ImageIO.read(RemoteControlWindow.class.getResource("pause.png")));
-            PAUSE_ON_ERROR_ICON =
-                    new ImageIcon(ImageIO.read(RemoteControlWindow.class.getResource("pauseOnError.png")));
-            PAUSE_ON_SCENARIO_ICON =
-                    new ImageIcon(ImageIO.read(RemoteControlWindow.class.getResource("pauseOnScenario.png")));
+            PAUSE_ON_ERROR_ICON = new ImageIcon(ImageIO.read(RemoteControlWindow.class.getResource("pauseOnError.png")));
+            PAUSE_ON_SCENARIO_ICON = new ImageIcon(ImageIO.read(RemoteControlWindow.class.getResource("pauseOnScenario.png")));
             STEP_ICON = new ImageIcon(ImageIO.read(RemoteControlWindow.class.getResource("step.png")));
             // STEP_SCENARIO_ICON = new ImageIcon(ImageIO.read(RemoteControlWindow.class.getResource("ff.png")));
             DOWN_ICON = new ImageIcon(ImageIO.read(RemoteControlWindow.class.getResource("down.png")));
@@ -167,6 +168,9 @@ public class RemoteControlWindow extends JWindow implements ActionListener {
     public RemoteControlWindow() {
         super();
 
+        setName("Remote Control");
+        setIconImage(WINDOW_IMAGE);
+
         JToolBar toolbar = new JToolBar() {
 
             private static final long serialVersionUID = 5363374860898779797L;
@@ -180,8 +184,7 @@ public class RemoteControlWindow extends JWindow implements ActionListener {
                 Color COLOR_C = new Color(0xcbc2e1);
                 Color COLOR_D = new Color(0xffffff);
 
-                g.setPaint(new LinearGradientPaint(0, 0, 0, getHeight(), new float[] { 0.0f, 0.45f, 0.46f, 1.0f },
-                    new Color[] { COLOR_A, COLOR_B, COLOR_C, COLOR_D }));
+                g.setPaint(new LinearGradientPaint(0, 0, 0, getHeight(), new float[] { 0.0f, 0.45f, 0.46f, 1.0f }, new Color[] { COLOR_A, COLOR_B, COLOR_C, COLOR_D }));
                 g.fillRect(0, 0, getWidth(), getHeight());
 
                 super.paintComponent(g);
@@ -200,8 +203,7 @@ public class RemoteControlWindow extends JWindow implements ActionListener {
         stepButton = createButton(STEP_ICON, "Step", STEP_ACTION);
         // stepScenarioButton = createButton(STEP_SCENARIO_ICON, "Step Scenario", STEP_SCENARIO_ACTION);
         pauseOnErrorButton = createToggleButton(PAUSE_ON_ERROR_ICON, "Pause On Error", PAUSE_ON_ERROR_ACTION);
-        pauseOnScenarioButton =
-                createToggleButton(PAUSE_ON_SCENARIO_ICON, "Pause On Scenario", PAUSE_ON_SCENARIO_ACTION);
+        pauseOnScenarioButton = createToggleButton(PAUSE_ON_SCENARIO_ICON, "Pause On Scenario", PAUSE_ON_SCENARIO_ACTION);
         infoLabel = createLabel(OK_ICON);
         infoField = createTextField("Ulrice Remote Control", 48);
         infoField.addMouseListener(dragListener);
@@ -255,7 +257,7 @@ public class RemoteControlWindow extends JWindow implements ActionListener {
         else {
             speedField.setText(String.format("%,.1f%%", 100 / speedFactor));
         }
-        
+
         if (RemoteControlCenter.isPausing()) {
             playButton.setIcon(PLAY_ICON);
         }
