@@ -117,13 +117,12 @@ public class UTableViewAdapter extends AbstractViewAdapter implements TableModel
             this.attributeModel = attributeModel;
             if(this.attributeModel != null){
                 this.attributeModel.addTableAMListener(tableAMListener);
-              
+
+                if(this.attributeModel.getColumnChooserID() != null){
+                    columnChooser = new ColumnChooser(this.attributeModel, table, this.attributeModel.getColumnChooserID());
+                }
             }
             table.setAttributeModel(attributeModel);
-
-            if(attributeModel.getColumnChooserID() != null){
-                columnChooser = new ColumnChooser(attributeModel, table, attributeModel.getColumnChooserID());
-            }
 
 //            table.updateColumnModel();
             fireAttributeModelBound(this.attributeModel);
