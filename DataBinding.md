@@ -1,0 +1,43 @@
+# Introduction #
+
+
+Databinding is used to bind the values of attributes of your business object to gui components. This means that all values are displayed automatically in the gui and user inputs are automatically synchronized with the business objects.
+
+![https://ulrice.googlecode.com/svn/wiki/img/Overview.png](https://ulrice.googlecode.com/svn/wiki/img/Overview.png)
+
+# View Adapter #
+A view adapter is a class that is able to handle a java gui component. The main task of this class is to receive values from attribute models and display them in the gui component.
+
+The following adapters are currently available:
+  * JButtonViewAdapter
+  * JCheckBoxViewAdapter
+  * JComboBoxViewAdapter
+  * JListViewAdapter
+  * JRadioButtonViewAdapter
+  * JSliderViewAdapter
+  * JSpinnerViewAdapter
+  * JTextComponentViewAdapter
+  * JTableViewAdapter
+  * UTableViewAdapter
+
+
+# Attribute Models #
+Javadoc:
+  * [IFBinding](http://ulrice.googlecode.com/svn/trunk/ulrice-javadoc/ulrice-databinding/net/ulrice/databinding/IFBinding.html)
+  * [IFAttributeModel](http://ulrice.googlecode.com/svn/trunk/ulrice-javadoc/ulrice-databinding/net/ulrice/databinding/bufferedbinding/IFAttributeModel.html)
+
+An attribute model is a class that is able to store an attribute value and detect changes on it. One or more view accessors could be connected to an attribute model. The value maintained by the attribute model is then displayed in the gui components of the accessors.
+
+Currently, two attribute models exist in the framework:
+
+## GenericAM ##
+A generic attribute model is the model for a single object (String, Integer, Long, ...).
+
+## TableAM ##
+The table attribute model is used as a model for all list types presented in UTableComponents or a JTable. It contains list-specific functions like methods for getting all created/updated/removed objects.
+
+# Data Validation #
+The ulrice binding framework offers a simple way to add your own object and attribute validators to the attribute models. You can add validations to an attribute model by calling the addValidator-Method.
+
+# Binding Group #
+A binding groups manages a set of attribute bindings.

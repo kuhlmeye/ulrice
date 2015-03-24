@@ -1,0 +1,5 @@
+# Introduction #
+
+The action manager controls the application action shown in the toolbar and the menue and used by the modules.
+
+The instance of the class can be retrieved by calling Ulrice.getActionManager().

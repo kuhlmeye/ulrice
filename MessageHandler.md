@@ -1,0 +1,3 @@
+# Introduction #
+
+The message handler handles all messages and exception thrown within the ulrice application.

@@ -1,0 +1,18 @@
+# Introduction #
+
+The dialog manager is used to handle the lifecycle of JDialogs that are controlled by modules. It shows/hides the dialogs if the controller is (de)activated and closes them if the controller is closed.
+
+It currently supports three display modes
+  * **Application Modal** - The dialog is always on top and the whole application is blocked until the dialog is closed.
+  * **Modul Modal** - The dialog is always on top. The module is blocked but not the application.
+  * **Non Modal** - The dialog could be moved to the background. The application is not blocked.
+
+# How To #
+
+## How to open a dialog within a controller ##
+
+The only thing you have to do to open a dialog from a controller is to call the showDialog-Method.
+```
+   // Open your dialog.
+   Ulrice.getDialogManager().showDialog(this, dialog, DialogMode.ModuleModal);
+```

@@ -1,0 +1,105 @@
+# Introduction #
+
+The webstarter is a highly configurable toolbox to download and start java applications. The process needed to update and start an application differs from application to application and therefore the process is defined in an xml file. Each process consists of several tasks.
+The webstarter could be started as a client application or an applet.
+
+![https://ulrice.googlecode.com/svn/wiki/img/webstarter.png](https://ulrice.googlecode.com/svn/wiki/img/webstarter.png)
+
+# Webstarter-Configuration #
+The xml-files defining the download and startup-process are loaded from the applications subdirectory (all files with the suffix .ws.xml or are given directly by a command line parameter.
+
+## Sample configuration ##
+
+```
+<application applicationName="Application Name" applicationIcon="Application.200.png" needsLogin="true" localDir="C:/MyApplication">	
+	<appParameter value="-param01=value"/>
+	<appParameter value="-param02=value"/>
+	<appParameter value="-param03=value"/>
+	<appParameter value="-userId=${USERID}"/>
+	<appParameter value="-pdCookie=${COOKIE=PD-H-SESSION-ID}"/>		
+	<appParameter value="-pdFailoverCookie=${COOKIE=PD-ID}"/>		
+		
+	<task type="TamLogin" url="https://tam.login.url/pkmslogin.form" />
+	<task type="ReadDescription"
+		baseUrl="https://root.url.to.downloaded.files/"
+		descriptionUrl="https://url.of.description.file" >
+		<task type="DownloadFile"/>
+		<task type="Unzip" filter=".*\.zip" />
+		<task type="AddToClasspath" filter=".*\.jar" />
+	</task>
+	<task type="StartApplication" localJre="name/of/jre/directory" mainClass="my.application.Application"/>
+</application>
+```
+
+Configuration file for downloading and starting the ulrice sample application.
+```
+<application applicationName="Ulrice Sample Application (Internet)" needsLogin="false" localDir="${USER_DIR}/ulrice-webstarter/ulrice_sample">
+    <task type="ReadTasks" descriptionUrl="http://ulrice.googlecode.com/files/ulrice-sample-0.1-SNAPSHOT.ws.xml"/>	
+	<task type="StartApplication" mainClass="net.ulrice.sample.UlriceSampleApplication" />
+</application>
+```
+
+## Application ##
+This tag defines the basic application settings like the name. The following attributes are valid
+  * applicationName The name of the application shown in the webstarter.
+  * applicationIcon An optional icon for the application.
+  * needsLogin true or false. It defines, if login-parameters are used.
+  * localDir The local directory where the downloaded files are stored. ${USER\_DIR} is an allowed placeholder for the default user directory.
+
+### Application Parameters ###
+Parameters that should be added as command line parameter during appliation start could be specified with the tag appParameter. The value attribute contains the commmand line parameter string.
+The placeholder that can be used within the value attribute are described in the StartApplication-Task.
+
+## Tasks ##
+This section describes the standard tasks included in the ulrice webstarter.
+
+### AddToClasspath ###
+Adds a downloaded file to the classpath.
+#### Parameters ####
+  * filter Reg.-Exp filter which identifies all files that should be added to the classpath.
+  * url Url of the file which is a candicate to be added to the classpath.
+
+### DownloadFile ###
+Downloads a file from an url.
+#### Parameters ####
+  * url The file location.
+  * md5 The md5 sum of the file.
+  * pack200 True, if the remote file is packed with pack200
+  * classpath True, if this file should be added to the classpath.
+
+### ReadDescription ###
+Reads a list of files from an application description file from an url and starts all subtasks contained in this task.
+#### Parameters ####
+  * baseUrl
+  * descriptionUrl
+#### Placeholders ####
+The following placeholders could be used in the subtasks.
+  * ${FILE\_URL} This placeholder will be replaced with the url of the current file that is downloaded by the webstarter.
+
+### ReadTasks ###
+Read further tasks from an url.
+#### Parameters ####
+  * url The url of the xml description file containing the additional tasks.
+
+### StartApplication ###
+Starts a java application using a jre. The application is started as a seperate process. All appParameter-Tags are processed within this task.
+#### Parameters ####
+  * localJre Path to a local jre. This is an optional parameter. If not existing a system jre will be used.
+  * mainClass The full qualified path to the main class.
+#### Placeholders ####
+The following placeholders are processed during the application parameter handling.
+  * ${USERID} Replaced with the user id entered for the login.
+  * ${COOKIE=`<name>`} Replaced with the value of the cookie with name `<name>`
+
+### TamLogin ###
+Logins with username/password at a tivoli access manager.
+Sends the user/password to the tam login form and retrieves the response including the session coookie.
+The cookie then will be used in the further communication with the server
+#### Parameters ####
+  * url Url to the login page of the tivoli access manager
+
+### Unzip ###
+Unzips a file.
+#### Parameters ####
+  * filter Reg.-Exp filter which identifies all files that should be unzipped.
+  * url Url of the file which is a candicate to be unzipped.
