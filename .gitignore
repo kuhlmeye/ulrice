@@ -6,3 +6,4 @@ bin/
 out/
 *.bak
 *.log
+*.iml
