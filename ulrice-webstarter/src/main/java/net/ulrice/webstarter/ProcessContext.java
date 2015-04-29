@@ -20,8 +20,9 @@ public class ProcessContext {
 	/** Stores all classpath entries. */
 	private List<String> classPath= new ArrayList<String>();
 	private Properties appSettings = new Properties();
-	
-	public Properties getAppSettings() {
+    private boolean filesDownloaded;
+
+    public Properties getAppSettings() {
 		return appSettings;
 	}
 
@@ -67,7 +68,15 @@ public class ProcessContext {
 		this.password = password;
 	}
 
-	public List<String> getClassPath() {
+    public void setFilesDownloaded(boolean filesDownloaded) {
+        this.filesDownloaded = filesDownloaded;
+    }
+
+    public boolean isFilesDownloaded() {
+        return filesDownloaded;
+    }
+
+    public List<String> getClassPath() {
 		return classPath;
 	}
 

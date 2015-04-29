@@ -161,6 +161,8 @@ public class DownloadFile extends AbstractTask {
             }
 
             if (!skipDownload) {
+                thread.getContext().setFilesDownloaded(true);
+
                 thread.fireTaskProgressed(this, 0, fileName, "Downloading " + fileName + "...");
 
                 if (localDir.isDirectory() && localDir.canWrite()) {
