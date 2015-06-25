@@ -265,7 +265,15 @@ public class DownloadFile extends AbstractTask {
 
 	public String getUrl() {
 		String urlStr = getParameterAsString(URL_PARAM);
+
         String baseUrlString = getParameterAsString(BASE_URL_PARAM_NAME);
+
+        if(baseUrlString == null){
+            baseUrlString = System.getProperty("jarBaseUrl");
+        }
+
+        System.out.println(baseUrlString);
+
         if (baseUrlString != null) {
             urlStr = baseUrlString + urlStr;
         }
