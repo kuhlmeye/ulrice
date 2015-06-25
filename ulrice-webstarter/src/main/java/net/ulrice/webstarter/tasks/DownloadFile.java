@@ -272,8 +272,6 @@ public class DownloadFile extends AbstractTask {
             baseUrlString = System.getProperty("jarBaseUrl");
         }
 
-        System.out.println(baseUrlString);
-
         if (baseUrlString != null) {
             urlStr = baseUrlString + urlStr;
         }
