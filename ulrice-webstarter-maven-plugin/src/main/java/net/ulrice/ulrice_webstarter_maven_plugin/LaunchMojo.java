@@ -1,15 +1,7 @@
 package net.ulrice.ulrice_webstarter_maven_plugin;
 
-import java.io.IOException;
-import java.net.URL;
-import java.util.List;
-
-import net.ulrice.webstarter.ApplicationDescription;
-import net.ulrice.webstarter.IFProcessEventListener;
-import net.ulrice.webstarter.ProcessThread;
-import net.ulrice.webstarter.XMLDescriptionReader;
+import net.ulrice.webstarter.*;
 import net.ulrice.webstarter.tasks.IFTask;
-
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
@@ -17,9 +9,16 @@ import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.project.MavenProject;
 import org.xml.sax.SAXException;
 
+import java.io.IOException;
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 /**
  * Launch ulrice application mojo
- * 
+ *
  * @author HAM
  * @goal launch
  */
@@ -35,8 +34,23 @@ public class LaunchMojo extends AbstractMojo implements IFProcessEventListener {
     private URL url;
 
     /**
+     * @parameter expression="${ulrice-webstarter.launch.baseUrl}"
+     */
+    private URL baseUrl;
+
+    /**
+     * @parameter expression="${ulrice-webstarter.launch.temppath}"
+     */
+    private String temppath;
+
+    /**
+     * @parameter expression="${ulrice-webstarter.launch.authType}"
+     */
+    private String authType;
+
+    /**
      * The Maven project object
-     * 
+     *
      * @parameter expression="${project}"
      * @readonly
      */
@@ -44,7 +58,7 @@ public class LaunchMojo extends AbstractMojo implements IFProcessEventListener {
 
     /**
      * The plugin dependencies.
-     * 
+     *
      * @parameter expression="${plugin.artifacts}"
      * @readonly
      */
@@ -56,6 +70,30 @@ public class LaunchMojo extends AbstractMojo implements IFProcessEventListener {
 
     public void setUrl(URL url) {
         this.url = url;
+    }
+
+    public URL getBaseUrl() {
+        return baseUrl;
+    }
+
+    public void setBaseUrl(URL baseUrl) {
+        this.baseUrl = baseUrl;
+    }
+
+    public String getTemppath() {
+        return temppath;
+    }
+
+    public void setTemppath(String temppath) {
+        this.temppath = temppath;
+    }
+
+    public String getAuthType() {
+        return authType;
+    }
+
+    public void setAuthType(String authType) {
+        this.authType = authType;
     }
 
     @Override
@@ -71,9 +109,18 @@ public class LaunchMojo extends AbstractMojo implements IFProcessEventListener {
         // }
 
         if (url == null) {
-            throw new MojoFailureException(
-                "URL is missing. Either provide a <configuration><url>...</url></configuration> or a -Dulrice-webstarter.launch.url=...");
+            throw new MojoFailureException("URL is missing. Either provide a <configuration><url>...</url></configuration> or a -Dulrice-webstarter.launch.url=...");
         }
+
+        if (baseUrl == null) {
+            throw new MojoFailureException("URL is missing. Either provide a <configuration><baseUrl>...</baseUrl></configuration> or a -Dulrice-webstarter.launch.baseUrl=...");
+        }
+
+        if (temppath == null) {
+            throw new MojoFailureException("temppath missing");
+        }
+
+        System.setProperty("jarBaseUrl", baseUrl.toString() + "appstarter/importer/");
 
         getLog().debug("Using URL: " + url);
 
@@ -86,15 +133,43 @@ public class LaunchMojo extends AbstractMojo implements IFProcessEventListener {
         }
         ApplicationDescription appDescription = new ApplicationDescription();
 
+        appDescription.setLocalDir(temppath);
+
+        ArrayList<String> params = new ArrayList<String>();
+        params.add("-authType=" + authType);
+        params.add("-backendUrl=" + baseUrl);
+        params.add("-authUrl=" + baseUrl + "OMDAuthService");
+        appDescription.setAppParameters(params);
+
         appDescription.setId(url.toString());
         try {
-            reader.parseXML(appDescription);
+            reader.parseXML(appDescription, baseUrl.toString() + "appstarter/importer/");
         }
         catch (SAXException e) {
             throw new MojoExecutionException("Failed to parse xml", e);
         }
         catch (IOException e) {
             throw new MojoFailureException("Failed to read application descriptor from " + url);
+        }
+
+        Class<? extends IFTask> taskClass = null;
+
+        try {
+            taskClass = (Class<? extends IFTask>) Class.forName("net.ulrice.webstarter.tasks.StartApplication");
+
+
+            Map<String, String> parameters = new HashMap<String, String>();
+//                        parameters.put("mainClass", "vwg.omd.test.acceptance.irc.ImporterRichClientWithRC");
+            parameters.put("mainClass", "vwg.omd.rc.imp.ImporterRichClient");
+            parameters.put("vmOptions", "Xmx1024m");
+            TaskDescription readTask = new TaskDescription(taskClass, parameters);
+
+
+
+            appDescription.addTask(readTask);
+        }
+        catch (ClassNotFoundException e) {
+            e.printStackTrace();
         }
 
         ProcessThread thread = new ProcessThread(appDescription);
@@ -138,6 +213,7 @@ public class LaunchMojo extends AbstractMojo implements IFProcessEventListener {
                 // ignore
             }
         }
+
     }
 
     @Override
@@ -153,14 +229,10 @@ public class LaunchMojo extends AbstractMojo implements IFProcessEventListener {
     }
 
     @Override
-    public void taskProgressed(ProcessThread thread, IFTask task, int progress, String shortMessage,
-        String longMessage) {
+    public void taskProgressed(ProcessThread thread, IFTask task, int progress, String shortMessage, String longMessage) {
 
         if (progress >= nextProgress) {
-            getLog()
-                .info(
-                    String.format("  %s [%d%%]", getProgressMessage(task.getName(), shortMessage, longMessage),
-                        progress));
+            getLog().info(String.format("  %s [%d%%]", getProgressMessage(task.getName(), shortMessage, longMessage), progress));
             nextProgress = Math.max(nextProgress + 25, 100);
         }
     }
