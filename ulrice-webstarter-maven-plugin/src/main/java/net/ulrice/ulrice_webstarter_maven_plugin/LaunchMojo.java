@@ -39,6 +39,11 @@ public class LaunchMojo extends AbstractMojo implements IFProcessEventListener {
     private URL baseUrl;
 
     /**
+     * @parameter expression="${ulrice-webstarter.launch.tamUrl}"
+     */
+    private URL tamUrl;
+
+    /**
      * @parameter expression="${ulrice-webstarter.launch.temppath}"
      */
     private String temppath;
@@ -57,6 +62,16 @@ public class LaunchMojo extends AbstractMojo implements IFProcessEventListener {
     private MavenProject project;
 
     /**
+     * @parameter expression="${ulrice-webstarter.launch.tamUser}"
+     */
+    private String tamUser;
+
+    /**
+     * @parameter expression="${ulrice-webstarter.launch.tamPW}"
+     */
+    private String tamPW;
+
+    /**
      * The plugin dependencies.
      *
      * @parameter expression="${plugin.artifacts}"
@@ -64,12 +79,36 @@ public class LaunchMojo extends AbstractMojo implements IFProcessEventListener {
      */
     private List<Artifact> pluginArtifacts;
 
+    public URL getTamUrl() {
+        return tamUrl;
+    }
+
+    public void setTamUrl(URL tamUrl) {
+        this.tamUrl = tamUrl;
+    }
+
     public URL getUrl() {
         return url;
     }
 
     public void setUrl(URL url) {
         this.url = url;
+    }
+
+    public String getTamPW() {
+        return tamPW;
+    }
+
+    public void setTamPW(String tamPW) {
+        this.tamPW = tamPW;
+    }
+
+    public String getTamUser() {
+        return tamUser;
+    }
+
+    public void setTamUser(String tamUser) {
+        this.tamUser = tamUser;
     }
 
     public URL getBaseUrl() {
@@ -124,15 +163,7 @@ public class LaunchMojo extends AbstractMojo implements IFProcessEventListener {
 
         getLog().debug("Using URL: " + url);
 
-        XMLDescriptionReader reader;
-        try {
-            reader = new XMLDescriptionReader(url.openStream(), null);
-        }
-        catch (IOException e1) {
-            throw new MojoFailureException("Failed to read application descriptor from " + url);
-        }
         ApplicationDescription appDescription = new ApplicationDescription();
-
         appDescription.setLocalDir(temppath);
 
         ArrayList<String> params = new ArrayList<String>();
@@ -142,6 +173,41 @@ public class LaunchMojo extends AbstractMojo implements IFProcessEventListener {
         appDescription.setAppParameters(params);
 
         appDescription.setId(url.toString());
+
+        if(tamUrl != null){
+            System.out.println("TAM URL: " + tamUrl);
+            Class<? extends IFTask> tamLoginClass = null;
+            try{
+                tamLoginClass = (Class<? extends IFTask>) Class.forName("net.ulrice.webstarter.tasks.TamLogin");
+                Map<String, String> parameters = new HashMap<String, String>();
+                parameters.put("url", tamUrl.toString());
+                TaskDescription tamLoginTask = new TaskDescription(tamLoginClass, parameters);
+                appDescription.addTask(tamLoginTask);
+            }
+            catch (ClassNotFoundException e) {
+                e.printStackTrace();
+            }
+        }
+        ProcessThread loginThread = new ProcessThread(appDescription);
+        if(tamUser != null && tamUser.trim().length() > 0){
+            loginThread.getContext().setUserId(tamUser);
+            loginThread.getContext().setUserId(tamPW);
+        }else{
+            loginThread.getContext().setUserId("");
+        }
+
+        loginThread.addProcessEventListener(this);
+        loginThread.startProcess();
+
+
+        XMLDescriptionReader reader;
+        try {
+            reader = new XMLDescriptionReader(url.openStream(), null);
+        }
+        catch (IOException e1) {
+            throw new MojoFailureException("Failed to read application descriptor from " + url);
+        }
+
         try {
             reader.parseXML(appDescription, baseUrl.toString() + "appstarter/importer/");
         }
@@ -153,7 +219,6 @@ public class LaunchMojo extends AbstractMojo implements IFProcessEventListener {
         }
 
         Class<? extends IFTask> taskClass = null;
-
         try {
             taskClass = (Class<? extends IFTask>) Class.forName("net.ulrice.webstarter.tasks.StartApplication");
 
