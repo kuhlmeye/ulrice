@@ -121,6 +121,7 @@ public class Element {
 		case Editable:
 			return modelList[columnIndex].isReadOnly();
 		case ReadOnly:
+		case Hidden_ReadOnly:
 			return true;
 		case NewEditable:
 			if (tableAM.isNew(this)) {
@@ -435,7 +436,9 @@ public class Element {
             	}
 
 				attributeModel.addValidator(modelValidator);
-                attributeModel.setReadOnly(column.getColumnType().equals(ColumnType.ReadOnly));
+                final boolean readOnly = column.getColumnType().equals(ColumnType.ReadOnly)
+                                            || column.getColumnType().equals(ColumnType.Hidden_ReadOnly);
+                attributeModel.setReadOnly(readOnly);
                 modelList[i] = attributeModel;
                 if (tableAM.getIdModelIndexMap() == null) {
                     tableAM.setIdModelIndexMap(new Object2IntOpenHashMap<String>());

@@ -129,12 +129,14 @@ public class ColumnChooser {
                 }
             }
 
-            if (initialColumnTypes.containsKey(column.getId()) && initialColumnTypes.get(column.getId()) == ColumnDefinition.ColumnType.Hidden) {
+            final boolean columnIsHidden = initialColumnTypes.get(column.getId()) == ColumnDefinition.ColumnType.Hidden
+                                            || initialColumnTypes.get(column.getId()) == ColumnDefinition.ColumnType.Hidden_ReadOnly;
+            if (initialColumnTypes.containsKey(column.getId()) && columnIsHidden) {
                 // columns that are hidden per default must NOT be shown
                 continue;
             }
 
-            model.addRow(column.getId(), column.getColumnName(), requiredColumn, (column.getColumnType() != ColumnDefinition.ColumnType.Hidden) || requiredColumn);
+            model.addRow(column.getId(), column.getColumnName(), requiredColumn, (!columnIsHidden || requiredColumn));
         }
         view = new ColumnChooserView(model);
 

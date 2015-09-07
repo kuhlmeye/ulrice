@@ -66,7 +66,9 @@ public class TableAMBuilder {
     public void addUniqueKey(String... columnPaths) {
         List<String> approvedPathList = new ArrayList<String>();
         for (String path : columnPaths) {
-            if (columnDefsByPath.get(path) != null && !columnDefsByPath.get(path).getColumnType().equals(ColumnType.Hidden)) {
+            final boolean hidden = columnDefsByPath.get(path).getColumnType().equals(ColumnType.Hidden)
+                                    || columnDefsByPath.get(path).getColumnType().equals(ColumnType.Hidden_ReadOnly);
+            if (columnDefsByPath.get(path) != null && !hidden) {
                 approvedPathList.add(path);
             }
             if (derivedColumnDefsByPath.get(path) != null) {

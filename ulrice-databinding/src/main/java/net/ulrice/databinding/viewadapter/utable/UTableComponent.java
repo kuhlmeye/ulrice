@@ -592,7 +592,8 @@ public class UTableComponent extends JPanel {
             column.setPreferredWidth(columnDefinition.getPreferredWidth());
         }
 
-        if (columnDefinition.getColumnType().equals(ColumnType.Hidden)) {
+        if (columnDefinition.getColumnType().equals(ColumnType.Hidden)
+                || columnDefinition.getColumnType().equals(ColumnType.Hidden_ReadOnly)) {
             column.setMinWidth(0);
             column.setMaxWidth(0);
             column.setPreferredWidth(0);

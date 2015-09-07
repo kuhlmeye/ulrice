@@ -65,7 +65,8 @@ public class ColumnDefinition<T extends Object> implements PropertyChangeListene
 		Editable,
 		ReadOnly,
 		NewEditable,
-		Hidden
+		Hidden,
+        Hidden_ReadOnly;
 	}
 
 
@@ -120,7 +121,10 @@ public class ColumnDefinition<T extends Object> implements PropertyChangeListene
      * Create the generic attribute model for this column
      */
     public LightGenericAM<T> createLightAM() {
-    	LightGenericAM<T> genericAM = new LightGenericAM<T>(id, getColumnType().equals(ColumnType.ReadOnly));
+        final boolean readOnly = getColumnType().equals(ColumnType.ReadOnly)
+                                    || getColumnType().equals(ColumnType.Hidden_ReadOnly);
+
+    	LightGenericAM<T> genericAM = new LightGenericAM<T>(id, readOnly);
         if(getValidators() != null && !getValidators().isEmpty()) {
             for (IFValidator validator : getValidators()) {
                 genericAM.addValidator(validator);
@@ -133,8 +137,10 @@ public class ColumnDefinition<T extends Object> implements PropertyChangeListene
      * Create the generic attribute model for this column
      */
     public IFElementInternalAM<List<T>> createListAM() {
+        final boolean readOnly = getColumnType().equals(ColumnType.ReadOnly)
+                                    || getColumnType().equals(ColumnType.Hidden_ReadOnly);
 
-    	ListAM<T> genericAM = new ListAM(id, attributeInfo, getColumnType().equals(ColumnType.ReadOnly), isListOrderRelevant);
+    	ListAM<T> genericAM = new ListAM(id, attributeInfo, readOnly, isListOrderRelevant);
 
         genericAM.setValueConverter(getValueConverter());
 
