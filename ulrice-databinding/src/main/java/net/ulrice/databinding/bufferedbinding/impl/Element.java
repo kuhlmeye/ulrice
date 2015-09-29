@@ -1,6 +1,11 @@
 package net.ulrice.databinding.bufferedbinding.impl;
 
 import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
 import net.ulrice.databinding.IFBinding;
 import net.ulrice.databinding.bufferedbinding.IFAttributeInfo;
 import net.ulrice.databinding.bufferedbinding.impl.ColumnDefinition.ColumnType;
@@ -10,10 +15,6 @@ import net.ulrice.databinding.validation.IFValidator;
 import net.ulrice.databinding.validation.UniqueKeyConstraintError;
 import net.ulrice.databinding.validation.ValidationError;
 import net.ulrice.databinding.validation.ValidationResult;
-
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
 
 /**
  * The element of the list attribute model. It manages the models for all
@@ -299,7 +300,7 @@ public class Element {
 		tableAM.handleElementStateChange(this);
 	}
 
-	private void fireValueChanged(String columnId) {
+    public void fireValueChanged(String columnId) {
 		tableAM.handleElementDataChanged(this, columnId);
 	}
 
