@@ -34,6 +34,7 @@ public class ColumnChooserView extends JDialog {
     private void initGUI() {
         TranslationProvider tp = Ulrice.getTranslationProvider();
         setDefaultCloseOperation(DISPOSE_ON_CLOSE);
+        setModalityType(ModalityType.APPLICATION_MODAL);
         String dialogTitleText = tp.getUlriceTranslation(TranslationUsage.Title, "ColumnChooser").getText();
         String okButtonText = tp.getUlriceTranslation(TranslationUsage.Button, "OK").getText();
         String resetButtonText = tp.getUlriceTranslation(TranslationUsage.Button, "Reset").getText();
