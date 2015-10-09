@@ -1,5 +1,28 @@
 package net.ulrice.databinding.columnchooser;
 
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.prefs.Preferences;
+
+import javax.swing.AbstractAction;
+import javax.swing.ActionMap;
+import javax.swing.ComponentInputMap;
+import javax.swing.ImageIcon;
+import javax.swing.InputMap;
+import javax.swing.JComponent;
+import javax.swing.JMenuItem;
+import javax.swing.JPopupMenu;
+import javax.swing.JRootPane;
+import javax.swing.KeyStroke;
+
 import net.ulrice.Ulrice;
 import net.ulrice.databinding.bufferedbinding.impl.ColumnDefinition;
 import net.ulrice.databinding.bufferedbinding.impl.TableAM;
@@ -7,14 +30,6 @@ import net.ulrice.databinding.validation.impl.NotNullValidator;
 import net.ulrice.databinding.viewadapter.utable.UTableComponent;
 import net.ulrice.message.TranslationProvider;
 import net.ulrice.message.TranslationUsage;
-
-import javax.swing.*;
-import java.awt.event.*;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.prefs.Preferences;
 
 /**
  * This tool is able to let the user select the columns that should be shown. Unique columns are always shown!
@@ -43,7 +58,7 @@ public class ColumnChooser {
         this.columnChooserUniqueID = uniqueId.substring(0, uniqueId.length() > Preferences.MAX_KEY_LENGTH ? Preferences.MAX_KEY_LENGTH : uniqueId.length());
 
         for (int i = 0; i < tableAM.getColumnCount(); i++) {
-            ColumnDefinition column = tableAM.getColumnByIndex(i);
+            ColumnDefinition<?> column = tableAM.getColumnByIndex(i);
             initialColumnTypes.put(column.getId(), column.getColumnType());
         }
 
@@ -116,7 +131,7 @@ public class ColumnChooser {
         model = new ColumnTableModel();
 
         for (int i = 0; i < tableAM.getColumnCount(); i++) {
-            ColumnDefinition column = tableAM.getColumnByIndex(i);
+            ColumnDefinition<?> column = tableAM.getColumnByIndex(i);
             boolean requiredColumn = tableAM.isUniquePathColumn(column.getId());
 
             if (!column.getValidators().isEmpty()) {
@@ -131,10 +146,6 @@ public class ColumnChooser {
 
             final boolean columnIsHidden = initialColumnTypes.get(column.getId()) == ColumnDefinition.ColumnType.Hidden
                                             || initialColumnTypes.get(column.getId()) == ColumnDefinition.ColumnType.Hidden_ReadOnly;
-            if (initialColumnTypes.containsKey(column.getId()) && columnIsHidden) {
-                // columns that are hidden per default must NOT be shown
-                continue;
-            }
 
             model.addRow(column.getId(), column.getColumnName(), requiredColumn, (!columnIsHidden || requiredColumn));
         }
@@ -182,7 +193,7 @@ public class ColumnChooser {
         tableView.disableUserSorting();
 
         for (String columnId : initialColumnTypes.keySet()) {
-            ColumnDefinition column = tableAM.getColumnById(columnId);
+            ColumnDefinition<?> column = tableAM.getColumnById(columnId);
             if (column != null) {
                 ColumnDefinition.ColumnType typeToSet = initialColumnTypes.get(columnId);
 
