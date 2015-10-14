@@ -50,7 +50,11 @@ public class ApplicationRemoteControlImpl implements ApplicationRemoteControl {
      */
     @Override
     public void shutdown() {
-        System.exit(0);
+
+        // only shutdown if tests were started by acceptance utils
+        if(System.getProperty("launchedByAcceptance") != null){
+            System.exit(0);
+        }
     }
 
     /**
