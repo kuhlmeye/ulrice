@@ -1140,7 +1140,7 @@ public class UTableComponent extends JPanel {
      * Convert view row index to model index.
      */
     public int convertRowIndexToModel(int index) {
-        if (getRowSorter() != null) {
+        if (index >= 0 && getRowSorter() != null) {
             return getRowSorter().convertRowIndexToModel(index);
         }
         return index;
@@ -1150,7 +1150,7 @@ public class UTableComponent extends JPanel {
      * Convert model row index to view index.
      */
     public int convertRowIndexToView(int index) {
-        if (getRowSorter() != null) {
+        if (index >= 0 && getRowSorter() != null) {
             return getRowSorter().convertRowIndexToView(index);
         }
         return index;
