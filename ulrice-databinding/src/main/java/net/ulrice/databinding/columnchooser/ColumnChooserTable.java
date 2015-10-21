@@ -1,6 +1,7 @@
 package net.ulrice.databinding.columnchooser;
 
 import javax.swing.*;
+import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.TableColumn;
 import java.awt.*;
 
@@ -15,6 +16,8 @@ public class ColumnChooserTable extends JTable {
         super.setBounds(x, y, width, height);
 
         setPreferredColumnWidths(new double[] { 0.45, 0.45, 0.1 });
+        setShowGrid(true);
+        setGridColor(new Color(229, 236, 209));
     }
 
     protected void setPreferredColumnWidths(double[] percentages) {

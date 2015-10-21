@@ -29,6 +29,7 @@ public class ColumnChooserView extends JDialog {
     private JButton saveButton;
     private JButton cancleButton;
     private JButton resetButton;
+    private JButton unselectAllButton;
     private ColumnChooserTable table;
 
     private void initGUI() {
@@ -39,9 +40,9 @@ public class ColumnChooserView extends JDialog {
         String okButtonText = tp.getUlriceTranslation(TranslationUsage.Button, "OK").getText();
         String resetButtonText = tp.getUlriceTranslation(TranslationUsage.Button, "Reset").getText();
         String cancelButtonText = tp.getUlriceTranslation(TranslationUsage.Button, "Cancel").getText();
+        String unselectAllButtonText = tp.getUlriceTranslation(TranslationUsage.Button, "UnselectAll").getText();
         setTitle(dialogTitleText);
 
-        //        setSize(520, 550);
         setMinimumSize(new Dimension(520, 550));
 
         table = new ColumnChooserTable();
@@ -53,6 +54,7 @@ public class ColumnChooserView extends JDialog {
         saveButton = new JButton(okButtonText);
         cancleButton = new JButton(cancelButtonText);
         resetButton = new JButton(resetButtonText);
+        unselectAllButton = new JButton(unselectAllButtonText);
         cancleButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -72,6 +74,7 @@ public class ColumnChooserView extends JDialog {
         setLayout(new BorderLayout());
 
         JPanel buttonPanel = new JPanel(new FlowLayout());
+        buttonPanel.add(unselectAllButton);
         buttonPanel.add(resetButton);
         buttonPanel.add(saveButton);
         buttonPanel.add(cancleButton);
@@ -98,5 +101,9 @@ public class ColumnChooserView extends JDialog {
 
     public JButton getResetButton() {
         return resetButton;
+    }
+
+    public JButton getUnselectAllButton() {
+        return unselectAllButton;
     }
 }

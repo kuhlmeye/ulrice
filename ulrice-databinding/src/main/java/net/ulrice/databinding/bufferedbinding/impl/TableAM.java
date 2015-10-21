@@ -47,6 +47,7 @@ public class TableAM implements IFAttributeModel {
     protected Long2ObjectMap<Element> elementIdMap = new Long2ObjectOpenHashMap<>();
 
     private String columnChooserID;
+    private List<String> defaultInvisibleColumns;
 
     private List<IFValidator> validators = new ArrayList<>();
     private EventListenerList listenerList = new EventListenerList();
@@ -2028,7 +2029,12 @@ public class TableAM implements IFAttributeModel {
         return columnChooserID;
     }
 
-    public void setColumnChooserID(String columnChooserID) {
+    public List<String> getDefaultInvisibleColumns() {
+        return defaultInvisibleColumns;
+    }
+
+    public void setColumnChooserData(String columnChooserID, List<String> defaultInvisibleColumns) {
         this.columnChooserID = columnChooserID;
+        this.defaultInvisibleColumns = defaultInvisibleColumns;
     }
 }

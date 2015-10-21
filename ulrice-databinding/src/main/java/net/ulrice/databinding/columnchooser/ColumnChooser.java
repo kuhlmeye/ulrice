@@ -1,28 +1,5 @@
 package net.ulrice.databinding.columnchooser;
 
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.KeyEvent;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.prefs.Preferences;
-
-import javax.swing.AbstractAction;
-import javax.swing.ActionMap;
-import javax.swing.ComponentInputMap;
-import javax.swing.ImageIcon;
-import javax.swing.InputMap;
-import javax.swing.JComponent;
-import javax.swing.JMenuItem;
-import javax.swing.JPopupMenu;
-import javax.swing.JRootPane;
-import javax.swing.KeyStroke;
-
 import net.ulrice.Ulrice;
 import net.ulrice.databinding.bufferedbinding.impl.ColumnDefinition;
 import net.ulrice.databinding.bufferedbinding.impl.TableAM;
@@ -30,6 +7,18 @@ import net.ulrice.databinding.validation.impl.NotNullValidator;
 import net.ulrice.databinding.viewadapter.utable.UTableComponent;
 import net.ulrice.message.TranslationProvider;
 import net.ulrice.message.TranslationUsage;
+
+import javax.swing.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.prefs.Preferences;
 
 /**
  * This tool is able to let the user select the columns that should be shown. Unique columns are always shown!
@@ -46,16 +35,20 @@ public class ColumnChooser {
     private final TableAM tableAM;
     private final UTableComponent tableView;
     private final String columnChooserUniqueID;
+    private final List<String> defaultInvisibleColumns;
+
+    private static final String VERSION = "1";
 
     private Map<String, ColumnDefinition.ColumnType> initialColumnTypes = new HashMap<>();
 
     private ColumnTableModel model;
     private ColumnChooserView view;
 
-    public ColumnChooser(TableAM tableAM, UTableComponent tableView, String uniqueId) {
+    public ColumnChooser(TableAM tableAM, UTableComponent tableView, String uniqueId, List<String> defaultInvisibleColumns) {
         this.tableAM = tableAM;
         this.tableView = tableView;
-        this.columnChooserUniqueID = uniqueId.substring(0, uniqueId.length() > Preferences.MAX_KEY_LENGTH ? Preferences.MAX_KEY_LENGTH : uniqueId.length());
+        this.defaultInvisibleColumns = defaultInvisibleColumns;
+        this.columnChooserUniqueID = VERSION + uniqueId.substring(0, uniqueId.length() > getPrefLength() ? getPrefLength() : uniqueId.length());
 
         for (int i = 0; i < tableAM.getColumnCount(); i++) {
             ColumnDefinition<?> column = tableAM.getColumnByIndex(i);
@@ -67,9 +60,14 @@ public class ColumnChooser {
         loadExistingPrefs();
     }
 
+    private int getPrefLength() {
+        return Preferences.MAX_KEY_LENGTH - VERSION.length();
+    }
+
     private void loadExistingPrefs() {
         List<String> columnsToHide = ColumnChooserSaver.loadPrefs(columnChooserUniqueID);
         if (columnsToHide == null || columnsToHide.isEmpty()) {
+            updateViewColumns(defaultInvisibleColumns);
             return;
         }
         updateViewColumns(columnsToHide);
@@ -83,9 +81,11 @@ public class ColumnChooser {
     }
 
     private void resetPrefs() {
-        ColumnChooserSaver.savePrefs(columnChooserUniqueID, new ArrayList<String>());
-        view.dispose();
-        updateViewColumns(new ArrayList<String>());
+        ColumnChooserSaver.savePrefs(columnChooserUniqueID, defaultInvisibleColumns);
+        if(view != null){
+            view.dispose();
+        }
+        updateViewColumns(defaultInvisibleColumns);
     }
 
     private void addContextMenuToTableHeader() {
@@ -122,12 +122,12 @@ public class ColumnChooser {
     }
 
     public void showDialog() {
-        init();
+        initDialog();
         view.setLocationRelativeTo(Ulrice.getMainFrame().getFrame());
         view.setVisible(true);
     }
 
-    private void init() {
+    private void initDialog() {
         model = new ColumnTableModel();
 
         for (int i = 0; i < tableAM.getColumnCount(); i++) {
@@ -144,10 +144,12 @@ public class ColumnChooser {
                 }
             }
 
-            final boolean columnIsHidden = initialColumnTypes.get(column.getId()) == ColumnDefinition.ColumnType.Hidden
-                                            || initialColumnTypes.get(column.getId()) == ColumnDefinition.ColumnType.Hidden_ReadOnly;
+            if (initialColumnTypes.containsKey(column.getId()) && initialColumnTypes.get(column.getId()) == ColumnDefinition.ColumnType.Hidden) {
+                // columns that are hidden per default must NOT be shown
+                continue;
+            }
 
-            model.addRow(column.getId(), column.getColumnName(), requiredColumn, (!columnIsHidden || requiredColumn));
+            model.addRow(column.getId(), column.getColumnName(), requiredColumn, (column.getColumnType() != ColumnDefinition.ColumnType.Hidden) || requiredColumn);
         }
         view = new ColumnChooserView(model);
 
@@ -187,6 +189,20 @@ public class ColumnChooser {
                 resetPrefs();
             }
         });
+
+        view.getUnselectAllButton().addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent actionEvent) {
+                boolean unselect = isUnselectAll();
+                for (int i = 0; i < model.getRowCount(); i++) {
+                    if (((Boolean) model.getValueAt(i, 0))) {
+                        // required value, always set
+                        continue;
+                    }
+                    model.setValueAt(unselect, i, 2);
+                }
+            }
+        });
     }
 
     private void updateViewColumns(List<String> columnsToHide) {
@@ -198,7 +214,15 @@ public class ColumnChooser {
                 ColumnDefinition.ColumnType typeToSet = initialColumnTypes.get(columnId);
 
                 if (columnsToHide.contains(columnId) && !tableAM.isUniquePathColumn(columnId)) {
-                    typeToSet = ColumnDefinition.ColumnType.Hidden;
+
+                    ColumnDefinition.ColumnType initialType = initialColumnTypes.get(columnId);
+
+                    if (initialType == ColumnDefinition.ColumnType.Hidden_ReadOnly) {
+                        typeToSet = ColumnDefinition.ColumnType.Hidden_ReadOnly;
+                    }
+                    else {
+                        typeToSet = ColumnDefinition.ColumnType.Hidden;
+                    }
                 }
                 column.setColumnType(typeToSet);
             }
@@ -208,4 +232,9 @@ public class ColumnChooser {
         tableView.enableUserSorting();
     }
 
+    boolean unselectAll = true;
+    public boolean isUnselectAll() {
+        unselectAll = !unselectAll;
+        return unselectAll;
+    }
 }

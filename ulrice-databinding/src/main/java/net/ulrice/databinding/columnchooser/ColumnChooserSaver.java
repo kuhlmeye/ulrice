@@ -1,8 +1,11 @@
 package net.ulrice.databinding.columnchooser;
 
+import net.ulrice.Ulrice;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.prefs.BackingStoreException;
 import java.util.prefs.Preferences;
 
 /**
@@ -16,6 +19,16 @@ public class ColumnChooserSaver {
 
     public static List<String> loadPrefs(String tableUniqueKey) {
         return listFromString(getPreferences().get(tableUniqueKey, null));
+    }
+
+    public static void clearAllPrefs(){
+        Preferences prefs = Preferences.userNodeForPackage(ColumnChooserSaver.class);
+        try {
+            prefs.removeNode();
+        }
+        catch (BackingStoreException e) {
+            Ulrice.getMessageHandler().handleException(e);
+        }
     }
 
     private static Preferences getPreferences() {
