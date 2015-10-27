@@ -9,15 +9,19 @@ import net.ulrice.message.TranslationProvider;
 import net.ulrice.message.TranslationUsage;
 
 import javax.swing.*;
+import javax.swing.table.TableColumn;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ScheduledThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 import java.util.prefs.Preferences;
 
 /**
@@ -57,15 +61,16 @@ public class ColumnChooser {
 
         addContextMenuToTableHeader();
 
+        loadExistingColPosPrefs();
         loadExistingPrefs();
     }
 
     private int getPrefLength() {
-        return Preferences.MAX_KEY_LENGTH - VERSION.length();
+        return Preferences.MAX_KEY_LENGTH - VERSION.length() - 1;
     }
 
     private void loadExistingPrefs() {
-        List<String> columnsToHide = ColumnChooserSaver.loadPrefs(columnChooserUniqueID);
+        List<String> columnsToHide = ColumnChooserSaver.loadColVisiblePrefs(columnChooserUniqueID);
         if (columnsToHide == null || columnsToHide.isEmpty()) {
             updateViewColumns(defaultInvisibleColumns);
             return;
@@ -76,13 +81,17 @@ public class ColumnChooser {
     private void savePrefs() {
         List<String> columnsToHide = model.getColumnsToHide();
 
-        ColumnChooserSaver.savePrefs(columnChooserUniqueID, columnsToHide);
+        Map<String, Integer> newColOrder = getCurrentColumnOrder();
+        ColumnChooserSaver.saveColPosPrefs(columnChooserUniqueID, newColOrder);
+        ColumnChooserSaver.saveColVisiblePrefs(columnChooserUniqueID, columnsToHide);
         updateViewColumns(columnsToHide);
+        updateColumnOrder(newColOrder);
     }
 
     private void resetPrefs() {
-        ColumnChooserSaver.savePrefs(columnChooserUniqueID, defaultInvisibleColumns);
-        if(view != null){
+        ColumnChooserSaver.saveColPosPrefs(columnChooserUniqueID, null);
+        ColumnChooserSaver.saveColVisiblePrefs(columnChooserUniqueID, defaultInvisibleColumns);
+        if (view != null) {
             view.dispose();
         }
         updateViewColumns(defaultInvisibleColumns);
@@ -230,11 +239,63 @@ public class ColumnChooser {
 
         tableView.updateColumnModel();
         tableView.enableUserSorting();
+
     }
 
     boolean unselectAll = true;
+
     public boolean isUnselectAll() {
         unselectAll = !unselectAll;
         return unselectAll;
     }
+
+    public void loadExistingColPosPrefs() {
+        final Map<String, Integer> colMap = ColumnChooserSaver.loadColPosPrefs(columnChooserUniqueID);
+
+        // TODO FIXME how to find out if finished?
+        final ScheduledThreadPoolExecutor executor = new ScheduledThreadPoolExecutor(1);
+        executor.schedule(new Runnable() {
+            @Override
+            public void run() {
+                SwingUtilities.invokeLater(new Runnable() {
+                    @Override
+                    public void run() {
+                        updateColumnOrder(colMap);
+                    }
+                });
+            }
+        }, 150, TimeUnit.MILLISECONDS);
+    }
+
+    public Map<String, Integer> getCurrentColumnOrder() {
+        Map<String, Integer> columnMap = new HashMap<>();
+        int idx = 0;
+        Enumeration<TableColumn> columns = tableView.getScrollTable().getTableHeader().getColumnModel().getColumns();
+        while (columns.hasMoreElements()) {
+            TableColumn tableColumn = columns.nextElement();
+            columnMap.put(tableColumn.getIdentifier().toString(), idx);
+            idx++;
+        }
+        return columnMap;
+    }
+
+    public void updateColumnOrder(Map<String, Integer> columnMap) {
+        Enumeration<TableColumn> columns = tableView.getScrollTable().getColumnModel().getColumns();
+        int idx = 0;
+
+        if (columnMap == null || columnMap.isEmpty()) {
+            tableView.getFilter().rebuildFilter();
+            return;
+        }
+
+        while (columns.hasMoreElements()) {
+            TableColumn tableColumn = columns.nextElement();
+            tableView.getScrollTable().getColumnModel().moveColumn(idx, columnMap.get(tableColumn.getIdentifier().toString()));
+            idx++;
+        }
+        if (tableView.getFilter() != null) {
+            tableView.getFilter().rebuildFilter();
+        }
+    }
+
 }
