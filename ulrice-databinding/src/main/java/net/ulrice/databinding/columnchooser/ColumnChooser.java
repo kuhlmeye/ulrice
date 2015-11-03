@@ -61,7 +61,7 @@ public class ColumnChooser {
 
         addContextMenuToTableHeader();
 
-        loadExistingColPosPrefs();
+        //        loadExistingColPosPrefs();
         loadExistingPrefs();
     }
 
@@ -82,14 +82,14 @@ public class ColumnChooser {
         List<String> columnsToHide = model.getColumnsToHide();
 
         Map<String, Integer> newColOrder = getCurrentColumnOrder();
-        ColumnChooserSaver.saveColPosPrefs(columnChooserUniqueID, newColOrder);
+        //        ColumnChooserSaver.saveColPosPrefs(columnChooserUniqueID, newColOrder);
         ColumnChooserSaver.saveColVisiblePrefs(columnChooserUniqueID, columnsToHide);
         updateViewColumns(columnsToHide);
-        updateColumnOrder(newColOrder);
+        //        updateColumnOrder(newColOrder);
     }
 
     private void resetPrefs() {
-        ColumnChooserSaver.saveColPosPrefs(columnChooserUniqueID, null);
+        //        ColumnChooserSaver.saveColPosPrefs(columnChooserUniqueID, null);
         ColumnChooserSaver.saveColVisiblePrefs(columnChooserUniqueID, defaultInvisibleColumns);
         if (view != null) {
             view.dispose();
