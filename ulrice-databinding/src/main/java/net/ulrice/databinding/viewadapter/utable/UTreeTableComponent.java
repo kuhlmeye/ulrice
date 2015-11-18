@@ -1,21 +1,27 @@
 package net.ulrice.databinding.viewadapter.utable;
 
-import it.unimi.dsi.fastutil.longs.*;
-import net.ulrice.Ulrice;
-import net.ulrice.databinding.bufferedbinding.impl.Element;
-import net.ulrice.databinding.bufferedbinding.impl.TableAM;
-import net.ulrice.message.Message;
-import net.ulrice.message.MessageSeverity;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
+import javax.swing.tree.TreeCellRenderer;
 import javax.swing.tree.TreePath;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+
+import it.unimi.dsi.fastutil.longs.Long2ObjectMap;
+import it.unimi.dsi.fastutil.longs.Long2ObjectOpenHashMap;
+import it.unimi.dsi.fastutil.longs.LongArrayList;
+import it.unimi.dsi.fastutil.longs.LongOpenHashSet;
+import it.unimi.dsi.fastutil.longs.LongSet;
+import net.ulrice.Ulrice;
+import net.ulrice.databinding.bufferedbinding.impl.Element;
+import net.ulrice.databinding.bufferedbinding.impl.TableAM;
+import net.ulrice.message.Message;
+import net.ulrice.message.MessageSeverity;
 
 public class UTreeTableComponent extends UTableComponent implements ExpandColapseListener{
 
@@ -354,5 +360,9 @@ public class UTreeTableComponent extends UTableComponent implements ExpandColaps
                 }
             }
         }
+    }
+
+    public void setTreeCellRenderer(TreeCellRenderer renderer) {
+        tree.setCellRenderer(renderer);
     }
 }
