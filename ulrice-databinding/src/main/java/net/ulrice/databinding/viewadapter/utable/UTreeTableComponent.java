@@ -1,5 +1,7 @@
 package net.ulrice.databinding.viewadapter.utable;
 
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -364,5 +366,33 @@ public class UTreeTableComponent extends UTableComponent implements ExpandColaps
 
     public void setTreeCellRenderer(TreeCellRenderer renderer) {
         tree.setCellRenderer(renderer);
+
+        addMouseListener(new MouseListener() {
+
+            @Override
+            public void mouseReleased(MouseEvent e) {
+                tree.dispatchEvent(e);
+            }
+
+            @Override
+            public void mousePressed(MouseEvent e) {
+                tree.dispatchEvent(e);
+            }
+
+            @Override
+            public void mouseExited(MouseEvent e) {
+                tree.dispatchEvent(e);
+            }
+
+            @Override
+            public void mouseEntered(MouseEvent e) {
+                tree.dispatchEvent(e);
+            }
+
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                tree.dispatchEvent(e);
+            }
+        });
     }
 }
