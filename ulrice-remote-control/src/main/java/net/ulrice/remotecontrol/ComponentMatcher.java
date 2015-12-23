@@ -395,6 +395,48 @@ public abstract class ComponentMatcher implements Serializable {
     }
 
     /**
+     * Matches all components with a tooltip, that matches the specified regular expression. If the component has no
+     * tooltip, it never matches this matcher.
+     *
+     * @param regex the regular expression
+     * @return the matcher
+     * @throws RemoteControlException on occasion
+     */
+    public static ComponentMatcher withTooltip(final String regex) throws RemoteControlException {
+        final RegularMatcher matcher = RemoteControlUtils.toMatcher(regex);
+
+        return new ComponentMatcher() {
+
+            private static final long serialVersionUID = 3323697224579645088L;
+
+            @Override
+            public Collection<Component> match(Collection<Component> components) throws RemoteControlException {
+                Iterator<Component> it = components.iterator();
+
+                while (it.hasNext()) {
+                    Component component = it.next();
+                    ComponentHelper<Component> helper = ComponentHelperRegistry.get(component.getClass());
+                    String text = helper.getToolTipText(component);
+
+                    if ((text != null) && (matcher.matches(text))) {
+                        continue;
+                    }
+
+                    it.remove();
+                }
+
+                return components;
+            }
+
+            @Override
+            public String toString() {
+                return "withTooltip[" + regex + "]";
+            }
+
+        };
+    }
+
+    /**
      * Matches a component, that is referenced by a label with the specified name or text as label-for. E.g. if you
      * have a text field and a label with the text "Name". The property labelFor of the label is set to text field. If
      * you call this matcher with "Name", then it matches the text field.
