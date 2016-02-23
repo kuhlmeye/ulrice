@@ -482,7 +482,7 @@ public class Element {
 	/**
 	 * Returns the attribute model of a cell.
 	 */
-	protected IFElementInternalAM getCellAtributeModel(int columnIndex) {
+	public IFElementInternalAM getCellAtributeModel(int columnIndex) {
 		return modelList[columnIndex];
 	}
 
