@@ -103,7 +103,7 @@ public class UTableComboBoxCellEditor extends AbstractCellEditor implements Tabl
                 for (int i = 0; i < elementCount; i++) {
                     final Object element = box.getItemAt(i);
                     
-                    final String textToMeasure = element == null ? "" : element.toString();
+                    final String textToMeasure = (element == null || element.toString() == null) ? "" : element.toString();
                     final int width = metrics.stringWidth(textToMeasure);
                     maxWidth = (width > maxWidth ? width : maxWidth);
                 }
