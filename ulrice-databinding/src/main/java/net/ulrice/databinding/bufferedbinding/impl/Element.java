@@ -275,8 +275,10 @@ public class Element {
 			dirty = false;
 			valid = validationResult == null || validationResult.isValid();
 			for (IFElementInternalAM<?> model : modelList) {
-				dirty |= model.isDirty();
-				valid &= model.isValid();
+                if (model != null) {
+                    dirty |= model.isDirty();
+                    valid &= model.isValid();
+                }
 			}
 		}
 
