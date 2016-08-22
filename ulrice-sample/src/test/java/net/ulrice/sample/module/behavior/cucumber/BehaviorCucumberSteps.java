@@ -73,7 +73,7 @@ public class BehaviorCucumberSteps {
 
     @Given("^the module \"([^\"]*)\" is open$")
     public void openModule(String module) throws RemoteControlException {
-        controllerRC().close(ControllerMatcher.all());
+        controllerRC().closeAllModules();
         assertTrue(moduleRC().open(ModuleMatcher.like(module)));
     }
 

@@ -1,20 +1,7 @@
 package net.ulrice.remotecontrol.impl;
 
-import static net.ulrice.remotecontrol.ComponentInteraction.click;
-import static net.ulrice.remotecontrol.ComponentMatcher.ofType;
-import static net.ulrice.remotecontrol.ComponentMatcher.texted;
-import static net.ulrice.remotecontrol.ComponentMatcher.within;
-import static net.ulrice.remotecontrol.ControllerMatcher.and;
-
-import java.util.Collection;
-import java.util.LinkedHashSet;
-
-import javax.swing.JButton;
-import javax.swing.JDialog;
-
 import net.ulrice.Ulrice;
 import net.ulrice.module.IFController;
-import net.ulrice.module.impl.IFCloseHandler;
 import net.ulrice.remotecontrol.ComponentMatcher;
 import net.ulrice.remotecontrol.ComponentRemoteControl;
 import net.ulrice.remotecontrol.ControllerMatcher;
@@ -26,16 +13,26 @@ import net.ulrice.remotecontrol.util.RemoteControlUtils;
 import net.ulrice.remotecontrol.util.Result;
 import net.ulrice.remotecontrol.util.ResultClosure;
 
+import javax.swing.*;
+import java.util.Collection;
+import java.util.LinkedHashSet;
+
+import static net.ulrice.remotecontrol.ComponentInteraction.click;
+import static net.ulrice.remotecontrol.ComponentMatcher.ofType;
+import static net.ulrice.remotecontrol.ComponentMatcher.texted;
+import static net.ulrice.remotecontrol.ComponentMatcher.within;
+import static net.ulrice.remotecontrol.ControllerMatcher.and;
+
 /**
  * Implementation of the {@link ControllerRemoteControl}.
- * 
+ *
  * @author Manfred HANTSCHEL
  */
 public class ControllerRemoteControlImpl implements ControllerRemoteControl {
 
     /**
      * {@inheritDoc}
-     * 
+     *
      * @see net.ulrice.remotecontrol.ControllerRemoteControl#ping()
      */
     @Override
@@ -45,13 +42,12 @@ public class ControllerRemoteControlImpl implements ControllerRemoteControl {
 
     /**
      * {@inheritDoc}
-     * 
+     *
      * @see net.ulrice.remotecontrol.ControllerRemoteControl#statesOf(net.ulrice.remotecontrol.ControllerMatcher[])
      */
     @Override
     public Collection<ControllerState> statesOf(ControllerMatcher... matchers) throws RemoteControlException {
-        LinkedHashSet<IFController> controllers =
-                new LinkedHashSet<IFController>(Ulrice.getModuleManager().getActiveControllers());
+        LinkedHashSet<IFController> controllers = new LinkedHashSet<IFController>(Ulrice.getModuleManager().getActiveControllers());
 
         // TODO: WTF, why are null controllers in the list?
         controllers.remove(null);
@@ -61,7 +57,7 @@ public class ControllerRemoteControlImpl implements ControllerRemoteControl {
 
     /**
      * {@inheritDoc}
-     * 
+     *
      * @see net.ulrice.remotecontrol.ControllerRemoteControl#stateOf(net.ulrice.remotecontrol.ControllerMatcher[])
      */
     @Override
@@ -83,8 +79,7 @@ public class ControllerRemoteControlImpl implements ControllerRemoteControl {
      * {@inheritDoc}
      */
     @Override
-    public Collection<ControllerState> waitForAll(final double seconds, final ControllerMatcher... matchers)
-        throws RemoteControlException {
+    public Collection<ControllerState> waitForAll(final double seconds, final ControllerMatcher... matchers) throws RemoteControlException {
 
         try {
             return RemoteControlUtils.repeatInThread(seconds, new ResultClosure<Collection<ControllerState>>() {
@@ -101,8 +96,7 @@ public class ControllerRemoteControlImpl implements ControllerRemoteControl {
             });
         }
         catch (RemoteControlException e) {
-            throw new RemoteControlException(String.format("Failed to wait %,.1f s for all controllers: %s", seconds,
-                ControllerMatcher.and(matchers)), e);
+            throw new RemoteControlException(String.format("Failed to wait %,.1f s for all controllers: %s", seconds, ControllerMatcher.and(matchers)), e);
         }
     }
 
@@ -118,7 +112,7 @@ public class ControllerRemoteControlImpl implements ControllerRemoteControl {
 
     /**
      * {@inheritDoc}
-     * 
+     *
      * @see net.ulrice.remotecontrol.ControllerRemoteControl#contains(net.ulrice.remotecontrol.ControllerMatcher[])
      */
     @Override
@@ -128,7 +122,7 @@ public class ControllerRemoteControlImpl implements ControllerRemoteControl {
 
     /**
      * {@inheritDoc}
-     * 
+     *
      * @see net.ulrice.remotecontrol.ControllerRemoteControl#focus(net.ulrice.remotecontrol.ControllerMatcher[])
      */
     @Override
@@ -172,101 +166,36 @@ public class ControllerRemoteControlImpl implements ControllerRemoteControl {
         return success;
     }
 
-    /**
-     * {@inheritDoc}
-     * 
-     * @see net.ulrice.remotecontrol.ControllerRemoteControl#close(net.ulrice.remotecontrol.ControllerMatcher[])
-     */
     @Override
-    public boolean close(ControllerMatcher... matchers) throws RemoteControlException {
-        Collection<ControllerState> states = statesOf(matchers);
+    public void closeAllModules() throws RemoteControlException {
+        int tries = 0;
 
-        if (states.isEmpty()) {
-            return true;
+        while (!closeDialogs() && tries < 10) {
+            tries++;
+            RemoteControlUtils.pause(10);
         }
 
-        boolean success = true;
-
-        for (final ControllerState state : states) {
-            final Result<Boolean> result = new Result<Boolean>(2);
-
-            try {
-                RemoteControlUtils.invokeInSwing(new Runnable() {
-
-                    @Override
-                    public void run() {
-                        try {
-                            Ulrice.getModuleManager().closeController(state.getController(), new IFCloseHandler() {
-
-                                @Override
-                                public void closeSuccess() {
-                                    result.fireResult(true);
-                                }
-
-                                @Override
-                                public void closeFailure() {
-                                    result.fireResult(false);
-                                }
-                            });
-                        }
-                        catch (Exception e) {
-                            e.printStackTrace(System.err);
-                            result.fireException(e);
-                        }
-                    }
-                });
-
-                while (!result.testResult(0.25)) {
-                    closeDialogs();
-                }
+        Ulrice.getModuleManager().closeAllControllers(new Runnable() {
+            @Override
+            public void run() {
+                RemoteControlUtils.pause();
             }
-            catch (RemoteControlException e) {
-                throw new RemoteControlException("Failed to close the dialogs when closing the controller", e);
-            }
-
-            try {
-                success &= result.aquireResult();
-            }
-            catch (RemoteControlException e) {
-                throw new RemoteControlException("Closing of controller failed", e);
-            }
-
-            RemoteControlUtils.pause();
-        }
-
-        try {
-            // handle non modal dialogs
-            RemoteControlUtils.repeatInThread(5, new ResultClosure<Boolean>() {
-
-                @Override
-                public void invoke(Result<Boolean> result) throws RemoteControlException {
-                    if (closeDialogs()) {
-                        result.fireResult(Boolean.TRUE);
-                    }
-                }
-
-            });
-        }
-        catch (RemoteControlException e) {
-            throw new RemoteControlException("Failed to close all remaining dialogs", e);
-        }
-
-        return success;
+        });
     }
 
     private boolean closeDialogs() throws RemoteControlException {
         ComponentRemoteControl componentRC = RemoteControlCenter.get(ComponentRemoteControl.class);
 
         componentRC.interact(click(), ComponentMatcher.like(".*Yes.*"), ofType(JButton.class),
-            within(ofType(JDialog.class), ComponentMatcher.contains(ComponentMatcher.or(texted(".*discard.*"),texted(".*unsaved.*")))));
-        componentRC.interact(click(), ComponentMatcher.like(".*No.*"), ofType(JButton.class),
-            within(ofType(JDialog.class)));
-        componentRC.interact(click(), ComponentMatcher.like(".*Close.*"), ofType(JButton.class),
-            within(ofType(JDialog.class)));
-        componentRC.interact(click(), ComponentMatcher.like(".*Cancel.*"), ofType(JButton.class),
-            within(ofType(JDialog.class)));
+                within(ofType(JDialog.class), ComponentMatcher.contains(ComponentMatcher.or(texted(".*discard.*"), texted(".*unsaved.*")))));
+        componentRC.interact(click(), ComponentMatcher.like(".*No.*"), ofType(JButton.class), within(ofType(JDialog.class)));
+        componentRC.interact(click(), ComponentMatcher.like(".*Close.*"), ofType(JButton.class), within(ofType(JDialog.class)));
+        componentRC.interact(click(), ComponentMatcher.like(".*Cancel.*"), ofType(JButton.class), within(ofType(JDialog.class)));
+        componentRC.interact(click(), ComponentMatcher.like(".*OK.*"), ofType(JButton.class), within(ofType(JDialog.class)));
+        componentRC.interact(click(), ComponentMatcher.like(".*Close.*"), ofType(JButton.class), within(ofType(JDialog.class)));
+
         componentRC.interact(click(), ComponentMatcher.like(".*OK.*"), ofType(JButton.class),
-            within(ofType(JDialog.class)));
+                within(ofType(JDialog.class), ComponentMatcher.contains(ComponentMatcher.or(texted(".*Warning.*"), texted(".*Exception.*")))));
 
         return !componentRC.contains(ofType(JDialog.class));
     }

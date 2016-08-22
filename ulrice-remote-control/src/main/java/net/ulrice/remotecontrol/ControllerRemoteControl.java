@@ -70,12 +70,5 @@ public interface ControllerRemoteControl {
      */
     boolean focus(ControllerMatcher... matchers) throws RemoteControlException;
 
-    /**
-     * Closes the specified controller. Tries to close all opened dialogs as well.
-     * 
-     * @param matchers the matchers, concatenated by and
-     * @return true if successful
-     * @throws RemoteControlException on occasion
-     */
-    boolean close(ControllerMatcher... matchers) throws RemoteControlException;
+    void closeAllModules() throws RemoteControlException;
 }
