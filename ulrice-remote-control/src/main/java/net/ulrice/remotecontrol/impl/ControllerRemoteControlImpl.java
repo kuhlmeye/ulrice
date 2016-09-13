@@ -2,6 +2,7 @@ package net.ulrice.remotecontrol.impl;
 
 import net.ulrice.Ulrice;
 import net.ulrice.module.IFController;
+import net.ulrice.module.impl.IFCloseHandler;
 import net.ulrice.remotecontrol.ComponentMatcher;
 import net.ulrice.remotecontrol.ComponentRemoteControl;
 import net.ulrice.remotecontrol.ControllerMatcher;
@@ -198,6 +199,88 @@ public class ControllerRemoteControlImpl implements ControllerRemoteControl {
                 within(ofType(JDialog.class), ComponentMatcher.contains(ComponentMatcher.or(texted(".*Warning.*"), texted(".*Exception.*")))));
 
         return !componentRC.contains(ofType(JDialog.class));
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @see net.ulrice.remotecontrol.ControllerRemoteControl#close(net.ulrice.remotecontrol.ControllerMatcher[])
+     */
+    @Override
+    public boolean close(ControllerMatcher... matchers) throws RemoteControlException {
+        Collection<ControllerState> states = statesOf(matchers);
+
+        if (states.isEmpty()) {
+            return true;
+        }
+
+        boolean success = true;
+
+        for (final ControllerState state : states) {
+            final Result<Boolean> result = new Result<Boolean>(2);
+
+            try {
+                RemoteControlUtils.invokeInSwing(new Runnable() {
+
+                    @Override
+                    public void run() {
+                        try {
+                            Ulrice.getModuleManager().closeController(state.getController(), new IFCloseHandler() {
+
+                                @Override
+                                public void closeSuccess() {
+                                    result.fireResult(true);
+                                }
+
+                                @Override
+                                public void closeFailure() {
+                                    result.fireResult(false);
+                                }
+                            });
+                        }
+                        catch (Exception e) {
+                            e.printStackTrace(System.err);
+                            result.fireException(e);
+                        }
+                    }
+                });
+
+                while (!result.testResult(0.25)) {
+                    closeDialogs();
+                }
+            }
+            catch (RemoteControlException e) {
+                throw new RemoteControlException("Failed to close the dialogs when closing the controller", e);
+            }
+
+            try {
+                success &= result.aquireResult();
+            }
+            catch (RemoteControlException e) {
+                throw new RemoteControlException("Closing of controller failed", e);
+            }
+
+            RemoteControlUtils.pause();
+        }
+
+        try {
+            // handle non modal dialogs
+            RemoteControlUtils.repeatInThread(5, new ResultClosure<Boolean>() {
+
+                @Override
+                public void invoke(Result<Boolean> result) throws RemoteControlException {
+                    if (closeDialogs()) {
+                        result.fireResult(Boolean.TRUE);
+                    }
+                }
+
+            });
+        }
+        catch (RemoteControlException e) {
+            throw new RemoteControlException("Failed to close all remaining dialogs", e);
+        }
+
+        return success;
     }
 
 }
