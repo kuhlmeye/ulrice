@@ -10,7 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * @author EXSTHUB
+ * @author Stefan Huber
  */
 public class ColumnTableModel extends AbstractTableModel {
     private static final long serialVersionUID = 833212348466712833L;

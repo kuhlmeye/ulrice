@@ -30,7 +30,7 @@ import java.util.prefs.Preferences;
  * Right-click on table header to show column chooser!
  * Table data is saved in Local User Profile
  *
- * @author EXSTHUB
+ * @author Stefan Huber
  */
 public class ColumnChooser {
 

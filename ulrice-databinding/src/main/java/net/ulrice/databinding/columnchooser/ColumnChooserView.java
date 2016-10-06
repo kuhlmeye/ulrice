@@ -14,7 +14,7 @@ import java.awt.event.ActionListener;
 /**
  * View for choosing visible table columns
  *
- * @author EXSTHUB
+ * @author Stefan Huber
  */
 public class ColumnChooserView extends JDialog {
     private static final long serialVersionUID = 1L;

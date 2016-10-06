@@ -11,7 +11,7 @@ import java.util.prefs.BackingStoreException;
 import java.util.prefs.Preferences;
 
 /**
- * @author EXSTHUB
+ * @author Stefan Huber
  */
 public class ColumnChooserSaver {
 

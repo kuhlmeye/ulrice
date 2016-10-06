@@ -11,7 +11,7 @@ import javax.swing.border.Border;
 /**
  * Panel with empty border and 7px insets
  *
- * @author EXSTHUB
+ * @author Stefan Huber
  */
 public class BorderPanel extends JPanel {
     

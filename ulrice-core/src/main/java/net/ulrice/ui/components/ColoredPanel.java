@@ -15,7 +15,7 @@ import net.ulrice.util.Gradients;
 /**
  * Panel with coloured background
  * 
- * @author EXSTHUB, EEXHANT
+ * @author Stefan Huber, EEXHANT
  */
 public class ColoredPanel extends JPanel {
 

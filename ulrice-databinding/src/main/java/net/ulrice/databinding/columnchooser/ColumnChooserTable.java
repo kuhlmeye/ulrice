@@ -6,7 +6,7 @@ import javax.swing.table.TableColumn;
 import java.awt.*;
 
 /**
- * @author EXSTHUB
+ * @author Stefan Huber
  */
 public class ColumnChooserTable extends JTable {
     private static final long serialVersionUID = 1L;

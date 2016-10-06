@@ -778,7 +778,7 @@ public class UTableVAFilter extends RowFilter<UTableViewAdapter, Long> implement
         Object value = cbModel.getSelectedItem();
 
         if(value instanceof ObjectWithPresentation< ?> && ((ObjectWithPresentation< ?>) value).getValue() == null){
-            //EXSTHUB: With this we can also filter all cells with value "null"
+            //Stefan Huber: With this we can also filter all cells with value "null"
             filterComboChanged(cbModel.columndId, null, true);
         }
         else if(value instanceof BooleanFilterElement) {
