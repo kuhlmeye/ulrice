@@ -1,5 +1,31 @@
 package net.ulrice.databinding.viewadapter.utable;
 
+import net.ulrice.databinding.bufferedbinding.impl.ColumnDefinition;
+import net.ulrice.databinding.bufferedbinding.impl.ColumnDefinition.ColumnType;
+import net.ulrice.databinding.bufferedbinding.impl.Element;
+import net.ulrice.databinding.bufferedbinding.impl.FilterMode;
+import net.ulrice.databinding.bufferedbinding.impl.TableAM;
+import net.ulrice.databinding.viewadapter.IFCellStateMarker;
+import net.ulrice.databinding.viewadapter.IFCellTooltipHandler;
+
+import javax.swing.DefaultListSelectionModel;
+import javax.swing.JComponent;
+import javax.swing.JPanel;
+import javax.swing.JPopupMenu;
+import javax.swing.JScrollPane;
+import javax.swing.JTable;
+import javax.swing.KeyStroke;
+import javax.swing.ListSelectionModel;
+import javax.swing.RowSorter.SortKey;
+import javax.swing.event.EventListenerList;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
+import javax.swing.plaf.basic.BasicTableHeaderUI;
+import javax.swing.table.JTableHeader;
+import javax.swing.table.TableCellEditor;
+import javax.swing.table.TableCellRenderer;
+import javax.swing.table.TableColumn;
+import javax.swing.table.TableColumnModel;
 import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.Dimension;
@@ -20,33 +46,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.StringTokenizer;
-
-import javax.swing.DefaultListSelectionModel;
-import javax.swing.JComponent;
-import javax.swing.JPanel;
-import javax.swing.JPopupMenu;
-import javax.swing.JScrollPane;
-import javax.swing.JTable;
-import javax.swing.KeyStroke;
-import javax.swing.ListSelectionModel;
-import javax.swing.RowSorter.SortKey;
-import javax.swing.event.EventListenerList;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
-import javax.swing.plaf.basic.BasicTableHeaderUI;
-import javax.swing.table.JTableHeader;
-import javax.swing.table.TableCellEditor;
-import javax.swing.table.TableCellRenderer;
-import javax.swing.table.TableColumn;
-import javax.swing.table.TableColumnModel;
-
-import net.ulrice.databinding.bufferedbinding.impl.ColumnDefinition;
-import net.ulrice.databinding.bufferedbinding.impl.ColumnDefinition.ColumnType;
-import net.ulrice.databinding.bufferedbinding.impl.Element;
-import net.ulrice.databinding.bufferedbinding.impl.FilterMode;
-import net.ulrice.databinding.bufferedbinding.impl.TableAM;
-import net.ulrice.databinding.viewadapter.IFCellStateMarker;
-import net.ulrice.databinding.viewadapter.IFCellTooltipHandler;
 
 /**
  * Ulrice table component with some extended features like sorting, filtering, ...
@@ -713,7 +712,15 @@ public class UTableComponent extends JPanel {
             return viewIndex;
         }
         if (viewIndex >= 0) {
-            return getRowSorter().convertRowIndexToModel(viewIndex);
+            int index = -1;
+            try {
+                index = getRowSorter().convertRowIndexToModel(viewIndex);
+            } catch (ArrayIndexOutOfBoundsException e) {
+                // do nothing, just remove the selection
+                // this happens, when the underlaying data was changed and a selection exists,
+                // e.g. deleting all entries and refreshing the ui afterwards
+            }
+            return index;
         }
         return -1;
     }
