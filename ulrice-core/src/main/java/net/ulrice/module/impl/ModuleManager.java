@@ -1,5 +1,24 @@
 package net.ulrice.module.impl;
 
+import net.ulrice.ConfigurationListener;
+import net.ulrice.Ulrice;
+import net.ulrice.module.ControllerProviderCallback;
+import net.ulrice.module.IFController;
+import net.ulrice.module.IFModule;
+import net.ulrice.module.IFModuleGroup;
+import net.ulrice.module.IFModuleManager;
+import net.ulrice.module.IFModuleStructureManager;
+import net.ulrice.module.IFModuleTitleProvider;
+import net.ulrice.module.IFModuleTitleProvider.Usage;
+import net.ulrice.module.ModuleParam;
+import net.ulrice.module.ModuleType;
+import net.ulrice.module.event.IFModuleEventListener;
+import net.ulrice.module.event.IFModuleStructureEventListener;
+import net.ulrice.module.exception.ModuleInstantiationException;
+
+import javax.swing.KeyStroke;
+import javax.swing.SwingUtilities;
+import javax.swing.event.EventListenerList;
 import java.awt.Cursor;
 import java.awt.KeyEventDispatcher;
 import java.awt.KeyboardFocusManager;
@@ -13,18 +32,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Logger;
-
-import javax.swing.KeyStroke;
-import javax.swing.SwingUtilities;
-import javax.swing.event.EventListenerList;
-
-import net.ulrice.ConfigurationListener;
-import net.ulrice.Ulrice;
-import net.ulrice.module.*;
-import net.ulrice.module.IFModuleTitleProvider.Usage;
-import net.ulrice.module.event.IFModuleEventListener;
-import net.ulrice.module.event.IFModuleStructureEventListener;
-import net.ulrice.module.exception.ModuleInstantiationException;
 
 /**
  * The default module manager.
@@ -781,14 +788,20 @@ public class ModuleManager implements IFModuleManager, IFModuleStructureManager,
 			} else if(hotkeyModuleIdMap.containsKey(keyStroke)) {
 				String moduleId = hotkeyModuleIdMap.get(keyStroke);
 				openModule(moduleId, null, new ControllerProviderCallback() {
+                    @Override
+                    public void onControllerReady(IFController controller) {
+                        super.onControllerReady(controller);
+                        openHotkeyControllerMap.put(keyStroke, controller);
+                    }
 
-					@Override
-					public void onControllerReady(IFController controller) {
-						super.onControllerReady(controller);
-						openHotkeyControllerMap.put(keyStroke, controller);
-					}
-
-				}, null);
+                }, new IFCloseCallback() {
+                    @Override
+                    public void wasClosed(IFController controller) {
+                        if (openHotkeyControllerMap.containsKey(keyStroke)) {
+                            openHotkeyControllerMap.remove(keyStroke);
+                        }
+                    }
+                });
 				e.consume();
 				return true;
 			}
@@ -808,7 +821,7 @@ public class ModuleManager implements IFModuleManager, IFModuleStructureManager,
 	}
 
 	private void loadHotkeys() {
-		loadKeyAndAddToList("F1");
+		loadKeyAndAddToList("1");
 		loadKeyAndAddToList("F2");
 		loadKeyAndAddToList("F3");
 		loadKeyAndAddToList("F4");
