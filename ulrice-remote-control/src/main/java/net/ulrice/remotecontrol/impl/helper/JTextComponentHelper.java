@@ -17,6 +17,11 @@ public class JTextComponentHelper extends AbstractJComponentHelper<JTextComponen
         return JTextComponent.class;
     }
 
+    @Override
+    public boolean isActive(JTextComponent component) throws RemoteControlException {
+        return component.isEditable();
+    }
+
     /**
      * {@inheritDoc}
      */
