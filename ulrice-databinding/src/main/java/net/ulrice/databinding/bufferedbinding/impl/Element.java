@@ -120,13 +120,13 @@ public class Element {
 		ColumnType type = columnDefinition.getColumnType();
 		switch (type) {
 		case Editable:
-			return modelList[columnIndex].isReadOnly();
+			return modelList[columnIndex] == null || modelList[columnIndex].isReadOnly();
 		case ReadOnly:
 		case Hidden_ReadOnly:
 			return true;
 		case NewEditable:
 			if (tableAM.isNew(this)) {
-				return modelList[columnIndex].isReadOnly();
+				return modelList[columnIndex] == null || modelList[columnIndex].isReadOnly();
 			} else {
 				return true;
 			}
@@ -732,7 +732,8 @@ public class Element {
 			}
 			return false;
 		}
-		return tableAM.getIdModelIndexMap().containsKey(columnId) ? modelList[tableAM.getIdModelIndexMap().get(columnId)].isDirty() : false;
+        IFElementInternalAM<?> ifElementInternalAM = modelList[tableAM.getIdModelIndexMap().get(columnId)];
+        return tableAM.getIdModelIndexMap().containsKey(columnId) && (ifElementInternalAM != null && ifElementInternalAM.isDirty());
 	}
 
 	/**
@@ -747,7 +748,8 @@ public class Element {
 			}
 			return true;
 		}
-		return tableAM.getIdModelIndexMap().containsKey(columnId) ? modelList[tableAM.getIdModelIndexMap().get(columnId)].isValid() : true;
+        IFElementInternalAM<?> ifElementInternalAM = modelList[tableAM.getIdModelIndexMap().get(columnId)];
+        return !tableAM.getIdModelIndexMap().containsKey(columnId) || (ifElementInternalAM != null && ifElementInternalAM.isValid());
 	}
 
 	/**
