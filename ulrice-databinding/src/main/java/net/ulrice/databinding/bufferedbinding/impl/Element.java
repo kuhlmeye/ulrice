@@ -393,7 +393,7 @@ public class Element {
 		if (modelList != null) {
 			for (int i = 0; i < tableAM.getColumns().size(); i++) {
 				IFElementInternalAM attributeModel = modelList[i];
-				if (!attributeModel.isReadOnly()) {
+				if (attributeModel != null && !attributeModel.isReadOnly()) {
 					IFDynamicModelValueAccessor dataAccessor = tableAM.getColumns().get(i).getDataAccessor();
 					IFAttributeInfo attributeInfo = tableAM.getColumns().get(i).getAttributeInfo();
 					IFValueConverter valueConverter = tableAM.getColumns().get(i).getValueConverter();
