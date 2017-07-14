@@ -649,7 +649,9 @@ public class Element {
 		if (modelList != null) {
 		    //synchronized (modelList) {
 		        for (IFElementInternalAM<?> model : modelList) {
-	                model.recalculateState();
+		        	if (model != null) {
+						model.recalculateState();
+					}
 	            }
             //}
 
