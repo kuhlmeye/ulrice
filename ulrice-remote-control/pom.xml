@@ -36,8 +36,8 @@
 			<email />
 		</developer>
 	</developers>
-        
-        
+
+
     <distributionManagement>
       <site>
         <id>ulrice-ftp-site</id>
@@ -49,7 +49,7 @@
 	<parent>
 		<groupId>net.ulrice</groupId>
 		<artifactId>ulrice</artifactId>
-		<version>0.2.5.58-SNAPSHOT</version>
+		<version>0.2.5.58</version>
 		<relativePath>../ulrice</relativePath>
 	</parent>
 
@@ -58,7 +58,7 @@
 			<groupId>net.ulrice</groupId>
 			<artifactId>ulrice-core</artifactId>
 		</dependency>
-		
+
 		<dependency>
 			<groupId>net.ulrice</groupId>
 			<artifactId>ulrice-databinding</artifactId>

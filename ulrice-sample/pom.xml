@@ -33,11 +33,11 @@
 	<parent>
 		<groupId>net.ulrice</groupId>
 		<artifactId>ulrice</artifactId>
-		<version>0.2.5.58-SNAPSHOT</version>
+		<version>0.2.5.58</version>
 		<relativePath>../ulrice</relativePath>
 	</parent>
-        
-        
+
+
     <distributionManagement>
       <site>
         <id>ulrice-ftp-site</id>
@@ -49,7 +49,7 @@
 	<properties>
 		<version.cucumber>1.0.0.RC13</version.cucumber>
 	</properties>
-	
+
 	<dependencies>
 		<dependency>
 			<groupId>net.ulrice</groupId>
@@ -110,8 +110,8 @@
 				<artifactId>maven-release-plugin</artifactId>
 			</plugin>
 
-			<!-- <plugin> <groupId>org.riedelcastro</groupId> <artifactId>gcupload-maven-plugin</artifactId> <version>0.9</version> 
-				<configuration> <projectName>ulrice</projectName> <allowSnapshots>true</allowSnapshots> <uploads> <upload> <extensions>jar.pack200</extensions> 
+			<!-- <plugin> <groupId>org.riedelcastro</groupId> <artifactId>gcupload-maven-plugin</artifactId> <version>0.9</version>
+				<configuration> <projectName>ulrice</projectName> <allowSnapshots>true</allowSnapshots> <uploads> <upload> <extensions>jar.pack200</extensions>
 				</upload> <upload> <extensions>ws.xml</extensions> <labels>Featured</labels> </upload> </uploads> </configuration> </plugin> -->
 		</plugins>
 	</build>

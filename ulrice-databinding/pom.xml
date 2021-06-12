@@ -32,7 +32,7 @@
 		    <name>Arno Haase</name>
 		</developer>
 	</developers>
-	
+
 	<dependencies>
 	    <dependency>
 	        <groupId>net.ulrice</groupId>
@@ -45,17 +45,17 @@
 	    <dependency>
 	        <groupId>it.unimi.dsi</groupId>
 	        <artifactId>fastutil</artifactId>
-	    </dependency>	    
+	    </dependency>
 	</dependencies>
 
 	<parent>
 		<groupId>net.ulrice</groupId>
 		<artifactId>ulrice</artifactId>
-		<version>0.2.5.58-SNAPSHOT</version>
+		<version>0.2.5.58</version>
 		<relativePath>../ulrice</relativePath>
 	</parent>
-        
-        
+
+
     <distributionManagement>
       <site>
         <id>ulrice-ftp-site</id>
@@ -63,7 +63,7 @@
         <url>ftp://ulrice.net/httpdocs/ulrice-core</url>
       </site>
     </distributionManagement>
-	
+
 	<build>
 		<plugins>
 			<plugin>

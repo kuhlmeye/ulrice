@@ -4,14 +4,14 @@
 	<packaging>jar</packaging>
 	<name>Ulrice Recorder</name>
 	<url>http://ulrice.googlecode.com</url>
-	
+
 	<parent>
 		<groupId>net.ulrice</groupId>
 		<artifactId>ulrice</artifactId>
-		<version>0.2.5.58-SNAPSHOT</version>
+		<version>0.2.5.58</version>
 		<relativePath>../ulrice</relativePath>
 	</parent>
-	
+
 	<licenses>
 		<license>
 			<name>Apache License, Version 2.0</name>
@@ -24,8 +24,8 @@
 		<developerConnection>scm:svn:https://ulrice.googlecode.com/svn/tags/ulrice-0.2.6/ulrice-translator</developerConnection>
 		<url>http://ulrice.googlecode.com/svn/tags/ulrice-0.2.6/svn</url>
 	</scm>
-        
-        
+
+
     <distributionManagement>
       <site>
         <id>ulrice-ftp-site</id>
@@ -33,7 +33,7 @@
         <url>ftp://ulrice.net/httpdocs/ulrice-core</url>
       </site>
     </distributionManagement>
-        
+
 	<developers>
 		<developer>
 			<id>ckuhlmeyer</id>
@@ -46,7 +46,7 @@
 			<email>apunahassaphemapetilon@hotmail.com</email>
 		</developer>
 	</developers>
-	
+
 	<build>
 		<plugins>
 			<plugin>
