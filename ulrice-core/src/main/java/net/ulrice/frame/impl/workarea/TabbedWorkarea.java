@@ -34,7 +34,7 @@ import net.ulrice.module.impl.action.CloseOtherModulesAction;
 
 /**
  * Workspace that displays the modules in a tabbed view.
- * 
+ *
  * @author ckuhlmeyer
  */
 public class TabbedWorkarea extends JTabbedPane implements IFWorkarea, MouseListener {
@@ -49,7 +49,7 @@ public class TabbedWorkarea extends JTabbedPane implements IFWorkarea, MouseList
     private ImageIcon closeIcon;
     private ImageIcon closeIconBorder;
 
-    private final Map<JComponent, GlassPanel> glassPanelMap = new HashMap<JComponent, GlassPanel>();
+    private final Map<JComponent, GlassPanel> glassPanelMap = new HashMap<>();
 
     private boolean ignoreStateChangedEvents = false;
     /**
@@ -78,7 +78,7 @@ public class TabbedWorkarea extends JTabbedPane implements IFWorkarea, MouseList
             }
         });
     }
-    
+
     private void loadCloseIcons() {
         final URL closeIconUrl = getClass().getResource("/net/ulrice/frame/impl/close.gif");
         if (closeIconUrl != null) {
@@ -112,7 +112,7 @@ public class TabbedWorkarea extends JTabbedPane implements IFWorkarea, MouseList
             if(activeController != null) {
                 activateModule(activeController);
             }
-        }      
+        }
     }
 
     /**
@@ -129,7 +129,7 @@ public class TabbedWorkarea extends JTabbedPane implements IFWorkarea, MouseList
      */
     public void activateModule(IFController activeController) {
 
- 
+
 
         // Get the component of the controller.
         final int idx = getTabIndex(activeController);
@@ -182,7 +182,7 @@ public class TabbedWorkarea extends JTabbedPane implements IFWorkarea, MouseList
         JComponent controllerComponent = getControllerComponent(activeController);
         remove(controllerComponent);
         glassPanelMap.remove(controllerComponent);
-        
+
     }
 
     /**
@@ -245,7 +245,7 @@ public class TabbedWorkarea extends JTabbedPane implements IFWorkarea, MouseList
 
     /**
      * Returns the view component of a given controller.
-     * 
+     *
      * @param controller The controller
      * @return The view component of this controller.
      */
@@ -256,7 +256,7 @@ public class TabbedWorkarea extends JTabbedPane implements IFWorkarea, MouseList
 
     /**
      * Component displayed in the tab area displaying the information of a controller.
-     * 
+     *
      * @author ckuhlmeyer
      */
     class TabControllerPanel extends JComponent {
@@ -288,7 +288,7 @@ public class TabbedWorkarea extends JTabbedPane implements IFWorkarea, MouseList
             closeButton.setBorder(BorderFactory.createEmptyBorder(2, 0, 0, 0));
             closeButton.setMargin(new Insets(0, 0, 0, 0));
             closeButton.setToolTipText(null);
-            
+
             closeButton.setIcon(closeIcon);
             closeButton.setRolloverEnabled(true);
             closeButton.setRolloverIcon(closeIconBorder);
@@ -306,7 +306,7 @@ public class TabbedWorkarea extends JTabbedPane implements IFWorkarea, MouseList
         public void setTitle(String title) {
             label.setText(title);
         }
-        
+
         public IFController getController() {
             return controller;
         }
@@ -322,20 +322,31 @@ public class TabbedWorkarea extends JTabbedPane implements IFWorkarea, MouseList
 
     @Override
     public void mouseClicked(MouseEvent e) {
+        closeIfPressedMiddleMouse(e);
+
         if (e.isPopupTrigger() && e.getComponent() instanceof TabControllerPanel) {
             final TabControllerPanel tabCtrlPanel = (TabControllerPanel) e.getComponent();
             showPopup(tabCtrlPanel, e.getPoint());
         }
     }
 
+    private void closeIfPressedMiddleMouse(MouseEvent e) {
+        if (e.getButton() == MouseEvent.BUTTON2) {
+            if (e.getComponent() instanceof TabControllerPanel) {
+                final TabControllerPanel tabCtrlPanel = (TabControllerPanel) e.getComponent();
+                Ulrice.getModuleManager().closeController(tabCtrlPanel.getController(), null);
+            }
+        }
+    }
+
     @Override
-    public void mousePressed(MouseEvent e) {                
-        
+    public void mousePressed(MouseEvent e) {
+
         if (e.getComponent() instanceof TabControllerPanel) {
             final TabControllerPanel tabCtrlPanel = (TabControllerPanel) e.getComponent();
             IFController tabCtrl = tabCtrlPanel.getController();
             IFController currentCtrl = Ulrice.getModuleManager().getCurrentController();
-            if(tabCtrl != null && !tabCtrl.equals(currentCtrl)) {            
+            if(tabCtrl != null && !tabCtrl.equals(currentCtrl)) {
                 Ulrice.getModuleManager().activateModule(tabCtrl);
                 if (e.isPopupTrigger()) {
                     showPopup(tabCtrlPanel, e.getPoint());
@@ -400,7 +411,7 @@ public class TabbedWorkarea extends JTabbedPane implements IFWorkarea, MouseList
             glassPanel.setBlocked(false);
         }
     }
-    
+
     @Override
     public void moduleBlockerRemoved(IFController controller, Object blocker) {
         // Do nothing, Workarea doesnt care about blockers, just if it is blocked or not
