@@ -16,12 +16,9 @@ import net.ulrice.module.event.IFModuleEventListener;
 import net.ulrice.module.event.IFModuleStructureEventListener;
 import net.ulrice.module.exception.ModuleInstantiationException;
 
-import javax.swing.KeyStroke;
-import javax.swing.SwingUtilities;
+import javax.swing.*;
 import javax.swing.event.EventListenerList;
-import java.awt.Cursor;
-import java.awt.KeyEventDispatcher;
-import java.awt.KeyboardFocusManager;
+import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -275,6 +272,31 @@ public class ModuleManager implements IFModuleManager, IFModuleStructureManager,
     }
 
     @Override
+    public void forceCloseAllControllers() {
+        final IFController controller = getCurrentController();
+        if (controller == null) {
+            return;
+        }
+
+        forceCloseController(controller, controller, null, new IFCloseHandler() {
+
+            @Override
+            public void closeSuccess() {
+
+                final Iterator<IFController> iterator = getActiveControllers().iterator();
+                if (iterator.hasNext()) {
+                    forceCloseAllControllers();
+                }
+            }
+
+            @Override
+            public void closeFailure() {
+
+            }
+        });
+    }
+
+    @Override
     public void closeOtherControllers(final IFController controller, final IFCloseHandler closeHandler) {
 
         final List<IFController> notCurrentControllerList = getNotCurrentControllers(controller);
@@ -360,6 +382,39 @@ public class ModuleManager implements IFModuleManager, IFModuleStructureManager,
         else {
             closeController(rootControllerToClose, openControllers.getChildren(controllerToClose).iterator().next(),
                 controllerToClose, closeHandler);
+        }
+    }
+
+    private void forceCloseController(final IFController rootControllerToClose, final IFController controllerToClose,
+                                      final IFController controllersParent, final IFCloseHandler closeHandler) {
+
+        if (openControllers.getChildren(controllerToClose).size() == 0) {
+
+            activateModule(controllerToClose);
+
+            internalCloseController(controllerToClose);
+
+            if (controllersParent == null) {
+                if (closeHandler != null) {
+                    closeHandler.closeSuccess();
+                }
+            } else {
+                if (openControllers.getChildren(controllersParent).iterator().hasNext()) {
+                    closeController(rootControllerToClose, openControllers.getChildren(controllersParent)
+                            .iterator().next(), controllersParent, closeHandler);
+                } else {
+                    if (openControllers.getChildren(rootControllerToClose).iterator().hasNext()) {
+                        closeController(rootControllerToClose,
+                                openControllers.getChildren(rootControllerToClose).iterator().next(),
+                                rootControllerToClose, closeHandler);
+                    } else {
+                        closeController(rootControllerToClose, rootControllerToClose, null, closeHandler);
+                    }
+                }
+            }
+        } else {
+            forceCloseController(rootControllerToClose, openControllers.getChildren(controllerToClose).iterator().next(),
+                    controllerToClose, closeHandler);
         }
     }
 

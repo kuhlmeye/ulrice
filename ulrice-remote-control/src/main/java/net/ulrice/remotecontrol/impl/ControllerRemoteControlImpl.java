@@ -176,6 +176,10 @@ public class ControllerRemoteControlImpl implements ControllerRemoteControl {
             RemoteControlUtils.pause(10);
         }
 
+        Ulrice.getModuleManager().forceCloseAllControllers();
+        RemoteControlUtils.pause();
+
+/*
         Ulrice.getModuleManager().closeAllControllers(new Runnable() {
             @Override
             public void run() {
@@ -192,19 +196,20 @@ public class ControllerRemoteControlImpl implements ControllerRemoteControl {
                 RemoteControlUtils.pause();
             }
         });
+*/
     }
 
     private boolean closeDialogs() throws RemoteControlException {
         ComponentRemoteControl componentRC = RemoteControlCenter.get(ComponentRemoteControl.class);
 
-        componentRC.interact(click(), ComponentMatcher.like(".*Yes.*"), ofType(JButton.class),
-                within(ofType(JDialog.class), ComponentMatcher.contains(ComponentMatcher.or(texted(".*discard.*"), texted(".*unsaved.*")))));
+        componentRC.interact(click(), ComponentMatcher.like(".*OK.*"), ofType(JButton.class), within(ofType(JDialog.class)));
         componentRC.interact(click(), ComponentMatcher.like(".*No.*"), ofType(JButton.class), within(ofType(JDialog.class)));
         componentRC.interact(click(), ComponentMatcher.like(".*Close.*"), ofType(JButton.class), within(ofType(JDialog.class)));
         componentRC.interact(click(), ComponentMatcher.like(".*Cancel.*"), ofType(JButton.class), within(ofType(JDialog.class)));
-        componentRC.interact(click(), ComponentMatcher.like(".*OK.*"), ofType(JButton.class), within(ofType(JDialog.class)));
-        componentRC.interact(click(), ComponentMatcher.like(".*Close.*"), ofType(JButton.class), within(ofType(JDialog.class)));
-
+        componentRC.interact(click(), ComponentMatcher.like(".*No.*"), ofType(JButton.class),
+                within(ofType(JDialog.class), ComponentMatcher.contains(ComponentMatcher.or(texted(".*discard.*"), texted(".*unsaved.*")))));
+        componentRC.interact(click(), ComponentMatcher.like(".*Yes.*"), ofType(JButton.class),
+                within(ofType(JDialog.class), ComponentMatcher.contains(ComponentMatcher.or(texted(".*discard.*"), texted(".*unsaved.*")))));
         componentRC.interact(click(), ComponentMatcher.like(".*OK.*"), ofType(JButton.class),
                 within(ofType(JDialog.class), ComponentMatcher.contains(ComponentMatcher.or(texted(".*Warning.*"), texted(".*Exception.*")))));
 

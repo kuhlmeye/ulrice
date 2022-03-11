@@ -59,6 +59,7 @@ public interface IFModuleManager {
 	 * {@code Runnable} is not executed.
 	 */
 	void closeAllControllers(Runnable afterClosingAllModules);
+	void forceCloseAllControllers();
 
 	/**
 	 * Close all modules except the one given by the parameter
