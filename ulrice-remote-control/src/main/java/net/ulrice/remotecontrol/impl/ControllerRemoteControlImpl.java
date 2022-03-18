@@ -176,7 +176,19 @@ public class ControllerRemoteControlImpl implements ControllerRemoteControl {
             RemoteControlUtils.pause(10);
         }
 
-        Ulrice.getModuleManager().forceCloseAllControllers(() -> RemoteControlUtils.pause(0.2));
+        Ulrice.getModuleManager().forceCloseAllControllers(() -> {
+            try {
+                int tries1 = 0;
+                while (!closeDialogs() && tries1 < 10) {
+                    tries1++;
+                    RemoteControlUtils.pause(10);
+                }
+            }
+            catch (RemoteControlException e) {
+                throw new RuntimeException(e);
+            }
+            RemoteControlUtils.pause(0.2);
+        });
 
 /*
 
