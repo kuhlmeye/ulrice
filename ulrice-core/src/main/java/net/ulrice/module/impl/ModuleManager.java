@@ -272,9 +272,12 @@ public class ModuleManager implements IFModuleManager, IFModuleStructureManager,
     }
 
     @Override
-    public void forceCloseAllControllers() {
+    public void forceCloseAllControllers(final Runnable afterClosingAllModules) {
         final IFController controller = getCurrentController();
         if (controller == null) {
+            if (afterClosingAllModules != null) {
+                afterClosingAllModules.run();
+            }
             return;
         }
 
@@ -285,7 +288,12 @@ public class ModuleManager implements IFModuleManager, IFModuleStructureManager,
 
                 final Iterator<IFController> iterator = getActiveControllers().iterator();
                 if (iterator.hasNext()) {
-                    forceCloseAllControllers();
+                    forceCloseAllControllers(afterClosingAllModules);
+                }
+                else {
+                    if (afterClosingAllModules != null) {
+                        afterClosingAllModules.run();
+                    }
                 }
             }
 

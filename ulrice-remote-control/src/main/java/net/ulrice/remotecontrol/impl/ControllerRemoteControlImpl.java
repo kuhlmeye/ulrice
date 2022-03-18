@@ -176,10 +176,10 @@ public class ControllerRemoteControlImpl implements ControllerRemoteControl {
             RemoteControlUtils.pause(10);
         }
 
-        Ulrice.getModuleManager().forceCloseAllControllers();
-        RemoteControlUtils.pause();
+        Ulrice.getModuleManager().forceCloseAllControllers(() -> RemoteControlUtils.pause(0.2));
 
 /*
+
         Ulrice.getModuleManager().closeAllControllers(new Runnable() {
             @Override
             public void run() {
