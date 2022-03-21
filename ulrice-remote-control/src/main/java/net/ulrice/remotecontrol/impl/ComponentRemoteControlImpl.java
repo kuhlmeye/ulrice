@@ -82,7 +82,7 @@ public class ComponentRemoteControlImpl implements ComponentRemoteControl {
             return false;
         }
 
-        final Result<Boolean> result = new Result<Boolean>(interaction.duration() + 10);
+        final Result<Boolean> result = new Result<Boolean>(interaction.duration() + 20);
 
         RemoteControlUtils.invokeInThread(new Runnable() {
             @Override
