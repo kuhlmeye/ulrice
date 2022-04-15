@@ -96,7 +96,7 @@
 									<pluginExecutionFilter>
 										<groupId>org.apache.maven.plugins</groupId>
 										<artifactId>maven-plugin-plugin</artifactId>
-										<versionRange>[3.6,)</versionRange>
+										<version>3.6.4</version>
 										<goals>
 											<goal>descriptor</goal>
 										</goals>
