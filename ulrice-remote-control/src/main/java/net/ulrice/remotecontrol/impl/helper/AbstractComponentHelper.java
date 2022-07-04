@@ -224,7 +224,7 @@ public abstract class AbstractComponentHelper<TYPE extends Component> implements
      */
     @Override
     public boolean selectAll(Robot robot, final TYPE component) throws RemoteControlException {
-        final Result<Boolean> result = new Result<Boolean>(15);
+        final Result<Boolean> result = new Result<Boolean>(30);
 
         RemoteControlUtils.invokeInSwing(new Runnable() {
 
@@ -250,7 +250,7 @@ public abstract class AbstractComponentHelper<TYPE extends Component> implements
      */
     @Override
     public boolean selectNone(Robot robot, final TYPE component) throws RemoteControlException {
-        final Result<Boolean> result = new Result<Boolean>(15);
+        final Result<Boolean> result = new Result<Boolean>(30);
 
         RemoteControlUtils.invokeInSwing(new Runnable() {
 

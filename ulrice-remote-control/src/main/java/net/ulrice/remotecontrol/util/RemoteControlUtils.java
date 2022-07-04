@@ -150,7 +150,7 @@ public class RemoteControlUtils {
         }
         else {
             try {
-                final Result<Boolean> result = new Result<Boolean>(10);
+                final Result<Boolean> result = new Result<Boolean>(20);
 
                 SwingUtilities.invokeLater(new Runnable() {
 

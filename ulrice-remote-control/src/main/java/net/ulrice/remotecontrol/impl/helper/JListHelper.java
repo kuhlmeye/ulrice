@@ -49,7 +49,7 @@ public class JListHelper extends AbstractJComponentHelper<JList> {
      */
     @Override
     public boolean enter(Robot robot, final JList component, String text) throws RemoteControlException {
-        final Result<Boolean> result = new Result<Boolean>(1);
+        final Result<Boolean> result = new Result<Boolean>(2);
         final RegularMatcher matcher = RemoteControlUtils.toMatcher(text);
 
         try {

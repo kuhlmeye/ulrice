@@ -724,7 +724,7 @@ public abstract class ComponentInteraction implements Serializable {
              */
             @Override
             public boolean interact(final Component component, Robot robot) throws RemoteControlException {
-                final Result<Boolean> result = new Result<Boolean>(5);
+                final Result<Boolean> result = new Result<Boolean>(10);
 
                 RemoteControlUtils.invokeInSwing(new Runnable() {
                     @Override

@@ -84,7 +84,7 @@ public class JTableHelper extends AbstractJComponentHelper<JTable> {
         final int finalRow = invertValue(row, component.getRowCount());
         final int finalColumn = invertValue(column, component.getColumnCount());
 
-        final Result<Boolean> result = new Result<Boolean>(2);
+        final Result<Boolean> result = new Result<Boolean>(4);
 
         try {
             RemoteControlUtils.invokeInSwing(new Runnable() {
@@ -141,7 +141,7 @@ public class JTableHelper extends AbstractJComponentHelper<JTable> {
      */
     @Override
     public boolean select(Robot robot, final JTable component, final int start, final int end) throws RemoteControlException {
-        final Result<Boolean> result = new Result<Boolean>(2);
+        final Result<Boolean> result = new Result<Boolean>(4);
 
         try {
             RemoteControlUtils.invokeInSwing(new Runnable() {

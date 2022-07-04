@@ -66,7 +66,7 @@ public class JComboBoxHelper extends AbstractJComponentHelper<JComboBox> {
      */
     @Override
     public boolean enter(final Robot robot, final JComboBox component, final String text) throws RemoteControlException {
-        final Result<Boolean> result = new Result<Boolean>(1);
+        final Result<Boolean> result = new Result<Boolean>(2);
         final RegularMatcher matcher = RemoteControlUtils.toMatcher(text);
 
         try {
@@ -74,7 +74,7 @@ public class JComboBoxHelper extends AbstractJComponentHelper<JComboBox> {
 
                 @Override
                 public void run() {
-                    for (int i = 0; i < component.getModel().getSize(); i += 1) {
+                    for (int i = 0; i < component.getModel().getSize(); i += 2) {
                         if (matcher.matches(String.valueOf(component.getModel().getElementAt(i)))) {
                             component.setSelectedIndex(i);
                             result.fireResult(true);

@@ -89,7 +89,7 @@ public class ModuleRemoteControlImpl implements ModuleRemoteControl {
 
         for (final ModuleState state : states) {
 
-            final Result<Boolean> result = new Result<Boolean>(10);
+            final Result<Boolean> result = new Result<Boolean>(20);
 
             try {
                 RemoteControlUtils.invokeInSwing(new Runnable() {

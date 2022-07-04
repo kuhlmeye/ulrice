@@ -27,7 +27,7 @@ public class I18nTextComponentHelper extends AbstractJComponentHelper<I18nTextCo
     public boolean enter(final Robot robot, final I18nTextComponent component, final String text)
         throws RemoteControlException {
 
-        final Result<Boolean> result = new Result<Boolean>(1);
+        final Result<Boolean> result = new Result<Boolean>(2);
         final JTextComponent editor = component.getTextComponent();
         final ComponentHelper<Component> helper = ComponentHelperRegistry.get(editor.getClass());
 

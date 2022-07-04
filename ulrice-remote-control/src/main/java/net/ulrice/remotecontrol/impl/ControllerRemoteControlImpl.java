@@ -137,7 +137,7 @@ public class ControllerRemoteControlImpl implements ControllerRemoteControl {
         boolean success = true;
 
         for (final ControllerState state : states) {
-            final Result<Boolean> result = new Result<Boolean>(2);
+            final Result<Boolean> result = new Result<Boolean>(4);
 
             try {
                 RemoteControlUtils.invokeInSwing(new Runnable() {
@@ -244,7 +244,7 @@ public class ControllerRemoteControlImpl implements ControllerRemoteControl {
         boolean success = true;
 
         for (final ControllerState state : states) {
-            final Result<Boolean> result = new Result<Boolean>(2);
+            final Result<Boolean> result = new Result<Boolean>(4);
 
             try {
                 RemoteControlUtils.invokeInSwing(new Runnable() {
@@ -292,7 +292,7 @@ public class ControllerRemoteControlImpl implements ControllerRemoteControl {
 
         try {
             // handle non modal dialogs
-            RemoteControlUtils.repeatInThread(5, new ResultClosure<Boolean>() {
+            RemoteControlUtils.repeatInThread(10, new ResultClosure<Boolean>() {
 
                 @Override
                 public void invoke(Result<Boolean> result) throws RemoteControlException {

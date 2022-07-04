@@ -114,7 +114,7 @@ public class ComponentUtils {
                 final Window window = (Window) component;
 
                 if (!window.isActive()) {
-                    final Result<Boolean> result = new Result<Boolean>(2);
+                    final Result<Boolean> result = new Result<Boolean>(4);
 
                     WindowFocusListener focusListener = new WindowFocusListener() {
                         @Override
@@ -201,7 +201,7 @@ public class ComponentUtils {
             return true;
         }
 
-        final Result<Boolean> result = new Result<Boolean>(2);
+        final Result<Boolean> result = new Result<Boolean>(4);
 
         FocusAdapter focusListener = new FocusAdapter() {
 

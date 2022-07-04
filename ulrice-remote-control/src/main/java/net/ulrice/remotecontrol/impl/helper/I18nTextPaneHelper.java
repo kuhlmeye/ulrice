@@ -27,7 +27,7 @@ public class I18nTextPaneHelper extends AbstractJComponentHelper<I18nTextPane> {
     @Override
     public boolean enter(final Robot robot, final I18nTextPane component, final String text) throws RemoteControlException {
 
-        final Result<Boolean> result = new Result<Boolean>(1);
+        final Result<Boolean> result = new Result<Boolean>(2);
         final JTextComponent editor = component.getTextPane();
         final ComponentHelper<Component> helper = ComponentHelperRegistry.get(editor.getClass());
 
