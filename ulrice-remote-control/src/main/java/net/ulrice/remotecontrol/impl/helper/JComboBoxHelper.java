@@ -74,7 +74,7 @@ public class JComboBoxHelper extends AbstractJComponentHelper<JComboBox> {
 
                 @Override
                 public void run() {
-                    for (int i = 0; i < component.getModel().getSize(); i += 2) {
+                    for (int i = 0; i < component.getModel().getSize(); i += 1) {
                         if (matcher.matches(String.valueOf(component.getModel().getElementAt(i)))) {
                             component.setSelectedIndex(i);
                             result.fireResult(true);
