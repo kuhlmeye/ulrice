@@ -100,6 +100,9 @@ public class RemoteControlCenter {
                 if (osName.contains("linux")) {
                     command.add(System.getProperty("java.home") + "/bin/java");
                 }
+                else if (osName.contains("darwin") || osName.contains("mac")) {
+                    command.add(System.getProperty("java.home") + "/bin/java");
+                }
                 else {
                     command.add(System.getProperty("java.home") + "\\bin\\java.exe");
                 }
